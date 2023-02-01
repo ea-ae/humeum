@@ -12,7 +12,7 @@ public class Transaction {
     public bool PerTimescale { get; set; } // e.g. "every second week" (false) vs "twice a week" (true)
     public DateTime PaymentStart { get; set; }
     public DateTime? PaymentEnd { get; set; }
-    
+
     public int TotalTransactionCount {
         get {
             if (PaymentEnd is null) {

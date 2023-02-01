@@ -1,5 +1,3 @@
-using System.IO;
-
 using Application.Common.Interfaces;
 
 using Infrastructure.Persistence;
