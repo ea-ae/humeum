@@ -2,7 +2,7 @@
 
 public class Transaction {
     public int Id { get; set; }
-    public DateTime Start { get; set; } = DateTime.UtcNow;
+    public DateTime Start { get; init; } = DateTime.UtcNow;
     public DateTime? End { get; set; } = null;
 
     public decimal Amount { get; set; }
@@ -12,7 +12,7 @@ public class Transaction {
     public bool PerTimescale { get; set; } // e.g. "every second week" (false) vs "twice a week" (true)
     public DateTime PaymentStart { get; set; }
     public DateTime? PaymentEnd { get; set; }
-
+    
     public int TotalTransactionCount {
         get {
             if (PaymentEnd is null) {
@@ -44,7 +44,6 @@ public class Transaction {
                     if (PaymentStart.AddYears(years).AddMonths(months) > (DateTime)PaymentEnd && !isLastDayOfMonth) {
                         count -= 1; // payments occur on the same date every month
                     }
-
                     break;
                 case "YEARS":
                     count += years;
@@ -52,7 +51,6 @@ public class Transaction {
                     if (PaymentStart.AddYears(years) > (DateTime)PaymentEnd && !isLastDayOfMonth) {
                         count -= 1; // didn't reach payment date on the last year
                     }
-
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(Timescale.Code, $"Unexpected time interval code: {Timescale.Code}");
@@ -61,4 +59,6 @@ public class Transaction {
             return count + 1; // first transaction is at the start date, so add 1
         }
     }
+
+    public decimal TotalTransactionAmount => Amount * TotalTransactionCount;
 }
