@@ -1,7 +1,19 @@
+using System.IO;
+
+using Application.Common.Interfaces;
+
+using Infrastructure.Persistence;
+
+using Microsoft.EntityFrameworkCore;
+
+var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+var dbPath = Path.Combine(appDataPath, "humeum.sqlite"); // todo: move outta here
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddDbContext<IAppDbContext, AppDbContext>(options => options.UseSqlite($"Data Source={dbPath}"));
 
 var app = builder.Build();
 
