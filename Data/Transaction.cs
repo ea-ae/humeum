@@ -21,9 +21,12 @@ public class Transaction {
 
             TimeSpan timespan = (TimeSpan)(PaymentEnd - PaymentStart);
             int count = 0;
-            int years;
-            int months;
-            
+            int years = ((DateTime)PaymentEnd).Year - PaymentStart.Year;
+            int months = ((DateTime)PaymentEnd).Month - PaymentStart.Month;
+
+            int daysInEndDate = DateTime.DaysInMonth(((DateTime)PaymentEnd).Year, ((DateTime)PaymentEnd).Month);
+            bool isLastDayOfMonth = ((DateTime)PaymentEnd).Day == daysInEndDate;
+
             switch (Timescale.Code) {
                 case "HOURS":
                     count = (int)timespan.TotalHours;
@@ -35,21 +38,18 @@ public class Transaction {
                     count = (int)(timespan.TotalDays / 7);
                     break;
                 case "MONTHS":
-                    years = (((DateTime)PaymentEnd).Year - PaymentStart.Year) * 12;
-                    count += years;
-                    months = (((DateTime)PaymentEnd).Month - PaymentStart.Month);
+                    count += years * 12;
                     count += months;
 
-                    if (PaymentStart.AddYears(years).AddMonths(months) > (DateTime)PaymentEnd) {
+                    if (PaymentStart.AddYears(years).AddMonths(months) > (DateTime)PaymentEnd && !isLastDayOfMonth) {
                         count -= 1; // payments occur on the same date every month
                     }
 
                     break;
                 case "YEARS":
-                    years = (((DateTime)PaymentEnd).Year - PaymentStart.Year);
                     count += years;
 
-                    if (PaymentStart.AddYears(years) > (DateTime)PaymentEnd) {
+                    if (PaymentStart.AddYears(years) > (DateTime)PaymentEnd && !isLastDayOfMonth) {
                         count -= 1; // didn't reach payment date on the last year
                     }
 
