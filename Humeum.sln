@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastru
 		{274F5F19-BF76-4B9B-AEEC-1461635C9F60} = {274F5F19-BF76-4B9B-AEEC-1461635C9F60}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Tests\Test.csproj", "{CDE8C3A2-BC2E-4048-82EA-9F1AF6FF4C43}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{CDE8C3A2-BC2E-4048-82EA-9F1AF6FF4C43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
