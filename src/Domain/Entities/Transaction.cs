@@ -3,20 +3,60 @@
 namespace Domain.Entities;
 
 public class Transaction : TimestampedEntity {
-    public decimal Amount { get; private set; }
-    public TransactionFrequency Frequency { get; private set; } = null!;
+    private decimal _amount;
+    public decimal Amount {
+        get => _amount;
+        private set {
+            if (_amount <= 0) {
+                throw new ArgumentException("Amount must be greater than zero.");
+            }
+            _amount = value;
+        }
+    }
+
+    private TransactionFrequency? _frequency;
+    public TransactionFrequency? Frequency { 
+        get => _frequency;
+        private set {
+            if (value is null && PaymentEnd is not null) {
+                throw new InvalidOperationException("Cannot set frequency to null with a payment end date.");
+            } else if (value is not null && PaymentEnd is null) {
+                throw new InvalidOperationException("Cannot assign a frequency when there is no payment end date.");
+            }
+            _frequency = value;
+        }
+    }
+
     public TransactionType Type { get; private set; } = null!;
 
-    public DateTime PaymentStart { get; private set; }
-    public DateTime? PaymentEnd { get; private set; }
+    private DateTime _paymentStart;
+    public DateTime PaymentStart {
+        get => _paymentStart;
+        private set {
+            if (PaymentEnd is not null && PaymentEnd >= PaymentStart) {
+                throw new ArgumentException("Payment end date must be after start date.");
+            }
+            _paymentStart = value;
+        }
+    }
 
-    private Transaction() { }
+    private DateTime? _paymentEnd;
+
+    public DateTime? PaymentEnd {
+        get => _paymentEnd;
+        private set {
+            if (PaymentEnd >= PaymentStart) {
+                throw new ArgumentException("Payment end date must be after start date.");
+            }
+            _paymentEnd = value;
+        }
+    }
 
     public Transaction(decimal amount,
                        TransactionType type,
                        TransactionFrequency frequency,
                        DateTime paymentStart,
-                       DateTime? paymentEnd) {
+                       DateTime paymentEnd) {
         Amount = amount;
         Type = type;
         Frequency = frequency;
@@ -24,9 +64,19 @@ public class Transaction : TimestampedEntity {
         PaymentEnd = paymentEnd;
     }
 
+    public Transaction(decimal amount,
+                       TransactionType type,
+                       DateTime paymentStart) {
+        Amount = amount;
+        Type = type;
+        PaymentStart = paymentStart;
+    }
+
+    private Transaction() { }
+
     public int TotalTransactionCount {
         get {
-            if (PaymentEnd is null) {
+            if (PaymentEnd is null || Frequency is null) {
                 return 1;
             }
 

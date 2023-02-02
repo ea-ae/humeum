@@ -164,7 +164,7 @@ public class TransactionTest
     /// Construct a partial Transaction object for testing purposes.
     /// </summary>
     /// <returns>Partially instantiated transaction.</returns>
-    private Transaction BuildTransaction(string timescale, DateTime paymentStart, DateTime? paymentEnd)
+    private static Transaction BuildTransaction(string timescale, DateTime paymentStart, DateTime? paymentEnd)
     {
         return new Transaction(0, 
                                new TransactionType("Income", "INCOME"), 
