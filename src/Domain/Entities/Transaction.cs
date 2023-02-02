@@ -3,15 +3,26 @@
 namespace Domain.Entities;
 
 public class Transaction : TimestampedEntity {
-    public decimal Amount { get; set; }
-    public required TransactionType Type { get; set; }
+    public decimal Amount { get; private set; }
+    public TransactionFrequency Frequency { get; private set; } = null!;
+    public TransactionType Type { get; private set; } = null!;
 
-    public required TransactionTimescale Timescale { get; set; }
-    public bool PerTimescale { get; set; } // e.g. "every second week" (false) vs "twice a week" (true)
-    public DateTime PaymentStart { get; set; }
-    public DateTime? PaymentEnd { get; set; }
+    public DateTime PaymentStart { get; private set; }
+    public DateTime? PaymentEnd { get; private set; }
 
     private Transaction() { }
+
+    public Transaction(decimal amount,
+                       TransactionType type,
+                       TransactionFrequency frequency,
+                       DateTime paymentStart,
+                       DateTime? paymentEnd) {
+        Amount = amount;
+        Type = type;
+        Frequency = frequency;
+        PaymentStart = paymentStart;
+        PaymentEnd = paymentEnd;
+    }
 
     public int TotalTransactionCount {
         get {
@@ -27,7 +38,7 @@ public class Transaction : TimestampedEntity {
             int daysInEndDate = DateTime.DaysInMonth(((DateTime)PaymentEnd).Year, ((DateTime)PaymentEnd).Month);
             bool isLastDayOfMonth = ((DateTime)PaymentEnd).Day == daysInEndDate;
 
-            switch (Timescale.Code) {
+            switch (Frequency.Unit.Code) {
                 case "HOURS":
                     count = (int)timespan.TotalHours;
                     break;
@@ -53,7 +64,8 @@ public class Transaction : TimestampedEntity {
                     }
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(Timescale.Code, $"Unexpected time interval code: {Timescale.Code}");
+                    throw new ArgumentOutOfRangeException(
+                        Frequency.Unit.Code, $"Unexpected time interval code: {Frequency.Unit.Code}");
             }
 
             return count + 1; // first transaction is at the start date, so add 1

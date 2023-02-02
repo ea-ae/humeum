@@ -15,5 +15,7 @@ public class AppDbContext : DbContext, IAppDbContext {
 
     protected override void OnConfiguring(DbContextOptionsBuilder options) { }
 
-    protected override void OnModelCreating(ModelBuilder builder) { }
+    protected override void OnModelCreating(ModelBuilder builder) {
+        builder.Entity<Transaction>().OwnsOne(t => t.Frequency);
+    }
 }

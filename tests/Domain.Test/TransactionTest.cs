@@ -166,23 +166,10 @@ public class TransactionTest
     /// <returns>Partially instantiated transaction.</returns>
     private Transaction BuildTransaction(string timescale, DateTime paymentStart, DateTime? paymentEnd)
     {
-        var transaction = new Transaction
-        {
-            Type = new TransactionType
-            {
-                Name = "Income",
-                Code = "INCOME",
-            },
-            Timescale = new TransactionTimescale
-            {
-                Name = timescale.ToLower(),
-                Code = timescale.ToUpper(),
-            },
-            PerTimescale = false,
-            PaymentStart = paymentStart,
-            PaymentEnd = paymentEnd,
-        };
-
-        return transaction;
+        return new Transaction(0, 
+                               new TransactionType("Income", "INCOME"), 
+                               new TransactionFrequency(new TransactionTimescale(timescale), 1),
+                               paymentStart,
+                               paymentEnd);
     }
 }
