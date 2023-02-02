@@ -47,9 +47,13 @@ public class TimeUnit : EnumerationEntity {
     }
 
     #pragma warning disable IDE0051 // Remove unused private members
-    private TimeUnit(string name, string code) : base(name, code) {
+    /// <summary>
+    /// Private constructor for EF that assigns a proper delegate
+    /// </summary>
+    /// <param name="code"></param>
+    /// <param name="name"></param>
+    private TimeUnit(string code, string name) : base(code, name) {
         var timeUnit = GetAll<TimeUnit>().First(t => t.Code == code);
-        Id = timeUnit.Id;
         InTimeSpan = timeUnit.InTimeSpan; // assign delegate to EF entities
     }
     #pragma warning restore IDE0051 // Remove unused private members

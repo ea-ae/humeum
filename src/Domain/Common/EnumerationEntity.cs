@@ -3,18 +3,18 @@
 namespace Domain.Common;
 
 public abstract class EnumerationEntity : Entity, IComparable {
-    public string Name { get; private set; } = null!;
     public string Code { get; private set; } = null!;
+    public string Name { get; private set; } = null!;
 
     public override string ToString() => Name;
 
-    protected EnumerationEntity(int id, string name, string code) => (Id, Name, Code) = (id, name, code);
+    protected EnumerationEntity(int id, string code, string name) => (Id, Code, Name) = (id, code, name);
 
     protected EnumerationEntity(int id, string code) : this(code) => Id = id;
 
-    protected EnumerationEntity(string name, string code) => (Name, Code) = (name, code);
+    protected EnumerationEntity(string code, string name) => (Code, Name) = (code, name);
 
-    protected EnumerationEntity(string code) => (Name, Code) = (code[..1].ToUpper() + code[1..].ToLower(), code);
+    protected EnumerationEntity(string code) => (Code, Name) = (code, code[..1].ToUpper() + code[1..].ToLower());
 
     protected EnumerationEntity() { }
 
@@ -36,12 +36,6 @@ public abstract class EnumerationEntity : Entity, IComparable {
         return typeMatches && valueMatches;
     }
     
-    //public T WithId<T>(int id) where T : EnumerationEntity {
-    //    T copy = (T)MemberwiseClone();
-    //    copy.Id = id;
-    //    return copy;
-    //}
-
     public int CompareTo(object? obj) => Code.CompareTo(((EnumerationEntity)obj!).Code);
 
     public override int GetHashCode() => Code.GetHashCode();
