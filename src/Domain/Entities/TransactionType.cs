@@ -2,15 +2,9 @@
 
 namespace Domain.Entities;
 
-public class TransactionType : Entity {
-    public string Name { get; private set; } = null!;
-    public string Code { get; private set; } = null!;
+public class TransactionType : EnumerationEntity {
+    public static TransactionType Income = new("Income");
+    public static TransactionType Expense = new("Expense");
 
-    public TransactionType(string name, string code) {
-        Name = name;
-        Code = code;
-        // todo: validation and enum class
-    }
-
-    private TransactionType() { }
+    private TransactionType(string name) : base(name) { }
 }
