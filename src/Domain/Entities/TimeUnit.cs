@@ -40,6 +40,9 @@ public class TimeUnit : EnumerationEntity {
         return years;
     });
 
+    IEnumerable<Transaction> _transactions = null!;
+    public IEnumerable<Transaction> Transactions => _transactions;
+
     public Func<DateTime, DateTime, int> InTimeSpan { get; init; } = null!;
     
     private TimeUnit(int id, string code, Func<DateTime, DateTime, int> unitsInTimeSpanDelegate) : base(id, code) {
@@ -48,7 +51,7 @@ public class TimeUnit : EnumerationEntity {
 
     #pragma warning disable IDE0051 // Remove unused private members
     /// <summary>
-    /// Private constructor for EF that assigns a proper delegate
+    /// Private constructor for EF that assigns the correct delegate
     /// </summary>
     /// <param name="code"></param>
     /// <param name="name"></param>
