@@ -40,9 +40,13 @@ public class TimeUnit : EnumerationEntity {
         return years;
     });
 
-    public Func<DateTime, DateTime, int> InTimeSpan { get; init; }
+    public Func<DateTime, DateTime, int> InTimeSpan { get; init; } = null!;
     
     private TimeUnit(string code, Func<DateTime, DateTime, int> unitsInTimeSpanDelegate) : base(code) {
         InTimeSpan = unitsInTimeSpanDelegate;
+    }
+
+    private TimeUnit(string name, string code) : base(name, code) {
+        InTimeSpan = delegate (DateTime start, DateTime end) { return 666; };
     }
 }

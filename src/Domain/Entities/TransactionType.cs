@@ -7,4 +7,6 @@ public class TransactionType : EnumerationEntity {
     public static readonly TransactionType Expense = new("EXPENSE");
 
     private TransactionType(string name) : base(name) { }
+
+    private TransactionType() { }
 }

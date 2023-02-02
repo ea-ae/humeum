@@ -3,14 +3,16 @@
 namespace Domain.Common;
 
 public abstract class EnumerationEntity : Entity, IComparable {
-    public string Name { get; private set; }
-    public string Code { get; private set; }
+    public string Name { get; private set; } = null!;
+    public string Code { get; private set; } = null!;
 
     public override string ToString() => Name;
 
     protected EnumerationEntity(string name, string code) => (Name, Code) = (name, code);
 
     protected EnumerationEntity(string code) => (Name, Code) = (code[..1].ToUpper() + code[1..].ToLower(), code);
+
+    protected EnumerationEntity() { }
 
     public static IEnumerable<T> GetAll<T>() where T : EnumerationEntity =>
         typeof(T).GetFields(BindingFlags.Public |

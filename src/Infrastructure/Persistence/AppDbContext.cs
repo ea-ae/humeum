@@ -21,5 +21,6 @@ public class AppDbContext : DbContext, IAppDbContext {
         builder.Entity<TransactionType>().HasIndex(t => t.Code).IsUnique();
 
         builder.Entity<TimeUnit>().HasIndex(t => t.Code).IsUnique(); // todo: inheritance on Code?
+        builder.Entity<TimeUnit>().Ignore(t => t.InTimeSpan);
     }
 }
