@@ -2,7 +2,17 @@
 
 public class TransactionFrequency {
     public TransactionTimescale Unit { get; private set; } = null!;
-    public int TimesPerUnit { get; private set; }
+
+    private int _timesPerUnit;
+    public int TimesPerUnit {
+        get => _timesPerUnit;
+        private set {
+            if (value <= 0) {
+                throw new ArgumentException("Time per unit must be greater than zero.");
+            }
+            _timesPerUnit = value;
+        } 
+    }
 
     public TransactionFrequency(TransactionTimescale unit, int timesPerUnit) {
         Unit = unit;
