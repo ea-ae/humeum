@@ -3,10 +3,10 @@
 namespace Domain.Entities;
 
 public class TransactionType : EnumerationEntity {
-    public static readonly TransactionType Income = new("INCOME");
-    public static readonly TransactionType Expense = new("EXPENSE");
+    public static readonly TransactionType Income = new(1, "INCOME");
+    public static readonly TransactionType Expense = new(2, "EXPENSE");
 
-    private TransactionType(string name) : base(name) { }
+    private TransactionType(int id, string code) : base(id, code) { }
 
     private TransactionType() { }
 }

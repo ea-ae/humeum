@@ -19,15 +19,11 @@ public class AppDbContext : DbContext, IAppDbContext {
         builder.Entity<Transaction>().OwnsOne(t => t.Frequency);
 
         builder.Entity<TransactionType>().HasIndex(t => t.Code).IsUnique();
-        builder.Entity<TransactionType>().HasData(TransactionType.Income.WithId<TransactionType>(1),
-                                                  TransactionType.Expense.WithId<TransactionType>(2));
+        builder.Entity<TransactionType>().HasData(TransactionType.Income, TransactionType.Expense);
 
         builder.Entity<TimeUnit>().HasIndex(t => t.Code).IsUnique(); // todo: inheritance on Code?
         builder.Entity<TimeUnit>().Ignore(t => t.InTimeSpan);
-        builder.Entity<TimeUnit>().HasData(TimeUnit.Hours.WithId<TimeUnit>(1), 
-                                           TimeUnit.Days.WithId<TimeUnit>(2), 
-                                           TimeUnit.Weeks.WithId<TimeUnit>(3), 
-                                           TimeUnit.Months.WithId<TimeUnit>(4),
-                                           TimeUnit.Years.WithId<TimeUnit>(5));
+        builder.Entity<TimeUnit>().HasData(TimeUnit.Hours, TimeUnit.Days, TimeUnit.Weeks, 
+                                           TimeUnit.Months, TimeUnit.Years);
     }
 }

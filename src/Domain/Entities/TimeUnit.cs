@@ -3,22 +3,22 @@
 namespace Domain.Entities;
 
 public class TimeUnit : EnumerationEntity {
-    public static readonly TimeUnit Hours = new("HOURS", delegate(DateTime start, DateTime end) {
+    public static readonly TimeUnit Hours = new(1, "HOURS", delegate(DateTime start, DateTime end) {
         var timeSpan = end - start;
         return (int)timeSpan.TotalHours;
     });
 
-    public static readonly TimeUnit Days = new("DAYS", delegate (DateTime start, DateTime end) {
+    public static readonly TimeUnit Days = new(2, "DAYS", delegate (DateTime start, DateTime end) {
         var timeSpan = end - start;
         return (int)timeSpan.TotalDays;
     });
 
-    public static readonly TimeUnit Weeks = new("WEEKS", delegate (DateTime start, DateTime end) {
+    public static readonly TimeUnit Weeks = new(3, "WEEKS", delegate (DateTime start, DateTime end) {
         var timeSpan = end - start;
         return (int)(timeSpan.TotalDays / 7);
     });
 
-    public static readonly TimeUnit Months = new("MONTHS", delegate (DateTime start, DateTime end) {
+    public static readonly TimeUnit Months = new(4, "MONTHS", delegate (DateTime start, DateTime end) {
         var timeSpan = end - start;
         int years = end.Year - start.Year;
         int months = end.Month - start.Month;
@@ -30,7 +30,7 @@ public class TimeUnit : EnumerationEntity {
         return years * 12 + months;
     });
 
-    public static readonly TimeUnit Years = new("YEARS", delegate (DateTime start, DateTime end) {
+    public static readonly TimeUnit Years = new(5, "YEARS", delegate (DateTime start, DateTime end) {
         int years = end.Year - start.Year;
         bool isLastDayOfMonth = end.Day == DateTime.DaysInMonth(end.Year, end.Month);
 
@@ -42,11 +42,15 @@ public class TimeUnit : EnumerationEntity {
 
     public Func<DateTime, DateTime, int> InTimeSpan { get; init; } = null!;
     
-    private TimeUnit(string code, Func<DateTime, DateTime, int> unitsInTimeSpanDelegate) : base(code) {
+    private TimeUnit(int id, string code, Func<DateTime, DateTime, int> unitsInTimeSpanDelegate) : base(id, code) {
         InTimeSpan = unitsInTimeSpanDelegate;
     }
 
-    public TimeUnit(string name, string code) : base(name, code) {
-        InTimeSpan = GetAll<TimeUnit>().First(t => t.Code == code).InTimeSpan; // assign delegate to EF entities
+    #pragma warning disable IDE0051 // Remove unused private members
+    private TimeUnit(string name, string code) : base(name, code) {
+        var timeUnit = GetAll<TimeUnit>().First(t => t.Code == code);
+        Id = timeUnit.Id;
+        InTimeSpan = timeUnit.InTimeSpan; // assign delegate to EF entities
     }
+    #pragma warning restore IDE0051 // Remove unused private members
 }
