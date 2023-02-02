@@ -1,10 +1,8 @@
-﻿namespace Domain;
+﻿using Domain.Common;
 
-public class Transaction {
-    public int Id { get; set; }
-    public DateTime Start { get; init; } = DateTime.UtcNow;
-    public DateTime? End { get; set; } = null;
+namespace Domain.Entities;
 
+public class Transaction : TimestampedEntity {
     public decimal Amount { get; set; }
     public required TransactionType Type { get; set; }
 

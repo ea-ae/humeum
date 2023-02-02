@@ -1,13 +1,12 @@
 ﻿using Application.Common.Interfaces;
 
-using Domain;
+using Domain.Entities;
 
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence;
 
 public class AppDbContext : DbContext, IAppDbContext {
-
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<TransactionType> TransactionTypes { get; set; }
     public DbSet<TransactionTimescale> TransactionTimescales { get; set; }
