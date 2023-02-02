@@ -27,9 +27,15 @@ public abstract class EnumerationEntity : Entity, IComparable {
         }
 
         var typeMatches = GetType().Equals(obj.GetType());
-        var valueMatches = Code.Equals(otherValue.Code);
+        var valueMatches = Code.Equals(otherValue.Code) && Name.Equals(otherValue.Name);
 
         return typeMatches && valueMatches;
+    }
+
+    public T WithId<T>(int id) where T : EnumerationEntity {
+        T copy = (T)MemberwiseClone();
+        copy.Id = id;
+        return copy;
     }
 
     public int CompareTo(object? obj) => Code.CompareTo(((EnumerationEntity)obj!).Code);

@@ -46,7 +46,7 @@ public class TimeUnit : EnumerationEntity {
         InTimeSpan = unitsInTimeSpanDelegate;
     }
 
-    private TimeUnit(string name, string code) : base(name, code) {
+    public TimeUnit(string name, string code) : base(name, code) {
         InTimeSpan = GetAll<TimeUnit>().First(t => t.Code == code).InTimeSpan; // assign delegate to EF entities
     }
 }
