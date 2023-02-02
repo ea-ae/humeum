@@ -1,9 +1,9 @@
 ﻿namespace Domain.Entities;
 
-public class TransactionFrequency {
-    public TransactionTimescale Unit { get; private set; } = null!;
+public class Frequency {
+    public TimeUnit Unit { get; private set; } = null!;
 
-    private int _timesPerUnit;
+    int _timesPerUnit;
     public int TimesPerUnit {
         get => _timesPerUnit;
         private set {
@@ -14,10 +14,10 @@ public class TransactionFrequency {
         } 
     }
 
-    public TransactionFrequency(TransactionTimescale unit, int timesPerUnit) {
+    public Frequency(TimeUnit unit, int timesPerUnit) {
         Unit = unit;
         TimesPerUnit = timesPerUnit;
     }
 
-    private TransactionFrequency() { }
+    private Frequency() { }
 }

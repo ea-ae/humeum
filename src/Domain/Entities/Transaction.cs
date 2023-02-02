@@ -3,19 +3,19 @@
 namespace Domain.Entities;
 
 public class Transaction : TimestampedEntity {
-    private decimal _amount;
+    decimal _amount;
     public decimal Amount {
         get => _amount;
         private set {
-            if (_amount <= 0) {
+            if (value <= 0) {
                 throw new ArgumentException("Amount must be greater than zero.");
             }
             _amount = value;
         }
     }
 
-    private TransactionFrequency? _frequency;
-    public TransactionFrequency? Frequency { 
+    Frequency? _frequency;
+    public Frequency? Frequency { 
         get => _frequency;
         private set {
             if (value is null && PaymentEnd is not null) {
@@ -29,7 +29,7 @@ public class Transaction : TimestampedEntity {
 
     public TransactionType Type { get; private set; } = null!;
 
-    private DateTime _paymentStart;
+    DateTime _paymentStart;
     public DateTime PaymentStart {
         get => _paymentStart;
         private set {
@@ -45,8 +45,12 @@ public class Transaction : TimestampedEntity {
     public DateTime? PaymentEnd {
         get => _paymentEnd;
         private set {
-            if (PaymentEnd >= PaymentStart) {
-                throw new ArgumentException("Payment end date must be after start date.");
+            if (value is null && Frequency is not null) {
+                throw new InvalidOperationException("Cannot set payment end date to null when there is a frequency.");
+            } else if (value is not null && Frequency is null) {
+                throw new InvalidOperationException("Cannot assign a payment end date when there is no frequency.");
+            } else if (PaymentEnd >= PaymentStart) {
+                throw new ArgumentException("Payment end date must be after the start date.");
             }
             _paymentEnd = value;
         }
@@ -54,13 +58,13 @@ public class Transaction : TimestampedEntity {
 
     public Transaction(decimal amount,
                        TransactionType type,
-                       TransactionFrequency frequency,
+                       Frequency frequency,
                        DateTime paymentStart,
                        DateTime paymentEnd) {
         Amount = amount;
         Type = type;
-        Frequency = frequency;
-        PaymentStart = paymentStart;
+        _frequency = frequency;
+        _paymentStart = paymentStart;
         PaymentEnd = paymentEnd;
     }
 
@@ -80,44 +84,7 @@ public class Transaction : TimestampedEntity {
                 return 1;
             }
 
-            TimeSpan timespan = (TimeSpan)(PaymentEnd - PaymentStart);
-            int count = 0;
-            int years = ((DateTime)PaymentEnd).Year - PaymentStart.Year;
-            int months = ((DateTime)PaymentEnd).Month - PaymentStart.Month;
-
-            int daysInEndDate = DateTime.DaysInMonth(((DateTime)PaymentEnd).Year, ((DateTime)PaymentEnd).Month);
-            bool isLastDayOfMonth = ((DateTime)PaymentEnd).Day == daysInEndDate;
-
-            switch (Frequency.Unit.Code) {
-                case "HOURS":
-                    count = (int)timespan.TotalHours;
-                    break;
-                case "DAYS":
-                    count = (int)timespan.TotalDays;
-                    break;
-                case "WEEKS":
-                    count = (int)(timespan.TotalDays / 7);
-                    break;
-                case "MONTHS":
-                    count += years * 12;
-                    count += months;
-
-                    if (PaymentStart.AddYears(years).AddMonths(months) > (DateTime)PaymentEnd && !isLastDayOfMonth) {
-                        count -= 1; // payments occur on the same date every month
-                    }
-                    break;
-                case "YEARS":
-                    count += years;
-
-                    if (PaymentStart.AddYears(years) > (DateTime)PaymentEnd && !isLastDayOfMonth) {
-                        count -= 1; // didn't reach payment date on the last year
-                    }
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(
-                        Frequency.Unit.Code, $"Unexpected time interval code: {Frequency.Unit.Code}");
-            }
-
+            int count = Frequency.Unit.InTimeSpan(PaymentStart, (DateTime)PaymentEnd);
             return count + 1; // first transaction is at the start date, so add 1
         }
     }

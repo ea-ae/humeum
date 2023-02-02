@@ -10,7 +10,7 @@ public abstract class EnumerationEntity : Entity, IComparable {
 
     protected EnumerationEntity(string name, string code) => (Name, Code) = (name, code);
 
-    protected EnumerationEntity(string name) => (Name, Code) = (name, name.ToUpper());
+    protected EnumerationEntity(string code) => (Name, Code) = (code[..1].ToUpper() + code[1..].ToLower(), code);
 
     public static IEnumerable<T> GetAll<T>() where T : EnumerationEntity =>
         typeof(T).GetFields(BindingFlags.Public |

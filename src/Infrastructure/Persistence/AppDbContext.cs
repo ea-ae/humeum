@@ -9,7 +9,7 @@ namespace Infrastructure.Persistence;
 public class AppDbContext : DbContext, IAppDbContext {
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<TransactionType> TransactionTypes { get; set; }
-    public DbSet<TransactionTimescale> TransactionTimescales { get; set; }
+    public DbSet<TimeUnit> TransactionTimescales { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -17,5 +17,9 @@ public class AppDbContext : DbContext, IAppDbContext {
 
     protected override void OnModelCreating(ModelBuilder builder) {
         builder.Entity<Transaction>().OwnsOne(t => t.Frequency);
+
+        builder.Entity<TransactionType>().HasIndex(t => t.Code).IsUnique();
+
+        builder.Entity<TimeUnit>().HasIndex(t => t.Code).IsUnique(); // todo: inheritance on Code?
     }
 }
