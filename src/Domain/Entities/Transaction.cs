@@ -11,6 +11,8 @@ public class Transaction : TimestampedEntity {
     public DateTime PaymentStart { get; set; }
     public DateTime? PaymentEnd { get; set; }
 
+    private Transaction() { }
+
     public int TotalTransactionCount {
         get {
             if (PaymentEnd is null) {
