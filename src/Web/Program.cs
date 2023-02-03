@@ -1,24 +1,7 @@
-using Application.Common.Interfaces;
-using Application.Transactions.Commands.AddTransaction;
-using Application.Transactions.Queries.GetUserTransactions;
-
-using Infrastructure.Persistence;
-
-using Microsoft.EntityFrameworkCore;
-
-var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-var dbPath = Path.Combine(appDataPath, "humeum.sqlite"); // todo: move outta here
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddDbContext<IAppDbContext, AppDbContext>(options => options.UseSqlite($"Data Source={dbPath}"));
-builder.Services.AddTransient<GetUserTransactionsQueryHandler>();
-builder.Services.AddTransient<AddTransactionCommandHandler>();
+builder.Services.ConfigureInfrastructureServices();
+builder.Services.ConfigureApplicationServices();
 
 var app = builder.Build();
 
