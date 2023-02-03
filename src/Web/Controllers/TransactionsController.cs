@@ -1,20 +1,25 @@
 ﻿using Application.Transactions.Commands.AddTransaction;
 using Application.Transactions.Queries.GetUserTransactions;
 
+using MediatR;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers;
 
+[Route("api/v1/users/{user}/[controller]")]
 public class TransactionsController : ApiControllerBase {
-    //[HttpGet("")]
-    //public List<TransactionDto> Index([FromServices] GetUserTransactionsQueryHandler query) {
-    //    var transactions = query.Handle().Result;
-    //    return transactions;
-    //}
+    private readonly IMediator _mediator;
 
-    [HttpPost("")]
-    public int Add(AddTransactionCommand command) {
-        var result = command.Handle(new AddTransactionCommand { Amount = amount }).Result;
-        return result;
+    public TransactionsController(IMediator mediator) => _mediator = mediator;
+
+    [HttpGet]
+    public async Task<List<TransactionDto>> Index([FromRoute] GetUserTransactionsQuery query) {
+        return await _mediator.Send(query);
+    }
+
+    [HttpPost]
+    public async Task<int> Add([FromQuery] AddTransactionCommand command) {
+        return await _mediator.Send(command);
     }
 }

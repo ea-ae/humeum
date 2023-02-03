@@ -1,7 +1,8 @@
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.ConfigureInfrastructureServices();
 builder.Services.ConfigureApplicationServices();
+builder.Services.ConfigureInfrastructureServices();
+builder.Services.ConfigureWebServices();
 
 var app = builder.Build();
 

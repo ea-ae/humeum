@@ -7,6 +7,7 @@ using MediatR;
 namespace Application.Transactions.Commands.AddTransaction;
 
 public record AddTransactionCommand : IRequest<int> {
+    public int User { get; init; }
     public int Amount { get; init; }
 }
 
