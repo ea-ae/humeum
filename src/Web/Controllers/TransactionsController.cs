@@ -5,9 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers;
 
-[Route("transactions")]
-[ApiController]
-public class TransactionController : ControllerBase {
+public class TransactionsController : ApiControllerBase {
     [HttpGet("")]
     public List<TransactionDto> Index([FromServices] GetUserTransactionsQueryHandler query) {
         var transactions = query.Handle().Result;

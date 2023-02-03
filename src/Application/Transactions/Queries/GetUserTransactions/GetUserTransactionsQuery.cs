@@ -11,7 +11,7 @@ public class GetUserTransactionsQueryHandler {
 
     public async Task<List<TransactionDto>> Handle() {
         return await _context.Transactions
-                             .Select(t => new TransactionDto { Id = t.Id, Amount = t.Amount })
+                             .Select(t => new TransactionDto(t))
                              .ToListAsync();
     }
 }
