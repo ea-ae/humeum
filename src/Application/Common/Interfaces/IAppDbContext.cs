@@ -8,4 +8,7 @@ public interface IAppDbContext {
     DbSet<Transaction> Transactions { get; set; }
     DbSet<TransactionType> TransactionTypes { get; set; }
     DbSet<TimeUnit> TransactionTimescales { get; set; }
+
+    public int SaveChanges();
+    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

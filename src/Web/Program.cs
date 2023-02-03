@@ -1,4 +1,6 @@
 using Application.Common.Interfaces;
+using Application.Transactions.Commands.AddTransaction;
+using Application.Transactions.Queries.GetUserTransactions;
 
 using Infrastructure.Persistence;
 
@@ -10,10 +12,13 @@ var dbPath = Path.Combine(appDataPath, "humeum.sqlite"); // todo: move outta her
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<IAppDbContext, AppDbContext>(options => options.UseSqlite($"Data Source={dbPath}"));
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<IAppDbContext, AppDbContext>(options => options.UseSqlite($"Data Source={dbPath}"));
+builder.Services.AddTransient<GetUserTransactionsQueryHandler>();
+builder.Services.AddTransient<AddTransactionCommandHandler>();
 
 var app = builder.Build();
 
@@ -27,11 +32,8 @@ if (app.Environment.IsDevelopment()) {
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.MapControllers();
 
 app.Run();
