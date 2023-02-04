@@ -44,20 +44,24 @@ public class TimeUnit : EnumerationEntity {
     public IEnumerable<Transaction> Transactions => _transactions;
 
     public Func<DateTime, DateTime, int> InTimeSpan { get; init; } = null!;
-    
-    private TimeUnit(int id, string code, Func<DateTime, DateTime, int> unitsInTimeSpanDelegate) : base(id, code) {
+
+    #pragma warning disable IDE0051 // Remove unused private members
+    TimeUnit(string code, string name) : base(code, name) {
+        InTimeSpan = GetTimeSpanForCode(code);
+    }
+
+    TimeUnit(string code) : base(code) {
+        InTimeSpan = GetTimeSpanForCode(code);
+    }
+    #pragma warning restore IDE0051 // Remove unused private members
+
+    TimeUnit(int id, string code, Func<DateTime, DateTime, int> unitsInTimeSpanDelegate) : base(id, code) {
         InTimeSpan = unitsInTimeSpanDelegate;
     }
 
-    #pragma warning disable IDE0051 // Remove unused private members
-    /// <summary>
-    /// Private constructor for EF that assigns the correct delegate
-    /// </summary>
-    /// <param name="code"></param>
-    /// <param name="name"></param>
-    private TimeUnit(string code, string name) : base(code, name) {
+    static Func<DateTime, DateTime, int> GetTimeSpanForCode(string code) {
+        // assigns proper delegate during EF Core entity construction
         var timeUnit = GetAll<TimeUnit>().First(t => t.Code == code);
-        InTimeSpan = timeUnit.InTimeSpan; // assign delegate to EF entities
+        return timeUnit.InTimeSpan;
     }
-    #pragma warning restore IDE0051 // Remove unused private members
 }

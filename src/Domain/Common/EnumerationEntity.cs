@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 
+using Domain.Entities;
+
 namespace Domain.Common;
 
 public abstract class EnumerationEntity : Entity, IComparable {
@@ -18,12 +20,9 @@ public abstract class EnumerationEntity : Entity, IComparable {
 
     protected EnumerationEntity() { }
 
-    public static IEnumerable<T> GetAll<T>() where T : EnumerationEntity =>
-        typeof(T).GetFields(BindingFlags.Public |
-                            BindingFlags.Static |
-                            BindingFlags.DeclaredOnly)
-                 .Select(f => f.GetValue(null))
-                 .Cast<T>();
+    public static T GetByCode<T>(string code) where T : EnumerationEntity {
+        return GetAll<T>().First(t => t.Code == code);
+    }
 
     public override bool Equals(object? obj) {
         if (obj is not EnumerationEntity otherValue) {
@@ -39,4 +38,11 @@ public abstract class EnumerationEntity : Entity, IComparable {
     public int CompareTo(object? obj) => Code.CompareTo(((EnumerationEntity)obj!).Code);
 
     public override int GetHashCode() => Code.GetHashCode();
+
+    protected static IEnumerable<T> GetAll<T>() where T : EnumerationEntity =>
+        typeof(T).GetFields(BindingFlags.Public |
+                            BindingFlags.Static |
+                            BindingFlags.DeclaredOnly)
+                 .Select(f => f.GetValue(null))
+                 .Cast<T>();
 }
