@@ -24,11 +24,11 @@ public class AddTransactionCommandHandler : IRequestHandler<AddTransactionComman
     public AddTransactionCommandHandler(IAppDbContext context) => _context = context;
 
     public async Task<int> Handle(AddTransactionCommand request, CancellationToken token) {
-        var transactionType = request.Type.ToEnumerationEntityByCode<TransactionType>(_context);
+        var transactionType = _context.GetEnumerationEntityByCode<TransactionType>(request.Type);
 
         Transaction transaction;
         if (request.PaymentEnd is not null && request.TimeUnit is not null && request.TimesPerUnit is not null) {
-            var timeUnit = request.TimeUnit.ToEnumerationEntityByCode<TimeUnit>(_context);
+            var timeUnit = _context.GetEnumerationEntityByCode<TimeUnit>(request.TimeUnit);
             var frequency = new Frequency(timeUnit, (int)request.TimesPerUnit);
             transaction = new Transaction(request.Amount,
                                           transactionType,
