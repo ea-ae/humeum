@@ -21,3 +21,9 @@ Update database:
 
     dotnet ef database update -s Web -p Infrastructure
 
+### REST API
+
+Create a basic sample transaction:
+
+    {{url}}/api/v1/users/3/transactions?amount=150&type=INCOME&paymentStart=2023-02-04T18:33:56
+

@@ -58,13 +58,13 @@ public class Transaction : TimestampedEntity {
 
     public Transaction(decimal amount,
                        TransactionType type,
-                       Frequency frequency,
                        DateTime paymentStart,
-                       DateTime paymentEnd) {
+                       DateTime paymentEnd,
+                       Frequency frequency) {
         Amount = amount;
         Type = type;
-        _frequency = frequency;
         _paymentStart = paymentStart;
+        _frequency = frequency;
         PaymentEnd = paymentEnd;
     }
 

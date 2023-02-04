@@ -6,8 +6,8 @@ public class TransactionDto {
     public int Id { get; set; }
     public decimal Amount { get; set; }
     
-    public int? timesPerUnit { get; set; }
-    public string? unit { get; set; }
+    public int? TimesPerUnit { get; set; }
+    public string? Unit { get; set; }
     
     public DateTime PaymentStart { get; set; }
     public DateTime? PaymentEnd { get; set; }
@@ -16,8 +16,8 @@ public class TransactionDto {
         Id = transaction.Id;
         Amount = transaction.Amount;
 
-        timesPerUnit = transaction.Frequency?.TimesPerUnit;
-        unit = transaction.Frequency?.Unit.Name;
+        TimesPerUnit = transaction.Frequency?.TimesPerUnit;
+        Unit = transaction.Frequency?.Unit.Name;
 
         PaymentStart = transaction.PaymentStart;
         PaymentEnd = transaction.PaymentEnd;
