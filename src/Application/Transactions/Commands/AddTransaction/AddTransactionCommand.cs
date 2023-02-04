@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common;
+using Application.Common.Interfaces;
 
 using Domain.Entities;
 
@@ -23,23 +24,21 @@ public class AddTransactionCommandHandler : IRequestHandler<AddTransactionComman
     public AddTransactionCommandHandler(IAppDbContext context) => _context = context;
 
     public async Task<int> Handle(AddTransactionCommand request, CancellationToken token) {
-        var transactionType = Domain.Common.EnumerationEntity.GetByCode<TransactionType>(request.Type);
+        var transactionType = request.Type.ToEnumerationEntityByCode<TransactionType>(_context);
 
         Transaction transaction;
         if (request.PaymentEnd is not null && request.TimeUnit is not null && request.TimesPerUnit is not null) {
-            var timeUnit = Domain.Common.EnumerationEntity.GetByCode<TimeUnit>(request.TimeUnit);
+            var timeUnit = request.TimeUnit.ToEnumerationEntityByCode<TimeUnit>(_context);
             var frequency = new Frequency(timeUnit, (int)request.TimesPerUnit);
             transaction = new Transaction(request.Amount,
                                           transactionType,
                                           request.PaymentStart,
                                           (DateTime)request.PaymentEnd,
                                           frequency);
-            _context.TransactionTimeUnits.Attach(timeUnit);
         } else {
             transaction = new Transaction(request.Amount, transactionType, request.PaymentStart);
         }
 
-        _context.TransactionTypes.Attach(transactionType);
         _context.Transactions.Add(transaction);
         await _context.SaveChangesAsync(token);
 
