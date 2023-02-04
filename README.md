@@ -1,6 +1,10 @@
 # Humeum
 
-Humeus is an ASP.NET & React webapp for retirement planning. 
+Humeus is a webapp for retirement planning.
+
+* ASP.NET Core backend following Clean Architecture, CQRS, and (partially) domain-driven design.
+* Backend developed with MediatR, EF Core, PostgreSQL, and Docker Compose.
+* Frontend developed with Webpack, React & React Router, ECharts, and TailwindCSS.
 
 ## Usage
 
