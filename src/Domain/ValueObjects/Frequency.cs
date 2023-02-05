@@ -1,6 +1,9 @@
-﻿namespace Domain.Entities;
+﻿using Domain.Common;
+using Domain.Entities;
 
-public class Frequency {
+namespace Domain.ValueObjects;
+
+public class Frequency : ValueObject {
     public TimeUnit Unit { get; private set; } = null!;
 
     int _timesPerUnit;
@@ -11,7 +14,7 @@ public class Frequency {
                 throw new ArgumentException("Time per unit must be greater than zero.");
             }
             _timesPerUnit = value;
-        } 
+        }
     }
 
     public Frequency(TimeUnit unit, int timesPerUnit) {
@@ -20,4 +23,9 @@ public class Frequency {
     }
 
     private Frequency() { }
+
+    protected override IEnumerable<object?> GetEqualityComponents() {
+        yield return Unit;
+        yield return TimesPerUnit;
+    }
 }

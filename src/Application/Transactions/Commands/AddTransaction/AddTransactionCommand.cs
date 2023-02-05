@@ -3,8 +3,7 @@ using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 
 using Domain.Entities;
-
-using MediatR;
+using Domain.ValueObjects;
 
 namespace Application.Transactions.Commands.AddTransaction;
 
@@ -20,9 +19,9 @@ public record AddTransactionCommand : ICommand<int> {
     public required string Type { get; init; }
     public DateTime PaymentStart { get; init; }
 
-    public DateTime? PaymentEnd { get; init; } = null;
-    public string? TimeUnit { get; init; } = null;
-    public int? TimesPerUnit { get; init; } = null;
+    public DateTime? PaymentEnd { get; init; }
+    public string? TimeUnit { get; init; }
+    public int? TimesPerUnit { get; init; }
 }
 
 public class AddTransactionCommandHandler : ICommandHandler<AddTransactionCommand, int> {

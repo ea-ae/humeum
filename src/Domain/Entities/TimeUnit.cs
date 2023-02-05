@@ -2,7 +2,7 @@
 
 namespace Domain.Entities;
 
-public class TimeUnit : EnumerationEntity {
+public class TimeUnit : Enumeration {
     public static readonly TimeUnit Hours = new(1, "HOURS", delegate(DateTime start, DateTime end) {
         var timeSpan = end - start;
         return (int)timeSpan.TotalHours;

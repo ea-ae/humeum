@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.ValueObjects;
 
 namespace Domain.Entities;
 
@@ -14,6 +15,8 @@ public class Transaction : TimestampedEntity {
         }
     }
 
+    public TransactionType Type { get; private set; } = null!;
+
     Frequency? _frequency;
     public Frequency? Frequency { 
         get => _frequency;
@@ -27,7 +30,10 @@ public class Transaction : TimestampedEntity {
         }
     }
 
-    public TransactionType Type { get; private set; } = null!;
+    //TimePeriod _paymentPeriod;
+    //public TimePeriod paymentPeriod {
+    //    get => _paymentPeriod;
+    //}
 
     DateTime _paymentStart;
     public DateTime PaymentStart {
@@ -58,6 +64,14 @@ public class Transaction : TimestampedEntity {
 
     public Transaction(decimal amount,
                        TransactionType type,
+                       DateTime paymentStart) {
+        Amount = amount;
+        Type = type;
+        PaymentStart = paymentStart;
+    }
+
+    public Transaction(decimal amount,
+                       TransactionType type,
                        DateTime paymentStart,
                        DateTime paymentEnd,
                        Frequency frequency) {
@@ -66,14 +80,6 @@ public class Transaction : TimestampedEntity {
         _paymentStart = paymentStart;
         _frequency = frequency;
         PaymentEnd = paymentEnd;
-    }
-
-    public Transaction(decimal amount,
-                       TransactionType type,
-                       DateTime paymentStart) {
-        Amount = amount;
-        Type = type;
-        PaymentStart = paymentStart;
     }
 
     private Transaction() { }

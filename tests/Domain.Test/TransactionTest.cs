@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Domain.ValueObjects;
 
 using Xunit;
 
@@ -153,9 +154,9 @@ public class TransactionTest {
     /// <returns>Partially instantiated transaction.</returns>
     static Transaction BuildTransaction(TimeUnit timescale, DateTime paymentStart, DateTime paymentEnd) {
         return new Transaction(1, 
-                               TransactionType.Income, 
-                               new Frequency(timescale, 1),
+                               TransactionType.Income,
                                paymentStart,
-                               paymentEnd);
+                               paymentEnd,
+                               new Frequency(timescale, 1));
     }
 }

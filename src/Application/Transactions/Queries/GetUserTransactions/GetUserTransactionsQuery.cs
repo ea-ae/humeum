@@ -15,8 +15,8 @@ namespace Application.Transactions.Queries.GetUserTransactions;
 public record GetUserTransactionsQuery : IQuery<List<TransactionDto>> {
     public int User { get; init; } // todo: unused for now
 
-    public DateTime? StartBefore { get; init; } = null;
-    public DateTime? StartAfter { get; init; } = null;
+    public DateTime? StartBefore { get; init; }
+    public DateTime? StartAfter { get; init; }
 }
 
 public class GetUserTransactionsQueryHandler : IQueryHandler<GetUserTransactionsQuery, List<TransactionDto>> {
@@ -29,7 +29,7 @@ public class GetUserTransactionsQueryHandler : IQueryHandler<GetUserTransactions
     }
 
     public async Task<List<TransactionDto>> Handle(GetUserTransactionsQuery request, CancellationToken token) {
-        var transactions = _context.Transactions.Select(t => t);
+        var transactions = _context.Transactions.AsNoTracking().Select(t => t);
         
         if (request.StartBefore is not null) {
             transactions = transactions.Where(t => t.PaymentStart < request.StartBefore);

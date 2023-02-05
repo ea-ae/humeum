@@ -12,8 +12,8 @@ internal static class AppDbContextExtensions {
     //    return enumEntity;
     //}
 
-    public static T GetEnumerationEntityByCode<T>(this IAppDbContext context, string code) where T : EnumerationEntity {
-        T enumEntity = EnumerationEntity.GetByCode<T>(code);
+    public static T GetEnumerationEntityByCode<T>(this IAppDbContext context, string code) where T : Enumeration {
+        T enumEntity = Enumeration.GetByCode<T>(code);
         context.Set<T>().Attach(enumEntity);
         return enumEntity;
     }
