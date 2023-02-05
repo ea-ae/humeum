@@ -8,7 +8,8 @@ namespace Domain.Test;
 public class TransactionTest {
     [Fact]
     public void TotalTransactionCount_InstantEnd_ReturnsOne() {
-        var transaction = new Transaction(1, TransactionType.Expense, new TimePeriod(new DateTime(2022, 1, 1)));
+        var timePeriod = new TimePeriod(new DateTime(2022, 1, 1));
+        var transaction = new Transaction(1, TransactionType.Expense, new Timeline(timePeriod));
 
         int expected = 1;
 
@@ -152,10 +153,8 @@ public class TransactionTest {
     /// Construct a partial Transaction object for testing purposes.
     /// </summary>
     /// <returns>Partially instantiated transaction.</returns>
-    static Transaction BuildTransaction(TimeUnit timescale, DateTime paymentStart, DateTime paymentEnd) {
-        return new Transaction(1, 
-                               TransactionType.Income,
-                               new TimePeriod(paymentStart, paymentEnd),
-                               new Frequency(timescale, 1));
+    static Transaction BuildTransaction(TimeUnit timeUnit, DateTime paymentStart, DateTime paymentEnd) {
+        var timeline = new Timeline(new TimePeriod(paymentStart, paymentEnd), new Frequency(timeUnit, 1));
+        return new Transaction(1, TransactionType.Income, timeline);
     }
 }

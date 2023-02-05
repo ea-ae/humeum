@@ -17,7 +17,37 @@ namespace Infrastructure.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.2");
 
-            modelBuilder.Entity("Domain.Entities.TimeUnit", b =>
+            modelBuilder.Entity("Domain.Entities.Transaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("TimeUnitId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TimeUnitId");
+
+                    b.HasIndex("TypeId");
+
+                    b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("Domain.ValueObjects.TimeUnit", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -36,7 +66,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("TransactionTimescales");
+                    b.ToTable("TransactionTimeUnits");
 
                     b.HasData(
                         new
@@ -71,43 +101,7 @@ namespace Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.Entities.Transaction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("PaymentEnd")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("PaymentStart")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("TimeUnitId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TypeId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TimeUnitId");
-
-                    b.HasIndex("TypeId");
-
-                    b.ToTable("Transactions");
-                });
-
-            modelBuilder.Entity("Domain.Entities.TransactionType", b =>
+            modelBuilder.Entity("Domain.ValueObjects.TransactionType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -145,56 +139,94 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.Transaction", b =>
                 {
-                    b.HasOne("Domain.Entities.TimeUnit", null)
+                    b.HasOne("Domain.ValueObjects.TimeUnit", null)
                         .WithMany("Transactions")
                         .HasForeignKey("TimeUnitId");
 
-                    b.HasOne("Domain.Entities.TransactionType", "Type")
+                    b.HasOne("Domain.ValueObjects.TransactionType", "Type")
                         .WithMany("Transactions")
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Domain.Entities.Frequency", "Frequency", b1 =>
+                    b.OwnsOne("Domain.ValueObjects.Timeline", "PaymentTimeline", b1 =>
                         {
                             b1.Property<int>("TransactionId")
                                 .HasColumnType("INTEGER");
 
-                            b1.Property<int>("TimesPerUnit")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("UnitId")
-                                .HasColumnType("INTEGER");
-
                             b1.HasKey("TransactionId");
-
-                            b1.HasIndex("UnitId");
 
                             b1.ToTable("Transactions");
 
                             b1.WithOwner()
                                 .HasForeignKey("TransactionId");
 
-                            b1.HasOne("Domain.Entities.TimeUnit", "Unit")
-                                .WithMany()
-                                .HasForeignKey("UnitId")
-                                .OnDelete(DeleteBehavior.Cascade)
-                                .IsRequired();
+                            b1.OwnsOne("Domain.ValueObjects.Frequency", "Frequency", b2 =>
+                                {
+                                    b2.Property<int>("TimelineTransactionId")
+                                        .HasColumnType("INTEGER");
 
-                            b1.Navigation("Unit");
+                                    b2.Property<int>("TimesPerUnit")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("UnitId")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.HasKey("TimelineTransactionId");
+
+                                    b2.HasIndex("UnitId");
+
+                                    b2.ToTable("Transactions");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("TimelineTransactionId");
+
+                                    b2.HasOne("Domain.ValueObjects.TimeUnit", "Unit")
+                                        .WithMany()
+                                        .HasForeignKey("UnitId")
+                                        .OnDelete(DeleteBehavior.Cascade)
+                                        .IsRequired();
+
+                                    b2.Navigation("Unit");
+                                });
+
+                            b1.OwnsOne("Domain.ValueObjects.TimePeriod", "TimePeriod", b2 =>
+                                {
+                                    b2.Property<int>("TimelineTransactionId")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<DateTime?>("End")
+                                        .HasColumnType("TEXT");
+
+                                    b2.Property<DateTime>("Start")
+                                        .HasColumnType("TEXT");
+
+                                    b2.HasKey("TimelineTransactionId");
+
+                                    b2.ToTable("Transactions");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("TimelineTransactionId");
+                                });
+
+                            b1.Navigation("Frequency");
+
+                            b1.Navigation("TimePeriod")
+                                .IsRequired();
                         });
 
-                    b.Navigation("Frequency");
+                    b.Navigation("PaymentTimeline")
+                        .IsRequired();
 
                     b.Navigation("Type");
                 });
 
-            modelBuilder.Entity("Domain.Entities.TimeUnit", b =>
+            modelBuilder.Entity("Domain.ValueObjects.TimeUnit", b =>
                 {
                     b.Navigation("Transactions");
                 });
 
-            modelBuilder.Entity("Domain.Entities.TransactionType", b =>
+            modelBuilder.Entity("Domain.ValueObjects.TransactionType", b =>
                 {
                     b.Navigation("Transactions");
                 });

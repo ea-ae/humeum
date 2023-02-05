@@ -1,40 +1,49 @@
 ﻿using Domain.Common;
+using Domain.Entities;
 
-namespace Domain.Entities;
+namespace Domain.ValueObjects;
 
-public class TimeUnit : Enumeration {
-    public static readonly TimeUnit Hours = new(1, "HOURS", delegate(DateTime start, DateTime end) {
+public class TimeUnit : Enumeration
+{
+    public static readonly TimeUnit Hours = new(1, "HOURS", delegate (DateTime start, DateTime end)
+    {
         var timeSpan = end - start;
         return (int)timeSpan.TotalHours + 1; // first transaction is at the start date, so add 1
     });
 
-    public static readonly TimeUnit Days = new(2, "DAYS", delegate (DateTime start, DateTime end) {
+    public static readonly TimeUnit Days = new(2, "DAYS", delegate (DateTime start, DateTime end)
+    {
         var timeSpan = end - start;
         return (int)timeSpan.TotalDays + 1;
     });
 
-    public static readonly TimeUnit Weeks = new(3, "WEEKS", delegate (DateTime start, DateTime end) {
+    public static readonly TimeUnit Weeks = new(3, "WEEKS", delegate (DateTime start, DateTime end)
+    {
         var timeSpan = end - start;
         return (int)(timeSpan.TotalDays / 7) + 1;
     });
 
-    public static readonly TimeUnit Months = new(4, "MONTHS", delegate (DateTime start, DateTime end) {
+    public static readonly TimeUnit Months = new(4, "MONTHS", delegate (DateTime start, DateTime end)
+    {
         var timeSpan = end - start;
         int years = end.Year - start.Year;
         int months = end.Month - start.Month;
         bool isLastDayOfMonth = end.Day == DateTime.DaysInMonth(end.Year, end.Month);
 
-        if (start.AddYears(years).AddMonths(months) > end && !isLastDayOfMonth) {
+        if (start.AddYears(years).AddMonths(months) > end && !isLastDayOfMonth)
+        {
             return years * 12 + months; // payments occur on the same date every month
         }
         return years * 12 + months + 1;
     });
 
-    public static readonly TimeUnit Years = new(5, "YEARS", delegate (DateTime start, DateTime end) {
+    public static readonly TimeUnit Years = new(5, "YEARS", delegate (DateTime start, DateTime end)
+    {
         int years = end.Year - start.Year;
         bool isLastDayOfMonth = end.Day == DateTime.DaysInMonth(end.Year, end.Month);
 
-        if (start.AddYears(years) > end && !isLastDayOfMonth) {
+        if (start.AddYears(years) > end && !isLastDayOfMonth)
+        {
             return years; // didn't reach payment date on the last year
         }
         return years + 1;
@@ -45,21 +54,25 @@ public class TimeUnit : Enumeration {
 
     public Func<DateTime, DateTime, int> InTimeSpan { get; init; } = null!;
 
-    #pragma warning disable IDE0051 // Remove unused private members
-    TimeUnit(string code, string name) : base(code, name) {
+#pragma warning disable IDE0051 // Remove unused private members
+    TimeUnit(string code, string name) : base(code, name)
+    {
         InTimeSpan = GetTimeSpanForCode(code);
     }
 
-    TimeUnit(string code) : base(code) {
+    TimeUnit(string code) : base(code)
+    {
         InTimeSpan = GetTimeSpanForCode(code);
     }
-    #pragma warning restore IDE0051 // Remove unused private members
+#pragma warning restore IDE0051 // Remove unused private members
 
-    TimeUnit(int id, string code, Func<DateTime, DateTime, int> unitsInTimeSpanDelegate) : base(id, code) {
+    TimeUnit(int id, string code, Func<DateTime, DateTime, int> unitsInTimeSpanDelegate) : base(id, code)
+    {
         InTimeSpan = unitsInTimeSpanDelegate;
     }
 
-    static Func<DateTime, DateTime, int> GetTimeSpanForCode(string code) {
+    static Func<DateTime, DateTime, int> GetTimeSpanForCode(string code)
+    {
         // assigns proper delegate during EF Core entity construction
         var timeUnit = GetAll<TimeUnit>().First(t => t.Code == code);
         return timeUnit.InTimeSpan;

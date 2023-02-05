@@ -5,7 +5,7 @@ using Domain.Entities;
 namespace Domain.Common;
 
 public abstract class Enumeration : ValueObject, IComparable {
-    public int Id { get; protected set; }
+    public int Id { get; protected set; } // EF core implementation detail (acceptable leak)
     public string Code { get; private set; } = null!;
     public string Name { get; private set; } = null!;
 

@@ -20,6 +20,8 @@ public class TimePeriod : ValueObject {
         End = end;
     }
 
+    private TimePeriod() { }
+
     protected override IEnumerable<object?> GetEqualityComponents() {
         yield return Start;
         yield return End;
