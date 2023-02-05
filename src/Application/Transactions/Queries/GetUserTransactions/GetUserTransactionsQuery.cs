@@ -1,5 +1,8 @@
 ﻿using Application.Common.Interfaces;
 
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+
 using MediatR;
 
 using Microsoft.EntityFrameworkCore;
@@ -18,8 +21,12 @@ public record GetUserTransactionsQuery : IQuery<List<TransactionDto>> {
 
 public class GetUserTransactionsQueryHandler : IQueryHandler<GetUserTransactionsQuery, List<TransactionDto>> {
     private readonly IAppDbContext _context;
+    private readonly IMapper _mapper;
 
-    public GetUserTransactionsQueryHandler(IAppDbContext context) => _context = context;
+    public GetUserTransactionsQueryHandler(IAppDbContext context, IMapper mapper) {
+        _context = context;
+        _mapper = mapper;
+    }
 
     public async Task<List<TransactionDto>> Handle(GetUserTransactionsQuery request, CancellationToken token) {
         var transactions = _context.Transactions.Select(t => t);
@@ -31,6 +38,7 @@ public class GetUserTransactionsQueryHandler : IQueryHandler<GetUserTransactions
             transactions = transactions.Where(t => t.PaymentStart > request.StartAfter);
         }
 
-        return await transactions.Select(t => new TransactionDto(t)).ToListAsync(token);
+        return await transactions.ProjectTo<TransactionDto>(_mapper.ConfigurationProvider)
+                                 .ToListAsync(token);
     }
 }
