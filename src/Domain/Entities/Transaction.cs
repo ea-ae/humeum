@@ -29,13 +29,13 @@ public class Transaction : TimestampedEntity {
 
     public int TotalTransactionCount {
         get {
-            if (!PaymentTimeline.TimePeriod.IsRecurring || PaymentTimeline.Frequency is null) {
+            if (!PaymentTimeline.Period.IsRecurring || PaymentTimeline.Frequency is null) {
                 return 1;
             }
 
             // todo: change this param/arg to just the type itself
-            int count = PaymentTimeline.Frequency.Unit.InTimeSpan(PaymentTimeline.TimePeriod.Start, 
-                                                                  (DateTime)PaymentTimeline.TimePeriod.End!);
+            int count = PaymentTimeline.Frequency.Unit.InTimeSpan(PaymentTimeline.Period.Start, 
+                                                                  (DateTime)PaymentTimeline.Period.End!);
             return count;
         }
     }

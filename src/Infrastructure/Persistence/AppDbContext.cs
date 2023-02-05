@@ -19,7 +19,7 @@ public class AppDbContext : DbContext, IAppDbContext {
         //builder.Entity<Transaction>().OwnsOne(t => t.Frequency);
         //builder.Entity<Transaction>().OwnsOne(t => t.PaymentPeriod);
         builder.Entity<Transaction>().OwnsOne(t => t.PaymentTimeline, pt => {
-            pt.OwnsOne(pt => pt.TimePeriod);
+            pt.OwnsOne(pt => pt.Period);
             pt.OwnsOne(pt => pt.Frequency);
         });
 

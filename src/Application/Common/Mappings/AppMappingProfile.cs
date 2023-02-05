@@ -3,6 +3,7 @@
 using Domain.Entities;
 
 using AutoMapper;
+using Domain.ValueObjects;
 
 namespace Application.Common.Mappings;
 

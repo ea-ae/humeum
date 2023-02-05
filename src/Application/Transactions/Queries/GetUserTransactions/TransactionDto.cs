@@ -2,13 +2,13 @@
 
 namespace Application.Transactions.Queries.GetUserTransactions;
 
-public class TransactionDto {
-    public int Id { get; set; }
-    public decimal Amount { get; set; }
+public record TransactionDto {
+    public int Id { get; init; }
+    public decimal Amount { get; init; }
     
-    public string? Unit { get; set; }
-    public int? TimesPerUnit { get; set; }
+    public string? PaymentTimelineFrequencyUnit { get; init; }
+    public int? PaymentTimelineFrequencyTimesPerUnit { get; init; }
     
-    public DateTime PaymentStart { get; set; }
-    public DateTime? PaymentEnd { get; set; }
+    public DateTime PaymentTimelinePeriodStart { get; init; }
+    public DateTime? PaymentTimelinePeriodEnd { get; init; }
 }
