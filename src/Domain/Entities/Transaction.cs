@@ -21,77 +21,52 @@ public class Transaction : TimestampedEntity {
     public Frequency? Frequency { 
         get => _frequency;
         private set {
-            if (value is null && PaymentEnd is not null) {
+            if (value is null && PaymentPeriod.IsRecurring) {
                 throw new InvalidOperationException("Cannot set frequency to null with a payment end date.");
-            } else if (value is not null && PaymentEnd is null) {
+            } else if (value is not null && !PaymentPeriod.IsRecurring) {
                 throw new InvalidOperationException("Cannot assign a frequency when there is no payment end date.");
             }
             _frequency = value;
         }
     }
 
-    //TimePeriod _paymentPeriod;
-    //public TimePeriod paymentPeriod {
-    //    get => _paymentPeriod;
-    //}
-
-    DateTime _paymentStart;
-    public DateTime PaymentStart {
-        get => _paymentStart;
-        private set {
-            if (PaymentEnd is not null && PaymentEnd >= PaymentStart) {
-                throw new ArgumentException("Payment end date must be after start date.");
-            }
-            _paymentStart = value;
-        }
-    }
-
-    private DateTime? _paymentEnd;
-
-    public DateTime? PaymentEnd {
-        get => _paymentEnd;
-        private set {
-            if (value is null && Frequency is not null) {
+    TimePeriod _paymentPeriod;
+    public TimePeriod PaymentPeriod {
+        get => _paymentPeriod;
+        set {
+            if (value.End is null && Frequency is not null) {
                 throw new InvalidOperationException("Cannot set payment end date to null when there is a frequency.");
-            } else if (value is not null && Frequency is null) {
+            } else if (value.End is not null && Frequency is null) {
                 throw new InvalidOperationException("Cannot assign a payment end date when there is no frequency.");
-            } else if (PaymentEnd >= PaymentStart) {
-                throw new ArgumentException("Payment end date must be after the start date.");
             }
-            _paymentEnd = value;
+            _paymentPeriod = value;
         }
     }
 
-    public Transaction(decimal amount,
-                       TransactionType type,
-                       DateTime paymentStart) {
+    public Transaction(decimal amount, TransactionType type, TimePeriod paymentPeriod) {
         Amount = amount;
         Type = type;
-        PaymentStart = paymentStart;
+        _paymentPeriod = paymentPeriod;
     }
 
-    public Transaction(decimal amount,
-                       TransactionType type,
-                       DateTime paymentStart,
-                       DateTime paymentEnd,
-                       Frequency frequency) {
+    public Transaction(decimal amount, TransactionType type, TimePeriod paymentPeriod, Frequency frequency) {
         Amount = amount;
         Type = type;
-        _paymentStart = paymentStart;
+        _paymentPeriod = paymentPeriod;
         _frequency = frequency;
-        PaymentEnd = paymentEnd;
     }
 
     private Transaction() { }
 
     public int TotalTransactionCount {
         get {
-            if (PaymentEnd is null || Frequency is null) {
+            if (!PaymentPeriod.IsRecurring || Frequency is null) {
                 return 1;
             }
 
-            int count = Frequency.Unit.InTimeSpan(PaymentStart, (DateTime)PaymentEnd);
-            return count + 1; // first transaction is at the start date, so add 1
+            // todo: change this param/arg to just the type itself
+            int count = Frequency.Unit.InTimeSpan(PaymentPeriod.Start, (DateTime)PaymentPeriod.End!);
+            return count;
         }
     }
 

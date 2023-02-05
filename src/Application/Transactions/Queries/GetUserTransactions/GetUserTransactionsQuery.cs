@@ -32,10 +32,10 @@ public class GetUserTransactionsQueryHandler : IQueryHandler<GetUserTransactions
         var transactions = _context.Transactions.AsNoTracking().Select(t => t);
         
         if (request.StartBefore is not null) {
-            transactions = transactions.Where(t => t.PaymentStart < request.StartBefore);
+            transactions = transactions.Where(t => t.PaymentPeriod.Start < request.StartBefore);
         }
         if (request.StartAfter is not null) {
-            transactions = transactions.Where(t => t.PaymentStart > request.StartAfter);
+            transactions = transactions.Where(t => t.PaymentPeriod.Start > request.StartAfter);
         }
 
         return await transactions.ProjectTo<TransactionDto>(_mapper.ConfigurationProvider)

@@ -50,14 +50,15 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
         Transaction transaction;
         if (recurrentTransaction) {
             var timeUnit = _context.GetEnumerationEntityByCode<TimeUnit>(request.TimeUnit!);
+            var paymentPeriod = new TimePeriod(request.PaymentStart, (DateTime)request.PaymentEnd!);
             var frequency = new Frequency(timeUnit, (int)request.TimesPerUnit!);
             transaction = new Transaction(request.Amount,
                                           transactionType,
-                                          request.PaymentStart,
-                                          (DateTime)request.PaymentEnd!,
+                                          paymentPeriod,
                                           frequency);
         } else {
-            transaction = new Transaction(request.Amount, transactionType, request.PaymentStart);
+            var paymentPeriod = new TimePeriod(request.PaymentStart);
+            transaction = new Transaction(request.Amount, transactionType, paymentPeriod);
         }
 
         _context.Transactions.Add(transaction);

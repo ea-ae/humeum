@@ -5,17 +5,17 @@ namespace Domain.Entities;
 public class TimeUnit : Enumeration {
     public static readonly TimeUnit Hours = new(1, "HOURS", delegate(DateTime start, DateTime end) {
         var timeSpan = end - start;
-        return (int)timeSpan.TotalHours;
+        return (int)timeSpan.TotalHours + 1; // first transaction is at the start date, so add 1
     });
 
     public static readonly TimeUnit Days = new(2, "DAYS", delegate (DateTime start, DateTime end) {
         var timeSpan = end - start;
-        return (int)timeSpan.TotalDays;
+        return (int)timeSpan.TotalDays + 1;
     });
 
     public static readonly TimeUnit Weeks = new(3, "WEEKS", delegate (DateTime start, DateTime end) {
         var timeSpan = end - start;
-        return (int)(timeSpan.TotalDays / 7);
+        return (int)(timeSpan.TotalDays / 7) + 1;
     });
 
     public static readonly TimeUnit Months = new(4, "MONTHS", delegate (DateTime start, DateTime end) {
@@ -25,9 +25,9 @@ public class TimeUnit : Enumeration {
         bool isLastDayOfMonth = end.Day == DateTime.DaysInMonth(end.Year, end.Month);
 
         if (start.AddYears(years).AddMonths(months) > end && !isLastDayOfMonth) {
-            return years * 12 + months - 1; // payments occur on the same date every month
+            return years * 12 + months; // payments occur on the same date every month
         }
-        return years * 12 + months;
+        return years * 12 + months + 1;
     });
 
     public static readonly TimeUnit Years = new(5, "YEARS", delegate (DateTime start, DateTime end) {
@@ -35,9 +35,9 @@ public class TimeUnit : Enumeration {
         bool isLastDayOfMonth = end.Day == DateTime.DaysInMonth(end.Year, end.Month);
 
         if (start.AddYears(years) > end && !isLastDayOfMonth) {
-            return years - 1; // didn't reach payment date on the last year
+            return years; // didn't reach payment date on the last year
         }
-        return years;
+        return years + 1;
     });
 
     IEnumerable<Transaction> _transactions = null!;

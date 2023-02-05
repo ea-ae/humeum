@@ -6,6 +6,8 @@ public class TimePeriod : ValueObject {
     public DateTime Start { get; private set; } // todo make these just Date
     public DateTime? End { get; private set; }
 
+    public bool IsRecurring => End is not null;
+
     public TimePeriod(DateTime timePoint) {
         Start = timePoint;
     }

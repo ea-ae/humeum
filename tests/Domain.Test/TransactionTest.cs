@@ -8,7 +8,7 @@ namespace Domain.Test;
 public class TransactionTest {
     [Fact]
     public void TotalTransactionCount_InstantEnd_ReturnsOne() {
-        var transaction = new Transaction(1, TransactionType.Expense, new DateTime(2022, 1, 1));
+        var transaction = new Transaction(1, TransactionType.Expense, new TimePeriod(new DateTime(2022, 1, 1)));
 
         int expected = 1;
 
@@ -155,8 +155,7 @@ public class TransactionTest {
     static Transaction BuildTransaction(TimeUnit timescale, DateTime paymentStart, DateTime paymentEnd) {
         return new Transaction(1, 
                                TransactionType.Income,
-                               paymentStart,
-                               paymentEnd,
+                               new TimePeriod(paymentStart, paymentEnd),
                                new Frequency(timescale, 1));
     }
 }
