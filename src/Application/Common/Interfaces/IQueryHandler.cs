@@ -2,5 +2,5 @@
 
 namespace Application.Common.Interfaces;
 
-public interface IQueryHandler<in TQuery, TQueryResult> : IRequestHandler<TQuery, TQueryResult> 
+public interface IQueryHandler<in TQuery, TQueryResult> : IRequestHandler<TQuery, TQueryResult>
     where TQuery : IQuery<TQueryResult> { }

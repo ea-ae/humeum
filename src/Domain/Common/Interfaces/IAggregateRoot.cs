@@ -1,7 +1,6 @@
 ﻿namespace Domain.Common.Interfaces;
 
-public interface IAggregateRoot
-{
+public interface IAggregateRoot {
     bool CanBeSaved { get; }
     bool CanBeDeleted { get; }
 }

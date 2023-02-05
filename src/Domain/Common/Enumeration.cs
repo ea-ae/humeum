@@ -1,7 +1,5 @@
 ﻿using System.Reflection;
 
-using Domain.Entities;
-
 namespace Domain.Common;
 
 public abstract class Enumeration : ValueObject, IComparable {
@@ -35,7 +33,7 @@ public abstract class Enumeration : ValueObject, IComparable {
 
         return typeMatches && valueMatches;
     }
-    
+
     public int CompareTo(object? obj) => Code.CompareTo(((Enumeration)obj!).Code);
 
     public override int GetHashCode() => Code.GetHashCode();

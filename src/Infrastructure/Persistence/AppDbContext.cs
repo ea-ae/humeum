@@ -2,6 +2,7 @@
 
 using Domain.Entities;
 using Domain.ValueObjects;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence;
@@ -28,7 +29,7 @@ public class AppDbContext : DbContext, IAppDbContext {
 
         builder.Entity<TimeUnit>().HasIndex(tu => tu.Code).IsUnique(); // todo: inheritance on Code?
         builder.Entity<TimeUnit>().Ignore(tu => tu.InTimeSpan);
-        builder.Entity<TimeUnit>().HasData(TimeUnit.Hours, TimeUnit.Days, TimeUnit.Weeks, 
+        builder.Entity<TimeUnit>().HasData(TimeUnit.Hours, TimeUnit.Days, TimeUnit.Weeks,
                                            TimeUnit.Months, TimeUnit.Years);
     }
 }
