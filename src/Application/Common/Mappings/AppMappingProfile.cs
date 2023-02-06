@@ -1,8 +1,7 @@
 ﻿using Application.Transactions.Queries.GetUserTransactions;
 
 using AutoMapper;
-
-using Domain.Entities;
+using Domain.TransactionAggregate;
 
 namespace Application.Common.Mappings;
 

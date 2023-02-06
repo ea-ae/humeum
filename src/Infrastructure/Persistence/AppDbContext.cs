@@ -1,7 +1,6 @@
 ﻿using Application.Common.Interfaces;
-
-using Domain.Entities;
-using Domain.ValueObjects;
+using Domain.TransactionAggregate;
+using Domain.TransactionAggregate.ValueObjects;
 
 using Microsoft.EntityFrameworkCore;
 

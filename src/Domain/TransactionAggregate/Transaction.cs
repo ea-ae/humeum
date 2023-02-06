@@ -1,14 +1,18 @@
 ﻿using Domain.Common;
-using Domain.ValueObjects;
+using Domain.TransactionAggregate.ValueObjects;
 
-namespace Domain.Entities;
+namespace Domain.TransactionAggregate;
 
-public class Transaction : TimestampedEntity {
+public class Transaction : TimestampedEntity
+{
     decimal _amount; // value object?
-    public decimal Amount {
+    public decimal Amount
+    {
         get => _amount;
-        private set {
-            if (value <= 0) {
+        private set
+        {
+            if (value <= 0)
+            {
                 throw new ArgumentException("Amount must be greater than zero.");
             }
             _amount = value;
@@ -19,7 +23,8 @@ public class Transaction : TimestampedEntity {
 
     public Timeline PaymentTimeline { get; private set; } = null!;
 
-    public Transaction(decimal amount, TransactionType type, Timeline paymentTimeline) {
+    public Transaction(decimal amount, TransactionType type, Timeline paymentTimeline)
+    {
         Amount = amount;
         Type = type;
         PaymentTimeline = paymentTimeline;
@@ -27,9 +32,12 @@ public class Transaction : TimestampedEntity {
 
     private Transaction() { }
 
-    public int TotalTransactionCount {
-        get {
-            if (!PaymentTimeline.Period.IsRecurring || PaymentTimeline.Frequency is null) {
+    public int TotalTransactionCount
+    {
+        get
+        {
+            if (!PaymentTimeline.Period.IsRecurring || PaymentTimeline.Frequency is null)
+            {
                 return 1;
             }
 

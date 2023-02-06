@@ -1,15 +1,21 @@
 ﻿using Domain.Common;
 
-namespace Domain.ValueObjects;
+namespace Domain.TransactionAggregate.ValueObjects;
 
-public class Timeline : ValueObject {
+public class Timeline : ValueObject
+{
     Frequency? _frequency;
-    public Frequency? Frequency {
+    public Frequency? Frequency
+    {
         get => _frequency;
-        private set {
-            if (value is null && Period.IsRecurring) {
+        private set
+        {
+            if (value is null && Period.IsRecurring)
+            {
                 throw new InvalidOperationException("Cannot set frequency to null with a payment end date.");
-            } else if (value is not null && !Period.IsRecurring) {
+            }
+            else if (value is not null && !Period.IsRecurring)
+            {
                 throw new InvalidOperationException("Cannot assign a frequency when there is no payment end date.");
             }
             _frequency = value;
@@ -17,30 +23,38 @@ public class Timeline : ValueObject {
     }
 
     TimePeriod _period = null!;
-    public TimePeriod Period {
+    public TimePeriod Period
+    {
         get => _period;
-        set {
-            if (value.End is null && Frequency is not null) {
+        set
+        {
+            if (value.End is null && Frequency is not null)
+            {
                 throw new InvalidOperationException("Cannot set payment end date to null when there is a frequency.");
-            } else if (value.End is not null && Frequency is null) {
+            }
+            else if (value.End is not null && Frequency is null)
+            {
                 throw new InvalidOperationException("Cannot assign a payment end date when there is no frequency.");
             }
             _period = value;
         }
     }
 
-    public Timeline(TimePeriod timePeriod) {
+    public Timeline(TimePeriod timePeriod)
+    {
         Period = timePeriod;
     }
 
-    public Timeline(TimePeriod period, Frequency frequency) {
+    public Timeline(TimePeriod period, Frequency frequency)
+    {
         _period = period;
         Frequency = frequency;
     }
 
     private Timeline() { }
 
-    protected override IEnumerable<object?> GetEqualityComponents() {
+    protected override IEnumerable<object?> GetEqualityComponents()
+    {
         yield return Frequency;
     }
 }

@@ -1,9 +1,8 @@
 ﻿using Application.Common;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
-
-using Domain.Entities;
-using Domain.ValueObjects;
+using Domain.TransactionAggregate;
+using Domain.TransactionAggregate.ValueObjects;
 
 namespace Application.Transactions.Commands.AddTransaction;
 
