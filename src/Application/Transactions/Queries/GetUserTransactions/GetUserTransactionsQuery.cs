@@ -11,7 +11,7 @@ namespace Application.Transactions.Queries.GetUserTransactions;
 /// Get transactions for a specified user with optional filtering conditions.
 /// </summary>
 public record GetUserTransactionsQuery : IQuery<List<TransactionDto>> {
-    public int User { get; init; } // todo: unused for now
+    public required int User { get; init; } // todo: unused for now
 
     public DateTime? StartBefore { get; init; }
     public DateTime? StartAfter { get; init; }

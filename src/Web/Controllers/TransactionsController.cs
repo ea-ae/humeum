@@ -15,12 +15,12 @@ public class TransactionsController : ControllerBase {
     public TransactionsController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet]
-    public async Task<List<TransactionDto>> Index([FromRoute] GetUserTransactionsQuery query) {
+    public async Task<List<TransactionDto>> Index(/*[FromRoute]*/ GetUserTransactionsQuery query) {
         return await _mediator.Send(query);
     }
 
     [HttpPost]
-    public async Task<int> Add([FromQuery] AddTransactionCommand command) {
+    public async Task<int> Add(AddTransactionCommand command) {
         return await _mediator.Send(command);
     }
 }
