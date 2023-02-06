@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Web.Controllers;
 
 [Route("api/v1/users/{user}/[controller]")]
-public class TransactionsController : ApiControllerBase {
+[ApiController]
+public class TransactionsController : ControllerBase {
     private readonly IMediator _mediator;
 
     public TransactionsController(IMediator mediator) => _mediator = mediator;

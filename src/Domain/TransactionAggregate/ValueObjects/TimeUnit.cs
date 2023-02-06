@@ -49,7 +49,7 @@ public class TimeUnit : Enumeration
         return years + 1;
     });
 
-    IEnumerable<Transaction> _transactions = null!;
+    ICollection<Transaction> _transactions = null!;
     public IEnumerable<Transaction> Transactions => _transactions;
 
     public Func<DateTime, DateTime, int> InTimeSpan { get; init; } = null!;
