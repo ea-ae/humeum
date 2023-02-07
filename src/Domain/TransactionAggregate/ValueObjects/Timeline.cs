@@ -26,7 +26,7 @@ public class Timeline : ValueObject
     public TimePeriod Period
     {
         get => _period;
-        set
+        private set
         {
             if (value.End is null && Frequency is not null)
             {

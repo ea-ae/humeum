@@ -3,9 +3,16 @@ using Domain.TransactionAggregate.ValueObjects;
 
 using Xunit;
 
-namespace Domain.Test;
+namespace Domain.Test.TransactionAggregate;
 
 public class TransactionTest {
+    [Fact]
+    public void TransactionConstructor_NegativeAmount_ThrowsDomainException() {
+        var timeline = new Timeline(new TimePeriod(new DateTime(2023, 1, 1)));
+
+        Assert.Throws<ArgumentException>(() => new Transaction(-3, TransactionType.Income, timeline));
+    }
+
     [Fact]
     public void TotalTransactionCount_InstantEnd_ReturnsOne() {
         var timePeriod = new TimePeriod(new DateTime(2022, 1, 1));
