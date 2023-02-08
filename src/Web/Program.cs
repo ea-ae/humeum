@@ -1,7 +1,12 @@
+
+using Microsoft.Extensions.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
 
+//builder.Configuration.AddJsonFile("appSettings.json");
+
 builder.Services.ConfigureApplicationServices();
-builder.Services.ConfigureInfrastructureServices();
+builder.Services.ConfigureInfrastructureServices(builder.Configuration);
 builder.Services.ConfigureWebServices();
 
 var app = builder.Build();
@@ -11,7 +16,6 @@ if (app.Environment.IsDevelopment()) {
     app.UseSwaggerUI();
 } else {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

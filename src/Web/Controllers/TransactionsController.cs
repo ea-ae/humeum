@@ -15,7 +15,7 @@ public class TransactionsController : ControllerBase {
     public TransactionsController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet]
-    public async Task<List<TransactionDto>> Index(/*[FromRoute]*/ GetUserTransactionsQuery query) {
+    public async Task<List<TransactionDto>> Index(GetUserTransactionsQuery query) {
         return await _mediator.Send(query);
     }
 

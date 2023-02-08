@@ -5,7 +5,7 @@ namespace Domain.TransactionAggregate;
 
 public class Transaction : TimestampedEntity
 {
-    decimal _amount; // value object?
+    decimal _amount; // value object? encapsulate in constructor or nah?
     public decimal Amount
     {
         get => _amount;
