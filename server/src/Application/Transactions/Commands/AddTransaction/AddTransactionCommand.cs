@@ -1,4 +1,6 @@
-﻿using Application.Common;
+﻿using System.Net;
+
+using Application.Common;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using Domain.TransactionAggregate;
@@ -36,8 +38,11 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
             request.TimeUnit,
             request.TimesPerUnit
         };
-        bool isRecurringTransaction = recurringTransactionFields.All(field => field is not null);
-        if (!isRecurringTransaction && recurringTransactionFields.Any(field => field is not null)) {
+        
+        int recurringTransactionFieldCount = recurringTransactionFields.Count(field => field is not null);
+        bool isRecurringTransaction = recurringTransactionFieldCount == recurringTransactionFields.Count;
+
+        if (!isRecurringTransaction && recurringTransactionFieldCount > 0) {
             throw new ValidationException("Fields for recurrent transactions were only partially specified.");
         }
 
