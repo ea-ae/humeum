@@ -5,9 +5,12 @@ using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 
+using Web.Filters;
+
 namespace Web.Controllers;
 
 [Route("api/v1/users/{user}/[controller]")]
+[CsrfXHeaderFilter]
 [ApiController]
 public class TransactionsController : ControllerBase {
     private readonly IMediator _mediator;

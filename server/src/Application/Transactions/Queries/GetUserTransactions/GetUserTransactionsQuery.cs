@@ -27,7 +27,7 @@ public class GetUserTransactionsQueryHandler : IQueryHandler<GetUserTransactions
     }
 
     public async Task<List<TransactionDto>> Handle(GetUserTransactionsQuery request, CancellationToken token) {
-        var transactions = _context.Transactions.AsNoTracking().Select(t => t);
+        var transactions = _context.Transactions.AsNoTracking().Where(t => t.DeletedAt == null).Select(t => t);
 
         if (request.StartBefore is not null) {
             transactions = transactions.Where(t => t.PaymentTimeline.Period.Start < request.StartBefore);
