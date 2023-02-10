@@ -8,6 +8,6 @@ public record TransactionDto {
     public string? PaymentTimelineFrequencyUnitCode { get; init; }
     public int? PaymentTimelineFrequencyTimesPerUnit { get; init; }
 
-    public DateTime PaymentTimelinePeriodStart { get; init; }
-    public DateTime? PaymentTimelinePeriodEnd { get; init; }
+    public DateOnly PaymentTimelinePeriodStart { get; init; }
+    public DateOnly? PaymentTimelinePeriodEnd { get; init; }
 }

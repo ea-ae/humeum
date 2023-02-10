@@ -26,9 +26,8 @@ public class AppDbContext : DbContext, IAppDbContext {
         builder.Entity<TransactionType>().HasIndex(tt => tt.Code).IsUnique();
         builder.Entity<TransactionType>().HasData(TransactionType.Income, TransactionType.Expense);
 
-        builder.Entity<TimeUnit>().HasIndex(tu => tu.Code).IsUnique(); // todo: inheritance on Code?
+        builder.Entity<TimeUnit>().HasIndex(tu => tu.Code).IsUnique();
         builder.Entity<TimeUnit>().Ignore(tu => tu.InTimeSpan);
-        builder.Entity<TimeUnit>().HasData(TimeUnit.Hours, TimeUnit.Days, TimeUnit.Weeks,
-                                           TimeUnit.Months, TimeUnit.Years);
+        builder.Entity<TimeUnit>().HasData(TimeUnit.Days, TimeUnit.Weeks, TimeUnit.Months, TimeUnit.Years);
     }
 }

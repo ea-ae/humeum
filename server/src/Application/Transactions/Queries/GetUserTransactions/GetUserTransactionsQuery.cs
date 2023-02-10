@@ -13,8 +13,8 @@ namespace Application.Transactions.Queries.GetUserTransactions;
 public record GetUserTransactionsQuery : IQuery<List<TransactionDto>> {
     public required int User { get; init; } // todo: unused for now
 
-    public DateTime? StartBefore { get; init; }
-    public DateTime? StartAfter { get; init; }
+    public DateOnly? StartBefore { get; init; }
+    public DateOnly? StartAfter { get; init; }
 }
 
 public class GetUserTransactionsQueryHandler : IQueryHandler<GetUserTransactionsQuery, List<TransactionDto>> {

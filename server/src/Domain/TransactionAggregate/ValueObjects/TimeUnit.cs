@@ -5,27 +5,20 @@ namespace Domain.TransactionAggregate.ValueObjects;
 
 public class TimeUnit : Enumeration
 {
-    public static readonly TimeUnit Hours = new(1, "HOURS", delegate (DateTime start, DateTime end)
+    public static readonly TimeUnit Days = new(2, "DAYS", delegate (DateOnly start, DateOnly end)
     {
-        var timeSpan = end - start;
-        return (int)timeSpan.TotalHours + 1; // first transaction is at the start date, so add 1
-    });
-
-    public static readonly TimeUnit Days = new(2, "DAYS", delegate (DateTime start, DateTime end)
-    {
-        var timeSpan = end - start;
+        var timeSpan = end.ToDateTime(TimeOnly.MinValue) - start.ToDateTime(TimeOnly.MinValue);
         return (int)timeSpan.TotalDays + 1;
     });
 
-    public static readonly TimeUnit Weeks = new(3, "WEEKS", delegate (DateTime start, DateTime end)
+    public static readonly TimeUnit Weeks = new(3, "WEEKS", delegate (DateOnly start, DateOnly end)
     {
-        var timeSpan = end - start;
+        var timeSpan = end.ToDateTime(TimeOnly.MinValue) - start.ToDateTime(TimeOnly.MinValue);
         return (int)(timeSpan.TotalDays / 7) + 1;
     });
 
-    public static readonly TimeUnit Months = new(4, "MONTHS", delegate (DateTime start, DateTime end)
+    public static readonly TimeUnit Months = new(4, "MONTHS", delegate (DateOnly start, DateOnly end)
     {
-        var timeSpan = end - start;
         int years = end.Year - start.Year;
         int months = end.Month - start.Month;
         bool isLastDayOfMonth = end.Day == DateTime.DaysInMonth(end.Year, end.Month);
@@ -37,7 +30,7 @@ public class TimeUnit : Enumeration
         return years * 12 + months + 1;
     });
 
-    public static readonly TimeUnit Years = new(5, "YEARS", delegate (DateTime start, DateTime end)
+    public static readonly TimeUnit Years = new(5, "YEARS", delegate (DateOnly start, DateOnly end)
     {
         int years = end.Year - start.Year;
         bool isLastDayOfMonth = end.Day == DateTime.DaysInMonth(end.Year, end.Month);
@@ -52,7 +45,7 @@ public class TimeUnit : Enumeration
     ICollection<Transaction> _transactions = null!;
     public IEnumerable<Transaction> Transactions => _transactions;
 
-    public Func<DateTime, DateTime, int> InTimeSpan { get; init; } = null!;
+    public Func<DateOnly, DateOnly, int> InTimeSpan { get; init; } = null!;
 
 #pragma warning disable IDE0051 // Remove unused private members
     TimeUnit(string code, string name) : base(code, name)
@@ -66,12 +59,12 @@ public class TimeUnit : Enumeration
     }
 #pragma warning restore IDE0051 // Remove unused private members
 
-    TimeUnit(int id, string code, Func<DateTime, DateTime, int> unitsInTimeSpanDelegate) : base(id, code)
+    TimeUnit(int id, string code, Func<DateOnly, DateOnly, int> unitsInTimeSpanDelegate) : base(id, code)
     {
         InTimeSpan = unitsInTimeSpanDelegate;
     }
 
-    static Func<DateTime, DateTime, int> GetTimeSpanForCode(string code)
+    static Func<DateOnly, DateOnly, int> GetTimeSpanForCode(string code)
     {
         // assigns proper delegate during EF Core entity construction
         var timeUnit = GetAll<TimeUnit>().First(t => t.Code == code);

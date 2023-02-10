@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 using Application.Common;
 using Application.Common.Exceptions;
@@ -15,12 +16,12 @@ namespace Application.Transactions.Commands.AddTransaction;
 /// The first payment is always made at the payment start date.
 /// </summary>
 public record AddTransactionCommand : ICommand<int> {
-    public required int User { get; init; }
-    public required int Amount { get; init; }
+    [Required] public int? User { get; init; }
+    [Required] public int? Amount { get; init; }
     public required string Type { get; init; }
-    public required DateTime PaymentStart { get; init; }
+    [Required] public DateOnly? PaymentStart { get; init; }
 
-    public DateTime? PaymentEnd { get; init; }
+    public DateOnly? PaymentEnd { get; init; }
     public string? TimeUnit { get; init; }
     public int? TimesPerUnit { get; init; }
 }
@@ -43,7 +44,8 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
         bool isRecurringTransaction = recurringTransactionFieldCount == recurringTransactionFields.Count;
 
         if (!isRecurringTransaction && recurringTransactionFieldCount > 0) {
-            throw new ValidationException("Fields for recurrent transactions were only partially specified.");
+            throw new Common.Exceptions.ValidationException(
+                "Fields for recurrent transactions were only partially specified.");
         }
 
         // handling
@@ -53,13 +55,13 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
         Transaction transaction;
         if (isRecurringTransaction) {
             var timeUnit = _context.GetEnumerationEntityByCode<TimeUnit>(request.TimeUnit!);
-            var paymentPeriod = new TimePeriod(request.PaymentStart, (DateTime)request.PaymentEnd!);
+            var paymentPeriod = new TimePeriod((DateOnly)request.PaymentStart!, (DateOnly)request.PaymentEnd!);
             var paymentFrequency = new Frequency(timeUnit, (int)request.TimesPerUnit!);
             var paymentTimeline = new Timeline(paymentPeriod, paymentFrequency);
-            transaction = new Transaction(request.Amount, transactionType, paymentTimeline);
+            transaction = new Transaction((decimal)request.Amount!, transactionType, paymentTimeline);
         } else {
-            var timeline = new Timeline(new TimePeriod(request.PaymentStart!));
-            transaction = new Transaction(request.Amount, transactionType, timeline);
+            var timeline = new Timeline(new TimePeriod((DateOnly)request.PaymentStart!));
+            transaction = new Transaction((decimal)request.Amount!, transactionType, timeline);
         }
 
         _context.Transactions.Add(transaction);

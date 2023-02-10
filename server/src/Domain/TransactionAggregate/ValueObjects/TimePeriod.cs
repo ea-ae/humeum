@@ -4,17 +4,17 @@ namespace Domain.TransactionAggregate.ValueObjects;
 
 public class TimePeriod : ValueObject
 {
-    public DateTime Start { get; private set; } // todo make these just Date
-    public DateTime? End { get; private set; }
+    public DateOnly Start { get; private set; } // todo make these just Date
+    public DateOnly? End { get; private set; }
 
     public bool IsRecurring => End is not null;
 
-    public TimePeriod(DateTime timePoint)
+    public TimePeriod(DateOnly timePoint)
     {
         Start = timePoint;
     }
 
-    public TimePeriod(DateTime start, DateTime end) : this(start)
+    public TimePeriod(DateOnly start, DateOnly end) : this(start)
     {
         if (end <= start)
         {
