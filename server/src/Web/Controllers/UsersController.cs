@@ -18,12 +18,12 @@ public class UsersController : ControllerBase {
     public UsersController(IMediator mediator) => _mediator = mediator;
 
     [HttpPost("register")]
-    public async Task<int> Register(RegisterUserCommand command) {
+    public async Task<string> Register(RegisterUserCommand command) {
         return await _mediator.Send(command);
     }
 
     [HttpPost("sign-in")]
-    public async Task<int> SignIn(SignInUserCommand command) {
+    public async Task<string> SignIn(SignInUserCommand command) {
         return await _mediator.Send(command);
     }
 }
