@@ -2,7 +2,7 @@
 
 namespace Application.Users.Commands.RegisterUser;
 
-public record RegisterUserCommand : ICommand<string> {
+public record RegisterUserCommand : ICommand<int> {
     public required string Username { get; init; }
     public required string Email { get; init; }
     public required string Password { get; init; }
@@ -10,14 +10,14 @@ public record RegisterUserCommand : ICommand<string> {
     public bool RememberMe { get; init; } = false;
 }
 
-public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, string> {
+public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, int> {
     private readonly IApplicationUserService _userService;
 
     public RegisterUserCommandHandler(IApplicationUserService userService) {
         _userService = userService;
     }
 
-    public async Task<string> Handle(RegisterUserCommand request, CancellationToken token) {
+    public async Task<int> Handle(RegisterUserCommand request, CancellationToken token) {
         // validation
 
         if (request.Username.Length > 20) { // todo: these will go in the domain later

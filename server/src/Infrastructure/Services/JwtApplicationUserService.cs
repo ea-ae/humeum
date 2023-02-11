@@ -31,7 +31,7 @@ public class JwtApplicationUserService : IApplicationUserService {
         _jwtSettings = jwtSettings.Value;
     }
 
-    public async Task<string> CreateUserAsync(string username, string email, string password, bool rememberMe) {
+    public async Task<int> CreateUserAsync(string username, string email, string password, bool rememberMe) {
         // todo automapper
         var appUser = new ApplicationUser {
             DisplayName = username,
@@ -46,14 +46,14 @@ public class JwtApplicationUserService : IApplicationUserService {
             var token = await CreateToken(user);
             AddTokenAsCookie(token);
 
-            return token;
+            return user.Id;
         }
 
         var error = result.Errors.First();
         throw new AuthenticationException($"{error.Code}\n{error.Description}");
     }
 
-    public async Task<string> SignInUserAsync(string username, string password, bool rememberMe) {
+    public async Task<int> SignInUserAsync(string username, string password, bool rememberMe) {
         var result = await _signInManager.PasswordSignInAsync(username, password, isPersistent: rememberMe,
                                                               lockoutOnFailure: true);
 
@@ -62,7 +62,7 @@ public class JwtApplicationUserService : IApplicationUserService {
             var token = await CreateToken(user);
             AddTokenAsCookie(token);
 
-            return "123";
+            return user.Id;
         }
 
         if (result.IsLockedOut) {
