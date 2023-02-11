@@ -3,8 +3,6 @@ using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.Configuration.AddJsonFile("appSettings.json");
-
 builder.Services.ConfigureApplicationServices();
 builder.Services.ConfigureInfrastructureServices(builder.Configuration);
 builder.Services.ConfigureWebServices();
@@ -16,7 +14,7 @@ if (app.Environment.IsDevelopment()) {
     app.UseSwaggerUI();
 } else {
     app.UseExceptionHandler("/Error");
-    app.UseHsts();
+    //app.UseHsts();
 }
 
 //app.UseHttpsRedirection();

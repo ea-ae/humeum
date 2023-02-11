@@ -10,10 +10,13 @@ using Infrastructure.Identity;
 
 using Microsoft.Extensions.Identity;
 using Microsoft.AspNetCore.Identity;
+using Infrastructure.Services;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ConfigureServices {
+    const string _allowedUsernameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
     public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services,
                                                                      IConfiguration config) {
         var dbSettingsSection = config.GetSection(nameof(DatabaseSettings));
@@ -38,8 +41,10 @@ public static class ConfigureServices {
             o.Password.RequireLowercase = false;
 
             o.User.RequireUniqueEmail = true;
-            o.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            o.User.AllowedUserNameCharacters = _allowedUsernameCharacters;
         }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+
+        services.AddScoped<IApplicationUserService, ApplicationUserService>();
 
         return services;
     }
