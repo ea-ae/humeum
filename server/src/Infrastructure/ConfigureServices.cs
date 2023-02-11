@@ -11,6 +11,9 @@ using Infrastructure.Identity;
 using Microsoft.Extensions.Identity;
 using Microsoft.AspNetCore.Identity;
 using Infrastructure.Services;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -27,22 +30,48 @@ public static class ConfigureServices {
         var dbPath = Path.Combine(appDataPath, dbSettings.Name + ".sqlite");
         services.AddDbContext<IAppDbContext, AppDbContext>(options => options.UseSqlite($"Data Source={dbPath}"));
 
-        services.AddAuthentication();
+        var jwtSettingsSection = config.GetSection(nameof(JwtSettings));
+        var jwtSettings = jwtSettingsSection.Get<JwtSettings>()!;
+        services.Configure<JwtSettings>(jwtSettingsSection);
 
-        services.AddIdentity<ApplicationUser, IdentityRole<int>>(o => {
-            o.Stores.ProtectPersonalData = true;
-            o.Stores.MaxLengthForKeys = 128;
+        services
+            .AddAuthentication(o => {
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddCookie(o => {
+                o.ExpireTimeSpan = TimeSpan.FromMinutes(180);
+                o.SlidingExpiration = true;
+            })
+            .AddJwtBearer(o => {
+                o.RequireHttpsMetadata = false;
+                o.SaveToken = true;
+                o.TokenValidationParameters = new() {
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Issuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
 
-            o.Password.RequiredLength = 12;
-            o.Password.RequiredUniqueChars = 3;
-            o.Password.RequireDigit = false;
-            o.Password.RequireNonAlphanumeric = false;
-            o.Password.RequireUppercase = false;
-            o.Password.RequireLowercase = false;
+        services
+            .AddIdentity<ApplicationUser, IdentityRole<int>>(o => {
+                //o.Stores.ProtectPersonalData = true;
+                o.Stores.MaxLengthForKeys = 128;
 
-            o.User.RequireUniqueEmail = true;
-            o.User.AllowedUserNameCharacters = _allowedUsernameCharacters;
-        }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+                o.Password.RequiredLength = 12;
+                o.Password.RequiredUniqueChars = 3;
+                o.Password.RequireDigit = false;
+                o.Password.RequireNonAlphanumeric = false;
+                o.Password.RequireUppercase = false;
+                o.Password.RequireLowercase = false;
+
+                o.User.RequireUniqueEmail = true;
+                o.User.AllowedUserNameCharacters = _allowedUsernameCharacters;
+            })
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
 
         services.AddScoped<IApplicationUserService, ApplicationUserService>();
 
