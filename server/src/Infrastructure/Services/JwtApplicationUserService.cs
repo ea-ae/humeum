@@ -8,22 +8,26 @@ using Application.Common.Interfaces;
 using Infrastructure.Common;
 using Infrastructure.Identity;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Services;
 
-public class ApplicationUserService : IApplicationUserService {
+public class JwtApplicationUserService : IApplicationUserService {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly JwtSettings _jwtSettings;
 
-    public ApplicationUserService(UserManager<ApplicationUser> userManager, 
-                                  SignInManager<ApplicationUser> signInManager,
-                                  IOptions<JwtSettings> jwtSettings) {
+    public JwtApplicationUserService(UserManager<ApplicationUser> userManager, 
+                                     SignInManager<ApplicationUser> signInManager,
+                                     IHttpContextAccessor httpContextAccessor,
+                                     IOptions<JwtSettings> jwtSettings) {
         _userManager = userManager;
         _signInManager = signInManager;
+        _httpContextAccessor = httpContextAccessor;
         _jwtSettings = jwtSettings.Value;
     }
 
@@ -40,6 +44,8 @@ public class ApplicationUserService : IApplicationUserService {
             await _signInManager.SignInAsync(appUser, isPersistent: rememberMe);
             var user = await _userManager.FindByNameAsync(username) ?? throw new InvalidOperationException();
             var token = await CreateToken(user);
+            AddTokenAsCookie(token);
+
             return token;
         }
 
@@ -54,7 +60,9 @@ public class ApplicationUserService : IApplicationUserService {
         if (result.Succeeded) {
             var user = await _userManager.FindByNameAsync(username) ?? throw new InvalidOperationException();
             var token = await CreateToken(user);
-            return token;
+            AddTokenAsCookie(token);
+
+            return "123";
         }
 
         if (result.IsLockedOut) {
@@ -81,5 +89,16 @@ public class ApplicationUserService : IApplicationUserService {
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    void AddTokenAsCookie(string token) {
+        var cookieName = _jwtSettings.Cookie;
+        var cookieOptions = new CookieOptions() {
+            HttpOnly = true,
+            Expires = DateTime.UtcNow.AddDays(_jwtSettings.ExpireDays)
+        };
+
+        HttpContext httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException();
+        httpContext.Response.Cookies.Append(cookieName, token, cookieOptions);
     }
 }

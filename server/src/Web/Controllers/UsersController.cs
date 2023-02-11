@@ -23,7 +23,7 @@ public class UsersController : ControllerBase {
     }
 
     [HttpPost("sign-in")]
-    [SetAsCookieFilter(CookieName = "AuthToken")]
+    //[SetAsCookieFilter(CookieName = "AuthToken")]
     public async Task<string> SignIn(SignInUserCommand command) {
         return await _mediator.Send(command);
     }

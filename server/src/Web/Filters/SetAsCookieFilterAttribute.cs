@@ -9,8 +9,10 @@ namespace Web.Filters;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 internal class SetAsCookieFilterAttribute : Attribute, IActionFilter
 {
+    /// <summary>Name of the cookie that the string will be assigned to.</summary>
     public required string CookieName { get; init; }
 
+    /// <summary>Overridable cookie options.</summary>
     public CookieOptions CookieOptions { get; init; } = new CookieOptions() { 
         HttpOnly = true,
         Expires = DateTime.UtcNow.AddDays(90)

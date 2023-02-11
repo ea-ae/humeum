@@ -39,10 +39,10 @@ public static class ConfigureServices {
                 o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddCookie(o => {
-                o.ExpireTimeSpan = TimeSpan.FromMinutes(180);
-                o.SlidingExpiration = true;
-            })
+            //.AddCookie(o => {
+            //    o.ExpireTimeSpan = TimeSpan.FromMinutes(180);
+            //    o.SlidingExpiration = true;
+            //})
             .AddJwtBearer(o => {
                 o.RequireHttpsMetadata = false;
                 o.SaveToken = true;
@@ -50,12 +50,18 @@ public static class ConfigureServices {
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
 
                     ValidIssuer = jwtSettings.Issuer,
                     ValidAudience = jwtSettings.Issuer,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
                     ClockSkew = TimeSpan.Zero
                 };
+                //o.Events.OnMessageReceived = async (context) => {
+                //    if (context.Request.Cookies.TryGetValue("")) {
+
+                //    }
+                //}
             });
 
         services
@@ -76,7 +82,7 @@ public static class ConfigureServices {
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
-        services.AddScoped<IApplicationUserService, ApplicationUserService>();
+        services.AddScoped<IApplicationUserService, JwtApplicationUserService>();
 
         return services;
     }

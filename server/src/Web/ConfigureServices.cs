@@ -10,6 +10,8 @@ public static class ConfigureServices {
 
         services.AddSwaggerGen();
 
+        services.AddHttpContextAccessor();
+
         services.Configure<ApiBehaviorOptions>(o => {
             // suppress ApiController custom binding, allowing multiple sources per complex object
             o.SuppressInferBindingSourcesForParameters = true;
