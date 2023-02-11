@@ -2,8 +2,8 @@
 
 Humeum is a webapp for retirement planning.
 
-* ASP.NET Core backend following Clean Architecture (with a few specks of dirt), CQRS (with compromises), and (somewhat?) domain-driven design.
-* Backend developed with MediatR, EF Core, PostgreSQL, and Docker Compose.
+* ASP.NET Core backend following Clean Architecture (with a few specks of dirt), (compromised) CQRS, and (somewhat) domain-driven design.
+* Backend developed with MediatR, EF Core, PostgreSQL, optional JWT authentication, and Docker Compose.
 * Frontend developed with Webpack, React & React Router, ECharts, and TailwindCSS.
 
 ## Usage

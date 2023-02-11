@@ -33,6 +33,22 @@ public class ApplicationUserService : IApplicationUserService {
         }
 
         var error = result.Errors.First();
-        throw new ValidationException($"{error.Code}\n{error.Description}");
+        throw new AuthenticationException($"{error.Code}\n{error.Description}");
+    }
+
+    public async Task<int> SignInUserAsync(string username, string password, bool rememberMe) {
+        var result = await _signInManager.PasswordSignInAsync(username, password, isPersistent: rememberMe,
+                                                              lockoutOnFailure: true);
+
+        if (result.Succeeded) {
+            var user = await _userManager.FindByNameAsync(username);
+            return user!.Id;
+        }
+
+        if (result.IsLockedOut) {
+            throw new AuthenticationException("Too many attempts, try again later.");
+        }
+
+        throw new AuthenticationException("Sign-in attempt failed.");
     }
 }

@@ -11,11 +11,9 @@ public record RegisterUserCommand : ICommand<int> {
 }
 
 public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, int> {
-    private readonly IAppDbContext _context;
     private readonly IApplicationUserService _userService;
 
-    public RegisterUserCommandHandler(IAppDbContext context, IApplicationUserService userService) {
-        _context = context;
+    public RegisterUserCommandHandler(IApplicationUserService userService) {
         _userService = userService;
     }
 

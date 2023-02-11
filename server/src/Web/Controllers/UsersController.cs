@@ -1,4 +1,5 @@
 ﻿using Application.Users.Commands.RegisterUser;
+using Application.Users.Commands.SignInUser;
 
 using MediatR;
 
@@ -18,6 +19,11 @@ public class UsersController : ControllerBase {
 
     [HttpPost("register")]
     public async Task<int> Register(RegisterUserCommand command) {
+        return await _mediator.Send(command);
+    }
+
+    [HttpPost("sign-in")]
+    public async Task<int> SignIn(SignInUserCommand command) {
         return await _mediator.Send(command);
     }
 }
