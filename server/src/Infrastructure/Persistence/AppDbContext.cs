@@ -2,11 +2,15 @@
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Infrastructure.Identity;
 
 namespace Infrastructure.Persistence;
 
-public class AppDbContext : DbContext, IAppDbContext {
+// todo: ApplicationDbContext
+public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>, IAppDbContext {
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<TransactionType> TransactionTypes { get; set; }
     public DbSet<TimeUnit> TransactionTimeUnits { get; set; }
@@ -16,8 +20,8 @@ public class AppDbContext : DbContext, IAppDbContext {
     protected override void OnConfiguring(DbContextOptionsBuilder options) { }
 
     protected override void OnModelCreating(ModelBuilder builder) {
-        //builder.Entity<Transaction>().OwnsOne(t => t.Frequency);
-        //builder.Entity<Transaction>().OwnsOne(t => t.PaymentPeriod);
+        base.OnModelCreating(builder); // configure Identity schema
+
         builder.Entity<Transaction>().OwnsOne(t => t.PaymentTimeline, pt => {
             pt.OwnsOne(pt => pt.Period);
             pt.OwnsOne(pt => pt.Frequency);
