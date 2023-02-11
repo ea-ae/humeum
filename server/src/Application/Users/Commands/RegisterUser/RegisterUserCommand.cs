@@ -1,9 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Net;
+﻿using Application.Common.Interfaces;
 
-using Application.Common.Interfaces;
-
-namespace Application.Transactions.Commands.AddTransaction;
+namespace Application.Users.Commands.RegisterUser;
 
 public record RegisterUserCommand : ICommand<int> {
     public required string Username { get; init; }
@@ -43,7 +40,6 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, i
                                                         request.Email,
                                                         request.Password,
                                                         request.RememberMe);
-
         return userId;
     }
 }

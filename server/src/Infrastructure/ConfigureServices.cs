@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 
 using Infrastructure.Identity;
 
-using Microsoft.Extensions.Identity;
 using Microsoft.AspNetCore.Identity;
 using Infrastructure.Services;
 using Microsoft.IdentityModel.Tokens;
