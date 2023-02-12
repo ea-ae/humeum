@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 using Application.Common.Interfaces;
 
@@ -30,27 +32,29 @@ public static class ConfigureServices {
         var jwtSettings = jwtSettingsSection.Get<JwtSettings>()!;
         services.Configure<JwtSettings>(jwtSettingsSection);
 
+        // JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         services
             .AddAuthentication(o => {
-                o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; // simplify (NET 7 feature)
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // remove
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // remove
             })
-            //.AddCookie(o => {
-            //    o.ExpireTimeSpan = TimeSpan.FromMinutes(180);
-            //    o.SlidingExpiration = true;
-            //})
+            //.AddCookie(o => { o.ExpireTimeSpan = TimeSpan.FromMinutes(180); o.SlidingExpiration = true; })
             .AddJwtBearer(o => {
                 o.RequireHttpsMetadata = false;
                 o.SaveToken = true;
                 o.TokenValidationParameters = new() {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidateLifetime = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateIssuerSigningKey = false,
+                    ValidateLifetime = false,
+                    ValidateTokenReplay = false,
 
-                    ValidIssuer = jwtSettings.Issuer,
-                    ValidAudience = jwtSettings.Issuer,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
-                    ClockSkew = TimeSpan.Zero
+                    //ValidIssuer = jwtSettings.Issuer,
+                    //ValidAudience = jwtSettings.Issuer,
+                    //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+
+                    ClockSkew = TimeSpan.Zero,
                 };
                 o.Events.OnMessageReceived = (context) => {
                     if (context.Request.Cookies.TryGetValue(jwtSettings.Cookie, out string? cookie)) {
@@ -59,6 +63,8 @@ public static class ConfigureServices {
                     return Task.CompletedTask;
                 };
             });
+
+        //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
         services
             .AddIdentity<ApplicationUser, IdentityRole<int>>(o => {
@@ -73,7 +79,6 @@ public static class ConfigureServices {
                 o.Password.RequireLowercase = false;
 
                 o.User.RequireUniqueEmail = true;
-                //o.User.AllowedUserNameCharacters = _allowedUsernameCharacters;
             })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();

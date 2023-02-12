@@ -96,8 +96,11 @@ public class JwtApplicationUserService : IApplicationUserService {
     async Task<IEnumerable<Claim>> GetUserClaims(ApplicationUser user) {
         var claims = await _userManager.GetClaimsAsync(user);
 
-        claims.Add(new Claim("uid", user.Id.ToString()));
-        claims.Add(new Claim("name", user.UserName ?? throw new InvalidOperationException()));
+        claims.Add(new Claim(ClaimTypes.Name, user.UserName ?? throw new InvalidOperationException()));
+
+        //claims.Add(new Claim("uid", user.Id.ToString()));
+        //claims.Add(new Claim("name", user.UserName ?? throw new InvalidOperationException()));
+        //claims.Add(new Claim("what", "now"));
 
         return claims;
     }

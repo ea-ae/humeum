@@ -3,6 +3,7 @@ using Application.Transactions.Queries.GetUserTransactions;
 
 using MediatR;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using Web.Filters;
@@ -18,7 +19,8 @@ public class TransactionsController : ControllerBase {
     public TransactionsController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet]
-    public async Task<List<TransactionDto>> Index(GetUserTransactionsQuery query) {
+    [Authorize]
+    public async Task<List<TransactionDto>> GetAll(GetUserTransactionsQuery query) {
         var transactions = await _mediator.Send(query);
         return transactions;
     }
