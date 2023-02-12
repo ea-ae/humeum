@@ -1,6 +1,4 @@
 ﻿using Application.Common.Interfaces;
-
-using Infrastructure.Common;
 using Infrastructure.Persistence;
 
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +11,7 @@ using Infrastructure.Services;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Infrastructure.Common.Settings;
 
 namespace Microsoft.Extensions.DependencyInjection;
 

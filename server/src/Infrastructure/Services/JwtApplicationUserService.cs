@@ -4,8 +4,7 @@ using System.Text;
 
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
-
-using Infrastructure.Common;
+using Infrastructure.Common.Settings;
 using Infrastructure.Identity;
 
 using Microsoft.AspNetCore.Http;
