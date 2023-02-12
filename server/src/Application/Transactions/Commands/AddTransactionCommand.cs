@@ -1,8 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Net;
-
-using Application.Common;
-using Application.Common.Exceptions;
+using Application.Common.Extensions;
 using Application.Common.Interfaces;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
