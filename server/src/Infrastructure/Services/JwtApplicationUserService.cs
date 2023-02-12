@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 using Application.Common.Exceptions;
@@ -78,7 +79,7 @@ public class JwtApplicationUserService : IApplicationUserService {
         var secret = new SymmetricSecurityKey(key);
         var credentials = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
 
-        var claims = await _userManager.GetClaimsAsync(user);
+        var claims = await GetUserClaims(user);
         var expires = DateTime.UtcNow.AddDays(_jwtSettings.ExpireDays);
 
         var token = new JwtSecurityToken(
@@ -90,6 +91,15 @@ public class JwtApplicationUserService : IApplicationUserService {
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    async Task<IEnumerable<Claim>> GetUserClaims(ApplicationUser user) {
+        var claims = await _userManager.GetClaimsAsync(user);
+
+        claims.Add(new Claim("uid", user.Id.ToString()));
+        claims.Add(new Claim("name", user.UserName ?? throw new InvalidOperationException()));
+
+        return claims;
     }
 
     void AddTokenAsCookie(string token) {
