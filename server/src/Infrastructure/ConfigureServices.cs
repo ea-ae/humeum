@@ -27,7 +27,7 @@ public static class ConfigureServices {
 
         var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         var dbPath = Path.Combine(appDataPath, dbSettings.Name + ".sqlite");
-        services.AddDbContext<IAppDbContext, AppDbContext>(options => options.UseSqlite($"Data Source={dbPath}"));
+        services.AddDbContext<IAppDbContext, ApplicationDbContext>(options => options.UseSqlite($"Data Source={dbPath}"));
 
         var jwtSettingsSection = config.GetSection(nameof(JwtSettings));
         var jwtSettings = jwtSettingsSection.Get<JwtSettings>()!;
@@ -79,7 +79,7 @@ public static class ConfigureServices {
                 o.User.RequireUniqueEmail = true;
                 o.User.AllowedUserNameCharacters = _allowedUsernameCharacters;
             })
-            .AddEntityFrameworkStores<AppDbContext>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
         services.AddScoped<IApplicationUserService, JwtApplicationUserService>();
