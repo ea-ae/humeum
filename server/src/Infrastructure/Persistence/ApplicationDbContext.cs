@@ -15,6 +15,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<TransactionType> TransactionTypes { get; set; }
     public DbSet<TimeUnit> TransactionTimeUnits { get; set; }
 
+    public new DbSet<User> Users { get; set; }
+
+    public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options) { }
@@ -35,6 +39,5 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         builder.Entity<TimeUnit>().HasData(TimeUnit.Days, TimeUnit.Weeks, TimeUnit.Months, TimeUnit.Years);
 
         builder.Entity<User>().OwnsOne(u => u.Username);
-        builder.Entity<User>().Property(u => u.Email).HasField("_email").UsePropertyAccessMode(PropertyAccessMode.Property);
     }
 }

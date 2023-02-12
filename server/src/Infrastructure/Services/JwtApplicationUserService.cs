@@ -4,6 +4,9 @@ using System.Text;
 
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+
+using Domain.UserAggregate;
+
 using Infrastructure.Common.Settings;
 using Infrastructure.Identity;
 
@@ -30,19 +33,19 @@ public class JwtApplicationUserService : IApplicationUserService {
         _jwtSettings = jwtSettings.Value;
     }
 
-    public async Task<int> CreateUserAsync(string username, string email, string password, bool rememberMe) {
+    public async Task<int> CreateUserAsync(User user, string password, bool rememberMe) {
         // todo automapper
         var appUser = new ApplicationUser {
-            DisplayName = username,
-            UserName = username,
-            Email = email,
+            DisplayName = user.Username.Value,
+            UserName = user.Username.Value,
+            Email = user.Email,
         };
 
         var result = await _userManager.CreateAsync(appUser, password);
         if (result.Succeeded) {
             await _signInManager.SignInAsync(appUser, isPersistent: rememberMe);
-            var user = await _userManager.FindByNameAsync(username) ?? throw new InvalidOperationException();
-            var token = await CreateToken(user);
+            appUser = await _userManager.FindByNameAsync(user.Username.Value) ?? throw new InvalidOperationException();
+            var token = await CreateToken(appUser);
             AddTokenAsCookie(token);
 
             return user.Id;
