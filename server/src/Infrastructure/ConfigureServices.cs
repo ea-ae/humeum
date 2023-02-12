@@ -32,9 +32,7 @@ public static class ConfigureServices {
 
         services
             .AddAuthentication(o => {
-                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             //.AddCookie(o => {
             //    o.ExpireTimeSpan = TimeSpan.FromMinutes(180);
@@ -54,11 +52,12 @@ public static class ConfigureServices {
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
                     ClockSkew = TimeSpan.Zero
                 };
-                //o.Events.OnMessageReceived = async (context) => {
-                //    if (context.Request.Cookies.TryGetValue("")) {
-
-                //    }
-                //}
+                o.Events.OnMessageReceived = (context) => {
+                    if (context.Request.Cookies.TryGetValue(jwtSettings.Cookie, out string? cookie)) {
+                        context.Token = cookie;
+                    }
+                    return Task.CompletedTask;
+                };
             });
 
         services
