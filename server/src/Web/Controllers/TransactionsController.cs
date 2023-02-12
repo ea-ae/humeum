@@ -19,11 +19,18 @@ public class TransactionsController : ControllerBase {
 
     [HttpGet]
     public async Task<List<TransactionDto>> Index(GetUserTransactionsQuery query) {
-        return await _mediator.Send(query);
+        var transactions = await _mediator.Send(query);
+        return transactions;
+    }
+
+    [HttpGet("{id}")]
+    public IActionResult Get() {
+        return StatusCode(StatusCodes.Status503ServiceUnavailable);
     }
 
     [HttpPost]
-    public async Task<int> Add(AddTransactionCommand command) {
-        return await _mediator.Send(command);
+    public async Task<IActionResult> Add(AddTransactionCommand command) {
+        int id = await _mediator.Send(command);
+        return CreatedAtAction(nameof(Get), new { command.User, id }, null);
     }
 }

@@ -17,14 +17,21 @@ public class UsersController : ControllerBase {
 
     public UsersController(IMediator mediator) => _mediator = mediator;
 
-    [HttpPost("register")]
-    public async Task<int> Register(RegisterUserCommand command) {
-        return await _mediator.Send(command);
+    [HttpGet("{id}")]
+    public IActionResult Get() {
+        return StatusCode(StatusCodes.Status503ServiceUnavailable);
     }
 
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(RegisterUserCommand command) {
+        int id = await _mediator.Send(command);
+        return CreatedAtAction(nameof(Get), new { id }, null);
+    }
+    
     [HttpPost("sign-in")]
-    //[SetAsCookieFilter(CookieName = "AuthToken")]
-    public async Task<int> SignIn(SignInUserCommand command) {
-        return await _mediator.Send(command);
+    //[SetAsCookieFilter(CookieName = "Jwt")]
+    public async Task<IActionResult> SignIn(SignInUserCommand command) {
+        int id = await _mediator.Send(command);
+        return Ok(id);
     }
 }
