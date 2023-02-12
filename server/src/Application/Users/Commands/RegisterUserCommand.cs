@@ -1,5 +1,8 @@
 ﻿using Application.Common.Interfaces;
 
+using Domain.UserAggregate;
+using Domain.UserAggregate.ValueObjects;
+
 namespace Application.Users.Commands.RegisterUser;
 
 public record RegisterUserCommand : ICommand<int> {
@@ -20,10 +23,6 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, i
     public async Task<int> Handle(RegisterUserCommand request, CancellationToken token) {
         // validation
 
-        if (request.Username.Length > 20) { // todo: these will go in the domain later
-            throw new Common.Exceptions.ValidationException("Username is too long (over 20 characters).");
-        }
-
         if (request.Password.Length > 200) {
             throw new Common.Exceptions.ValidationException("Password is too long (over 200 characters).");
         }
@@ -33,6 +32,8 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, i
         }
 
         // handling
+
+        var user = new User(request.Username, request.Email);
 
         return await _userService.CreateUserAsync(request.Username, request.Email, request.Password, request.RememberMe);
     }

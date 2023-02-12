@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Identity;
+using Domain.UserAggregate;
 
 namespace Infrastructure.Persistence;
 
@@ -32,5 +33,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         builder.Entity<TimeUnit>().HasIndex(tu => tu.Code).IsUnique();
         builder.Entity<TimeUnit>().Ignore(tu => tu.InTimeSpan);
         builder.Entity<TimeUnit>().HasData(TimeUnit.Days, TimeUnit.Weeks, TimeUnit.Months, TimeUnit.Years);
+
+        builder.Entity<User>().OwnsOne(u => u.Username);
+        builder.Entity<User>().Property(u => u.Email).HasField("_email").UsePropertyAccessMode(PropertyAccessMode.Property);
     }
 }

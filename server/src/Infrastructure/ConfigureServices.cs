@@ -16,8 +16,6 @@ using Infrastructure.Common.Settings;
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ConfigureServices {
-    const string _allowedUsernameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
     public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services,
                                                                      IConfiguration config) {
         var dbSettingsSection = config.GetSection(nameof(DatabaseSettings));
@@ -76,7 +74,7 @@ public static class ConfigureServices {
                 o.Password.RequireLowercase = false;
 
                 o.User.RequireUniqueEmail = true;
-                o.User.AllowedUserNameCharacters = _allowedUsernameCharacters;
+                //o.User.AllowedUserNameCharacters = _allowedUsernameCharacters;
             })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
