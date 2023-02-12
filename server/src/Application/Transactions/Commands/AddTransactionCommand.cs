@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
+
 using Application.Common.Extensions;
 using Application.Common.Interfaces;
+
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 
@@ -36,7 +38,7 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
             request.TimeUnit,
             request.TimesPerUnit
         };
-        
+
         int recurringTransactionFieldCount = recurringTransactionFields.Count(field => field is not null);
         bool isRecurringTransaction = recurringTransactionFieldCount == recurringTransactionFields.Count;
 

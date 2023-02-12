@@ -1,5 +1,4 @@
-﻿using Domain.TransactionAggregate;
-using Domain.TransactionAggregate.ValueObjects;
+﻿using Domain.TransactionAggregate.ValueObjects;
 
 using Xunit;
 

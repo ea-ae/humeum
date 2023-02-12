@@ -1,7 +1,5 @@
 ﻿using Domain.UserAggregate;
 
-using Microsoft.Extensions.Options;
-
 namespace Application.Common.Interfaces;
 
 public interface IApplicationUserService {

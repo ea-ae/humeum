@@ -1,7 +1,6 @@
 ﻿using Application.Common.Interfaces;
 
 using Domain.UserAggregate;
-using Domain.UserAggregate.ValueObjects;
 
 namespace Application.Users.Commands.RegisterUser;
 

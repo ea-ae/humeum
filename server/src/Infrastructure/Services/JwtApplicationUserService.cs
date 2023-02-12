@@ -1,5 +1,4 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 
 using Application.Common.Exceptions;
@@ -23,7 +22,7 @@ public class JwtApplicationUserService : IApplicationUserService {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly JwtSettings _jwtSettings;
 
-    public JwtApplicationUserService(UserManager<ApplicationUser> userManager, 
+    public JwtApplicationUserService(UserManager<ApplicationUser> userManager,
                                      SignInManager<ApplicationUser> signInManager,
                                      IHttpContextAccessor httpContextAccessor,
                                      IOptions<JwtSettings> jwtSettings) {

@@ -27,7 +27,7 @@ public class UsersController : ControllerBase {
         int id = await _mediator.Send(command);
         return CreatedAtAction(nameof(Get), new { id }, null);
     }
-    
+
     [HttpPost("sign-in")]
     //[SetAsCookieFilter(CookieName = "Jwt")]
     public async Task<IActionResult> SignIn(SignInUserCommand command) {

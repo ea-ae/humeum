@@ -1,17 +1,17 @@
-﻿using Application.Common.Interfaces;
-using Infrastructure.Persistence;
+﻿using System.Text;
 
+using Application.Common.Interfaces;
+
+using Infrastructure.Common.Settings;
+using Infrastructure.Identity;
+using Infrastructure.Persistence;
+using Infrastructure.Services;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-
-using Infrastructure.Identity;
-
-using Microsoft.AspNetCore.Identity;
-using Infrastructure.Services;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Infrastructure.Common.Settings;
 
 namespace Microsoft.Extensions.DependencyInjection;
 

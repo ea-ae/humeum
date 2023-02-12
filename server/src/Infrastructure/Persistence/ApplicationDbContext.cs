@@ -1,11 +1,13 @@
 ﻿using Application.Common.Interfaces;
+
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Infrastructure.Identity;
+
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence;
 
