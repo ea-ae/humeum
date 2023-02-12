@@ -36,15 +36,15 @@ public class JwtApplicationUserService : IApplicationUserService {
     public async Task<int> CreateUserAsync(User user, string password, bool rememberMe) {
         // todo automapper
         var appUser = new ApplicationUser {
-            DisplayName = user.Username.Value,
-            UserName = user.Username.Value,
+            DisplayName = user.Username,
+            UserName = user.Username,
             Email = user.Email,
         };
 
         var result = await _userManager.CreateAsync(appUser, password);
         if (result.Succeeded) {
             await _signInManager.SignInAsync(appUser, isPersistent: rememberMe);
-            appUser = await _userManager.FindByNameAsync(user.Username.Value) ?? throw new InvalidOperationException();
+            appUser = await _userManager.FindByNameAsync(user.Username) ?? throw new InvalidOperationException();
             var token = await CreateToken(appUser);
             AddTokenAsCookie(token);
 

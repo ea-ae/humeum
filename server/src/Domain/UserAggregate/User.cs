@@ -7,9 +7,9 @@ namespace Domain.UserAggregate;
 
 public class User : TimestampedEntity {
     Username _username = null!;
-    public Username Username {
-        get => _username;
-        private set => _username = value;
+    public string Username {
+        get => _username.Value;
+        private set => _username = new Username(value);
     }
 
     // public Username Username { get; private set; } = null!;
@@ -25,7 +25,7 @@ public class User : TimestampedEntity {
 
     // public User(Username username, string email)
     public User(string username, string email) {
-        Username = new Username(username);
+        Username = username;
         Email = email;
     }
 
