@@ -10,7 +10,7 @@ using Web.Filters;
 
 namespace Web.Controllers;
 
-[Route("api/v1/users/{user}/[controller]")]
+[Route("api/v1/users/{user}/profiles/{profile}/[controller]")]
 [CsrfXHeaderFilter]
 [ApiController]
 public class TransactionsController : ControllerBase {
@@ -30,8 +30,8 @@ public class TransactionsController : ControllerBase {
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add(AddTransactionCommand command) {
+    public async Task<IActionResult> Add(int user, AddTransactionCommand command) {
         int id = await _mediator.Send(command);
-        return CreatedAtAction(nameof(Get), new { command.User, id }, null);
+        return CreatedAtAction(nameof(Get), new { user, id }, null);
     }
 }

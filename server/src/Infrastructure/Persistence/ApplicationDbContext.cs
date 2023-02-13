@@ -6,8 +6,9 @@ using Domain.Common;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 using Domain.UserAggregate;
+using Domain.ProfileAggregate;
 
-using Infrastructure.Identity;
+using Infrastructure.Models;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -16,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Persistence;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>, IAppDbContext {
+    public DbSet<Profile> Profiles { get; set; }
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<TransactionType> TransactionTypes { get; set; }
     public DbSet<TimeUnit> TransactionTimeUnits { get; set; }
@@ -33,13 +35,16 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         //builder.Entity<User>().Property<int>("ApplicationUserId");
         //builder.Entity<User>().HasOne("ApplicationUser").WithOne().HasForeignKey("ApplicationUserId");
 
+        builder.Entity<Transaction>().HasOne(t => t.Profile).WithMany(p => p.Transactions);
         builder.Entity<Transaction>().OwnsOne(t => t.PaymentTimeline, pt => {
             pt.OwnsOne(pt => pt.Period);
             pt.OwnsOne(pt => pt.Frequency);
         });
 
         builder.Entity<TransactionType>().HasIndex(tt => tt.Code).IsUnique();
-        builder.Entity<TransactionType>().HasData(TransactionType.Income, TransactionType.Expense);
+        builder.Entity<TransactionType>().HasData(TransactionType.Always,
+                                                  TransactionType.PreRetirementOnly,
+                                                  TransactionType.RetirementOnly);
 
         builder.Entity<TimeUnit>().HasIndex(tu => tu.Code).IsUnique();
         builder.Entity<TimeUnit>().Ignore(tu => tu.InTimeSpan);

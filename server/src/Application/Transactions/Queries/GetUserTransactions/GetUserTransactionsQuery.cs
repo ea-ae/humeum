@@ -11,7 +11,7 @@ namespace Application.Transactions.Queries.GetUserTransactions;
 /// Get transactions for a specified user with optional filtering conditions.
 /// </summary>
 public record GetUserTransactionsQuery : IQuery<List<TransactionDto>> {
-    public required int User { get; init; } // todo: unused for now
+    public required int Profile { get; init; }
 
     public DateOnly? StartBefore { get; init; }
     public DateOnly? StartAfter { get; init; }
@@ -28,8 +28,11 @@ public class GetUserTransactionsQueryHandler : IQueryHandler<GetUserTransactions
 
     public async Task<List<TransactionDto>> Handle(GetUserTransactionsQuery request, CancellationToken token) {
         var transactions = _context.Transactions.AsNoTracking()
-                                                .Where(t => t.UserId == request.User && t.DeletedAt == null)
+                                                .Include(t => t.Profile)
+                                                .Where(t => t.ProfileId == request.Profile && t.DeletedAt == null)
                                                 .Select(t => t);
+
+        // todo: verify profile ownership as well as the user during authorization!
 
         if (request.StartBefore is not null) {
             transactions = transactions.Where(t => t.PaymentTimeline.Period.Start < request.StartBefore);

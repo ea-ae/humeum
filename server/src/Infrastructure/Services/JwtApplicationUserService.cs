@@ -8,7 +8,7 @@ using Application.Common.Interfaces;
 using Domain.UserAggregate;
 
 using Infrastructure.Common.Settings;
-using Infrastructure.Identity;
+using Infrastructure.Models;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

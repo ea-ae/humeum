@@ -15,14 +15,16 @@ namespace Application.Transactions.Commands.AddTransaction;
 /// The first payment is always made at the payment start date.
 /// </summary>
 public record AddTransactionCommand : ICommand<int> {
-    [Required] public int? User { get; init; }
+    [Required] public int? Profile { get; init; }
+
     [Required] public int? Amount { get; init; }
     public required string Type { get; init; }
     [Required] public DateOnly? PaymentStart { get; init; }
 
     public DateOnly? PaymentEnd { get; init; }
     public string? TimeUnit { get; init; }
-    public int? TimesPerUnit { get; init; }
+    public int? TimesPerCycle { get; init; }
+    public int? UnitsInCycle { get; init; }
 }
 
 public class AddTransactionCommandHandler : ICommandHandler<AddTransactionCommand, int> {
@@ -36,7 +38,8 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
         List<object?> recurringTransactionFields = new() { // fields required for recurrent transactions
             request.PaymentEnd,
             request.TimeUnit,
-            request.TimesPerUnit
+            request.TimesPerCycle,
+            request.UnitsInCycle
         };
 
         int recurringTransactionFieldCount = recurringTransactionFields.Count(field => field is not null);
@@ -55,12 +58,12 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
         if (isRecurringTransaction) {
             var timeUnit = _context.GetEnumerationEntityByCode<TimeUnit>(request.TimeUnit!);
             var paymentPeriod = new TimePeriod((DateOnly)request.PaymentStart!, (DateOnly)request.PaymentEnd!);
-            var paymentFrequency = new Frequency(timeUnit, (int)request.TimesPerUnit!);
+            var paymentFrequency = new Frequency(timeUnit, (int)request.TimesPerCycle!, (int)request.UnitsInCycle!);
             var paymentTimeline = new Timeline(paymentPeriod, paymentFrequency);
-            transaction = new Transaction((decimal)request.Amount!, transactionType, paymentTimeline);
+            transaction = new Transaction((int)request.Profile!, (decimal)request.Amount!, transactionType, paymentTimeline);
         } else {
             var timeline = new Timeline(new TimePeriod((DateOnly)request.PaymentStart!));
-            transaction = new Transaction((decimal)request.Amount!, transactionType, timeline);
+            transaction = new Transaction((int)request.Profile!, (decimal)request.Amount!, transactionType, timeline);
         }
 
         _context.Transactions.Add(transaction);

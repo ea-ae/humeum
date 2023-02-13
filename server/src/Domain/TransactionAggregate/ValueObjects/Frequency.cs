@@ -3,28 +3,46 @@
 namespace Domain.TransactionAggregate.ValueObjects;
 
 public class Frequency : ValueObject {
-    public TimeUnit Unit { get; private set; } = null!;
+    public int TimeUnitId { get; private set; }
+    /// <summary>Time unit used to determine cycle length.</summary>
+    public TimeUnit TimeUnit { get; private set; } = null!;
 
-    int _timesPerUnit;
-    public int TimesPerUnit {
-        get => _timesPerUnit;
+    int _timesPerCycle;
+    /// <summary>How many times per cycle the payment is made.</summary>
+    public int TimesPerCycle {
+        get => _timesPerCycle;
         private set {
             if (value <= 0) {
-                throw new ArgumentException("Time per unit must be greater than zero.");
+                throw new ArgumentException("Times per period must be greater than zero.");
             }
-            _timesPerUnit = value;
+            _timesPerCycle = value;
         }
     }
 
-    public Frequency(TimeUnit unit, int timesPerUnit) {
-        Unit = unit;
-        TimesPerUnit = timesPerUnit;
+    int _unitsInCycle;
+    /// <summary>How many time units a single cycle lasts.</summary>
+    public int UnitsInCycle {
+        get => _unitsInCycle;
+        private set {
+            if (value <= 0) {
+                throw new ArgumentException("Units in period must be greater than zero.");
+            }
+            _unitsInCycle = value;
+        }
+    }
+
+    public Frequency(TimeUnit unit, int timesPerCycle, int unitsInCycle) {
+        TimeUnitId = unit.Id;
+        TimeUnit = unit;
+        TimesPerCycle = timesPerCycle;
+        UnitsInCycle = unitsInCycle;
     }
 
     private Frequency() { }
 
     protected override IEnumerable<object?> GetEqualityComponents() {
-        yield return Unit;
-        yield return TimesPerUnit;
+        yield return TimeUnit;
+        yield return TimesPerCycle;
+        yield return UnitsInCycle;
     }
 }

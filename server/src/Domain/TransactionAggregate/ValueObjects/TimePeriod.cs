@@ -3,9 +3,13 @@
 namespace Domain.TransactionAggregate.ValueObjects;
 
 public class TimePeriod : ValueObject {
-    public DateOnly Start { get; private set; } // todo make these just Date
+    /// <summary>Start of time period.</summary>
+    public DateOnly Start { get; private set; }
+
+    /// <summary>End of time period. Lack of value signifies a singular time point (single-time payment).</summary>
     public DateOnly? End { get; private set; }
 
+    /// <summary>Whether the payment is recurring or single-time.</summary>
     public bool IsRecurring => End is not null;
 
     public TimePeriod(DateOnly timePoint) {
@@ -16,7 +20,6 @@ public class TimePeriod : ValueObject {
         if (end <= start) {
             throw new ArgumentException("Time period must end after it starts.");
         }
-
         End = end;
     }
 

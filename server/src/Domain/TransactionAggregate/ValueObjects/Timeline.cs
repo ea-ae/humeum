@@ -4,6 +4,7 @@ namespace Domain.TransactionAggregate.ValueObjects;
 
 public class Timeline : ValueObject {
     Frequency? _frequency;
+    /// <summary>The frequency at which payments are made in the time period.</summary>
     public Frequency? Frequency {
         get => _frequency;
         private set {
@@ -17,6 +18,7 @@ public class Timeline : ValueObject {
     }
 
     TimePeriod _period = null!;
+    /// <summary>The time period within which payments are made. Lack of end date signifies a single-time payment.</summary>
     public TimePeriod Period {
         get => _period;
         private set {

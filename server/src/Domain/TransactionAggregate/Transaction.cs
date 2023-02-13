@@ -1,13 +1,18 @@
 ﻿using Domain.Common;
 using Domain.Common.Interfaces;
+using Domain.ProfileAggregate;
 using Domain.TransactionAggregate.ValueObjects;
-using Domain.UserAggregate;
 
 namespace Domain.TransactionAggregate;
 
+/// <summary>
+/// Transactions are the planned payments of a user. They can be either single-time payments,
+/// or recurring ones with a certain frequency in a provided time period. Positive amounts signify
+/// income (payments coming in), negative amounts signify expenses (payments going out). Transactions
+/// can also be conditional on the dynamic time point at which one retires, which is signified through
+/// the transaction type.
+/// </summary>
 public class Transaction : TimestampedEntity {
-    public int UserId { get; private set; }
-
     decimal _amount; // value object? encapsulate in constructor or nah?
     public decimal Amount {
         get => _amount;
@@ -19,14 +24,26 @@ public class Transaction : TimestampedEntity {
         }
     }
 
-    public TransactionType Type { get; private set; } = null!;
-
     public Timeline PaymentTimeline { get; private set; } = null!;
 
-    public Transaction(decimal amount, TransactionType type, Timeline paymentTimeline) {
+    public int TypeId { get; private set; }
+    public TransactionType Type { get; private set; } = null!;
+
+    public int ProfileId { get; private set; }
+    public Profile Profile { get; private set; } = null!;
+
+    public Transaction(Profile profile, decimal amount, TransactionType type, Timeline paymentTimeline)
+        : this(profile.Id, amount, type, paymentTimeline)    
+    {
+        Profile = profile;
+    }
+
+    public Transaction(int profileId, decimal amount, TransactionType type, Timeline paymentTimeline) {
         Amount = amount;
-        Type = type;
         PaymentTimeline = paymentTimeline;
+        TypeId = type.Id;
+        Type = type;
+        ProfileId = profileId;
     }
 
     private Transaction() { }
@@ -38,7 +55,7 @@ public class Transaction : TimestampedEntity {
             }
 
             // todo: change this param/arg to just the type itself
-            int count = PaymentTimeline.Frequency.Unit.InTimeSpan(PaymentTimeline.Period.Start,
+            int count = PaymentTimeline.Frequency.TimeUnit.InTimeSpan(PaymentTimeline.Period.Start,
                                                                   (DateOnly)PaymentTimeline.Period.End!);
             return count;
         }

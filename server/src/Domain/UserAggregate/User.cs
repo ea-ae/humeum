@@ -5,6 +5,10 @@ using Domain.UserAggregate.ValueObjects;
 
 namespace Domain.UserAggregate;
 
+/// <summary>
+/// Users in this case are not persisted, but instead mapped onto by an authentication
+/// service, either internal or external, that has its own inner entities for users.
+/// </summary>
 public class User : Entity {
     // public int ApplicationUserId { get; private set; }
 

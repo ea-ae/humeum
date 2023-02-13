@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,12 +11,37 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230213234526_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.2");
+
+            modelBuilder.Entity("Domain.ProfileAggregate.Profile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Profiles");
+                });
 
             modelBuilder.Entity("Domain.TransactionAggregate.Transaction", b =>
                 {
@@ -35,16 +61,18 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("ProfileId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("TimeUnitId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("TypeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("ProfileId");
 
                     b.HasIndex("TimeUnitId");
 
@@ -126,18 +154,24 @@ namespace Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            Code = "INCOME",
-                            Name = "Income"
+                            Code = "ALWAYS",
+                            Name = "Always"
                         },
                         new
                         {
                             Id = 2,
-                            Code = "EXPENSE",
-                            Name = "Expense"
+                            Code = "PRERETIREMENTOnly",
+                            Name = "Pre-retirement only"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Code = "RETIREMENTONLY",
+                            Name = "Retirement only"
                         });
                 });
 
-            modelBuilder.Entity("Infrastructure.Identity.ApplicationUser", b =>
+            modelBuilder.Entity("Infrastructure.Models.ApplicationUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -338,6 +372,12 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Domain.TransactionAggregate.Transaction", b =>
                 {
+                    b.HasOne("Domain.ProfileAggregate.Profile", "Profile")
+                        .WithMany("Transactions")
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.TransactionAggregate.ValueObjects.TimeUnit", null)
                         .WithMany("Transactions")
                         .HasForeignKey("TimeUnitId");
@@ -365,10 +405,13 @@ namespace Infrastructure.Persistence.Migrations
                                     b2.Property<int>("TimelineTransactionId")
                                         .HasColumnType("INTEGER");
 
-                                    b2.Property<int>("TimesPerUnit")
+                                    b2.Property<int>("TimesPerCycle")
                                         .HasColumnType("INTEGER");
 
                                     b2.Property<int>("UnitId")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("UnitsInCycle")
                                         .HasColumnType("INTEGER");
 
                                     b2.HasKey("TimelineTransactionId");
@@ -417,6 +460,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("PaymentTimeline")
                         .IsRequired();
 
+                    b.Navigation("Profile");
+
                     b.Navigation("Type");
                 });
 
@@ -431,7 +476,7 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
-                    b.HasOne("Infrastructure.Identity.ApplicationUser", null)
+                    b.HasOne("Infrastructure.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -440,7 +485,7 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
-                    b.HasOne("Infrastructure.Identity.ApplicationUser", null)
+                    b.HasOne("Infrastructure.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -455,7 +500,7 @@ namespace Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Infrastructure.Identity.ApplicationUser", null)
+                    b.HasOne("Infrastructure.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -464,11 +509,16 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.HasOne("Infrastructure.Identity.ApplicationUser", null)
+                    b.HasOne("Infrastructure.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.ProfileAggregate.Profile", b =>
+                {
+                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("Domain.TransactionAggregate.ValueObjects.TimeUnit", b =>
