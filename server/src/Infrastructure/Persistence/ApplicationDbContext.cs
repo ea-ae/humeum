@@ -20,7 +20,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<TransactionType> TransactionTypes { get; set; }
     public DbSet<TimeUnit> TransactionTimeUnits { get; set; }
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
+        SavingChanges += SetTimestampFields; // add event handler
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options) { }
 
@@ -48,10 +50,32 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         throw new NotSupportedException();
     }
 
-    public async Task<int> SaveChangesAsync() {
-        ChangeTracker.DetectChanges();
+    //public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) {
+    //    ChangeTracker.DetectChanges();
 
-        var entities = ChangeTracker.Entries().Where(e => e.State is EntityState.Modified or EntityState.Deleted);
+    //    var entities = ChangeTracker.Entries().Where(e => e.State is EntityState.Modified or EntityState.Deleted);
+
+    //    foreach (var entity in entities) {
+    //        if (entity.Entity is TimestampedEntity timestampedEntity) {
+    //            if (entity.State is EntityState.Modified) {
+    //                timestampedEntity.UpdateModificationTimestamp();
+    //            } else if (entity.State is EntityState.Deleted) {
+    //                timestampedEntity.UpdateDeletionTimestamp();
+    //                entity.State = EntityState.Modified;
+    //            }
+    //        }
+    //    }
+
+    //    return await base.SaveChangesAsync(cancellationToken);
+    //}
+
+    /// <summary>
+    /// Source: https://stackoverflow.com/a/74052251/4362799.
+    /// </summary>
+    private void SetTimestampFields(object? sender, SavingChangesEventArgs eventArgs) {
+        var context = (DbContext)(sender ?? throw new InvalidOperationException());
+
+        var entities = context.ChangeTracker.Entries().Where(e => e.State is EntityState.Modified or EntityState.Deleted);
 
         foreach (var entity in entities) {
             if (entity.Entity is TimestampedEntity timestampedEntity) {
@@ -63,7 +87,5 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
                 }
             }
         }
-
-        return await base.SaveChangesAsync();
     }
 }
