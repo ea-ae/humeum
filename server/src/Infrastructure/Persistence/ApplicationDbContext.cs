@@ -2,6 +2,7 @@
 
 using AutoMapper.Execution;
 
+using Domain.Common;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 using Domain.UserAggregate;
@@ -41,5 +42,28 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         builder.Entity<TimeUnit>().HasIndex(tu => tu.Code).IsUnique();
         builder.Entity<TimeUnit>().Ignore(tu => tu.InTimeSpan);
         builder.Entity<TimeUnit>().HasData(TimeUnit.Days, TimeUnit.Weeks, TimeUnit.Months, TimeUnit.Years);
+    }
+
+    public override int SaveChanges() {
+        throw new NotSupportedException();
+    }
+
+    public async Task<int> SaveChangesAsync() {
+        ChangeTracker.DetectChanges();
+
+        var entities = ChangeTracker.Entries().Where(e => e.State is EntityState.Modified or EntityState.Deleted);
+
+        foreach (var entity in entities) {
+            if (entity.Entity is TimestampedEntity timestampedEntity) {
+                if (entity.State is EntityState.Modified) {
+                    timestampedEntity.UpdateModificationTimestamp();
+                } else if (entity.State is EntityState.Deleted) {
+                    timestampedEntity.UpdateDeletionTimestamp();
+                    entity.State = EntityState.Modified;
+                }
+            }
+        }
+
+        return await base.SaveChangesAsync();
     }
 }

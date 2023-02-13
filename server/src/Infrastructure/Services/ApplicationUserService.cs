@@ -10,7 +10,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace Infrastructure.Services;
 
 public abstract class ApplicationUserService : IApplicationUserService {
-    IAppDbContext _context;
+    protected readonly IAppDbContext _context;
 
     public ApplicationUserService(IAppDbContext context) => _context = context;
 

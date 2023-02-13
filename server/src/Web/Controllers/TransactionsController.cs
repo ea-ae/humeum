@@ -19,7 +19,6 @@ public class TransactionsController : ControllerBase {
     public TransactionsController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet]
-    [Authorize]
     public async Task<List<TransactionDto>> GetAll(GetUserTransactionsQuery query) {
         var transactions = await _mediator.Send(query);
         return transactions;

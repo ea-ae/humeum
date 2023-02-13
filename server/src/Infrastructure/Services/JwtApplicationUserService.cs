@@ -23,10 +23,11 @@ public class JwtApplicationUserService : ApplicationUserService {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly JwtSettings _jwtSettings;
 
-    public JwtApplicationUserService(UserManager<ApplicationUser> userManager,
+    public JwtApplicationUserService(IAppDbContext context,
+                                     UserManager<ApplicationUser> userManager,
                                      SignInManager<ApplicationUser> signInManager,
                                      IHttpContextAccessor httpContextAccessor,
-                                     IOptions<JwtSettings> jwtSettings) {
+                                     IOptions<JwtSettings> jwtSettings) : base(context) {
         _userManager = userManager;
         _signInManager = signInManager;
         _httpContextAccessor = httpContextAccessor;
