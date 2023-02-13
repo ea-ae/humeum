@@ -1,9 +1,13 @@
 ﻿using Domain.Common;
+using Domain.Common.Interfaces;
 using Domain.TransactionAggregate.ValueObjects;
+using Domain.UserAggregate;
 
 namespace Domain.TransactionAggregate;
 
 public class Transaction : TimestampedEntity {
+    public int UserId { get; private set; }
+
     decimal _amount; // value object? encapsulate in constructor or nah?
     public decimal Amount {
         get => _amount;

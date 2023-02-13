@@ -1,7 +1,10 @@
 ﻿using Application.Common.Interfaces;
 
+using AutoMapper.Execution;
+
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
+using Domain.UserAggregate;
 
 using Infrastructure.Identity;
 
@@ -22,6 +25,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
 
     protected override void OnModelCreating(ModelBuilder builder) {
         base.OnModelCreating(builder); // configure Identity schema
+
+        //builder.Entity<User>().Property<ApplicationUser>("ApplicationUser");
+        //builder.Entity<User>().Property<int>("ApplicationUserId");
+        //builder.Entity<User>().HasOne("ApplicationUser").WithOne().HasForeignKey("ApplicationUserId");
 
         builder.Entity<Transaction>().OwnsOne(t => t.PaymentTimeline, pt => {
             pt.OwnsOne(pt => pt.Period);

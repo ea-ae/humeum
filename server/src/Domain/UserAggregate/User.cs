@@ -6,6 +6,8 @@ using Domain.UserAggregate.ValueObjects;
 namespace Domain.UserAggregate;
 
 public class User : Entity {
+    // public int ApplicationUserId { get; private set; }
+
     Username _username = null!;
     public string Username {
         get => _username.Value;
@@ -26,6 +28,10 @@ public class User : Entity {
     }
 
     // public User(Username username, string email) {}
+
+    public User(int id, string username, string email) : this(id, username) {
+        Email = email;
+    }
 
     public User(string username, string email) : this(username) {
         Email = email;

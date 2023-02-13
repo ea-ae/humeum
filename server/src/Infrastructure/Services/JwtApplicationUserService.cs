@@ -17,7 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Services;
 
-public class JwtApplicationUserService : IApplicationUserService {
+public class JwtApplicationUserService : ApplicationUserService {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -33,7 +33,7 @@ public class JwtApplicationUserService : IApplicationUserService {
         _jwtSettings = jwtSettings.Value;
     }
 
-    public async Task<int> CreateUserAsync(User user, string password, bool rememberMe) {
+    public override async Task<int> CreateUserAsync(User user, string password, bool rememberMe) {
         // todo automapper
         var appUser = new ApplicationUser {
             DisplayName = user.Username,
@@ -55,7 +55,7 @@ public class JwtApplicationUserService : IApplicationUserService {
         throw new AuthenticationException($"{error.Code}\n{error.Description}");
     }
 
-    public async Task<int> SignInUserAsync(string username, string password, bool rememberMe) {
+    public override async Task<int> SignInUserAsync(string username, string password, bool rememberMe) {
         var result = await _signInManager.PasswordSignInAsync(username, password, isPersistent: rememberMe,
                                                               lockoutOnFailure: true);
 

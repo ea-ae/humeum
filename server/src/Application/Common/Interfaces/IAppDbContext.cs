@@ -1,5 +1,6 @@
 ﻿using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
+using Domain.UserAggregate;
 
 using Microsoft.EntityFrameworkCore;
 
