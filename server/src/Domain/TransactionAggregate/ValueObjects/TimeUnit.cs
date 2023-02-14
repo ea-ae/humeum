@@ -3,17 +3,17 @@
 namespace Domain.TransactionAggregate.ValueObjects;
 
 public class TimeUnit : Enumeration {
-    public static readonly TimeUnit Days = new(2, "DAYS", delegate (DateOnly start, DateOnly end) {
+    public static readonly TimeUnit Days = new(2, "DAYS", (DateOnly start, DateOnly end) => {
         var timeSpan = end.ToDateTime(TimeOnly.MinValue) - start.ToDateTime(TimeOnly.MinValue);
         return (int)timeSpan.TotalDays + 1;
     });
 
-    public static readonly TimeUnit Weeks = new(3, "WEEKS", delegate (DateOnly start, DateOnly end) {
+    public static readonly TimeUnit Weeks = new(3, "WEEKS", (DateOnly start, DateOnly end) => {
         var timeSpan = end.ToDateTime(TimeOnly.MinValue) - start.ToDateTime(TimeOnly.MinValue);
         return (int)(timeSpan.TotalDays / 7) + 1;
     });
 
-    public static readonly TimeUnit Months = new(4, "MONTHS", delegate (DateOnly start, DateOnly end) {
+    public static readonly TimeUnit Months = new(4, "MONTHS", (DateOnly start, DateOnly end) => {
         int years = end.Year - start.Year;
         int months = end.Month - start.Month;
         bool isLastDayOfMonth = end.Day == DateTime.DaysInMonth(end.Year, end.Month);
@@ -24,7 +24,7 @@ public class TimeUnit : Enumeration {
         return years * 12 + months + 1;
     });
 
-    public static readonly TimeUnit Years = new(5, "YEARS", delegate (DateOnly start, DateOnly end) {
+    public static readonly TimeUnit Years = new(5, "YEARS", (DateOnly start, DateOnly end) => {
         int years = end.Year - start.Year;
         bool isLastDayOfMonth = end.Day == DateTime.DaysInMonth(end.Year, end.Month);
 
