@@ -24,7 +24,7 @@ public class TransactionsController : ControllerBase {
         return transactions;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{transaction}")]
     public IActionResult Get() {
         return StatusCode(StatusCodes.Status503ServiceUnavailable);
     }

@@ -30,8 +30,6 @@ public class CustomWebAppFactory : WebApplicationFactory<Program> {
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder) {
-        // connection.Open(); // prevent EF core from closing
-
         builder.ConfigureTestServices(services => {
             services.RemoveAll<IAppDbContext>();
             services.RemoveAll<DbConnection>();

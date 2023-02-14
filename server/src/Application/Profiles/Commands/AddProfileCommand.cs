@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using Domain.ProfileAggregate;
@@ -12,7 +11,7 @@ namespace Application.Profiles.Commands.AddProfile;
 /// configurations and transactions.
 /// </summary>
 public record AddProfileCommand : ICommand<int> {
-    [Required] public int? User { get; init; }
+    public required int User { get; init; }
 
     public required string Name { get; init; }
     public string? Description { get; init; }

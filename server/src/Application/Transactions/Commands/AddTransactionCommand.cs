@@ -15,7 +15,7 @@ namespace Application.Transactions.Commands.AddTransaction;
 /// The first payment is always made at the payment start date.
 /// </summary>
 public record AddTransactionCommand : ICommand<int> {
-    [Required] public int? Profile { get; init; }
+    public required int Profile { get; init; }
 
     public string? Name { get; init; }
     public string? Description { get; init; }

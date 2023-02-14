@@ -95,6 +95,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
                     timestampedEntity.UpdateDeletionTimestamp();
                     entity.State = EntityState.Modified;
                 }
+            } else if (entity.Entity is ValueObject valueObject) {
+                if (entity.State is EntityState.Deleted) {
+                    entity.State = EntityState.Modified;
+                }
             }
         }
     }
