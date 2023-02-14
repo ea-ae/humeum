@@ -31,10 +31,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     protected override void OnModelCreating(ModelBuilder builder) {
         base.OnModelCreating(builder); // configure Identity schema
 
-        //builder.Entity<User>().Property<ApplicationUser>("ApplicationUser");
-        //builder.Entity<User>().Property<int>("ApplicationUserId");
-        //builder.Entity<User>().HasOne("ApplicationUser").WithOne().HasForeignKey("ApplicationUserId");
-
         builder.Entity<Transaction>().HasOne(t => t.Profile).WithMany(p => p.Transactions);
         builder.Entity<Transaction>().OwnsOne(t => t.PaymentTimeline, pt => {
             pt.OwnsOne(pt => pt.Period);
@@ -59,25 +55,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public override int SaveChanges() {
         throw new NotSupportedException();
     }
-
-    //public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) {
-    //    ChangeTracker.DetectChanges();
-
-    //    var entities = ChangeTracker.Entries().Where(e => e.State is EntityState.Modified or EntityState.Deleted);
-
-    //    foreach (var entity in entities) {
-    //        if (entity.Entity is TimestampedEntity timestampedEntity) {
-    //            if (entity.State is EntityState.Modified) {
-    //                timestampedEntity.UpdateModificationTimestamp();
-    //            } else if (entity.State is EntityState.Deleted) {
-    //                timestampedEntity.UpdateDeletionTimestamp();
-    //                entity.State = EntityState.Modified;
-    //            }
-    //        }
-    //    }
-
-    //    return await base.SaveChangesAsync(cancellationToken);
-    //}
 
     /// <summary>
     /// Source: https://stackoverflow.com/a/74052251/4362799.

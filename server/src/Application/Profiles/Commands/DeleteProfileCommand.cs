@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Common.Exceptions;
 
 using Domain.ProfileAggregate;
 
@@ -22,7 +23,14 @@ public class DeleteProfileCommandHandler : ICommandHandler<DeleteProfileCommand>
     public DeleteProfileCommandHandler(IAppDbContext context) => _context = context;
 
     public async Task<Unit> Handle(DeleteProfileCommand request, CancellationToken token) {
-        Profile profile = _context.Profiles.Where(p => p.Id == request.Profile).Include(p => p.Transactions).Single();
+        var profile = _context.Profiles.Where(p => p.Id == request.Profile && p.DeletedAt == null)
+                                       .Include(p => p.Transactions)
+                                       .FirstOrDefault();
+
+        if (profile == null) {
+            throw new ValidationException("Profile with given ID does not exist.");
+        }
+
         _context.Profiles.Remove(profile);
         await _context.SaveChangesAsync(token);
 
