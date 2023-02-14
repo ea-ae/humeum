@@ -10,7 +10,7 @@ namespace Domain.ProfileAggregate;
 public class Profile : TimestampedEntity {
     public int UserId { get; private set; }
 
-    public string Name { get; private set; }
+    public string Name { get; private set; } = null!;
 
     public string? Description { get; private set; }
 
@@ -25,9 +25,12 @@ public class Profile : TimestampedEntity {
     HashSet<Transaction> _transactions = null!;
     public IReadOnlyCollection<Transaction> Transactions => _transactions;
 
-    public Profile(string name, decimal withdrawalRate, string? description = null) {
+    public Profile(int userId, string name, string? description = null, decimal? withdrawalRate = null) {
+        UserId = userId;
         Name = name;
-        Description = description;
-        WithdrawalRate = withdrawalRate;
+        Description = description ?? Description;
+        WithdrawalRate = withdrawalRate ?? WithdrawalRate;
     }
+
+    private Profile() { }
 }

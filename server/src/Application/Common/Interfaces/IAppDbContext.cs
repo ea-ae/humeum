@@ -1,12 +1,13 @@
-﻿using Domain.TransactionAggregate;
+﻿using Domain.ProfileAggregate;
+using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
-using Domain.UserAggregate;
 
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Common.Interfaces;
 
 public interface IAppDbContext {
+    DbSet<Profile> Profiles { get; set; }
     DbSet<Transaction> Transactions { get; set; }
     DbSet<TransactionType> TransactionTypes { get; set; }
     DbSet<TimeUnit> TransactionTimeUnits { get; set; }
