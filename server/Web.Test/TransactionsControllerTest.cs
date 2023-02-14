@@ -2,11 +2,14 @@
 
 using Microsoft.AspNetCore.Mvc.Testing;
 
+using Web.Test.Common;
+
 using Xunit;
 
 namespace Web.Test;
 
-public class TransactionsControllerTest : IClassFixture<WebApplicationFactory<Program>> {
+[Collection(WebApplicationFactoryCollection.COLLECTION_NAME)]
+public class TransactionsControllerTest {
     private readonly WebApplicationFactory<Program> _fixture;
     private readonly HttpClient _client;
 
@@ -28,6 +31,8 @@ public class TransactionsControllerTest : IClassFixture<WebApplicationFactory<Pr
 
         var response = await _client.PostAsync("users/1/profiles/1/transactions?amount=5", null);
         var actual = response.StatusCode;
+
+        
 
         Assert.Equal(expected, actual);
     }
