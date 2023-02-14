@@ -38,7 +38,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         builder.Entity<Transaction>().HasOne(t => t.Profile).WithMany(p => p.Transactions);
         builder.Entity<Transaction>().OwnsOne(t => t.PaymentTimeline, pt => {
             pt.OwnsOne(pt => pt.Period);
-            pt.OwnsOne(pt => pt.Frequency);
+            pt.OwnsOne(pt => pt.Frequency, f => {
+                f.HasOne(f => f.TimeUnit);
+                //f.OwnsOne(f => f.TimeUnit, tu => {
+                //    tu.Has
+                //});
+            });
         });
 
         builder.Entity<TransactionType>().HasIndex(tt => tt.Code).IsUnique();

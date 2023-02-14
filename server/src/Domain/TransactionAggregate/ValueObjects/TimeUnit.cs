@@ -34,9 +34,6 @@ public class TimeUnit : Enumeration {
         return years + 1;
     });
 
-    ICollection<Transaction> _transactions = null!;
-    public IEnumerable<Transaction> Transactions => _transactions;
-
     public Func<DateOnly, DateOnly, int> InTimeSpan { get; init; } = null!;
 
 #pragma warning disable IDE0051 // Remove unused private members
