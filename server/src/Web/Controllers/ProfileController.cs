@@ -22,11 +22,9 @@ public class ProfilesController : ControllerBase {
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add(AddProfileCommand command) {
+    public async Task<IActionResult> Create(AddProfileCommand command) {
         int id = await _mediator.Send(command);
-        int x = 3;
-        int y = 4;
-        return CreatedAtAction(nameof(Get), new { command.User, id }, null);
+        return CreatedAtAction(nameof(Get), new { command.User, Profile = id }, null);
     }
 
     [HttpDelete("{profile}")]

@@ -21,8 +21,8 @@ public class DeleteProfileCommandHandler : ICommandHandler<DeleteProfileCommand>
     public DeleteProfileCommandHandler(IAppDbContext context) => _context = context;
 
     public async Task<Unit> Handle(DeleteProfileCommand request, CancellationToken token) {
-        var profile = _context.Profiles.Where(p => p.Id == request.Profile && p.DeletedAt == null)
-                                       .Include(p => p.Transactions)
+        var profile = _context.Profiles.Include(p => p.Transactions)
+                                       .Where(p => p.Id == request.Profile && p.DeletedAt == null)
                                        .FirstOrDefault();
 
         if (profile == null) {

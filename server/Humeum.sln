@@ -29,7 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Test", "Web.Test\Web.Test.csproj", "{553D72AD-A7B2-48B4-B9C9-F6DAD038ECBA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Test", "tests\Web.Test\Web.Test.csproj", "{553D72AD-A7B2-48B4-B9C9-F6DAD038ECBA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

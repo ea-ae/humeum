@@ -31,6 +31,6 @@ public class TransactionsController : ControllerBase {
     [HttpPost]
     public async Task<IActionResult> Add(int user, AddTransactionCommand command) {
         int id = await _mediator.Send(command);
-        return CreatedAtAction(nameof(Get), new { user, command.Profile, id }, null);
+        return CreatedAtAction(nameof(Get), new { user, command.Profile, Transaction = id }, null);
     }
 }

@@ -4,6 +4,8 @@ builder.Services.ConfigureApplicationServices();
 builder.Services.ConfigureInfrastructureServices(builder.Configuration);
 builder.Services.ConfigureWebServices();
 
+builder.Logging.AddConsole().AddFilter(level => level >= LogLevel.Trace);
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment()) {
@@ -23,4 +25,4 @@ app.MapControllers();
 
 app.Run();
 
-public partial class Program { } // make visible to test project
+public partial class Program { } // expose class to test projects
