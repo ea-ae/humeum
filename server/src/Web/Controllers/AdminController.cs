@@ -1,11 +1,4 @@
-﻿using Application.Users.Commands.RegisterUser;
-using Application.Users.Commands.SignInUser;
-
-using MediatR;
-
-using Microsoft.AspNetCore.Mvc;
-
-using Web.Filters;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers;
 

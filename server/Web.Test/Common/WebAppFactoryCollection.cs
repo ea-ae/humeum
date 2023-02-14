@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
-
-using Xunit;
+﻿using Xunit;
 
 namespace Web.Test.Common;
 

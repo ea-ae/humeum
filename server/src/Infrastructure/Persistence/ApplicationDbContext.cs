@@ -1,12 +1,9 @@
 ﻿using Application.Common.Interfaces;
 
-using AutoMapper.Execution;
-
 using Domain.Common;
+using Domain.ProfileAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
-using Domain.UserAggregate;
-using Domain.ProfileAggregate;
 
 using Infrastructure.Models;
 

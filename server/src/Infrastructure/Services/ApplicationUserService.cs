@@ -1,11 +1,10 @@
-﻿using Domain.UserAggregate;
+﻿using Application.Common.Interfaces;
 
-using Application.Common.Interfaces;
+using Domain.UserAggregate;
 
 using Infrastructure.Persistence;
-using Domain.Common.Interfaces;
+
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Infrastructure.Services;
 
@@ -21,8 +20,8 @@ public abstract class ApplicationUserService : IApplicationUserService {
     public async Task<User> GetUserById(int id) {
         if (_context is ApplicationDbContext identityContext) {
             var appUser = await identityContext.Users.SingleAsync(au => au.Id == id);
-            var user = new User(appUser.Id, 
-                                appUser.UserName ?? throw new InvalidOperationException("No username found"), 
+            var user = new User(appUser.Id,
+                                appUser.UserName ?? throw new InvalidOperationException("No username found"),
                                 appUser.Email ?? throw new InvalidOperationException("No email found"));
             return user;
         }

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
 
 using Domain.ProfileAggregate;
 
@@ -24,7 +22,7 @@ public class AddProfileCommandHandler : ICommandHandler<AddProfileCommand, int> 
     public AddProfileCommandHandler(IAppDbContext context) => _context = context;
 
     public async Task<int> Handle(AddProfileCommand request, CancellationToken token) {
-        Profile profile = new((int)request.User!, request.Name, request.Description, request.WithdrawalRate);
+        Profile profile = new(request.User!, request.Name, request.Description, request.WithdrawalRate);
 
         _context.Profiles.Add(profile);
         await _context.SaveChangesAsync(token);

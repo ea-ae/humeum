@@ -1,7 +1,5 @@
-﻿using Application.Common.Interfaces;
-using Application.Common.Exceptions;
-
-using Domain.ProfileAggregate;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 
 using MediatR;
 

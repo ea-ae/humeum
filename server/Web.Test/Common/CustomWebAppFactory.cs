@@ -1,6 +1,8 @@
-﻿using Infrastructure.Persistence;
+﻿using System.Data.Common;
 
 using Application.Common.Interfaces;
+
+using Infrastructure.Persistence;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -9,7 +11,6 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Data.Common;
 
 namespace Web.Test.Common;
 
