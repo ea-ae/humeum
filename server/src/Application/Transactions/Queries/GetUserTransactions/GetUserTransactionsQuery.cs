@@ -1,4 +1,6 @@
-﻿using Application.Common.Interfaces;
+﻿using System.ComponentModel.DataAnnotations;
+
+using Application.Common.Interfaces;
 
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -11,7 +13,7 @@ namespace Application.Transactions.Queries.GetUserTransactions;
 /// Get transactions for a specified user with optional filtering conditions.
 /// </summary>
 public record GetUserTransactionsQuery : IQuery<List<TransactionDto>> {
-    public required int Profile { get; init; }
+    [Required] public int? Profile { get; init; }
 
     public DateOnly? StartBefore { get; init; }
     public DateOnly? StartAfter { get; init; }
