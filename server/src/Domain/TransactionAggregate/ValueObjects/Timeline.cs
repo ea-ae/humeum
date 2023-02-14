@@ -44,5 +44,6 @@ public class Timeline : ValueObject {
 
     protected override IEnumerable<object?> GetEqualityComponents() {
         yield return Frequency;
+        yield return Period;
     }
 }

@@ -3,10 +3,6 @@
 namespace Domain.TransactionAggregate.ValueObjects;
 
 public class Frequency : ValueObject {
-    public int TimeUnitId { get; private set; }
-    /// <summary>Time unit used to determine cycle length.</summary>
-    public TimeUnit TimeUnit { get; private set; } = null!;
-
     int _timesPerCycle;
     /// <summary>How many times per cycle the payment is made.</summary>
     public int TimesPerCycle {
@@ -31,17 +27,21 @@ public class Frequency : ValueObject {
         }
     }
 
+    public int TimeUnitId { get; private set; }
+    /// <summary>Time unit used to determine cycle length.</summary>
+    public TimeUnit TimeUnit { get; private set; } = null!;
+
     public Frequency(TimeUnit unit, int timesPerCycle, int unitsInCycle) {
-        TimeUnitId = unit.Id;
-        TimeUnit = unit;
         TimesPerCycle = timesPerCycle;
         UnitsInCycle = unitsInCycle;
+        TimeUnitId = unit.Id;
+        TimeUnit = unit;
     }
 
     private Frequency() { }
 
     protected override IEnumerable<object?> GetEqualityComponents() {
-        yield return TimeUnit;
+        yield return TimeUnitId;
         yield return TimesPerCycle;
         yield return UnitsInCycle;
     }
