@@ -10,13 +10,13 @@ public class TransactionTest {
     public void TransactionConstructor_NegativeAmount_ThrowsDomainException() {
         var timeline = new Timeline(new TimePeriod(new DateOnly(2023, 1, 1)));
 
-        Assert.Throws<ArgumentException>(() => new Transaction(-3, TransactionType.Income, timeline));
+        Assert.Throws<ArgumentException>(() => new Transaction(1, null, null, -1, TransactionType.Always, timeline));
     }
 
     [Fact]
     public void TotalTransactionCount_InstantEnd_ReturnsOne() {
-        var timePeriod = new TimePeriod(new DateOnly(2022, 1, 1));
-        var transaction = new Transaction(1, TransactionType.Expense, new Timeline(timePeriod));
+        var timePeriod = new Timeline(new TimePeriod(new DateOnly(2022, 1, 1)));
+        var transaction = new Transaction(1, null, null, 1, TransactionType.RetirementOnly, timePeriod);
 
         int expected = 1;
 
@@ -161,7 +161,7 @@ public class TransactionTest {
     /// </summary>
     /// <returns>Partially instantiated transaction.</returns>
     static Transaction BuildTransaction(TimeUnit timeUnit, DateOnly paymentStart, DateOnly paymentEnd) {
-        var timeline = new Timeline(new TimePeriod(paymentStart, paymentEnd), new Frequency(timeUnit, 1));
-        return new Transaction(1, TransactionType.Income, timeline);
+        var timeline = new Timeline(new TimePeriod(paymentStart, paymentEnd), new Frequency(timeUnit, 1, 1));
+        return new Transaction(1, null, null, 1, TransactionType.Always, timeline);
     }
 }
