@@ -17,11 +17,6 @@ public class UsersController : ControllerBase {
 
     public UsersController(IMediator mediator) => _mediator = mediator;
 
-    [HttpGet()]
-    public IActionResult Index() {
-        return StatusCode(StatusCodes.Status503ServiceUnavailable);
-    }
-
     [HttpGet("{id}")]
     public IActionResult Get() {
         return StatusCode(StatusCodes.Status503ServiceUnavailable);

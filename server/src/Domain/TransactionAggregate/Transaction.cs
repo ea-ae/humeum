@@ -1,5 +1,4 @@
 ﻿using Domain.Common;
-using Domain.Common.Interfaces;
 using Domain.ProfileAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 
@@ -13,6 +12,10 @@ namespace Domain.TransactionAggregate;
 /// the transaction type.
 /// </summary>
 public class Transaction : TimestampedEntity {
+    public string? Name { get; private set; }
+
+    public string? Description { get; private set; }
+
     decimal _amount; // value object? encapsulate in constructor or nah?
     public decimal Amount {
         get => _amount;
@@ -32,13 +35,24 @@ public class Transaction : TimestampedEntity {
     public int ProfileId { get; private set; }
     public Profile Profile { get; private set; } = null!;
 
-    public Transaction(Profile profile, decimal amount, TransactionType type, Timeline paymentTimeline)
-        : this(profile.Id, amount, type, paymentTimeline)    
-    {
+    public Transaction(Profile profile,
+                       string? name,
+                       string? description,
+                       decimal amount,
+                       TransactionType type,
+                       Timeline paymentTimeline)
+        : this(profile.Id, name, description, amount, type, paymentTimeline) {
         Profile = profile;
     }
 
-    public Transaction(int profileId, decimal amount, TransactionType type, Timeline paymentTimeline) {
+    public Transaction(int profileId,
+                       string? name,
+                       string? description,
+                       decimal amount,
+                       TransactionType type,
+                       Timeline paymentTimeline) {
+        Name = name;
+        Description = description;
         Amount = amount;
         PaymentTimeline = paymentTimeline;
         TypeId = type.Id;
