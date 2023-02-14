@@ -7,9 +7,6 @@ public class TransactionType : Enumeration {
     public static readonly TransactionType PreRetirementOnly = new(2, "PRERETIREMENTOnly", "Pre-retirement only");
     public static readonly TransactionType RetirementOnly = new(3, "RETIREMENTONLY", "Retirement only");
 
-    ICollection<Transaction> _transactions = null!;
-    public IEnumerable<Transaction> Transactions => _transactions;
-
     private TransactionType(int id, string code, string name) : base(id, code, name) { }
 
     private TransactionType() { }

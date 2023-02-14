@@ -10,6 +10,6 @@ namespace Domain.ProfileAggregate;
 public class Profile : TimestampedEntity {
     public int UserId { get; private set; }
 
-    ICollection<Transaction> _transactions = null!;
-    public IEnumerable<Transaction> Transactions => _transactions;
+    HashSet<Transaction> _transactions = null!;
+    public IReadOnlyCollection<Transaction> Transactions => _transactions;
 }
