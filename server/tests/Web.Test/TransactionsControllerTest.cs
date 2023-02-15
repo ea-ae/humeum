@@ -49,13 +49,18 @@ public class TransactionsControllerTest {
 
         var response = await client.PostAsync("users/1/profiles?name=Default", null);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        Assert.NotNull(response.Headers.Location);
+        int profileOneId = int.Parse(response.Headers.Location.ToString().Split("/").Last());
+
         response = await client.PostAsync("users/1/profiles?name=Conservative&withdrawalRate=3.15", null);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        Assert.NotNull(response.Headers.Location);
+        int profileTwoId = int.Parse(response.Headers.Location.ToString().Split("/").Last());
 
         // create 3 transactions per profile
 
         const int transactionsPerProfile = 3;
-        for (int profileId = 1; profileId <= 2; profileId++) {
+        foreach (int profileId in new[] { profileOneId, profileTwoId }) {
             for (int i = 0; i < transactionsPerProfile; i++) {
                 response = await client.PostAsync($"users/1/profiles/{profileId}/transactions?{transactionQuery}", null);
                 Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -69,16 +74,20 @@ public class TransactionsControllerTest {
 
         // confirm that soft deletion was applied correctly
 
-        bool profileOneDeleted = context.Profiles.Any(p => p.Id == 1 && p.DeletedAt != null);
-        bool profileTwoDeleted = context.Profiles.Any(p => p.Id == 2 && p.DeletedAt != null);
+        bool profileOneDeleted = context.Profiles.Any(p => p.Id == profileOneId && p.DeletedAt != null);
+        bool profileTwoDeleted = context.Profiles.Any(p => p.Id == profileTwoId && p.DeletedAt != null);
 
         Assert.False(profileOneDeleted);
         Assert.True(profileTwoDeleted);
 
-        int profileOneTransactions = context.Transactions.AsNoTracking().Where(t => t.ProfileId == 1 && t.DeletedAt != null).Count();
-        int profileTwoTransactions = context.Transactions.AsNoTracking().Where(t => t.ProfileId == 2 && t.DeletedAt != null).Count();
+        int profileOneTransactionsDeleted = context.Transactions.AsNoTracking()
+                                                                .Where(t => t.ProfileId == profileOneId && t.DeletedAt != null)
+                                                                .Count();
+        int profileTwoTransactionsDeleted = context.Transactions.AsNoTracking()
+                                                                .Where(t => t.ProfileId == profileTwoId && t.DeletedAt != null)
+                                                                .Count();
 
-        Assert.Equal(0, profileOneTransactions);
-        Assert.Equal(transactionsPerProfile, profileTwoTransactions);
+        Assert.Equal(0, profileOneTransactionsDeleted);
+        Assert.Equal(transactionsPerProfile, profileTwoTransactionsDeleted);
     }
 }

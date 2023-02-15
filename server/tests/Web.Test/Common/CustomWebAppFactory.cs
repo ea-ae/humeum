@@ -32,9 +32,6 @@ public class CustomWebAppFactory : WebApplicationFactory<Program> {
 
     protected override void ConfigureWebHost(IWebHostBuilder builder) {
         builder.ConfigureTestServices(services => {
-            services.RemoveAll<IAppDbContext>();
-            services.RemoveAll<ApplicationDbContext>();
-            services.RemoveAll<DbConnection>();
 
             var dbContextDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
             if (dbContextDescriptor is not null) {
