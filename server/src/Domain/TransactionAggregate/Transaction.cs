@@ -16,16 +16,7 @@ public class Transaction : TimestampedEntity {
 
     public string? Description { get; private set; }
 
-    decimal _amount; // value object? encapsulate in constructor or nah?
-    public decimal Amount {
-        get => _amount;
-        private set {
-            if (value <= 0) {
-                throw new ArgumentException("Amount must be greater than zero.");
-            }
-            _amount = value;
-        }
-    }
+    public decimal Amount { get; private set; }
 
     public Timeline PaymentTimeline { get; private set; } = null!;
 

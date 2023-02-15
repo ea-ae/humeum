@@ -7,16 +7,9 @@ namespace Domain.Test.TransactionAggregate;
 
 public class TransactionTest {
     [Fact]
-    public void TransactionConstructor_NegativeAmount_ThrowsDomainException() {
-        var timeline = new Timeline(new TimePeriod(new DateOnly(2023, 1, 1)));
-
-        Assert.Throws<ArgumentException>(() => new Transaction(1, null, null, -1, TransactionType.Always, timeline));
-    }
-
-    [Fact]
     public void TotalTransactionCount_InstantEnd_ReturnsOne() {
         var timePeriod = new Timeline(new TimePeriod(new DateOnly(2022, 1, 1)));
-        var transaction = new Transaction(1, null, null, 1, TransactionType.RetirementOnly, timePeriod);
+        var transaction = new Transaction(1, null, null, -1, TransactionType.RetirementOnly, timePeriod);
 
         int expected = 1;
 
