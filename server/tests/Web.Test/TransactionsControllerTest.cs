@@ -22,9 +22,16 @@ public class TransactionsControllerTest {
         _webapp = webapp;
     }
 
-    [Fact]
-    public async Task AddAction_MissingQueryData_ReturnsBadRequest() {
-        const string url = "users/1/profiles/1/transactions?amount=5&type=RETIREMENTONLY";
+    [Theory]
+    [InlineData("amount=5&type=RETIREMENTONLY")]
+    [InlineData("amount=5&paymentStart=2023-01-01")]
+    [InlineData("amount=5&paymentStart=2022")]
+    [InlineData("amount=5&type=ALWAYS")]
+    [InlineData("amount=5&type=ALWAYS&paymentStart=2023-01-01&paymentEnd=2024-01-01")]
+    [InlineData("amount=5&type=ALWAYS&paymentStart=2023-01-01&timeUnit=DAYS")]
+    [InlineData("amount=5&type=ALWAYS&paymentStart=2023-01-01&timeUnit=DAYS&timesPerCycle=1&unitsInCycle=1")]
+    public async Task AddAction_MissingQueryData_ReturnsBadRequest(string query) {
+        string url = $"users/1/profiles/1/transactions?{query}";
         var client = _webapp.ConfiguredClient;
 
         var expected = HttpStatusCode.BadRequest;
