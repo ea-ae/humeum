@@ -10,6 +10,7 @@ using Web.Filters;
 namespace Web.Controllers;
 
 [Route("api/v1/users/{user}/profiles/{profile}/[controller]")]
+[ValidationExceptionFilter]
 [CsrfXHeaderFilter]
 [ApiController]
 public class TransactionsController : ControllerBase {
