@@ -42,7 +42,7 @@ public class TransactionsControllerTest {
 
         using var scope = _webapp.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
-        await context.Database.EnsureDeletedAsync();
+        //await context.Database.EnsureDeletedAsync();
         await context.Database.EnsureCreatedAsync();
 
         // create 2 profiles

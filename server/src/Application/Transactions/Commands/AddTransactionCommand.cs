@@ -19,7 +19,7 @@ public record AddTransactionCommand : ICommand<int> {
 
     public string? Name { get; init; }
     public string? Description { get; init; }
-    [Required] public int? Amount { get; init; }
+    [Required] public decimal? Amount { get; init; }
     public required string Type { get; init; }
     [Required] public DateOnly? PaymentStart { get; init; }
 
@@ -34,7 +34,7 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
 
     public AddTransactionCommandHandler(IAppDbContext context) => _context = context;
 
-    public async Task<int> Handle(AddTransactionCommand request, CancellationToken token) {
+    public async Task<int> Handle(AddTransactionCommand request, CancellationToken token = default) {
         // validation
 
         List<object?> recurringTransactionFields = new() { // fields required for recurrent transactions
