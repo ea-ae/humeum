@@ -4,8 +4,20 @@ namespace Web.Controllers;
 
 [Route("api/v1/[controller]")]
 public class AdminController : ControllerBase {
+    [HttpGet("authorization")]
+    public string GetAuthorizationHeader() {
+        var authorization = Request.Headers.Authorization.ToString();
+        return authorization;
+    }
+
+    [HttpGet("is-authenticated")]
+    public string GetAuthenticationStatus() {
+        var isAuthed = User.Identity?.IsAuthenticated ?? false;
+        return isAuthed.ToString();
+    }
+
     [HttpGet("claims")]
-    public string GetClaims() {
+    public string GetClaimCount() {
         var authorization = Request.Headers.Authorization.ToString();
         var userClaims = User.Claims.Count();
         var firstIdentityClaims = User.Identities.First().Claims.Count();
