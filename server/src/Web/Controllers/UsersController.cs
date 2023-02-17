@@ -25,7 +25,7 @@ public class UsersController : ControllerBase {
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterUserCommand command) {
         int id = await _mediator.Send(command);
-        return CreatedAtAction(nameof(Get), new { id }, null);
+        return CreatedAtAction(nameof(Get), new { User = id }, null);
     }
 
     [HttpPost("sign-in")]

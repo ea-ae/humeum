@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers;
 
@@ -16,6 +18,7 @@ public class AdminController : ControllerBase {
         return isAuthed.ToString();
     }
 
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet("claims")]
     public string GetClaimCount() {
         var authorization = Request.Headers.Authorization.ToString();

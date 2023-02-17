@@ -1,4 +1,7 @@
-﻿using Application.Common.Interfaces;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+
+using Application.Common.Interfaces;
 
 using Infrastructure.Common.Settings;
 using Infrastructure.Models;
@@ -9,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -27,36 +31,37 @@ public static class ConfigureServices {
         var jwtSettings = jwtSettingsSection.Get<JwtSettings>()!;
         services.Configure<JwtSettings>(jwtSettingsSection);
 
-        // JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+        JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         services
             .AddAuthentication(o => {
                 o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; // simplify (NET 7 feature)
                 o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // remove
                 o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // remove
             })
-            //.AddCookie(o => { o.ExpireTimeSpan = TimeSpan.FromMinutes(180); o.SlidingExpiration = true; })
+            //.AddAuthentication()
+            //.AddCookie(o => { /*o.ExpireTimeSpan = TimeSpan.FromMinutes(180); */o.SlidingExpiration = true; })
             .AddJwtBearer(o => {
                 o.RequireHttpsMetadata = false;
                 o.SaveToken = true;
                 o.TokenValidationParameters = new() {
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateIssuerSigningKey = false,
-                    ValidateLifetime = false,
-                    ValidateTokenReplay = false,
+                    //ValidateIssuer = false,
+                    //ValidateAudience = false,
+                    //ValidateIssuerSigningKey = false,
+                    //ValidateLifetime = false,
+                    //ValidateTokenReplay = false,
 
-                    //ValidIssuer = jwtSettings.Issuer,
-                    //ValidAudience = jwtSettings.Issuer,
-                    //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Issuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
 
                     ClockSkew = TimeSpan.Zero,
                 };
-                o.Events.OnMessageReceived = (context) => {
-                    if (context.Request.Cookies.TryGetValue(jwtSettings.Cookie, out string? cookie)) {
-                        context.Token = cookie;
-                    }
-                    return Task.CompletedTask;
-                };
+                //o.Events.OnMessageReceived = (context) => {
+                //    if (context.Request.Cookies.TryGetValue(jwtSettings.Cookie, out string? cookie)) {
+                //        context.Token = cookie;
+                //    }
+                //    return Task.CompletedTask;
+                //};
             });
 
         //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();

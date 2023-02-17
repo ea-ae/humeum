@@ -3,6 +3,7 @@ using Application.Transactions.Queries.GetUserTransactions;
 
 using MediatR;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using Web.Filters;
@@ -29,6 +30,7 @@ public class TransactionsController : ControllerBase {
         return StatusCode(StatusCodes.Status503ServiceUnavailable);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Add(int user, AddTransactionCommand command) {
         int id = await _mediator.Send(command);
