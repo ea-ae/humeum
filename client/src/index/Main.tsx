@@ -1,15 +1,7 @@
-import * as React from 'react';
-import * as Mui from '@mui/material';
-
-import Navigation from './Navigation';
-
+import Welcome from './home/Welcome';
 
 const Main = () => {
-    return (
-        <div className="flex flex-row flex-grow bg-stone-50">
-            <Navigation />
-        </div>
-    )
+    return <Welcome username="admin" savedUp={42_350} haveToSave={4650} retireInYears={23} />;
 }
 
 export default Main;

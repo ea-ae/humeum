@@ -15,7 +15,9 @@ const staticPages = staticFilenames.map(name => {
 
 module.exports = {
     entry: {
-        index: './src/index/index.tsx',
+        index: {
+            import: './src/index/index.tsx',
+        },
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
@@ -25,8 +27,8 @@ module.exports = {
             template: 'src/index/index.html',
             filename: 'index.html',
             chunks: ['index'],
-        }),]
-        .concat(staticPages),
+        }),
+    ].concat(staticPages),
     module: { rules: [
         {
             test: /\.(jsx?|tsx?)$/,
@@ -56,5 +58,10 @@ module.exports = {
                 'postcss-loader'
             ],
         },
-    ]},  
+    ]},
+    optimization: {
+        splitChunks: {
+            chunks: 'all',
+        }
+    },
 };

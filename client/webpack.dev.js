@@ -28,10 +28,10 @@ module.exports = merge(common, {
         watchFiles: {paths: ['./src/**/*']},
         historyApiFallback: {
             index: '/',
-            rewrites: [
-                { from: /^\/app/, to: '/app.html' },
-                { from: /./, to: '/404.html' },
-            ],
+            // rewrites: [
+            //     { from: /^\/app/, to: '/app.html' },
+            //     { from: /./, to: '/404.html' },
+            // ],
         },
         proxy: {
             '/api': {

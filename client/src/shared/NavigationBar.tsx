@@ -5,7 +5,7 @@ import { Box, Tabs, Tab } from '@mui/material';
 
 const NavigationBar = () => {
     return (
-        <div className="flex flex-row justify-between drop-shadow-md py-4 px-10 text-lg text-stone-50 bg-primary-300">
+        <div className="flex flex-row justify-between drop-shadow-md py-4 px-10 text-lg text-stone-50 bg-primary-400">
             <span className="font-semibold">
                 Humeum
             </span>

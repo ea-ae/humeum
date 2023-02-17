@@ -1,6 +1,6 @@
 ############ custom
 
-# ignores here
+dist/
 
 ############# node
 

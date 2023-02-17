@@ -1,10 +1,12 @@
-import React from 'react';
+import * as React from 'react';
+import * as ReactRouter from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import * as Mui from '@mui/material';
 
-import NavigationBar from './NavigationBar';
-import Main from './Main';
+import Layout from '../shared/Layout';
 import './index.css';
+import Welcome from './home/Welcome';
+import TransactionList from './transactions/TransactionList';
 
 const theme = Mui.createTheme({
     components: {
@@ -16,12 +18,22 @@ const theme = Mui.createTheme({
     }
 });
 
+const router = ReactRouter.createBrowserRouter([
+    {
+        path: '/',
+        element: <Welcome username="admin" savedUp={42_350} haveToSave={4650} retireInYears={23} />,
+    },
+    {
+        path: '/transactions',
+        element: <TransactionList />,
+    },
+]);
+
 ReactDOM.render(
     <Mui.ThemeProvider theme={theme}>
-        <div className="h-screen flex flex-col bg-stone-50">
-            <NavigationBar />
-            <Main />
-        </div>
+        <Layout sidebar={true}>
+            <ReactRouter.RouterProvider router={router} />
+        </Layout>
     </Mui.ThemeProvider>,
     document.getElementById('app')
 );
