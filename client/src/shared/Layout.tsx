@@ -9,7 +9,7 @@ interface Props {
 
 function Layout({ children, sidebar }: Props) {
   return (
-    <div className="h-screen flex flex-col flex-grow bg-stone-50 bg-opacity-20">
+    <div className="h-screen flex flex-col flex-grow bg-stone-100 bg-opacity-20">
       <NavigationBar />
       <div className="flex-grow flex flex-row">
         {sidebar === undefined ? null : sidebar}

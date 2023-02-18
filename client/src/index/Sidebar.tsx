@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import SidebarTab from './SidebarTab';
 
 interface Props {
