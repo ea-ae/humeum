@@ -3,7 +3,7 @@ import * as ReactRouter from 'react-router-dom';
 import * as Mui from '@mui/material';
 
 
-const Navigation = () => {
+const Sidebar = () => {
     const [navSelection, setNavSelection] = React.useState(0);
 
     const handleNavigationChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -13,7 +13,6 @@ const Navigation = () => {
     return (
         <Mui.Box className="shadow-inner bg-secondary-400">
             <Mui.Tabs TabIndicatorProps={{className: 'w-0'}}
-                      
                       value={navSelection} 
                       onChange={handleNavigationChange} 
                       orientation="vertical"
@@ -44,4 +43,4 @@ const Navigation = () => {
     );
 };
 
-export default Navigation;
+export default Sidebar;

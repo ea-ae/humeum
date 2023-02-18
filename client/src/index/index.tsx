@@ -5,8 +5,11 @@ import * as Mui from '@mui/material';
 
 import Layout from '../shared/Layout';
 import './index.css';
-import Welcome from './home/Welcome';
+import HomeIndex from './home/HomeIndex';
+
 import TransactionList from './transactions/TransactionList';
+import Sidebar from './Sidebar';
+
 
 const theme = Mui.createTheme({
     components: {
@@ -21,7 +24,7 @@ const theme = Mui.createTheme({
 const router = ReactRouter.createBrowserRouter([
     {
         path: '/',
-        element: <Welcome username="admin" savedUp={42_350} haveToSave={4650} retireInYears={23} />,
+        element: <HomeIndex username="admin" savedUp={42_350} haveToSave={4650} retireInYears={23} />,
     },
     {
         path: '/transactions',
@@ -30,10 +33,12 @@ const router = ReactRouter.createBrowserRouter([
 ]);
 
 ReactDOM.render(
-    <Mui.ThemeProvider theme={theme}>
-        <Layout sidebar={true}>
-            <ReactRouter.RouterProvider router={router} />
-        </Layout>
-    </Mui.ThemeProvider>,
+    <React.StrictMode>
+        <Mui.ThemeProvider theme={theme}>
+            <Layout sidebar={<Sidebar />}>
+                <ReactRouter.RouterProvider router={router} />
+            </Layout>
+        </Mui.ThemeProvider>
+    </React.StrictMode>,
     document.getElementById('app')
 );
