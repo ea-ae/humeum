@@ -2,6 +2,8 @@ import * as Mui from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import * as React from 'react';
 
+import AddItemDial from '../AddItemDial';
+
 function TransactionsIndex() {
   const [pageSize, setPageSize] = React.useState<number>(10);
 
@@ -71,18 +73,21 @@ function TransactionsIndex() {
   ];
 
   return (
-    <DataGrid
-      rows={transactions}
-      columns={columns}
-      pageSize={pageSize}
-      rowsPerPageOptions={[5, 10, 25, 50]}
-      onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-      checkboxSelection
-      disableSelectionOnClick
-      experimentalFeatures={{ newEditingApi: true }}
-      classes={{ cell: 'outline-none', columnHeader: 'outline-none' }}
-      className="min-w-fit"
-    />
+    <>
+      <DataGrid
+        rows={transactions}
+        columns={columns}
+        pageSize={pageSize}
+        rowsPerPageOptions={[5, 10, 25, 50]}
+        onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+        checkboxSelection
+        disableSelectionOnClick
+        experimentalFeatures={{ newEditingApi: true }}
+        classes={{ cell: 'outline-none', columnHeader: 'outline-none' }}
+        className="min-w-fit"
+      />
+      <AddItemDial />
+    </>
   );
 }
 

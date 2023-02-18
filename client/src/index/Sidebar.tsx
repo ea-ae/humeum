@@ -12,7 +12,7 @@ interface Props {
 
 function Sidebar({ activeTabLabel }: Props) {
   return (
-    <div className="min-w-max shadow-inner bg-secondary-400">
+    <div className="min-w-fit shadow-inner bg-secondary-400">
       <SidebarTab label="Home" activeLabel={activeTabLabel} icon={<HomeWorkOutlinedIcon />} path="/" />
       <SidebarTab
         label="Transactions"
