@@ -13,7 +13,7 @@ function Layout({ children, sidebar }: Props) {
       <NavigationBar />
       <div className="flex-grow flex flex-row">
         {sidebar === undefined ? null : sidebar}
-        <div className="flex-grow px-12 py-8">{children}</div>
+        <div className="overflow-x-hidden flex-grow px-12 py-8">{children}</div>
       </div>
     </div>
   );

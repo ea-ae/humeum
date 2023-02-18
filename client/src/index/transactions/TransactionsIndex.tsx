@@ -81,6 +81,7 @@ function TransactionsIndex() {
       disableSelectionOnClick
       experimentalFeatures={{ newEditingApi: true }}
       classes={{ cell: 'outline-none', columnHeader: 'outline-none' }}
+      className="min-w-fit"
     />
   );
 }
