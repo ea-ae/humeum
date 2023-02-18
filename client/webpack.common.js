@@ -1,7 +1,7 @@
+/* eslint-disable */
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
-
 
 const staticFilenames = ['404'];
 const staticPages = staticFilenames.map(name => {
@@ -11,7 +11,6 @@ const staticPages = staticFilenames.map(name => {
       chunks: ['static'],
     })
 });
-
 
 module.exports = {
     entry: {
@@ -37,8 +36,8 @@ module.exports = {
                 options: {
                     presets: [
                         '@babel/preset-env',
-                        '@babel/preset-react',
-                        '@babel/preset-typescript'
+                        ['@babel/preset-react', { runtime: 'automatic' }],
+                        '@babel/preset-typescript',
                     ],
                 },
             },],
@@ -52,16 +51,16 @@ module.exports = {
                 'style-loader',
                 {
                     loader: MiniCssExtractPlugin.loader,
-                    options: { esModule: false }
+                    options: { esModule: false },
                 },
                 'css-loader',
-                'postcss-loader'
+                'postcss-loader',
             ],
         },
     ]},
     optimization: {
         splitChunks: {
             chunks: 'all',
-        }
+        },
     },
 };

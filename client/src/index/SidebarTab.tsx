@@ -1,4 +1,3 @@
-import * as React from 'react';
 import * as Router from 'react-router-dom';
 
 interface Props {
@@ -12,7 +11,7 @@ function SidebarTab({ label, path, activeLabel }: Props) {
 
   return (
     <Router.Link to={path}>
-      <div className={`px-7 text-gray-100 hover:text-white ${extraClasses}`}>{label}</div>
+      <div className={`px-7 py-3 text-gray-100 hover:text-white ${extraClasses}`}>{label.toUpperCase()}</div>
     </Router.Link>
   );
 }

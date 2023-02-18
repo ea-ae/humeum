@@ -1,6 +1,3 @@
-import * as React from 'react';
-import * as Router from 'react-router-dom';
-
 interface Props {
   username: string;
   savedUp: number;
@@ -23,7 +20,6 @@ function HomeIndex({ username, savedUp, haveToSave, retireInYears }: Props) {
       <h2 className="mb-4 text-2xl">
         At this pace, you will retire in <b>{retireInYears}</b> years
       </h2>
-      <Router.Link to="/transactions">Go here</Router.Link>
     </div>
   );
 }
