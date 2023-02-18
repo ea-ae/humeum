@@ -3,21 +3,17 @@ import * as React from 'react';
 import SidebarTab from './SidebarTab';
 
 interface Props {
-  activeTab: number;
+  activeTabLabel: string;
 }
 
-function Sidebar({ activeTab }: Props) {
+function Sidebar({ activeTabLabel }: Props) {
   return (
     <div className="shadow-inner bg-secondary-400">
-      <SidebarTab label="Home" path="/" active={activeTab === 0} />
-      <SidebarTab
-        label="Transactions"
-        path="/transactions"
-        active={activeTab === 1}
-      />
-      <SidebarTab label="Assets" path="/assets" active={activeTab === 2} />
-      <SidebarTab label="Taxes" path="/taxes" active={activeTab === 3} />
-      <SidebarTab label="Settings" path="/settings" active={activeTab === 4} />
+      <SidebarTab label="Home" activeLabel={activeTabLabel} path="/" />
+      <SidebarTab label="Transactions" activeLabel={activeTabLabel} path="/transactions" />
+      <SidebarTab label="Assets" activeLabel={activeTabLabel} path="/assets" />
+      <SidebarTab label="Taxes" activeLabel={activeTabLabel} path="/taxes" />
+      <SidebarTab label="Settings" activeLabel={activeTabLabel} path="/settings" />
     </div>
   );
 

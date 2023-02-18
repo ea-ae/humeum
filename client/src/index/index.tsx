@@ -2,13 +2,13 @@ import './index.css';
 
 import * as Mui from '@mui/material';
 import * as React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import * as ReactRouter from 'react-router-dom';
 
 import Layout from '../shared/Layout';
 import HomeIndex from './home/HomeIndex';
 import Sidebar from './Sidebar';
-import TransactionList from './transactions/TransactionList';
+import TransactionsIndex from './transactions/TransactionsIndex';
 
 const theme = Mui.createTheme({
   components: {
@@ -24,27 +24,29 @@ const router = ReactRouter.createBrowserRouter([
   {
     path: '/',
     element: (
-      <HomeIndex
-        username="admin"
-        savedUp={42_350}
-        haveToSave={4650}
-        retireInYears={23}
-      />
+      <Layout sidebar={<Sidebar activeTabLabel="home" />}>
+        <HomeIndex username="admin" savedUp={42_350} haveToSave={4650} retireInYears={23} />
+      </Layout>
     ),
   },
   {
     path: '/transactions',
-    element: <TransactionList />,
+    element: (
+      <Layout sidebar={<Sidebar activeTabLabel="transactions" />}>
+        <TransactionsIndex />
+      </Layout>
+    ),
   },
 ]);
 
-ReactDOM.render(
+const container = document.getElementById('app');
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const root = ReactDOM.createRoot(container!);
+
+root.render(
   <React.StrictMode>
     <Mui.ThemeProvider theme={theme}>
-      <Layout sidebar={<Sidebar activeTab={0} />}>
-        <ReactRouter.RouterProvider router={router} />
-      </Layout>
+      <ReactRouter.RouterProvider router={router} />
     </Mui.ThemeProvider>
-  </React.StrictMode>,
-  document.getElementById('app')
+  </React.StrictMode>
 );

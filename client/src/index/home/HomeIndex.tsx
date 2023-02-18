@@ -10,7 +10,7 @@ interface Props {
 
 function HomeIndex({ username, savedUp, haveToSave, retireInYears }: Props) {
   return (
-    <div className="">
+    <div>
       <h1 className="mb-8 text-4xl">
         Welcome back, <b>{username}</b>
       </h1>
