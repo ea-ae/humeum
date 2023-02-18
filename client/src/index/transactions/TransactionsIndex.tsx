@@ -5,6 +5,11 @@ import * as React from 'react';
 function TransactionsIndex() {
   const [pageSize, setPageSize] = React.useState<number>(10);
 
+  const editTransaction = (id: number) => {
+    // eslint-disable-next-line no-console
+    console.log(`Editing transaction with id ${id}`);
+  };
+
   const columns: GridColDef[] = [
     { field: 'name', headerName: 'Name', flex: 2, minWidth: 180, editable: true },
     {
@@ -31,8 +36,13 @@ function TransactionsIndex() {
       field: 'editAction',
       headerName: 'Edit',
       renderCell: (params) => (
-        // eslint-disable-next-line no-console
-        <Mui.Button variant="text" onClick={() => console.log('Edit!')}>
+        <Mui.Button
+          variant="text"
+          onClick={(e) => {
+            e.stopPropagation();
+            editTransaction(params.row.id as number);
+          }}
+        >
           Edit
         </Mui.Button>
       ),

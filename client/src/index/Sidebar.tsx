@@ -1,3 +1,9 @@
+import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
+import HomeWorkOutlinedIcon from '@mui/icons-material/HomeWorkOutlined';
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
+import SavingsOutlinedIcon from '@mui/icons-material/SavingsOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+
 import SidebarTab from './SidebarTab';
 
 interface Props {
@@ -7,11 +13,16 @@ interface Props {
 function Sidebar({ activeTabLabel }: Props) {
   return (
     <div className="shadow-inner bg-secondary-400">
-      <SidebarTab label="Home" activeLabel={activeTabLabel} path="/" />
-      <SidebarTab label="Transactions" activeLabel={activeTabLabel} path="/transactions" />
-      <SidebarTab label="Assets" activeLabel={activeTabLabel} path="/assets" />
-      <SidebarTab label="Taxes" activeLabel={activeTabLabel} path="/taxes" />
-      <SidebarTab label="Settings" activeLabel={activeTabLabel} path="/settings" />
+      <SidebarTab label="Home" activeLabel={activeTabLabel} icon={<HomeWorkOutlinedIcon />} path="/" />
+      <SidebarTab
+        label="Transactions"
+        activeLabel={activeTabLabel}
+        icon={<ReceiptLongOutlinedIcon />}
+        path="/transactions"
+      />
+      <SidebarTab label="Assets" activeLabel={activeTabLabel} icon={<SavingsOutlinedIcon />} path="/assets" />
+      <SidebarTab label="Taxes" activeLabel={activeTabLabel} icon={<AccountBalanceOutlinedIcon />} path="/taxes" />
+      <SidebarTab label="Settings" activeLabel={activeTabLabel} icon={<SettingsOutlinedIcon />} path="/settings" />
     </div>
   );
 
