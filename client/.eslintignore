@@ -1,3 +1,4 @@
+.eslintrc.js
 webpack.*.js
 *.config.js
 dist/
