@@ -1,4 +1,5 @@
 import CardList from '../../shared/cards/CardList';
+import NewItemCard from '../../shared/cards/NewItemCard';
 import AssetCard from './AssetCard';
 import NewAssetCard from './NewAssetCard';
 
@@ -40,7 +41,7 @@ function AssetList() {
         returnRate={1}
         standardDeviation={1}
       />
-      <NewAssetCard />
+      <NewItemCard text="Create custom asset" />
     </CardList>
   );
 }

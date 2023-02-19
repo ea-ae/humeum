@@ -3,11 +3,12 @@ import * as React from 'react';
 
 interface Props {
   label: string;
+  tooltip?: string;
   defaultValue: string;
   disabled?: boolean;
 }
 
-function PercentageInput({ label, defaultValue, disabled }: Props) {
+function PercentageInput({ label, tooltip, defaultValue, disabled }: Props) {
   const typePattern = /^[0-9]{0,3}($|[,.][0-9]{0,2}$)/;
   const validPattern = /^[0-9]+($|[,.][0-9]{1,2})$/;
 
@@ -23,21 +24,24 @@ function PercentageInput({ label, defaultValue, disabled }: Props) {
   };
 
   return (
-    <Mui.TextField
-      disabled={disabled}
-      className="flex-grow my-4 mr-8"
-      id="return"
-      label={label}
-      variant="standard"
-      value={value}
-      onChange={(e) => validate(e)}
-      InputProps={{ endAdornment: <Mui.InputAdornment position="end">%</Mui.InputAdornment> }}
-      InputLabelProps={{ className: isValid ? '' : 'text-red-600 border-red-500' }}
-    />
+    <Mui.Tooltip title={tooltip} placement="top">
+      <Mui.TextField
+        disabled={disabled}
+        className="flex-grow my-4 mr-8"
+        id="return"
+        label={label}
+        variant="standard"
+        value={value}
+        onChange={(e) => validate(e)}
+        InputProps={{ endAdornment: <Mui.InputAdornment position="end">%</Mui.InputAdornment> }}
+        InputLabelProps={{ className: isValid ? '' : 'text-red-600 border-red-500' }}
+      />
+    </Mui.Tooltip>
   );
 }
 
 PercentageInput.defaultProps = {
+  tooltip: '',
   disabled: false,
 };
 
