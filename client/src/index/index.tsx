@@ -9,6 +9,7 @@ import Layout from '../shared/Layout';
 import AddItemDial from './AddItemDial';
 import AssetsIndex from './assets/AssetsIndex';
 import HomeIndex from './home/HomeIndex';
+import SettingsIndex from './settings/SettingsIndex';
 import Sidebar from './Sidebar';
 import TaxesIndex from './taxes/TaxesIndex';
 import TransactionsIndex from './transactions/TransactionsIndex';
@@ -56,6 +57,15 @@ const router = ReactRouter.createBrowserRouter([
     element: (
       <Layout sidebar={<Sidebar activeTabLabel="taxes" />}>
         <TaxesIndex />
+        <AddItemDial />
+      </Layout>
+    ),
+  },
+  {
+    path: 'settings',
+    element: (
+      <Layout sidebar={<Sidebar activeTabLabel="settings" />}>
+        <SettingsIndex />
         <AddItemDial />
       </Layout>
     ),

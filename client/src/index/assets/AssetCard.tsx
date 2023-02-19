@@ -26,7 +26,7 @@ function AssetCard({ name, description, returnRate, standardDeviation, readOnly 
         <PercentageInput
           disabled={readOnly}
           label="Standard deviation"
-          tooltip="Measures the volatility of the asset; how many % the return deviates from the annual mean."
+          tooltip="Measures the volatility of the asset; how much the return deviates from the annual mean on average."
           defaultValue={standardDeviation.toString()}
         />
       </div>

@@ -5,14 +5,14 @@ function AssetList() {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
       <AssetCard
-        name="Index fund"
+        name="Index fund (default)"
         description="Index funds track the performance of a particular market index; great diversification, low fees, and easy management."
         returnRate={8.1}
         standardDeviation={15.2}
         readOnly
       />
       <AssetCard
-        name="Bond fund"
+        name="Bond fund (default)"
         description="Bonds funds provide great diversification potential and are generally less volatile than other securities (depending on bond type)."
         returnRate={1.9}
         standardDeviation={3}

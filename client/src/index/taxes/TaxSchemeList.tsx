@@ -15,7 +15,10 @@ function TaxSchemeList() {
       />
       <TaxSchemeCard
         name="III pillar, post-2021"
-        description="Asset income invested through III pillar, with an account opened in 2021 or later."
+        description={
+          'Asset income invested through III pillar, with an account opened in 2021 or later. ' +
+          'Term pensions based on life expectancy, not included here, provide a 20% discount.'
+        }
         taxRate={20}
         discount={10}
         discountAge={60}
@@ -25,7 +28,10 @@ function TaxSchemeList() {
       />
       <TaxSchemeCard
         name="III pillar, pre-2021"
-        description="Asset income invested through III pillar, with an account opened before 2021."
+        description={
+          'Asset income invested through III pillar, with an account opened before 2021. ' +
+          'Term pensions based on life expectancy, not included here, provide a 20% discount.'
+        }
         taxRate={20}
         discount={10}
         discountAge={55}

@@ -2,6 +2,7 @@ import * as Mui from '@mui/material';
 
 import Card from '../../shared/cards/Card';
 import CurrencyInput from '../../shared/cards/CurrencyInput';
+import Input from '../../shared/cards/Input';
 import PercentageInput from '../../shared/cards/PercentageInput';
 
 interface Props {
@@ -35,32 +36,34 @@ function TaxSchemeCard(props: Props) {
           tooltip="Income tax refund rate for investments."
           defaultValue={discount.toString()}
         />
-        <PercentageInput
+        <Input
           disabled={readOnly}
           label="Refund age"
           tooltip="Age at which the discount becomes applicable. Set to 0 in case there are no age requirements."
           defaultValue={discountAge.toString()}
+          typePattern={/[0-9]{0,2}/}
+          validPattern={/[0-9]{1,2}/}
         />
         <PercentageInput
           disabled={readOnly}
-          label="Refund max income"
+          label="Refund max income percentage"
           tooltip="Maximum percentage of income that is discountable. Set to 100% in case there are no income-based limits."
           defaultValue={maxIncomePercent.toString()}
         />
         <CurrencyInput
           disabled={readOnly}
-          label="Refund max income"
+          label="Annual max income sum"
           tooltip="Maximum annual income sum that is discountable. Set to 0 if there is no maximum sum."
           defaultValue={maxIncome.toString()}
         />
-        <Mui.ButtonGroup className="self-center my-4" variant="text">
+        {/* <Mui.ButtonGroup className="self-center my-4" variant="text">
           <Mui.Button disabled={readOnly} className="border-0">
             Save
           </Mui.Button>
           <Mui.Button disabled={readOnly} className={`border-0 ${readOnly ? '' : 'text-red-700 hover:bg-red-50'}`}>
             Delete
           </Mui.Button>
-        </Mui.ButtonGroup>
+        </Mui.ButtonGroup> */}
       </div>
     </Card>
   );
