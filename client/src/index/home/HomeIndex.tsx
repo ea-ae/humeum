@@ -1,4 +1,4 @@
-import * as Mui from '@mui/material';
+import Card from '../../shared/cards/Card';
 
 interface Props {
   username: string;
@@ -9,7 +9,7 @@ interface Props {
 
 function HomeIndex({ username, savedUp, haveToSave, retireInYears }: Props) {
   return (
-    <div className="card inline-block px-8 py-4">
+    <Card className="max-w-fit">
       <h1 className="mb-4 text-xl">
         Welcome back, <b>{username}</b>
       </h1>
@@ -22,7 +22,7 @@ function HomeIndex({ username, savedUp, haveToSave, retireInYears }: Props) {
       <h2 className="mb-1">
         At this pace, you will retire in <b>{retireInYears}</b> years
       </h2>
-    </div>
+    </Card>
   );
 }
 

@@ -6,11 +6,12 @@ import ReactDOM from 'react-dom/client';
 import * as ReactRouter from 'react-router-dom';
 
 import Layout from '../shared/Layout';
+import AddItemDial from './AddItemDial';
+import AssetsIndex from './assets/AssetsIndex';
 import HomeIndex from './home/HomeIndex';
 import Sidebar from './Sidebar';
+import TaxesIndex from './taxes/TaxesIndex';
 import TransactionsIndex from './transactions/TransactionsIndex';
-import AssetsIndex from './assets/AssetsIndex';
-import AddItemDial from './AddItemDial';
 
 const theme = Mui.createTheme({
   components: {
@@ -48,8 +49,17 @@ const router = ReactRouter.createBrowserRouter([
         <AssetsIndex />
         <AddItemDial />
       </Layout>
-    )
-  }
+    ),
+  },
+  {
+    path: '/taxes',
+    element: (
+      <Layout sidebar={<Sidebar activeTabLabel="taxes" />}>
+        <TaxesIndex />
+        <AddItemDial />
+      </Layout>
+    ),
+  },
 ]);
 
 const container = document.getElementById('app');

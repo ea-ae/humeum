@@ -1,11 +1,9 @@
-import CardList from '../../shared/cards/CardList';
 import NewItemCard from '../../shared/cards/NewItemCard';
 import AssetCard from './AssetCard';
-import NewAssetCard from './NewAssetCard';
 
 function AssetList() {
   return (
-    <CardList>
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
       <AssetCard
         name="Index fund"
         description="Index funds track the performance of a particular market index; great diversification, low fees, and easy management."
@@ -42,7 +40,7 @@ function AssetList() {
         standardDeviation={1}
       />
       <NewItemCard text="Create custom asset" />
-    </CardList>
+    </div>
   );
 }
 
