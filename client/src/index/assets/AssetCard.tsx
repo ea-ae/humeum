@@ -1,6 +1,7 @@
 import * as Mui from '@mui/material';
 
-import AssetPercentageInput from './AssetPercentageInput';
+import Card from '../../shared/cards/Card';
+import PercentageInput from '../../shared/cards/PercentageInput';
 
 interface Props {
   name: string;
@@ -12,16 +13,12 @@ interface Props {
 
 function AssetCard({ name, description, returnRate, standardDeviation, readOnly }: Props) {
   return (
-    <div className="flex flex-col card px-8 py-4">
+    <Card>
       <h1 className="font-semibold">{name}</h1>
       <p className="flex-grow pt-2 text-sm break-words">{description}</p>
       <div className="flex flex-row">
-        <AssetPercentageInput disabled={readOnly} label="Real return" defaultValue={returnRate.toString()} />
-        <AssetPercentageInput
-          disabled={readOnly}
-          label="Standard deviation"
-          defaultValue={standardDeviation.toString()}
-        />
+        <PercentageInput disabled={readOnly} label="Real return" defaultValue={returnRate.toString()} />
+        <PercentageInput disabled={readOnly} label="Standard deviation" defaultValue={standardDeviation.toString()} />
       </div>
 
       <Mui.ButtonGroup className="self-end" variant="text">
@@ -32,7 +29,7 @@ function AssetCard({ name, description, returnRate, standardDeviation, readOnly 
           Delete
         </Mui.Button>
       </Mui.ButtonGroup>
-    </div>
+    </Card>
   );
 }
 
