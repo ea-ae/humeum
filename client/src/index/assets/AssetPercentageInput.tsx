@@ -25,7 +25,7 @@ function AssetPercentageInput({ label, defaultValue, disabled }: Props) {
   return (
     <Mui.TextField
       disabled={disabled}
-      className="my-4 mr-8"
+      className="flex-grow my-4 mr-8"
       id="return"
       label={label}
       variant="standard"

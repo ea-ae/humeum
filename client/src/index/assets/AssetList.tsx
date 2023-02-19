@@ -1,7 +1,7 @@
 import AssetCard from './AssetCard';
 import NewAssetCard from './NewAssetCard';
 
-function AssetsList() {
+function AssetList() {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
       <AssetCard
@@ -44,4 +44,4 @@ function AssetsList() {
   );
 }
 
-export default AssetsList;
+export default AssetList;

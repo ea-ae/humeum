@@ -1,8 +1,7 @@
-import AddItemDial from '../AddItemDial';
-import AssetsList from './AssetsList';
+import AssetList from './AssetList';
 
 function AssetsIndex() {
-  return <AssetsList />;
+  return <AssetList />;
 }
 
 export default AssetsIndex;

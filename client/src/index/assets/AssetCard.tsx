@@ -14,16 +14,23 @@ function AssetCard({ name, description, returnRate, standardDeviation, readOnly 
   return (
     <div className="flex flex-col card px-8 py-4">
       <h1 className="font-semibold">{name}</h1>
-      <p className="flex-grow break-words">{description}</p>
-      <AssetPercentageInput disabled={readOnly} label="Real return" defaultValue={returnRate.toString()} />
-      <AssetPercentageInput
-        disabled={readOnly}
-        label="Standard deviation"
-        defaultValue={standardDeviation.toString()}
-      />
+      <p className="flex-grow pt-2 text-sm break-words">{description}</p>
+      <div className="flex flex-row">
+        <AssetPercentageInput disabled={readOnly} label="Real return" defaultValue={returnRate.toString()} />
+        <AssetPercentageInput
+          disabled={readOnly}
+          label="Standard deviation"
+          defaultValue={standardDeviation.toString()}
+        />
+      </div>
+
       <Mui.ButtonGroup className="self-end" variant="text">
-        <Mui.Button className="border-0">Save</Mui.Button>
-        <Mui.Button className="border-0 text-red-600 hover:bg-red-50">Delete</Mui.Button>
+        <Mui.Button disabled={readOnly} className="border-0">
+          Save
+        </Mui.Button>
+        <Mui.Button disabled={readOnly} className={`border-0 ${readOnly ? '' : 'text-red-700 hover:bg-red-50'}`}>
+          Delete
+        </Mui.Button>
       </Mui.ButtonGroup>
     </div>
   );
