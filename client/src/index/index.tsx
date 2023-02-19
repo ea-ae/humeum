@@ -5,6 +5,7 @@ import * as React from 'react';
 import ReactDOM from 'react-dom/client';
 import * as Router from 'react-router-dom';
 
+import Authenticated from './authentication/Authenticated';
 import Login from './authentication/Login';
 import { ProvideAuth } from './authentication/ProvideAuth';
 import AssetsIndex from './pages/assets/AssetsIndex';
@@ -32,9 +33,18 @@ const withLayout = (element: React.ReactNode, activeTabLabel: string) => (
 const router = Router.createBrowserRouter(
   Router.createRoutesFromElements(
     <>
-      <Router.Route path="/" element={withLayout(<HomeIndex />, 'home')} />
       <Router.Route path="/login" element={<Login />} />
       <Router.Route path="/admin" element={<Router.Navigate to="/login" replace />} />
+      <Router.Route
+        path="/secret"
+        element={
+          <Authenticated>
+            <b>Secret!</b>
+          </Authenticated>
+        }
+      />
+
+      <Router.Route path="/" element={withLayout(<HomeIndex />, 'home')} />
       <Router.Route path="/transactions" element={withLayout(<TransactionsIndex />, 'transactions')} />
       <Router.Route path="/assets" element={withLayout(<AssetsIndex />, 'assets')} />
       <Router.Route path="/taxes" element={withLayout(<TaxesIndex />, 'taxes')} />
