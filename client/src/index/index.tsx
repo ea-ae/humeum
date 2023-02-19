@@ -9,6 +9,8 @@ import Layout from '../shared/Layout';
 import HomeIndex from './home/HomeIndex';
 import Sidebar from './Sidebar';
 import TransactionsIndex from './transactions/TransactionsIndex';
+import AssetsIndex from './assets/AssetsIndex';
+import AddItemDial from './AddItemDial';
 
 const theme = Mui.createTheme({
   components: {
@@ -26,6 +28,7 @@ const router = ReactRouter.createBrowserRouter([
     element: (
       <Layout sidebar={<Sidebar activeTabLabel="home" />}>
         <HomeIndex username="admin" savedUp={42_350} haveToSave={4650} retireInYears={23} />
+        <AddItemDial />
       </Layout>
     ),
   },
@@ -34,9 +37,19 @@ const router = ReactRouter.createBrowserRouter([
     element: (
       <Layout sidebar={<Sidebar activeTabLabel="transactions" />}>
         <TransactionsIndex />
+        <AddItemDial />
       </Layout>
     ),
   },
+  {
+    path: '/assets',
+    element: (
+      <Layout sidebar={<Sidebar activeTabLabel="assets" />}>
+        <AssetsIndex />
+        <AddItemDial />
+      </Layout>
+    )
+  }
 ]);
 
 const container = document.getElementById('app');

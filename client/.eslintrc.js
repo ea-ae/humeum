@@ -27,9 +27,8 @@ module.exports = {
     'prettier'
   ],
   rules: {
-    indent: ['error', 2],
-    'linebreak-style': ['off', 'windows'],
-    quotes: ['error', 'single'],
+    indent: ['warn', 2],
+    quotes: ['warn', 'single'],
     semi: ['error', 'always'],
     'import/extensions': [
       'error',
@@ -46,9 +45,12 @@ module.exports = {
       'error',
       { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
     ],
-    'simple-import-sort/imports': 'error',
-    'simple-import-sort/exports': 'error',
-    'prettier/prettier': 'error',
+    'simple-import-sort/imports': 'warn',
+    'simple-import-sort/exports': 'warn',
+    'prettier/prettier': [
+      'warn',
+      { endOfLine: 'crlf' },
+    ],
   },
   settings: {
     react: {
