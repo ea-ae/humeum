@@ -5,7 +5,7 @@ function TaxSchemeList() {
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-2">
       <TaxSchemeCard
         name="Income tax"
-        description="Regular flat income tax in Estonia, applicable to all income by default. First 654EUR/mo are tax-free."
+        description="Regular flat income tax in Estonia, applicable to all income by default. First 654EUR/mo aka 7848EUR/yr are tax-free."
         taxRate={20}
         discount={100}
         discountAge={0}

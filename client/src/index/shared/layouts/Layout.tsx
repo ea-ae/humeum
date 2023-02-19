@@ -26,6 +26,6 @@ function Layout({ children, sidebar }: Props) {
   );
 }
 
-Layout.defaultProps = { sidebar: false };
+Layout.defaultProps = { sidebar: undefined };
 
 export default Layout;

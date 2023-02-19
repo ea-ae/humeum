@@ -32,7 +32,7 @@ function TaxSchemeCard(props: Props) {
         />
         <PercentageInput
           disabled={readOnly}
-          label="Tax refund"
+          label="Tax refund rate"
           tooltip="Income tax refund rate for investments."
           defaultValue={discount.toString()}
         />
@@ -43,11 +43,12 @@ function TaxSchemeCard(props: Props) {
           defaultValue={discountAge.toString()}
           typePattern={/[0-9]{0,2}/}
           validPattern={/[0-9]{1,2}/}
+          symbol="y"
         />
         <PercentageInput
           disabled={readOnly}
           label="Refund max income percentage"
-          tooltip="Maximum percentage of income that is discountable. Set to 100% in case there are no income-based limits."
+          tooltip="Maximum percentage of annual income that is discountable. Set to 100% in case there are no income-based limits."
           defaultValue={maxIncomePercent.toString()}
         />
         <CurrencyInput
