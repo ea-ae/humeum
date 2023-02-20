@@ -2,6 +2,8 @@
 
 using MediatR;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using Web.Filters;
@@ -9,6 +11,7 @@ using Web.Filters;
 namespace Web.Controllers;
 
 [Route("api/v1/users/{user}/[controller]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleUserData")]
 [CsrfXHeaderFilter]
 [ApiController]
 public class ProfilesController : ControllerBase {

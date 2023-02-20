@@ -3,6 +3,7 @@ using Application.Transactions.Queries.GetUserTransactions;
 
 using MediatR;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ using Web.Filters;
 namespace Web.Controllers;
 
 [Route("api/v1/users/{user}/profiles/{profile}/[controller]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleUserData")]
 [ValidationExceptionFilter]
 [CsrfXHeaderFilter]
 [ApiController]
@@ -30,7 +32,6 @@ public class TransactionsController : ControllerBase {
         return StatusCode(StatusCodes.Status503ServiceUnavailable);
     }
 
-    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Add(int user, AddTransactionCommand command) {
         int id = await _mediator.Send(command);
