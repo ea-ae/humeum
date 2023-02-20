@@ -33,12 +33,12 @@ public static class ConfigureServices {
 
         JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         services
-            .AddAuthentication(o => {
-                o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; // simplify (NET 7 feature)
-                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // remove
-                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // remove
-            })
-            //.AddAuthentication()
+            //.AddAuthentication(o => {
+            //    o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; // simplify (NET 7 feature)
+            //    o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // remove
+            //    o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // remove
+            //})
+            .AddAuthentication()
             //.AddCookie(o => { /*o.ExpireTimeSpan = TimeSpan.FromMinutes(180); */o.SlidingExpiration = true; })
             .AddJwtBearer(o => {
                 o.RequireHttpsMetadata = false;

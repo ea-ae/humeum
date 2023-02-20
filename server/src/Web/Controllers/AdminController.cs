@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers;
 
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route("api/v1/[controller]")]
 public class AdminController : ControllerBase {
     [HttpGet("authorization")]
@@ -18,7 +19,6 @@ public class AdminController : ControllerBase {
         return isAuthed.ToString();
     }
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet("claims")]
     public string GetClaimCount() {
         var authorization = Request.Headers.Authorization.ToString();
