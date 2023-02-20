@@ -4,7 +4,7 @@ builder.Services.ConfigureApplicationServices();
 builder.Services.ConfigureInfrastructureServices(builder.Configuration);
 builder.Services.ConfigureWebServices();
 
-builder.Logging.AddConsole().AddFilter(level => level >= LogLevel.Trace);
+// builder.Logging.AddConsole().AddFilter(level => level >= LogLevel.Trace);
 
 var app = builder.Build();
 

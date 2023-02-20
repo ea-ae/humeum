@@ -33,38 +33,27 @@ public static class ConfigureServices {
 
         JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         services
-            //.AddAuthentication(o => {
-            //    o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; // simplify (NET 7 feature)
-            //    o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // remove
-            //    o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // remove
-            //})
             .AddAuthentication()
             //.AddCookie(o => { /*o.ExpireTimeSpan = TimeSpan.FromMinutes(180); */o.SlidingExpiration = true; })
             .AddJwtBearer(o => {
                 o.RequireHttpsMetadata = false;
                 o.SaveToken = true;
                 o.TokenValidationParameters = new() {
-                    //ValidateIssuer = false,
-                    //ValidateAudience = false,
-                    //ValidateIssuerSigningKey = false,
-                    //ValidateLifetime = false,
-                    //ValidateTokenReplay = false,
-
                     ValidIssuer = jwtSettings.Issuer,
                     ValidAudience = jwtSettings.Issuer,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
 
                     ClockSkew = TimeSpan.Zero,
                 };
-                //o.Events.OnMessageReceived = (context) => {
-                //    if (context.Request.Cookies.TryGetValue(jwtSettings.Cookie, out string? cookie)) {
-                //        context.Token = cookie;
-                //    }
-                //    return Task.CompletedTask;
-                //};
+                o.Events = new JwtBearerEvents {
+                    OnMessageReceived = (context) => {
+                        if (context.Request.Cookies.TryGetValue(jwtSettings.Cookie, out string? cookie)) {
+                            context.Token = cookie;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
-
-        //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
         services
             .AddIdentity<ApplicationUser, IdentityRole<int>>(o => {
