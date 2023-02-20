@@ -1,4 +1,4 @@
-import NewItemCard from '../../shared/cards/NewItemCard';
+import NewItemCard from '../../components/cards/NewItemCard';
 import AssetCard from './AssetCard';
 
 function AssetList() {

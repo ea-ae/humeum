@@ -1,9 +1,9 @@
 import * as Mui from '@mui/material';
 
-import Card from '../../shared/cards/Card';
-import CurrencyInput from '../../shared/cards/CurrencyInput';
-import Input from '../../shared/cards/Input';
-import PercentageInput from '../../shared/cards/PercentageInput';
+import Card from '../../components/cards/Card';
+import CurrencyInput from '../../components/cards/CurrencyInput';
+import Input from '../../components/cards/Input';
+import PercentageInput from '../../components/cards/PercentageInput';
 
 interface Props {
   name: string;

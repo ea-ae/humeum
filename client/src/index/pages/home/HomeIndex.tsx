@@ -1,4 +1,4 @@
-import Card from '../../shared/cards/Card';
+import Card from '../../components/cards/Card';
 
 function HomeIndex() {
   return (

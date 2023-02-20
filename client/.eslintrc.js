@@ -31,7 +31,7 @@ module.exports = {
     quotes: ['warn', 'single'],
     semi: ['error', 'always'],
     'import/extensions': [
-      'error',
+      'warn',
       'ignorePackages',
       {
         'js': 'never',

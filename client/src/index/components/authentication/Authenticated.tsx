@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Router from 'react-router-dom';
 
-import { useAuth } from './ProvideAuth';
+import useAuth from '../../hooks/useAuth';
 
 interface Props {
   children: React.ReactElement;
