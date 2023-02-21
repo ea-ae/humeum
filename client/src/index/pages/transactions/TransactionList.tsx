@@ -1,6 +1,17 @@
 import * as Mui from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridFooter, GridFooterContainer, GridSlotsComponent } from '@mui/x-data-grid';
 import * as React from 'react';
+
+function CustomFooter() {
+  return (
+    <GridFooterContainer>
+      <Mui.Button variant="outlined" className="mx-4 whitespace-nowrap">
+        Create new
+      </Mui.Button>
+      <GridFooter />
+    </GridFooterContainer>
+  );
+}
 
 function TransactionList() {
   const [pageSize, setPageSize] = React.useState<number>(10);
@@ -83,6 +94,9 @@ function TransactionList() {
       experimentalFeatures={{ newEditingApi: true }}
       classes={{ cell: 'outline-none', columnHeader: 'outline-none' }}
       className="min-w-fit card"
+      components={{
+        Footer: () => <CustomFooter />,
+      }}
     />
   );
 }
