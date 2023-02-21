@@ -1,4 +1,5 @@
 ﻿using Application.Common.Exceptions;
+using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using AutoMapper;
@@ -36,8 +37,8 @@ public class GetTransactionsQueryHandler : IQueryHandler<GetTransactionsQuery, L
                                                             && t.DeletedAt == null);
 
         // check whether profile is owned by user in case no transactions were loaded (extra query required)
-        if (!transactions.Any() && !_context.Profiles.Any(p => p.Id == request.Profile && p.UserId == request.User)) {
-            throw new NotFoundValidationException(typeof(Domain.ProfileAggregate.Profile));
+        if (!transactions.Any()) {
+            _context.AssertUserOwnsProfile(request.User, request.Profile);
         }
 
         if (request.StartBefore is not null) {

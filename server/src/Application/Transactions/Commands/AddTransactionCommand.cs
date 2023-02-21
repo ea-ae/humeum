@@ -51,15 +51,10 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
         bool isRecurringTransaction = recurringTransactionFieldCount == recurringTransactionFields.Count;
 
         if (!isRecurringTransaction && recurringTransactionFieldCount > 0) {
-            throw new Common.Exceptions.ValidationException(
-                "Fields for recurrent transactions were only partially specified.");
+            throw new Common.Exceptions.ValidationException("Fields for recurrent transactions were only partially specified.");
         }
 
-        // TODO: we handle this differently in different services!!
-        bool userOwnsProfile = _context.Profiles.Any(p => p.Id == request.Profile && p.UserId == request.User);
-        if (!userOwnsProfile) {
-            throw new NotFoundValidationException(typeof(Profile));
-        }
+        _context.AssertUserOwnsProfile(request.User, request.Profile);
 
         // handling
 
