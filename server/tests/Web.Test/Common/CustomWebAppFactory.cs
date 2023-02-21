@@ -16,6 +16,9 @@ namespace Web.Test.Common;
 
 public class CustomWebAppFactory : WebApplicationFactory<Program> {
     HttpClient? _configuredClient;
+    /// <summary>
+    /// Correctly pre-configured HttpClient with an API root URL to be used in tests.
+    /// </summary>
     public HttpClient ConfiguredClient {
         get {
             if (_configuredClient is null) {

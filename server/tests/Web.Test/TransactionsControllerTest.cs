@@ -25,12 +25,39 @@ public class TransactionsControllerTest {
 
     [Fact]
     public async Task AddAction_UnauthorizedUser_ReturnsUnauthorized() {
-        string query = "users/1/profiles/1/transactions";
         var client = _webapp.ConfiguredClient;
 
         var expected = HttpStatusCode.Unauthorized;
 
-        var response = await client.PostAsync(query, null);
+        var response = await client.PostAsync("users/1/profiles/1/transactions", null);
+        var actual = response.StatusCode;
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public async Task AddAction_AuthorizedUserWrongId_ReturnsForbidden() {
+        var client = _webapp.ConfiguredClient;
+        using var scope = _webapp.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
+        await context.Database.EnsureCreatedAsync();
+
+        // create user account
+
+        const string userQuery = "username=testwrongid&password=testingtesting&confirmPassword=testingtesting&email=testwid@test.com";
+        var response = await client.PostAsync($"users/register?{userQuery}", null);
+        Assert.NotNull(response.Headers.Location);
+        int userId = int.Parse(response.Headers.Location.ToString().Split("/").Last());
+
+        string jwtToken;
+        Assert.True(response.TryGetJwtToken(out jwtToken!));
+
+        // access resource with invalid ID
+
+        var expected = HttpStatusCode.Forbidden;
+
+        var message = new HttpRequestMessage(HttpMethod.Get, $"users/{userId + 1}/profiles/1/transactions").WithJwtCookie(jwtToken);
+        response = await client.SendAsync(message);
         var actual = response.StatusCode;
 
         Assert.Equal(expected, actual);
@@ -61,7 +88,6 @@ public class TransactionsControllerTest {
         var client = _webapp.ConfiguredClient;
         using var scope = _webapp.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
-        //await context.Database.EnsureDeletedAsync();
         await context.Database.EnsureCreatedAsync();
 
         // create user account
@@ -95,8 +121,8 @@ public class TransactionsControllerTest {
         foreach (int profileId in new[] { profileOneId, profileTwoId }) {
             for (int i = 0; i < transactionsPerProfile; i++) {
                 const string transactionQuery = "amount=5&type=RETIREMENTONLY&paymentStart=2030-06-06";
-                message = new HttpRequestMessage(HttpMethod.Post,
-                                                 $"users/{userId}/profiles/{profileId}/transactions?{transactionQuery}").WithJwtCookie(jwtToken);
+                string transactionUrl = $"users/{userId}/profiles/{profileId}/transactions?{transactionQuery}";
+                message = new HttpRequestMessage(HttpMethod.Post, transactionUrl).WithJwtCookie(jwtToken);
                 response = await client.SendAsync(message);
                 Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             }
@@ -104,7 +130,7 @@ public class TransactionsControllerTest {
 
         // soft delete one of the profiles
 
-        message = new HttpRequestMessage(HttpMethod.Delete, $"users/1/profiles/{profileTwoId}").WithJwtCookie(jwtToken);
+        message = new HttpRequestMessage(HttpMethod.Delete, $"users/{userId}/profiles/{profileTwoId}").WithJwtCookie(jwtToken);
         response = await client.SendAsync(message);
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
