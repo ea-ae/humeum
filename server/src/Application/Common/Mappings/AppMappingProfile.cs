@@ -1,4 +1,4 @@
-﻿using Application.Profiles.Queries.GetUserProfileDetails;
+﻿using Application.Profiles.Queries;
 using Application.Transactions.Queries.GetUserTransactions;
 
 using AutoMapper;

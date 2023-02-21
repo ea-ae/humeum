@@ -1,5 +1,6 @@
 ﻿using Application.Profiles.Commands.AddProfile;
 using Application.Profiles.Commands.DeleteProfile;
+using Application.Profiles.Queries;
 using Application.Profiles.Queries.GetUserProfileDetails;
 
 using MediatR;
@@ -22,8 +23,14 @@ public class ProfilesController : ControllerBase {
 
     public ProfilesController(IMediator mediator) => _mediator = mediator;
 
+    [HttpGet]
+    public async Task<IActionResult> GetAll(GetUserProfilesQuery query) {
+        var profiles = await _mediator.Send(query);
+        return Ok(profiles);
+    }
+
     [HttpGet("{profile}")]
-    public async Task<IActionResult> GetDetails(GetUserProfileDetailsQuery query) {
+    public async Task<IActionResult> Get(GetUserProfileQuery query) {
         var profile = await _mediator.Send(query);
         return Ok(profile);
     }
@@ -31,7 +38,7 @@ public class ProfilesController : ControllerBase {
     [HttpPost]
     public async Task<IActionResult> Create(AddProfileCommand command) {
         int id = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetDetails), new { command.User, Profile = id }, null);
+        return CreatedAtAction(nameof(Get), new { command.User, Profile = id }, null);
     }
 
     [HttpDelete("{profile}")]

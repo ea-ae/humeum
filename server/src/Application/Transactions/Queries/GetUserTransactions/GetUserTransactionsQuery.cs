@@ -31,8 +31,7 @@ public class GetUserTransactionsQueryHandler : IQueryHandler<GetUserTransactions
     public async Task<List<TransactionDto>> Handle(GetUserTransactionsQuery request, CancellationToken token) {
         var transactions = _context.Transactions.AsNoTracking()
                                                 .Include(t => t.Profile)
-                                                .Where(t => t.ProfileId == request.Profile && t.DeletedAt == null)
-                                                .Select(t => t);
+                                                .Where(t => t.ProfileId == request.Profile && t.DeletedAt == null);
 
         bool userOwnsProfile = _context.Profiles.Any(p => p.Id == request.Profile && p.UserId == request.User);
         if (!userOwnsProfile) {
@@ -46,7 +45,6 @@ public class GetUserTransactionsQueryHandler : IQueryHandler<GetUserTransactions
             transactions = transactions.Where(t => t.PaymentTimeline.Period.Start > request.StartAfter);
         }
 
-        return await transactions.ProjectTo<TransactionDto>(_mapper.ConfigurationProvider)
-                                 .ToListAsync(token);
+        return await transactions.ProjectTo<TransactionDto>(_mapper.ConfigurationProvider).ToListAsync(token);
     }
 }
