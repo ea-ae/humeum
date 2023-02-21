@@ -1,4 +1,6 @@
-﻿using Application.Common.Exceptions;
+﻿using System.ComponentModel.DataAnnotations;
+
+using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 
 using Domain.ProfileAggregate;
@@ -14,8 +16,8 @@ namespace Application.Profiles.Commands.DeleteProfile;
 /// configurations and transactions.
 /// </summary>
 public record DeleteProfileCommand : ICommand {
-    public required int User { get; init; }
-    public required int Profile { get; init; }
+    [Required] public required int User { get; init; }
+    [Required] public required int Profile { get; init; }
 }
 
 public class DeleteProfileCommandHandler : ICommandHandler<DeleteProfileCommand> {

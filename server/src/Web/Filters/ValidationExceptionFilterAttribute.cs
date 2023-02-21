@@ -20,7 +20,7 @@ public class ValidationExceptionFilterAttribute : ExceptionFilterAttribute {
                 StatusCode = StatusCodes.Status404NotFound
             };
             context.ExceptionHandled = true;
-        } else if (context.Exception is ValidationException validationException) {
+        } else if (context.Exception is ApplicationValidationException validationException) {
             var error = new ProblemDetails {
                 Title = "Validation Error",
                 Detail = context.Exception.Message,

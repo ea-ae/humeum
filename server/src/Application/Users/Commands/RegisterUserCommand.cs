@@ -1,14 +1,17 @@
-﻿using Application.Common.Interfaces;
+﻿using System.ComponentModel.DataAnnotations;
+
+using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 
 using Domain.UserAggregate;
 
 namespace Application.Users.Commands.RegisterUser;
 
 public record RegisterUserCommand : ICommand<int> {
-    public required string Username { get; init; }
-    public required string Email { get; init; }
-    public required string Password { get; init; }
-    public required string ConfirmPassword { get; init; }
+    [Required] public required string Username { get; init; }
+    [Required] public required string Email { get; init; }
+    [Required] public required string Password { get; init; }
+    [Required] public required string ConfirmPassword { get; init; }
     public bool RememberMe { get; init; } = false;
 }
 
@@ -23,11 +26,11 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, i
         // validation
 
         if (request.Password.Length > 200) {
-            throw new Common.Exceptions.ValidationException("Password is too long (over 200 characters).");
+            throw new ApplicationValidationException("Password is too long (over 200 characters).");
         }
 
         if (request.Password != request.ConfirmPassword) {
-            throw new Common.Exceptions.ValidationException("Passwords do not match.");
+            throw new ApplicationValidationException("Passwords do not match.");
         }
 
         // handling

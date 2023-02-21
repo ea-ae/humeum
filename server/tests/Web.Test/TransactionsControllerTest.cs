@@ -50,7 +50,8 @@ public class TransactionsControllerTest {
 
         var expected = HttpStatusCode.Forbidden;
 
-        var message = new HttpRequestMessage(HttpMethod.Get, $"users/{userId + 1}/profiles/1/transactions").WithJwtCookie(jwtToken);
+        string url = $"users/{userId + 1}/profiles/1/transactions?amount=1&type=ALWAYS&paymentStart=2020-01-01";
+        var message = new HttpRequestMessage(HttpMethod.Get, url).WithJwtCookie(jwtToken);
         var response = await client.SendAsync(message);
         var actual = response.StatusCode;
 
@@ -71,7 +72,7 @@ public class TransactionsControllerTest {
         (int secondUserId, string secondJwtToken) = await client.CreateUser("secondUser");
         int secondProfileId = await client.CreateProfile(secondUserId, secondJwtToken);
 
-        // attempt to create transaction in second profile with first user
+        // attempt to get transaction of second profile with first user
 
         var expected = HttpStatusCode.NotFound;
 

@@ -81,7 +81,7 @@ public static class AuthenticationExtensions {
             throw new InvalidOperationException("No response returned.");
         }
         if (response.StatusCode != HttpStatusCode.Created) {
-            throw new InvalidOperationException("User could not be created.");
+            throw new InvalidOperationException("Profile could not be created.");
         }
         if (response.Headers.Location is null) {
             throw new InvalidOperationException("Location header was not returned by API endpoint.");

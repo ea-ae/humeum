@@ -1,4 +1,6 @@
-﻿using Application.Common.Exceptions;
+﻿using System.ComponentModel.DataAnnotations;
+
+using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using AutoMapper;
 
@@ -9,9 +11,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Transactions.Queries.GetTransaction;
 
 public record GetTransactionQuery : IQuery<TransactionDto> {
-    public required int User { get; init; }
-    public required int Profile { get; init; }
-    public required int Transaction { get; init; }
+    [Required] public required int User { get; init; }
+    [Required] public required int Profile { get; init; }
+    [Required] public required int Transaction { get; init; }
 }
 
 public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, TransactionDto> {

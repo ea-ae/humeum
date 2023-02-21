@@ -1,4 +1,6 @@
-﻿using Application.Common.Exceptions;
+﻿using System.ComponentModel.DataAnnotations;
+
+using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 
 using AutoMapper;
@@ -8,8 +10,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Profiles.Queries.GetProfileDetails;
 
 public record GetProfileQuery : IQuery<ProfileDto> {
-    public int User { get; init; }
-    public int Profile { get; init; }
+    [Required] public int User { get; init; }
+    [Required] public int Profile { get; init; }
 }
 
 public class GetProfileQueryHandler : IQueryHandler<GetProfileQuery, ProfileDto> {

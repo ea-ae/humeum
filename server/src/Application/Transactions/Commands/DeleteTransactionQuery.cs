@@ -1,4 +1,6 @@
-﻿using Application.Common.Exceptions;
+﻿using System.ComponentModel.DataAnnotations;
+
+using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 
 using Domain.TransactionAggregate;
@@ -10,9 +12,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Transactions.Commands.DeleteTransaction;
 
 public record DeleteTransactionCommand : ICommand {
-    public required int User { get; init; }
-    public required int Profile { get; init; }
-    public required int Transaction { get; init; }
+    [Required] public required int User { get; init; }
+    [Required] public required int Profile { get; init; }
+    [Required] public required int Transaction { get; init; }
 }
 
 public class DeleteTransactionCommandHandler : ICommandHandler<DeleteTransactionCommand> {

@@ -1,10 +1,12 @@
-﻿using Application.Common.Interfaces;
+﻿using System.ComponentModel.DataAnnotations;
+
+using Application.Common.Interfaces;
 
 namespace Application.Users.Commands.SignInUser;
 
 public record SignInUserCommand : ICommand<int> {
-    public required string Username { get; init; }
-    public required string Password { get; init; }
+    [Required] public required string Username { get; init; }
+    [Required] public required string Password { get; init; }
     public bool RememberMe { get; init; } = false;
 }
 

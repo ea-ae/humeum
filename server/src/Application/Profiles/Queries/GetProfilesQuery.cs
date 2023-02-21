@@ -1,4 +1,6 @@
-﻿using Application.Common.Interfaces;
+﻿using System.ComponentModel.DataAnnotations;
+
+using Application.Common.Interfaces;
 
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -11,7 +13,7 @@ namespace Application.Profiles.Queries.GetProfilesQuery;
 /// Get list of profiles owned by user.
 /// </summary>
 public record GetProfilesQuery : IQuery<List<ProfileDto>> {
-    public int User { get; init; }
+    [Required] public required int User { get; init; }
 }
 
 public class GetProfilesQueryHandler : IQueryHandler<GetProfilesQuery, List<ProfileDto>> {

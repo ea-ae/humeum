@@ -1,4 +1,6 @@
-﻿using Application.Common.Exceptions;
+﻿using System.ComponentModel.DataAnnotations;
+
+using Application.Common.Exceptions;
 using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
@@ -13,8 +15,8 @@ namespace Application.Transactions.Queries.GetTransactions;
 /// Get transactions for a specified user with optional filtering conditions.
 /// </summary>
 public record GetTransactionsQuery : IQuery<List<TransactionDto>> {
-    public required int User { get; init; }
-    public required int Profile { get; init; }
+    [Required] public required int User { get; init; }
+    [Required] public required int Profile { get; init; }
 
     public DateOnly? StartBefore { get; init; }
     public DateOnly? StartAfter { get; init; }

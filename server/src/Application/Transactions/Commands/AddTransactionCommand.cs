@@ -17,13 +17,13 @@ namespace Application.Transactions.Commands.AddTransaction;
 /// The first payment is always made at the payment start date.
 /// </summary>
 public record AddTransactionCommand : ICommand<int> {
-    public required int User { get; init; }
-    public required int Profile { get; init; }
+    [Required] public required int User { get; init; }
+    [Required] public required int Profile { get; init; }
 
     public string? Name { get; init; }
     public string? Description { get; init; }
     [Required] public decimal? Amount { get; init; }
-    public required string Type { get; init; }
+    [Required] public required string Type { get; init; }
     [Required] public DateOnly? PaymentStart { get; init; }
 
     public DateOnly? PaymentEnd { get; init; }
@@ -51,7 +51,7 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
         bool isRecurringTransaction = recurringTransactionFieldCount == recurringTransactionFields.Count;
 
         if (!isRecurringTransaction && recurringTransactionFieldCount > 0) {
-            throw new Common.Exceptions.ValidationException("Fields for recurrent transactions were only partially specified.");
+            throw new ApplicationValidationException("Fields for recurrent transactions were only partially specified.");
         }
 
         _context.AssertUserOwnsProfile(request.User, request.Profile);

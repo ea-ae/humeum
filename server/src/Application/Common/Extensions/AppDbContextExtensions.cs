@@ -17,13 +17,13 @@ internal static class AppDbContextExtensions {
     /// <param name="context">Database context to attach entity to.</param>
     /// <param name="code">Enumeration entity code to match.</param>
     /// <returns>Attached enumeration entity that matches the given code.</returns>
-    /// <exception cref="ValidationException">Thrown when the given code does not match any enumeration entity.</exception>
+    /// <exception cref="ApplicationValidationException">Thrown when the given code does not match any enumeration entity.</exception>
     public static T GetEnumerationEntityByCode<T>(this IAppDbContext context, string code) where T : Enumeration {
         T enumEntity;
         try {
             enumEntity = Enumeration.GetByCode<T>(code);
         } catch (InvalidOperationException) {
-            throw new ValidationException($"Incorrect enumeration code {code} for {typeof(T).Name}");
+            throw new ApplicationValidationException($"Incorrect enumeration code {code} for {typeof(T).Name}");
         }
 
         context.Set<T>().Attach(enumEntity);
