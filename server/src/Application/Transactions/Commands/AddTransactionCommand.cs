@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Application.Common.Exceptions;
 using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
@@ -15,6 +16,7 @@ namespace Application.Transactions.Commands.AddTransaction;
 /// The first payment is always made at the payment start date.
 /// </summary>
 public record AddTransactionCommand : ICommand<int> {
+    public required int User { get; init; }
     public required int Profile { get; init; }
 
     public string? Name { get; init; }
@@ -52,7 +54,10 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
                 "Fields for recurrent transactions were only partially specified.");
         }
 
-        // todo profile validation here as well
+        bool userOwnsProfile = _context.Profiles.Any(p => p.Id == request.Profile && p.UserId == request.User);
+        if (!userOwnsProfile) {
+            throw new NotFoundValidationException("Profile ID not found.");
+        }
 
         // handling
 

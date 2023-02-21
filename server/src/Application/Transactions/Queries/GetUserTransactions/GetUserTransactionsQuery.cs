@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -11,6 +12,7 @@ namespace Application.Transactions.Queries.GetUserTransactions;
 /// Get transactions for a specified user with optional filtering conditions.
 /// </summary>
 public record GetUserTransactionsQuery : IQuery<List<TransactionDto>> {
+    public required int User { get; init; }
     public required int Profile { get; init; }
 
     public DateOnly? StartBefore { get; init; }
@@ -32,7 +34,10 @@ public class GetUserTransactionsQueryHandler : IQueryHandler<GetUserTransactions
                                                 .Where(t => t.ProfileId == request.Profile && t.DeletedAt == null)
                                                 .Select(t => t);
 
-        // todo: verify profile ownership as well as the user during authorization!
+        bool userOwnsProfile = _context.Profiles.Any(p => p.Id == request.Profile && p.UserId == request.User);
+        if (!userOwnsProfile) {
+            throw new NotFoundValidationException("Profile ID not found.");
+        }
 
         if (request.StartBefore is not null) {
             transactions = transactions.Where(t => t.PaymentTimeline.Period.Start < request.StartBefore);

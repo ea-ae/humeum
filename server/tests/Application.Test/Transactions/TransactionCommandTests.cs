@@ -24,6 +24,7 @@ public class TransactionCommandTests {
         await context.SaveChangesAsync();
 
         AddTransactionCommand command = new() {
+            User = 1,
             Profile = profile.Id,
             Amount = -200,
             Name = "Groceries",
@@ -60,6 +61,7 @@ public class TransactionCommandTests {
         await context.SaveChangesAsync();
 
         AddTransactionCommand command = new() {
+            User = 1,
             Profile = profile.Id,
             Amount = 150,
             Name = "Shoplifting",

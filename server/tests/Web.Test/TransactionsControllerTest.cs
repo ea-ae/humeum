@@ -24,7 +24,7 @@ public class TransactionsControllerTest {
     }
 
     [Fact]
-    public async Task AddAction_UnauthorizedUser_ReturnsUnauthorized() {
+    public async Task GetAllAction_UnauthorizedUser_ReturnsUnauthorized() {
         var client = _webapp.ConfiguredClient;
 
         var expected = HttpStatusCode.Unauthorized;
@@ -36,7 +36,7 @@ public class TransactionsControllerTest {
     }
 
     [Fact]
-    public async Task AddAction_AuthorizedUserWrongId_ReturnsForbidden() {
+    public async Task GetAllAction_AuthorizedUserWrongId_ReturnsForbidden() {
         var client = _webapp.ConfiguredClient;
         using var scope = _webapp.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
@@ -58,7 +58,34 @@ public class TransactionsControllerTest {
     }
 
     [Fact]
-    public async Task AddAction_CreateProfileAndTransactionsAndDeleteProfile_AuthorizesCreatesSoftDeletes() {
+    public async Task GetAllAction_AuthorizedUserWrongProfile_ReturnsNotFound() {
+        var client = _webapp.ConfiguredClient;
+        using var scope = _webapp.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
+        await context.Database.EnsureCreatedAsync();
+
+        // create 2 user accounts and 2 profiles
+
+        (int firstUserId, string firstJwtToken) = await client.CreateUser("firstUser");
+        int firstProfileId = await client.CreateProfile(firstUserId, firstJwtToken);
+        (int secondUserId, string secondJwtToken) = await client.CreateUser("secondUser");
+        int secondProfileId = await client.CreateProfile(secondUserId, secondJwtToken);
+
+        // attempt to create transaction in second profile with first user
+
+        var expected = HttpStatusCode.NotFound;
+
+        string url = $"users/{firstUserId}/profiles/{secondProfileId}/transactions";
+        var message = new HttpRequestMessage(HttpMethod.Get, url).WithJwtCookie(firstJwtToken);
+        var response = await client.SendAsync(message);
+        var actual = response.StatusCode;
+
+        Assert.Equal(expected, actual);
+    }
+
+
+    [Fact]
+    public async Task TransactionController_CreateProfileAndTransactionsAndDeleteProfile_AuthorizesCreatesSoftDeletes() {
         var client = _webapp.ConfiguredClient;
         using var scope = _webapp.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
@@ -92,7 +119,7 @@ public class TransactionsControllerTest {
         response = await client.SendAsync(message);
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
-        // confirm that soft deletion was applied correctly
+        // confirm that soft deletion was applied correctly in DB
 
         bool profileOneDeleted = context.Profiles.Any(p => p.Id == profileOneId && p.DeletedAt != null);
         bool profileTwoDeleted = context.Profiles.Any(p => p.Id == profileTwoId && p.DeletedAt != null);
@@ -109,5 +136,17 @@ public class TransactionsControllerTest {
 
         Assert.Equal(0, profileOneTransactionsDeleted);
         Assert.Equal(transactionsPerProfile, profileTwoTransactionsDeleted);
+
+        // confirm that API only displays transactions for first profile
+
+        message = new HttpRequestMessage(HttpMethod.Get, $"users/{userId}/profiles/{profileOneId}/transactions").WithJwtCookie(jwtToken);
+        response = await client.SendAsync(message);
+        var firstProfileTransactions = await response.Content.ReadAsStringAsync();
+        Assert.True(firstProfileTransactions.Length >= 3);
+
+        message = new HttpRequestMessage(HttpMethod.Get, $"users/{userId}/profiles/{profileTwoId}/transactions").WithJwtCookie(jwtToken);
+        response = await client.SendAsync(message);
+        var secondProfileTransactions = await response.Content.ReadAsStringAsync();
+        Assert.True(secondProfileTransactions.Length < 3);
     }
 }
