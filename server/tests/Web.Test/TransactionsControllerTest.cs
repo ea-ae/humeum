@@ -71,29 +71,19 @@ public class TransactionsControllerTest {
         Assert.NotNull(response.Headers.Location);
         int userId = int.Parse(response.Headers.Location.ToString().Split("/").Last());
 
-        var setCookieHeaderFound = response.Headers.TryGetValues("Set-Cookie", out var cookies);
-        Assert.True(setCookieHeaderFound);
-
-        string? authToken = null;
-        foreach (var cookie in cookies ?? Array.Empty<string>()) {
-            if (cookie.StartsWith("Jwt")) {
-                authToken = "Jwt=" + cookie.Split("=")[1].Split(";")[0];
-                break;
-            }
-        }
-        Assert.NotNull(authToken);
+        string jwtToken;
+        Assert.True(response.TryGetJwtToken(out jwtToken!));
 
         // create 2 profiles
 
-        var message = new HttpRequestMessage(HttpMethod.Post, $"users/{userId}/profiles?name=Default");
-        message.Headers.Add("Cookie", authToken);
+        var message = new HttpRequestMessage(HttpMethod.Post, $"users/{userId}/profiles?name=Default").WithJwtCookie(jwtToken);
         response = await client.SendAsync(message);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         Assert.NotNull(response.Headers.Location);
         int profileOneId = int.Parse(response.Headers.Location.ToString().Split("/").Last());
 
-        message = new HttpRequestMessage(HttpMethod.Post, $"users/{userId}/profiles?name=Conservative&withdrawalRate=3.15");
-        message.Headers.Add("Cookie", authToken);
+        message = new HttpRequestMessage(HttpMethod.Post,
+                                         $"users/{userId}/profiles?name=Conservative&withdrawalRate=3.15").WithJwtCookie(jwtToken);
         response = await client.SendAsync(message);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         Assert.NotNull(response.Headers.Location);
@@ -105,8 +95,8 @@ public class TransactionsControllerTest {
         foreach (int profileId in new[] { profileOneId, profileTwoId }) {
             for (int i = 0; i < transactionsPerProfile; i++) {
                 const string transactionQuery = "amount=5&type=RETIREMENTONLY&paymentStart=2030-06-06";
-                message = new HttpRequestMessage(HttpMethod.Post, $"users/{userId}/profiles/{profileId}/transactions?{transactionQuery}");
-                message.Headers.Add("Cookie", authToken);
+                message = new HttpRequestMessage(HttpMethod.Post,
+                                                 $"users/{userId}/profiles/{profileId}/transactions?{transactionQuery}").WithJwtCookie(jwtToken);
                 response = await client.SendAsync(message);
                 Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             }
@@ -114,8 +104,7 @@ public class TransactionsControllerTest {
 
         // soft delete one of the profiles
 
-        message = new HttpRequestMessage(HttpMethod.Delete, $"users/1/profiles/{profileTwoId}");
-        message.Headers.Add("Cookie", authToken);
+        message = new HttpRequestMessage(HttpMethod.Delete, $"users/1/profiles/{profileTwoId}").WithJwtCookie(jwtToken);
         response = await client.SendAsync(message);
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
