@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Transactions.Queries.GetTransaction;
 
 public record GetTransactionQuery : IQuery<TransactionDto> {
-    public int User { get; init; }
-    public int Profile { get; init; }
-    public int Transaction { get; init; }
+    public required int User { get; init; }
+    public required int Profile { get; init; }
+    public required int Transaction { get; init; }
 }
 
 public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, TransactionDto> {

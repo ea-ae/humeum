@@ -26,8 +26,8 @@ public class DeleteProfileCommandHandler : ICommandHandler<DeleteProfileCommand>
                                        .Where(p => p.Id == request.Profile && p.UserId == request.User && p.DeletedAt == null)
                                        .FirstOrDefault();
 
-        if (profile == null) {
-            throw new ValidationException("Profile with given ID does not exist.");
+        if (profile is null) {
+            throw new NotFoundValidationException("Profile with given ID does not exist.");
         }
 
         _context.Profiles.Remove(profile);
