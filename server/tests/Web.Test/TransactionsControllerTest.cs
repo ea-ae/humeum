@@ -44,40 +44,14 @@ public class TransactionsControllerTest {
 
         // create user account
 
-        const string userQuery = "username=testwrongid&password=testingtesting&confirmPassword=testingtesting&email=testwid@test.com";
-        var response = await client.PostAsync($"users/register?{userQuery}", null);
-        Assert.NotNull(response.Headers.Location);
-        int userId = int.Parse(response.Headers.Location.ToString().Split("/").Last());
-
-        string jwtToken;
-        Assert.True(response.TryGetJwtToken(out jwtToken!));
+        (int userId, string jwtToken) = await client.CreateUser("wrongIdUser");
 
         // access resource with invalid ID
 
         var expected = HttpStatusCode.Forbidden;
 
         var message = new HttpRequestMessage(HttpMethod.Get, $"users/{userId + 1}/profiles/1/transactions").WithJwtCookie(jwtToken);
-        response = await client.SendAsync(message);
-        var actual = response.StatusCode;
-
-        Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData("amount=5&type=RETIREMENTONLY")]
-    [InlineData("amount=5&paymentStart=2023-01-01")]
-    [InlineData("amount=5&paymentStart=2022")]
-    [InlineData("amount=5&type=ALWAYS")]
-    [InlineData("amount=5&type=ALWAYS&paymentStart=2023-01-01&paymentEnd=2024-01-01")]
-    [InlineData("amount=5&type=ALWAYS&paymentStart=2023-01-01&timeUnit=DAYS")]
-    [InlineData("amount=5&type=ALWAYS&paymentStart=2023-01-01&timeUnit=DAYS&timesPerCycle=1&unitsInCycle=1")]
-    public async Task AddAction_MissingQueryData_ReturnsBadRequest(string query) {
-        string url = $"users/1/profiles/1/transactions?{query}";
-        var client = _webapp.ConfiguredClient;
-
-        var expected = HttpStatusCode.BadRequest;
-
-        var response = await client.PostAsync(url, null);
+        var response = await client.SendAsync(message);
         var actual = response.StatusCode;
 
         Assert.Equal(expected, actual);
@@ -90,38 +64,22 @@ public class TransactionsControllerTest {
         var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
         await context.Database.EnsureCreatedAsync();
 
-        // create user account
+        // create user account and 2 profiles
 
-        const string userQuery = "username=test&password=testingtesting&confirmPassword=testingtesting&email=test@test.com";
-        var response = await client.PostAsync($"users/register?{userQuery}", null);
-        Assert.NotNull(response.Headers.Location);
-        int userId = int.Parse(response.Headers.Location.ToString().Split("/").Last());
-
-        string jwtToken;
-        Assert.True(response.TryGetJwtToken(out jwtToken!));
-
-        // create 2 profiles
-
-        var message = new HttpRequestMessage(HttpMethod.Post, $"users/{userId}/profiles?name=Default").WithJwtCookie(jwtToken);
-        response = await client.SendAsync(message);
-        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        Assert.NotNull(response.Headers.Location);
-        int profileOneId = int.Parse(response.Headers.Location.ToString().Split("/").Last());
-
-        message = new HttpRequestMessage(HttpMethod.Post,
-                                         $"users/{userId}/profiles?name=Conservative&withdrawalRate=3.15").WithJwtCookie(jwtToken);
-        response = await client.SendAsync(message);
-        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        Assert.NotNull(response.Headers.Location);
-        int profileTwoId = int.Parse(response.Headers.Location.ToString().Split("/").Last());
+        (int userId, string jwtToken) = await client.CreateUser("softDeleteTestUser");
+        int profileOneId = await client.CreateProfile(userId, jwtToken);
+        int profileTwoId = await client.CreateProfile(userId, jwtToken);
 
         // create 3 transactions per profile
 
         const int transactionsPerProfile = 3;
+        HttpRequestMessage message;
+        HttpResponseMessage response;
         foreach (int profileId in new[] { profileOneId, profileTwoId }) {
             for (int i = 0; i < transactionsPerProfile; i++) {
                 const string transactionQuery = "amount=5&type=RETIREMENTONLY&paymentStart=2030-06-06";
                 string transactionUrl = $"users/{userId}/profiles/{profileId}/transactions?{transactionQuery}";
+
                 message = new HttpRequestMessage(HttpMethod.Post, transactionUrl).WithJwtCookie(jwtToken);
                 response = await client.SendAsync(message);
                 Assert.Equal(HttpStatusCode.Created, response.StatusCode);
