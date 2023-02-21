@@ -1,6 +1,7 @@
-﻿namespace Application.Transactions.Queries.GetUserTransactions;
+﻿namespace Application.Transactions.Queries;
 
-public record TransactionDto {
+public record TransactionDto
+{
     public required int Id { get; init; }
     public required decimal Amount { get; init; }
 

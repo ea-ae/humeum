@@ -1,4 +1,5 @@
 ﻿using Application.Transactions.Commands.AddTransaction;
+using Application.Transactions.Queries;
 using Application.Transactions.Queries.GetUserTransactions;
 
 using MediatR;

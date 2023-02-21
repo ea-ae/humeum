@@ -1,5 +1,5 @@
 ﻿using Application.Profiles.Queries;
-using Application.Transactions.Queries.GetUserTransactions;
+using Application.Transactions.Queries;
 
 using AutoMapper;
 

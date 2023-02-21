@@ -31,11 +31,13 @@ public class GetUserTransactionsQueryHandler : IQueryHandler<GetUserTransactions
     public async Task<List<TransactionDto>> Handle(GetUserTransactionsQuery request, CancellationToken token) {
         var transactions = _context.Transactions.AsNoTracking()
                                                 .Include(t => t.Profile)
-                                                .Where(t => t.ProfileId == request.Profile && t.DeletedAt == null);
+                                                .Where(t => t.ProfileId == request.Profile
+                                                            && t.Profile.UserId == request.User
+                                                            && t.DeletedAt == null);
 
-        bool userOwnsProfile = _context.Profiles.Any(p => p.Id == request.Profile && p.UserId == request.User);
-        if (!userOwnsProfile) {
-            throw new NotFoundValidationException("Profile ID not found.");
+        // check whether profile is owned by user in case no transactions were loaded (extra query required)
+        if (!transactions.Any() && !_context.Profiles.Any(p => p.Id == request.Profile && p.UserId == request.User)) {
+            throw new NotFoundValidationException("Profile is not owned by given user.");
         }
 
         if (request.StartBefore is not null) {
