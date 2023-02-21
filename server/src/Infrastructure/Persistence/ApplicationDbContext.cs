@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 
+using Domain.AssetAggregate;
 using Domain.Common;
 using Domain.ProfileAggregate;
 using Domain.TransactionAggregate;
@@ -16,6 +17,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<TransactionType> TransactionTypes { get; set; }
     public DbSet<TimeUnit> TransactionTimeUnits { get; set; }
+    public DbSet<Asset> Assets { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
         SavingChanges += SetTimestampFields; // add event handler
@@ -31,9 +33,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
             pt.OwnsOne(pt => pt.Period);
             pt.OwnsOne(pt => pt.Frequency, f => {
                 f.HasOne(f => f.TimeUnit);
-                //f.OwnsOne(f => f.TimeUnit, tu => {
-                //    tu.Has
-                //});
             });
         });
 
@@ -45,6 +44,19 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         builder.Entity<TimeUnit>().HasIndex(tu => tu.Code).IsUnique();
         builder.Entity<TimeUnit>().Ignore(tu => tu.InTimeSpan);
         builder.Entity<TimeUnit>().HasData(TimeUnit.Days, TimeUnit.Weeks, TimeUnit.Months, TimeUnit.Years);
+
+        builder.Entity<Asset>().HasData(
+            new Asset(-1,
+                "Index fund (default)",
+                "Index funds track the performance of a particular market index; great diversification, low fees, and easy management.",
+                returnRate: 8.1m,
+                standardDeviation: 15.2m),
+            new Asset(-1,
+                "Bond fund (default)",
+                "Bond funds provide great diversification potential and are stereotypically less volatile than other securities.",
+                returnRate: 1.9m,
+                standardDeviation: 3.0m)
+        );
     }
 
     public override int SaveChanges() {

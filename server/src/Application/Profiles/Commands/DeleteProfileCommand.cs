@@ -12,6 +12,7 @@ namespace Application.Profiles.Commands.AddProfile;
 /// configurations and transactions.
 /// </summary>
 public record DeleteProfileCommand : ICommand {
+    public required int User { get; init; }
     public required int Profile { get; init; }
 }
 
@@ -22,7 +23,7 @@ public class DeleteProfileCommandHandler : ICommandHandler<DeleteProfileCommand>
 
     public async Task<Unit> Handle(DeleteProfileCommand request, CancellationToken token) {
         var profile = _context.Profiles.Include(p => p.Transactions)
-                                       .Where(p => p.Id == request.Profile && p.DeletedAt == null)
+                                       .Where(p => p.Id == request.Profile && p.UserId == request.User && p.DeletedAt == null)
                                        .FirstOrDefault();
 
         if (profile == null) {

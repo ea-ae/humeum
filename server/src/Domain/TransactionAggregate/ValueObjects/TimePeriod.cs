@@ -2,6 +2,9 @@
 
 namespace Domain.TransactionAggregate.ValueObjects;
 
+/// <summary>
+/// Time periods can be either instant or have a start and end date.
+/// </summary>
 public class TimePeriod : ValueObject {
     /// <summary>Start of time period.</summary>
     public DateOnly Start { get; private set; }
