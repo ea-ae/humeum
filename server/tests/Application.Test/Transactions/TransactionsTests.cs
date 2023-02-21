@@ -13,10 +13,10 @@ using Application.Common.Exceptions;
 namespace Application.Test.Transactions;
 
 [Collection(InMemoryDbContextCollection.COLLECTION_NAME)]
-public class TransactionCommandTests {
+public class TransactionsTests {
     readonly InMemorySqliteDbContextFixture _dbContextFixture;
 
-    public TransactionCommandTests(InMemorySqliteDbContextFixture fixture) {
+    public TransactionsTests(InMemorySqliteDbContextFixture fixture) {
         _dbContextFixture = fixture;
     }
 
@@ -56,6 +56,16 @@ public class TransactionCommandTests {
         GetTransactionsQuery query = new() { User = 100, Profile = profile.Id };
         var result = await handler.Handle(query);
         Assert.Equal(3, result.Count);
+
+        // ensure that endpoint returns transactions with filters
+
+        query = new() { User = 100, Profile = profile.Id, StartAfter = new DateOnly(2013, 1, 2) };
+        result = await handler.Handle(query);
+        Assert.Equal(2, result.Count);
+
+        query = new() { User = 100, Profile = profile.Id, StartBefore = new DateOnly(2023, 12, 1), StartAfter = new DateOnly(2022, 6, 7) };
+        result = await handler.Handle(query);
+        Assert.Single(result);
 
         // ensure that a new profile with no transactions returns an empty list
 

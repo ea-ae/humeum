@@ -41,10 +41,10 @@ public class GetTransactionsQueryHandler : IQueryHandler<GetTransactionsQuery, L
         }
 
         if (request.StartBefore is not null) {
-            transactions = transactions.Where(t => t.PaymentTimeline.Period.Start < request.StartBefore);
+            transactions = transactions.Where(t => t.PaymentTimeline.Period.Start <= request.StartBefore);
         }
         if (request.StartAfter is not null) {
-            transactions = transactions.Where(t => t.PaymentTimeline.Period.Start > request.StartAfter);
+            transactions = transactions.Where(t => t.PaymentTimeline.Period.Start >= request.StartAfter);
         }
 
         return await transactions.ProjectTo<TransactionDto>(_mapper.ConfigurationProvider).ToListAsync(token);

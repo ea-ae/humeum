@@ -83,7 +83,6 @@ public class TransactionsControllerTest {
         Assert.Equal(expected, actual);
     }
 
-
     [Fact]
     public async Task TransactionController_CreateProfileAndTransactionsAndDeleteProfile_AuthorizesCreatesSoftDeletes() {
         var client = _webapp.ConfiguredClient;
