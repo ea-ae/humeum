@@ -6,12 +6,12 @@ using AutoMapper.QueryableExtensions;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Transactions.Queries.GetUserTransactions;
+namespace Application.Transactions.Queries.GetTransactions;
 
 /// <summary>
 /// Get transactions for a specified user with optional filtering conditions.
 /// </summary>
-public record GetUserTransactionsQuery : IQuery<List<TransactionDto>> {
+public record GetTransactionsQuery : IQuery<List<TransactionDto>> {
     public required int User { get; init; }
     public required int Profile { get; init; }
 
@@ -19,16 +19,16 @@ public record GetUserTransactionsQuery : IQuery<List<TransactionDto>> {
     public DateOnly? StartAfter { get; init; }
 }
 
-public class GetUserTransactionsQueryHandler : IQueryHandler<GetUserTransactionsQuery, List<TransactionDto>> {
+public class GetTransactionsQueryHandler : IQueryHandler<GetTransactionsQuery, List<TransactionDto>> {
     private readonly IAppDbContext _context;
     private readonly IMapper _mapper;
 
-    public GetUserTransactionsQueryHandler(IAppDbContext context, IMapper mapper) {
+    public GetTransactionsQueryHandler(IAppDbContext context, IMapper mapper) {
         _context = context;
         _mapper = mapper;
     }
 
-    public async Task<List<TransactionDto>> Handle(GetUserTransactionsQuery request, CancellationToken token = default) {
+    public async Task<List<TransactionDto>> Handle(GetTransactionsQuery request, CancellationToken token = default) {
         var transactions = _context.Transactions.AsNoTracking()
                                                 .Include(t => t.Profile)
                                                 .Where(t => t.ProfileId == request.Profile

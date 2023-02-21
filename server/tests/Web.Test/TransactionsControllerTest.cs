@@ -24,7 +24,7 @@ public class TransactionsControllerTest {
     }
 
     [Fact]
-    public async Task GetAllAction_UnauthorizedUser_ReturnsUnauthorized() {
+    public async Task GetTransactionsAction_UnauthorizedUser_ReturnsUnauthorized() {
         var client = _webapp.ConfiguredClient;
 
         var expected = HttpStatusCode.Unauthorized;
@@ -36,7 +36,7 @@ public class TransactionsControllerTest {
     }
 
     [Fact]
-    public async Task GetAllAction_AuthorizedUserWrongId_ReturnsForbidden() {
+    public async Task GetTransactionsAction_AuthorizedUserWrongId_ReturnsForbidden() {
         var client = _webapp.ConfiguredClient;
         using var scope = _webapp.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
@@ -58,7 +58,7 @@ public class TransactionsControllerTest {
     }
 
     [Fact]
-    public async Task GetAllAction_AuthorizedUserWrongProfile_ReturnsNotFound() {
+    public async Task GetTransactionsAction_AuthorizedUserWrongProfile_ReturnsNotFound() {
         var client = _webapp.ConfiguredClient;
         using var scope = _webapp.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();

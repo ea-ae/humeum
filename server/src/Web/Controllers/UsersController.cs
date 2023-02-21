@@ -23,14 +23,14 @@ public class UsersController : ControllerBase {
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register(RegisterUserCommand command) {
+    public async Task<IActionResult> RegisterUser(RegisterUserCommand command) {
         int id = await _mediator.Send(command);
         return CreatedAtAction(nameof(Get), new { User = id }, null);
     }
 
     [HttpPost("sign-in")]
     //[SetAsCookieFilter(CookieName = "Jwt")]
-    public async Task<IActionResult> SignIn(SignInUserCommand command) {
+    public async Task<IActionResult> SignInUser(SignInUserCommand command) {
         int id = await _mediator.Send(command);
         return Ok(id);
     }

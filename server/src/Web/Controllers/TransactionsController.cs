@@ -1,6 +1,7 @@
 ﻿using Application.Transactions.Commands.AddTransaction;
 using Application.Transactions.Queries;
-using Application.Transactions.Queries.GetUserTransactions;
+using Application.Transactions.Queries.GetTransaction;
+using Application.Transactions.Queries.GetTransactions;
 
 using MediatR;
 
@@ -23,20 +24,20 @@ public class TransactionsController : ControllerBase {
     public TransactionsController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet]
-    public async Task<List<TransactionDto>> GetAll(GetUserTransactionsQuery query) {
+    public async Task<List<TransactionDto>> GetTransactions(GetTransactionsQuery query) {
         var transactions = await _mediator.Send(query);
         return transactions;
     }
 
     [HttpGet("{transaction}")]
-    public async Task<IActionResult> Get(GetUserTransactionQuery query) {
+    public async Task<IActionResult> GetTransaction(GetTransactionQuery query) {
         var transaction = await _mediator.Send(query);
         return Ok(transaction);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add(AddTransactionCommand command) {
+    public async Task<IActionResult> AddTransaction(AddTransactionCommand command) {
         int id = await _mediator.Send(command);
-        return CreatedAtAction(nameof(Get), new { command.User, command.Profile, Transaction = id }, null);
+        return CreatedAtAction(nameof(GetTransaction), new { command.User, command.Profile, Transaction = id }, null);
     }
 }

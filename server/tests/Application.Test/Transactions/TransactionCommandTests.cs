@@ -5,7 +5,7 @@ using Application.Transactions.Commands.AddTransaction;
 using Domain.ProfileAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
-using Application.Transactions.Queries.GetUserTransactions;
+using Application.Transactions.Queries.GetTransactions;
 using AutoMapper;
 using Application.Common.Mappings;
 using Application.Common.Exceptions;
@@ -21,10 +21,10 @@ public class TransactionCommandTests {
     }
 
     [Fact]
-    public async Task GetAllTransactionsQuery_TransactionsAndProfiles_ReturnsAuthenticatedProfileTransactions() {
+    public async Task GetTransactionsQuery_TransactionsAndProfiles_ReturnsAuthenticatedProfileTransactions() {
         var context = _dbContextFixture.CreateDbContext();
         var mapperConfig = new MapperConfiguration(cfg => { cfg.AddProfile(new AppMappingProfile()); });
-        var handler = new GetUserTransactionsQueryHandler(context, mapperConfig.CreateMapper());
+        var handler = new GetTransactionsQueryHandler(context, mapperConfig.CreateMapper());
 
         // set up a profile and three transactions
 
@@ -53,7 +53,7 @@ public class TransactionCommandTests {
 
         // ensure that endpoint returns transactions
 
-        GetUserTransactionsQuery query = new() { User = 100, Profile = profile.Id };
+        GetTransactionsQuery query = new() { User = 100, Profile = profile.Id };
         var result = await handler.Handle(query);
         Assert.Equal(3, result.Count);
 

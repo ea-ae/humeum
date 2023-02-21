@@ -5,23 +5,23 @@ using AutoMapper;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Profiles.Queries.GetUserProfileDetails;
+namespace Application.Profiles.Queries.GetProfileDetails;
 
-public record GetUserProfileQuery : IQuery<ProfileDto> {
+public record GetProfileQuery : IQuery<ProfileDto> {
     public int User { get; init; }
     public int Profile { get; init; }
 }
 
-public class GetUserProfileQueryHandler : IQueryHandler<GetUserProfileQuery, ProfileDto> {
+public class GetProfileQueryHandler : IQueryHandler<GetProfileQuery, ProfileDto> {
     private readonly IAppDbContext _context;
     private readonly IMapper _mapper;
 
-    public GetUserProfileQueryHandler(IAppDbContext context, IMapper mapper) {
+    public GetProfileQueryHandler(IAppDbContext context, IMapper mapper) {
         _context = context;
         _mapper = mapper;
     }
 
-    public async Task<ProfileDto> Handle(GetUserProfileQuery request, CancellationToken _) {
+    public async Task<ProfileDto> Handle(GetProfileQuery request, CancellationToken _) {
         var profile = _context.Profiles.AsNoTracking()
                                        .FirstOrDefault(p => p.Id == request.Profile && p.UserId == request.User && p.DeletedAt == null);
 
