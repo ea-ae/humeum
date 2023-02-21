@@ -1,6 +1,7 @@
 ﻿using System.Net.Mail;
 
 using Domain.Common;
+using Domain.Common.Exceptions;
 using Domain.UserAggregate.ValueObjects;
 
 namespace Domain.UserAggregate;
@@ -25,7 +26,11 @@ public class User : Entity {
         get => _email;
         private set {
             if (value != null) {
-                _ = new MailAddress(value); // validation
+                try {
+                    _ = new MailAddress(value); // validation
+                } catch (Exception e) {
+                    throw new DomainException(e);
+                }
             }
             _email = value;
         }

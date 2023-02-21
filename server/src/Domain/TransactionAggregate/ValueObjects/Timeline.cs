@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Common.Exceptions;
 
 namespace Domain.TransactionAggregate.ValueObjects;
 
@@ -9,9 +10,9 @@ public class Timeline : ValueObject {
         get => _frequency;
         private set {
             if (value is null && Period.IsRecurring) {
-                throw new InvalidOperationException("Cannot set frequency to null with a payment end date.");
+                throw new DomainException(new InvalidOperationException("Cannot set frequency to null with a payment end date."));
             } else if (value is not null && !Period.IsRecurring) {
-                throw new InvalidOperationException("Cannot assign a frequency when there is no payment end date.");
+                throw new DomainException(new InvalidOperationException("Cannot assign a frequency when there is no payment end date."));
             }
             _frequency = value;
         }
@@ -23,9 +24,9 @@ public class Timeline : ValueObject {
         get => _period;
         private set {
             if (value.End is null && Frequency is not null) {
-                throw new InvalidOperationException("Cannot set payment end date to null when there is a frequency.");
+                throw new DomainException(new InvalidOperationException("Cannot set payment end date to null when there is a frequency."));
             } else if (value.End is not null && Frequency is null) {
-                throw new InvalidOperationException("Cannot assign a payment end date when there is no frequency.");
+                throw new DomainException(new InvalidOperationException("Cannot assign a payment end date when there is no frequency."));
             }
             _period = value;
         }

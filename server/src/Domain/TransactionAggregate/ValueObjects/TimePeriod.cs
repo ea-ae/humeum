@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Common.Exceptions;
 
 namespace Domain.TransactionAggregate.ValueObjects;
 
@@ -21,7 +22,7 @@ public class TimePeriod : ValueObject {
 
     public TimePeriod(DateOnly start, DateOnly end) : this(start) {
         if (end <= start) {
-            throw new ArgumentException("Time period must end after it starts.");
+            throw new DomainException(new ArgumentException("Time period must end after it starts."));
         }
         End = end;
     }

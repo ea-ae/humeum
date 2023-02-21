@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Common.Exceptions;
 
 namespace Domain.TransactionAggregate.ValueObjects;
 
@@ -9,7 +10,7 @@ public class Frequency : ValueObject {
         get => _timesPerCycle;
         private set {
             if (value <= 0) {
-                throw new ArgumentException("Times per period must be greater than zero.");
+                throw new DomainException(new ArgumentException("Times per period must be greater than zero."));
             }
             _timesPerCycle = value;
         }
@@ -21,7 +22,7 @@ public class Frequency : ValueObject {
         get => _unitsInCycle;
         private set {
             if (value <= 0) {
-                throw new ArgumentException("Units in period must be greater than zero.");
+                throw new DomainException(new ArgumentException("Units in period must be greater than zero."));
             }
             _unitsInCycle = value;
         }

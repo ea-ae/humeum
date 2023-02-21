@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Common.Exceptions;
 
 namespace Domain.UserAggregate.ValueObjects;
 
@@ -11,19 +12,19 @@ public class Username : ValueObject {
         get => _value;
         private set {
             if (value.Length > MAX_USERNAME_LENGTH) {
-                throw new ArgumentException($"Username is too long (>{MAX_USERNAME_LENGTH} characters).");
+                throw new DomainException(new ArgumentException($"Username is too long (>{MAX_USERNAME_LENGTH} characters)."));
             }
 
             if (value.Length < MIN_USERNAME_LENGTH) {
-                throw new ArgumentException($"Username is too short (<{MIN_USERNAME_LENGTH} characters).");
+                throw new DomainException(new ArgumentException($"Username is too short (<{MIN_USERNAME_LENGTH} characters)."));
             }
 
             if (!value.All(char.IsAsciiLetterOrDigit)) {
-                throw new ArgumentException($"Username must be ASCII-alphanumeric.");
+                throw new DomainException(new ArgumentException($"Username must be ASCII-alphanumeric."));
             }
 
             if (!char.IsAsciiLetter(value.First())) {
-                throw new ArgumentException($"Username must start with a letter, not a digit.");
+                throw new DomainException(new ArgumentException($"Username must start with a letter, not a digit."));
             }
 
             _value = value;

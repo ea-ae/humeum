@@ -1,5 +1,7 @@
 ﻿using Application.Common.Exceptions;
 
+using Domain.Common.Exceptions;
+
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -20,7 +22,7 @@ public class ValidationExceptionFilterAttribute : ExceptionFilterAttribute {
                 StatusCode = StatusCodes.Status404NotFound
             };
             context.ExceptionHandled = true;
-        } else if (context.Exception is ApplicationValidationException validationException) {
+        } else if (context.Exception is ApplicationValidationException or DomainException) {
             var error = new ProblemDetails {
                 Title = "Validation Error",
                 Detail = context.Exception.Message,

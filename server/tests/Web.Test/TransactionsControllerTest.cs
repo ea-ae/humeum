@@ -7,8 +7,6 @@ using Web.Test.Common;
 using Xunit;
 using Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Xunit.Abstractions;
-using System.Security.Policy;
 
 namespace Web.Test;
 

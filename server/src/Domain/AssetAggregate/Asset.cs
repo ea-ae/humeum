@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Common.Exceptions;
 using Domain.ProfileAggregate;
 
 namespace Domain.AssetAggregate;
@@ -22,7 +23,7 @@ public class Asset : TimestampedEntity {
         get => _returnRate;
         private set {
             if (value < 0) {
-                throw new ArgumentException("Return rate cannot be negative.");
+                throw new DomainException(new ArgumentException("Return rate cannot be negative."));
             }
             _returnRate = value;
         }
@@ -33,7 +34,7 @@ public class Asset : TimestampedEntity {
         get => _standardDeviation;
         private set {
             if (value < 0) {
-                throw new ArgumentException("Standard deviation cannot be negative.");
+                throw new DomainException(new ArgumentException("Standard deviation cannot be negative."));
             }
             _standardDeviation = value;
         }
