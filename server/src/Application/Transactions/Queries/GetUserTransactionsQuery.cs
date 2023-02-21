@@ -28,7 +28,7 @@ public class GetUserTransactionsQueryHandler : IQueryHandler<GetUserTransactions
         _mapper = mapper;
     }
 
-    public async Task<List<TransactionDto>> Handle(GetUserTransactionsQuery request, CancellationToken token) {
+    public async Task<List<TransactionDto>> Handle(GetUserTransactionsQuery request, CancellationToken token = default) {
         var transactions = _context.Transactions.AsNoTracking()
                                                 .Include(t => t.Profile)
                                                 .Where(t => t.ProfileId == request.Profile
@@ -37,7 +37,7 @@ public class GetUserTransactionsQueryHandler : IQueryHandler<GetUserTransactions
 
         // check whether profile is owned by user in case no transactions were loaded (extra query required)
         if (!transactions.Any() && !_context.Profiles.Any(p => p.Id == request.Profile && p.UserId == request.User)) {
-            throw new NotFoundValidationException("Profile is not owned by given user.");
+            throw new NotFoundValidationException("Profile not found for user.");
         }
 
         if (request.StartBefore is not null) {

@@ -29,8 +29,9 @@ public class TransactionsController : ControllerBase {
     }
 
     [HttpGet("{transaction}")]
-    public IActionResult Get() {
-        return StatusCode(StatusCodes.Status503ServiceUnavailable);
+    public async Task<IActionResult> Get(GetUserTransactionQuery query) {
+        var transaction = await _mediator.Send(query);
+        return Ok(transaction);
     }
 
     [HttpPost]

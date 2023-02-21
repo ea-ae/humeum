@@ -3,6 +3,12 @@
 using Application.Test.Common;
 using Application.Transactions.Commands.AddTransaction;
 using Domain.ProfileAggregate;
+using Domain.TransactionAggregate;
+using Domain.TransactionAggregate.ValueObjects;
+using Application.Transactions.Queries.GetUserTransactions;
+using AutoMapper;
+using Application.Common.Mappings;
+using Application.Common.Exceptions;
 
 namespace Application.Test.Transactions;
 
@@ -15,11 +21,67 @@ public class TransactionCommandTests {
     }
 
     [Fact]
+    public async Task GetAllTransactionsQuery_TransactionsAndProfiles_ReturnsAuthenticatedProfileTransactions() {
+        var context = _dbContextFixture.CreateDbContext();
+        var mapperConfig = new MapperConfiguration(cfg => { cfg.AddProfile(new AppMappingProfile()); });
+        var handler = new GetUserTransactionsQueryHandler(context, mapperConfig.CreateMapper());
+
+        // set up a profile and three transactions
+
+        var profile = new Domain.ProfileAggregate.Profile(100, "Default");
+        context.Profiles.Add(profile);
+
+        var transactionType = TransactionType.Always;
+        context.TransactionTypes.Attach(transactionType);
+
+        var timeline = new Timeline(new TimePeriod(new DateOnly(2023, 2, 3)));
+        var transaction = new Transaction(profile, "Test", null, 42, transactionType, timeline);
+        context.Transactions.Add(transaction);
+
+        var timeUnit = TimeUnit.Years;
+        context.TransactionTimeUnits.Attach(timeUnit);
+        timeline = new Timeline(new TimePeriod(new DateOnly(2022, 6, 6), new DateOnly(2024, 1, 1)), new Frequency(timeUnit, 2, 3));
+
+        transaction = new Transaction(profile, "Test2", null, 43, transactionType, timeline);
+        context.Transactions.Add(transaction);
+
+        timeline = new Timeline(new TimePeriod(new DateOnly(2013, 1, 1)));
+        transaction = new Transaction(profile, "Test2", null, 43, transactionType, timeline);
+        context.Transactions.Add(transaction);
+
+        await context.SaveChangesAsync();
+
+        // ensure that endpoint returns transactions
+
+        GetUserTransactionsQuery query = new() { User = 100, Profile = profile.Id };
+        var result = await handler.Handle(query);
+        Assert.Equal(3, result.Count);
+
+        // ensure that a new profile with no transactions returns an empty list
+
+        var emptyProfile = new Domain.ProfileAggregate.Profile(200, "EmptyProfile");
+        context.Profiles.Add(emptyProfile);
+        await context.SaveChangesAsync();
+
+        query = new() { User = 200, Profile = emptyProfile.Id };
+        result = await handler.Handle(query);
+        Assert.Empty(result);
+
+        // ensure that profiles owned by different users do not leak data
+
+        query = new() { User = 100, Profile = emptyProfile.Id };
+        _ = Assert.ThrowsAsync<NotFoundValidationException>(async () => await handler.Handle(query));
+
+        query = new() { User = 200, Profile = profile.Id };
+        _ = Assert.ThrowsAsync<NotFoundValidationException>(async () => await handler.Handle(query));
+    }
+
+    [Fact]
     public async Task AddTransactionCommand_OneTimeTransaction_Persists() {
         var context = _dbContextFixture.CreateDbContext();
         var handler = new AddTransactionCommandHandler(context);
         
-        var profile = new Profile(1, "Default");
+        var profile = new Domain.ProfileAggregate.Profile(1, "Default");
         context.Profiles.Add(profile);
         await context.SaveChangesAsync();
 
@@ -56,7 +118,7 @@ public class TransactionCommandTests {
         var context = _dbContextFixture.CreateDbContext();
         var handler = new AddTransactionCommandHandler(context);
 
-        var profile = new Profile(1, "Default");
+        var profile = new Domain.ProfileAggregate.Profile(1, "Default");
         context.Profiles.Add(profile);
         await context.SaveChangesAsync();
 

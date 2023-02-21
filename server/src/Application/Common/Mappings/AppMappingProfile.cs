@@ -7,7 +7,7 @@ using Domain.TransactionAggregate;
 
 namespace Application.Common.Mappings;
 
-internal class AppMappingProfile : Profile {
+public class AppMappingProfile : Profile {
     public AppMappingProfile() {
         CreateMap<Transaction, TransactionDto>();
         CreateMap<Domain.ProfileAggregate.Profile, ProfileDto>();
