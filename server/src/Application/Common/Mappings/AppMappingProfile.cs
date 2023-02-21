@@ -1,4 +1,5 @@
-﻿using Application.Transactions.Queries.GetUserTransactions;
+﻿using Application.Profiles.Queries.GetUserProfileDetails;
+using Application.Transactions.Queries.GetUserTransactions;
 
 using AutoMapper;
 
@@ -9,5 +10,6 @@ namespace Application.Common.Mappings;
 internal class AppMappingProfile : Profile {
     public AppMappingProfile() {
         CreateMap<Transaction, TransactionDto>();
+        CreateMap<Domain.ProfileAggregate.Profile, ProfileDto>();
     }
 }

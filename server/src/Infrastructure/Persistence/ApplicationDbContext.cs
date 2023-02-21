@@ -46,12 +46,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         builder.Entity<TimeUnit>().HasData(TimeUnit.Days, TimeUnit.Weeks, TimeUnit.Months, TimeUnit.Years);
 
         builder.Entity<Asset>().HasData(
-            new Asset(-1,
+            new Asset(1,
                 "Index fund (default)",
                 "Index funds track the performance of a particular market index; great diversification, low fees, and easy management.",
                 returnRate: 8.1m,
                 standardDeviation: 15.2m),
-            new Asset(-1,
+            new Asset(2,
                 "Bond fund (default)",
                 "Bond funds provide great diversification potential and are stereotypically less volatile than other securities.",
                 returnRate: 1.9m,

@@ -5,7 +5,7 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Profiles.Commands.AddProfile;
+namespace Application.Profiles.Commands.DeleteProfile;
 
 /// <summary>
 /// Create a new profile for a user. Users can have multiple profiles with their own
