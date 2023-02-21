@@ -1,4 +1,5 @@
 ﻿using Application.Transactions.Commands.AddTransaction;
+using Application.Transactions.Commands.DeleteTransaction;
 using Application.Transactions.Queries;
 using Application.Transactions.Queries.GetTransaction;
 using Application.Transactions.Queries.GetTransactions;
@@ -39,5 +40,11 @@ public class TransactionsController : ControllerBase {
     public async Task<IActionResult> AddTransaction(AddTransactionCommand command) {
         int id = await _mediator.Send(command);
         return CreatedAtAction(nameof(GetTransaction), new { command.User, command.Profile, Transaction = id }, null);
+    }
+
+    [HttpDelete("{transaction}")]
+    public async Task<IActionResult> DeleteTransaction(DeleteTransactionCommand command) {
+        await _mediator.Send(command);
+        return NoContent();
     }
 }
