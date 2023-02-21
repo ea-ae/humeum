@@ -8,6 +8,7 @@ using Xunit;
 using Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Xunit.Abstractions;
+using System.Security.Policy;
 
 namespace Web.Test;
 
@@ -20,6 +21,19 @@ public class TransactionsControllerTest {
 
     public TransactionsControllerTest(CustomWebAppFactory webapp) {
         _webapp = webapp;
+    }
+
+    [Fact]
+    public async Task AddAction_UnauthorizedUser_ReturnsUnauthorized() {
+        string query = "users/1/profiles/1/transactions";
+        var client = _webapp.ConfiguredClient;
+
+        var expected = HttpStatusCode.Unauthorized;
+
+        var response = await client.PostAsync(query, null);
+        var actual = response.StatusCode;
+
+        Assert.Equal(expected, actual);
     }
 
     [Theory]
@@ -43,23 +57,44 @@ public class TransactionsControllerTest {
     }
 
     [Fact]
-    public async Task AddAction_CreateProfileAndTransactionsAndDeleteProfile_ReturnsCreated() {
-        const string transactionQuery = "amount=5&type=RETIREMENTONLY&paymentStart=2030-06-06";
+    public async Task AddAction_CreateProfileAndTransactionsAndDeleteProfile_AuthorizesCreatesSoftDeletes() {
         var client = _webapp.ConfiguredClient;
-
         using var scope = _webapp.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
         //await context.Database.EnsureDeletedAsync();
         await context.Database.EnsureCreatedAsync();
 
+        // create user account
+
+        const string userQuery = "username=test&password=testingtesting&confirmPassword=testingtesting&email=test@test.com";
+        var response = await client.PostAsync($"users/register?{userQuery}", null);
+        Assert.NotNull(response.Headers.Location);
+        int userId = int.Parse(response.Headers.Location.ToString().Split("/").Last());
+
+        var setCookieHeaderFound = response.Headers.TryGetValues("Set-Cookie", out var cookies);
+        Assert.True(setCookieHeaderFound);
+
+        string? authToken = null;
+        foreach (var cookie in cookies ?? Array.Empty<string>()) {
+            if (cookie.StartsWith("Jwt")) {
+                authToken = "Jwt=" + cookie.Split("=")[1].Split(";")[0];
+                break;
+            }
+        }
+        Assert.NotNull(authToken);
+
         // create 2 profiles
 
-        var response = await client.PostAsync("users/1/profiles?name=Default", null);
+        var message = new HttpRequestMessage(HttpMethod.Post, $"users/{userId}/profiles?name=Default");
+        message.Headers.Add("Cookie", authToken);
+        response = await client.SendAsync(message);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         Assert.NotNull(response.Headers.Location);
         int profileOneId = int.Parse(response.Headers.Location.ToString().Split("/").Last());
 
-        response = await client.PostAsync("users/1/profiles?name=Conservative&withdrawalRate=3.15", null);
+        message = new HttpRequestMessage(HttpMethod.Post, $"users/{userId}/profiles?name=Conservative&withdrawalRate=3.15");
+        message.Headers.Add("Cookie", authToken);
+        response = await client.SendAsync(message);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         Assert.NotNull(response.Headers.Location);
         int profileTwoId = int.Parse(response.Headers.Location.ToString().Split("/").Last());
@@ -69,14 +104,19 @@ public class TransactionsControllerTest {
         const int transactionsPerProfile = 3;
         foreach (int profileId in new[] { profileOneId, profileTwoId }) {
             for (int i = 0; i < transactionsPerProfile; i++) {
-                response = await client.PostAsync($"users/1/profiles/{profileId}/transactions?{transactionQuery}", null);
+                const string transactionQuery = "amount=5&type=RETIREMENTONLY&paymentStart=2030-06-06";
+                message = new HttpRequestMessage(HttpMethod.Post, $"users/{userId}/profiles/{profileId}/transactions?{transactionQuery}");
+                message.Headers.Add("Cookie", authToken);
+                response = await client.SendAsync(message);
                 Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             }
         }
 
         // soft delete one of the profiles
 
-        response = await client.DeleteAsync("users/1/profiles/2");
+        message = new HttpRequestMessage(HttpMethod.Delete, $"users/1/profiles/{profileTwoId}");
+        message.Headers.Add("Cookie", authToken);
+        response = await client.SendAsync(message);
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
         // confirm that soft deletion was applied correctly

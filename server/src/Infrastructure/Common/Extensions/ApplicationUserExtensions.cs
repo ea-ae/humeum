@@ -1,6 +1,5 @@
 ﻿using Domain.UserAggregate;
-
-using Infrastructure.Models;
+using Infrastructure.Identity;
 
 namespace Infrastructure.Common.Extensions;
 

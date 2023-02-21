@@ -3,9 +3,8 @@ using System.Text;
 
 using Application.Common.Interfaces;
 
-using Infrastructure.Authorization;
+using Infrastructure.Identity;
 using Infrastructure.Common.Settings;
-using Infrastructure.Models;
 using Infrastructure.Persistence;
 using Infrastructure.Services;
 

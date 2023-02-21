@@ -8,7 +8,7 @@ using Application.Common.Interfaces;
 using Domain.UserAggregate;
 
 using Infrastructure.Common.Settings;
-using Infrastructure.Models;
+using Infrastructure.Identity;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -49,7 +49,7 @@ public class JwtApplicationUserService : ApplicationUserService {
             var token = await CreateToken(appUser);
             AddTokenAsCookie(token);
 
-            return user.Id;
+            return appUser.Id;
         }
 
         var error = result.Errors.First();

@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Infrastructure.Models;
+namespace Infrastructure.Identity;
 
-public class ApplicationUser : IdentityUser<int> {
+public class ApplicationUser : IdentityUser<int>
+{
     public required string DisplayName { get; set; }
 }

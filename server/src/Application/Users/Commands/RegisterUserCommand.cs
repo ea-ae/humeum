@@ -33,7 +33,8 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, i
         // handling
 
         var user = new User(request.Username, request.Email);
+        int userId = await _userService.CreateUserAsync(user, request.Password, request.RememberMe);
 
-        return await _userService.CreateUserAsync(user, request.Password, request.RememberMe);
+        return userId;
     }
 }

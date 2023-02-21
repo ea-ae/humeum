@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace Infrastructure.Authorization;
+namespace Infrastructure.Identity;
 
 public class UserDataAccessRequirement : IAuthorizationRequirement { }
