@@ -4,6 +4,7 @@ using Application.Common.Exceptions;
 using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
+using Domain.ProfileAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 
@@ -54,9 +55,10 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
                 "Fields for recurrent transactions were only partially specified.");
         }
 
+        // TODO: we handle this differently in different services!!
         bool userOwnsProfile = _context.Profiles.Any(p => p.Id == request.Profile && p.UserId == request.User);
         if (!userOwnsProfile) {
-            throw new NotFoundValidationException("Profile ID not found.");
+            throw new NotFoundValidationException(typeof(Profile));
         }
 
         // handling

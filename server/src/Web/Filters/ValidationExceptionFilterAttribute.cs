@@ -11,7 +11,7 @@ public class ValidationExceptionFilterAttribute : ExceptionFilterAttribute {
     public override void OnException(ExceptionContext context) {
         if (context.Exception is NotFoundValidationException notFoundValidationException) {
             var error = new ProblemDetails {
-                Title = "Not found",
+                Title = "Not Found",
                 Detail = context.Exception.Message,
                 Status = StatusCodes.Status404NotFound
             };
@@ -22,7 +22,7 @@ public class ValidationExceptionFilterAttribute : ExceptionFilterAttribute {
             context.ExceptionHandled = true;
         } else if (context.Exception is ValidationException validationException) {
             var error = new ProblemDetails {
-                Title = "Validation error",
+                Title = "Validation Error",
                 Detail = context.Exception.Message,
                 Status = StatusCodes.Status400BadRequest
             };

@@ -2,6 +2,8 @@
 using Application.Common.Interfaces;
 using AutoMapper;
 
+using Domain.TransactionAggregate;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Transactions.Queries.GetTransaction;
@@ -29,7 +31,7 @@ public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, Tra
                                                                     && t.DeletedAt == null);
 
         if (transaction is null) {
-            throw new NotFoundValidationException("Transaction does not exist.");
+            throw new NotFoundValidationException(typeof(Transaction));
         }
 
         return await Task.Run(() => _mapper.Map<TransactionDto>(transaction));

@@ -1,6 +1,8 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 
+using Domain.ProfileAggregate;
+
 using MediatR;
 
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +29,7 @@ public class DeleteProfileCommandHandler : ICommandHandler<DeleteProfileCommand>
                                        .FirstOrDefault();
 
         if (profile is null) {
-            throw new NotFoundValidationException("Profile with given ID does not exist.");
+            throw new NotFoundValidationException(typeof(Profile));
         }
 
         _context.Profiles.Remove(profile);

@@ -26,7 +26,7 @@ public class GetProfileQueryHandler : IQueryHandler<GetProfileQuery, ProfileDto>
                                        .FirstOrDefault(p => p.Id == request.Profile && p.UserId == request.User && p.DeletedAt == null);
 
         if (profile is null) {
-            throw new NotFoundValidationException("User profile does not exist.");
+            throw new NotFoundValidationException(typeof(Profile));
         }
 
         return await Task.Run(() => _mapper.Map<ProfileDto>(profile));

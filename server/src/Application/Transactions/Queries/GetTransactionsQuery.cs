@@ -37,7 +37,7 @@ public class GetTransactionsQueryHandler : IQueryHandler<GetTransactionsQuery, L
 
         // check whether profile is owned by user in case no transactions were loaded (extra query required)
         if (!transactions.Any() && !_context.Profiles.Any(p => p.Id == request.Profile && p.UserId == request.User)) {
-            throw new NotFoundValidationException("Profile not found for user.");
+            throw new NotFoundValidationException(typeof(Domain.ProfileAggregate.Profile));
         }
 
         if (request.StartBefore is not null) {

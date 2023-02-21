@@ -1,6 +1,8 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 
+using Domain.TransactionAggregate;
+
 using MediatR;
 
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +29,7 @@ public class DeleteTransactionCommandHandler : ICommandHandler<DeleteTransaction
                                                .FirstOrDefault();
 
         if (transaction is null) {
-            throw new NotFoundValidationException("Transaction with given ID does not exist in profile for user.");
+            throw new NotFoundValidationException(typeof(Transaction));
         }
 
         _context.Transactions.Remove(transaction);
