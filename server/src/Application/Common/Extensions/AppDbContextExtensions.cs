@@ -31,9 +31,10 @@ internal static class AppDbContextExtensions {
     }
     
     /// <summary>
-    /// Finds out through an SQL query whether a profile is owned by given user. This can be a useful
-    /// check for entities that fall under a profile in scenarios where one must distinguish between
-    /// no results returned (an empty list) due to lack of data and due to an invalid profile condition.
+    /// Finds out whether a profile is owned by given user. Simplicity of method is paid for through an
+    /// additional light SQL query.. This can be a useful check for entities that fall under a profile 
+    /// scenarios where one must distinguish between no results returned (an empty list) due to lack of 
+    /// data and due to an invalid profile condition.
     /// </summary>
     /// <param name="context">Database context to perform query on.</param>
     /// <param name="userId">The user to check profile ownership with.</param>

@@ -6,10 +6,6 @@ using Domain.ProfileAggregate;
 
 namespace Application.Profiles.Commands.AddProfile;
 
-/// <summary>
-/// Create a new profile for a user. Users can have multiple profiles with their own
-/// configurations and transactions.
-/// </summary>
 public record AddProfileCommand : ICommand<int> {
     [Required] public required int User { get; init; }
 

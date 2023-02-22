@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using Application.Common.Exceptions;
+using Application.Common.Extensions;
 using Application.Common.Interfaces;
 using AutoMapper;
 
@@ -33,6 +34,7 @@ public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, Tra
                                                                     && t.DeletedAt == null);
 
         if (transaction is null) {
+            _context.AssertUserOwnsProfile(request.User, request.Profile);
             throw new NotFoundValidationException(typeof(Transaction));
         }
 

@@ -11,10 +11,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Profiles.Commands.DeleteProfile;
 
-/// <summary>
-/// Create a new profile for a user. Users can have multiple profiles with their own
-/// configurations and transactions.
-/// </summary>
 public record DeleteProfileCommand : ICommand {
     [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }

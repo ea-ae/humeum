@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using Application.Common.Exceptions;
+using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using Domain.TransactionAggregate;
@@ -31,6 +32,7 @@ public class DeleteTransactionCommandHandler : ICommandHandler<DeleteTransaction
                                                .FirstOrDefault();
 
         if (transaction is null) {
+            _context.AssertUserOwnsProfile(request.User, request.Profile);
             throw new NotFoundValidationException(typeof(Transaction));
         }
 

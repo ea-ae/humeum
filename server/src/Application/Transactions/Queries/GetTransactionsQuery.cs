@@ -11,9 +11,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Transactions.Queries.GetTransactions;
 
-/// <summary>
-/// Get transactions for a specified user with optional filtering conditions.
-/// </summary>
 public record GetTransactionsQuery : IQuery<List<TransactionDto>> {
     [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }

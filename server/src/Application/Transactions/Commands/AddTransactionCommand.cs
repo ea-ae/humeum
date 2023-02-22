@@ -10,12 +10,6 @@ using Domain.TransactionAggregate.ValueObjects;
 
 namespace Application.Transactions.Commands.AddTransaction;
 
-/// <summary>
-/// Create a new transaction for a user profile. Transactions can either be single-payment, in which
-/// case the optional recurring transaction fields are not provided; or they can be recurrent,
-/// meaning they'll be performed at a certain frequency up until the payment end date.
-/// The first payment is always made at the payment start date.
-/// </summary>
 public record AddTransactionCommand : ICommand<int> {
     [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }
