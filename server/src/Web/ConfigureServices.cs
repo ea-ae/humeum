@@ -8,7 +8,15 @@ using Web.Common;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
+/// <summary>
+/// Configures web services.
+/// </summary>
 public static class ConfigureServices {
+    /// <summary>
+    /// Run as an extension method from the main <see cref="Program.Program"/> method.
+    /// </summary>
+    /// <param name="services">Provided service collection.</param>
+    /// <returns>Given service collection for further extension method chaining.</returns>
     public static IServiceCollection ConfigureWebServices(this IServiceCollection services) {
         services.AddControllers(o => {
             o.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));

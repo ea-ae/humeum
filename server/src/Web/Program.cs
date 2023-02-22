@@ -25,4 +25,7 @@ app.MapControllers();
 
 app.Run();
 
-public partial class Program { } // expose class to test projects
+/// <summary>
+/// Main program entrypoint, primarily used for test project hooks.
+/// </summary>
+public partial class Program { }

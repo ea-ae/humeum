@@ -15,11 +15,15 @@ using Web.Filters;
 namespace Web.Controllers;
 
 /// <inheritdoc cref="Domain.TransactionAggregate.Transaction"/>
+/// <response code="401">If a user route is accessed without an authentication token.</response>
+/// <response code="403">If a user route is accessed with an authentication token assigned to another user ID.</response>
 [Route("api/v1/users/{user}/profiles/{profile}/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleUserData")]
-[ValidationExceptionFilter]
+[ApplicationExceptionFilter]
 [CsrfXHeaderFilter]
 [Produces("application/json")]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status403Forbidden)]
 [ApiController]
 public class TransactionsController : ControllerBase {
     private readonly IMediator _mediator;

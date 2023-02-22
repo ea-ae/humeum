@@ -8,10 +8,16 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Web.Filters;
 
+/// <summary>
+/// Handles application exceptions and converts them to appropriate HTTP responses.
+/// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-public class ValidationExceptionFilterAttribute : ExceptionFilterAttribute {
+public class ApplicationExceptionFilterAttribute : ExceptionFilterAttribute {
+    /// <summary>
+    /// Called when application services (commands/queries) in controller actions throw unhandled exceptions.
+    /// </summary>
     public override void OnException(ExceptionContext context) {
-        if (context.Exception is NotFoundValidationException notFoundValidationException) {
+        if (context.Exception is NotFoundValidationException) {
             var error = new ProblemDetails {
                 Title = "Not Found",
                 Detail = context.Exception.Message,
@@ -33,6 +39,16 @@ public class ValidationExceptionFilterAttribute : ExceptionFilterAttribute {
                 StatusCode = StatusCodes.Status400BadRequest
             };
             context.ExceptionHandled = true;
+        } else if (context.Exception is IAuthenticationException) {
+            var error = new ProblemDetails {
+                Title = "Authentication Error",
+                Detail = context.Exception.Message,
+                Status = StatusCodes.Status401Unauthorized
+            };
+
+            context.Result = new ObjectResult(error) {
+                StatusCode = StatusCodes.Status401Unauthorized
+            };
         }
     }
 }

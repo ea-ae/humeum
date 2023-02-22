@@ -19,6 +19,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
+/// <summary>
+/// Configures infrastructure services.
+/// </summary>
 public static class ConfigureServices {
     public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services,
                                                                      IConfiguration config) {
