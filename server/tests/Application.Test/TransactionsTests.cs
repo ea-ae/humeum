@@ -10,18 +10,21 @@ using AutoMapper;
 using Application.Common.Mappings;
 using Application.Common.Exceptions;
 
-namespace Application.Test.Transactions;
+namespace Application.Test;
 
 [Collection(InMemoryDbContextCollection.COLLECTION_NAME)]
-public class TransactionsTests {
+public class TransactionsTests
+{
     readonly InMemorySqliteDbContextFixture _dbContextFixture;
 
-    public TransactionsTests(InMemorySqliteDbContextFixture fixture) {
+    public TransactionsTests(InMemorySqliteDbContextFixture fixture)
+    {
         _dbContextFixture = fixture;
     }
 
     [Fact]
-    public async Task GetTransactionsQuery_TransactionsAndProfiles_ReturnsAuthenticatedProfileTransactions() {
+    public async Task GetTransactionsQuery_TransactionsAndProfiles_ReturnsAuthenticatedProfileTransactions()
+    {
         var context = _dbContextFixture.CreateDbContext();
         var mapperConfig = new MapperConfiguration(cfg => { cfg.AddProfile(new AppMappingProfile()); });
         var handler = new GetTransactionsQueryHandler(context, mapperConfig.CreateMapper());
@@ -87,15 +90,17 @@ public class TransactionsTests {
     }
 
     [Fact]
-    public async Task AddTransactionCommand_OneTimeTransaction_Persists() {
+    public async Task AddTransactionCommand_OneTimeTransaction_Persists()
+    {
         var context = _dbContextFixture.CreateDbContext();
         var handler = new AddTransactionCommandHandler(context);
-        
+
         var profile = new Domain.ProfileAggregate.Profile(1, "Default");
         context.Profiles.Add(profile);
         await context.SaveChangesAsync();
 
-        AddTransactionCommand command = new() {
+        AddTransactionCommand command = new()
+        {
             User = 1,
             Profile = profile.Id,
             Amount = -200,
@@ -124,7 +129,8 @@ public class TransactionsTests {
     }
 
     [Fact]
-    public async Task AddTransactionCommand_RecurringTransaction_Persists() {
+    public async Task AddTransactionCommand_RecurringTransaction_Persists()
+    {
         var context = _dbContextFixture.CreateDbContext();
         var handler = new AddTransactionCommandHandler(context);
 
@@ -132,7 +138,8 @@ public class TransactionsTests {
         context.Profiles.Add(profile);
         await context.SaveChangesAsync();
 
-        AddTransactionCommand command = new() {
+        AddTransactionCommand command = new()
+        {
             User = 1,
             Profile = profile.Id,
             Amount = 150,

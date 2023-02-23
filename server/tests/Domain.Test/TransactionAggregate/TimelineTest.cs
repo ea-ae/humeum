@@ -1,4 +1,5 @@
-﻿using Domain.TransactionAggregate.ValueObjects;
+﻿using Domain.Common.Exceptions;
+using Domain.TransactionAggregate.ValueObjects;
 
 using Xunit;
 
@@ -10,13 +11,13 @@ public class TimelineTest {
         var timePeriod = new TimePeriod(new DateOnly(2022, 1, 1));
         var frequency = new Frequency(TimeUnit.Weeks, 3, 2);
 
-        Assert.Throws<InvalidOperationException>(() => new Timeline(timePeriod, frequency));
+        Assert.Throws<DomainException>(() => new Timeline(timePeriod, frequency));
     }
 
     [Fact]
     public void TimelineConstructor_NoFrequencyWithEndDate_ThrowsDomainException() {
         var timePeriod = new TimePeriod(new DateOnly(2022, 1, 1), new DateOnly(2023, 1, 1));
 
-        Assert.Throws<InvalidOperationException>(() => new Timeline(timePeriod));
+        Assert.Throws<DomainException>(() => new Timeline(timePeriod));
     }
 }

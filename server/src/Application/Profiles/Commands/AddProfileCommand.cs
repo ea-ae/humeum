@@ -19,7 +19,7 @@ public class AddProfileCommandHandler : ICommandHandler<AddProfileCommand, int> 
 
     public AddProfileCommandHandler(IAppDbContext context) => _context = context;
 
-    public async Task<int> Handle(AddProfileCommand request, CancellationToken token) {
+    public async Task<int> Handle(AddProfileCommand request, CancellationToken token = default) {
         Profile profile = new(request.User!, request.Name, request.Description, request.WithdrawalRate);
 
         _context.Profiles.Add(profile);
