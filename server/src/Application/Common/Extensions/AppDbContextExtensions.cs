@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Common.Extensions;
 
-internal static class AppDbContextExtensions {
+public static class AppDbContextExtensions {
     /// <summary>
     /// Returns an enumeration entity by code in an attached-to-database state.
     /// </summary>

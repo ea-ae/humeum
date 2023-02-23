@@ -1,4 +1,5 @@
-﻿using Domain.Common;
+﻿using Domain.AssetAggregate;
+using Domain.Common;
 using Domain.TransactionAggregate;
 
 namespace Domain.ProfileAggregate;
@@ -24,6 +25,9 @@ public class Profile : TimestampedEntity {
 
     HashSet<Transaction> _transactions = null!;
     public IReadOnlyCollection<Transaction> Transactions => _transactions;
+
+    HashSet<Asset> _assets = null!;
+    public IReadOnlyCollection<Asset> Assets => _assets;
 
     public Profile(int userId, string name, string? description = null, decimal? withdrawalRate = null) {
         UserId = userId;

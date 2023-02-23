@@ -45,6 +45,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         builder.Entity<TimeUnit>().Ignore(tu => tu.InTimeSpan);
         builder.Entity<TimeUnit>().HasData(TimeUnit.Days, TimeUnit.Weeks, TimeUnit.Months, TimeUnit.Years);
 
+        builder.Entity<Asset>().HasOne(a => a.Profile).WithMany(p => p.Assets).OnDelete(DeleteBehavior.Cascade);
         builder.Entity<Asset>().HasData(
             new Asset(1,
                 "Index fund (default)",
@@ -76,7 +77,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
                 if (entity.State is EntityState.Modified) {
                     timestampedEntity.UpdateModificationTimestamp();
                 } else if (entity.State is EntityState.Deleted) {
-                    timestampedEntity.UpdateDeletionTimestamp();
+                    timestampedEntity.SetDeletionTimestamp();
                     entity.State = EntityState.Modified;
                 }
             } else if (entity.Entity is ValueObject valueObject) {

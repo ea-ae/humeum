@@ -1,12 +1,13 @@
 ﻿using Xunit;
 
 using Application.Test.Common;
-using AutoMapper;
-using Application.Common.Mappings;
-using Application.Common.Exceptions;
-using Application.Transactions.Queries.GetTransactions;
+using Application.Common.Extensions;
 using Application.Profiles.Commands.AddProfile;
-using Application.Profiles.Queries;
+using Domain.ProfileAggregate;
+using Application.Profiles.Commands.DeleteProfile;
+using Domain.AssetAggregate;
+using Domain.TransactionAggregate;
+using Domain.TransactionAggregate.ValueObjects;
 
 namespace Application.Test;
 
@@ -19,7 +20,7 @@ public class ProfilesTests {
     }
 
     [Fact]
-    public async Task AddProfileCommand_ValidProfile_CreatesProfile() {
+    public async Task AddProfileCommand_ValidProfile_ReturnsCreatedProfileId() {
         var context = _dbContextFixture.CreateDbContext();
         var handler = new AddProfileCommandHandler(context);
         int userId = 5;
@@ -41,5 +42,43 @@ public class ProfilesTests {
         Assert.Equal(profileName, profile.Name);
         Assert.Equal(profileDescription, profile.Description);
         Assert.Equal(profileWithdrawalRate, profile.WithdrawalRate);
+    }
+
+    [Fact]
+    public async Task DeleteProfileCommand_ValidProfileAndChildren_CascadeDeletesProfile() {
+        var context = _dbContextFixture.CreateDbContext();
+        var handler = new DeleteProfileCommandHandler(context);
+
+        var profile = new Profile(1000, "My Profile Name", "About to delete", 5.5m);
+        var transaction = new Transaction(profile,
+                                          "My Transaction",
+                                          null,
+                                          1,
+                                          context.GetEnumerationEntityByCode<TransactionType>("ALWAYS"),
+                                          new Timeline(new TimePeriod(new DateOnly(2021, 1, 1))));
+        var asset = new Asset("My Asset", "About to delete", 7.9m, 11, profile);
+
+        context.Profiles.Add(profile);
+        context.Transactions.Add(transaction);
+        context.Assets.Add(asset);
+        await context.SaveChangesAsync();
+
+        Assert.Null(profile.DeletedAt);
+        Assert.Null(profile.DeletedAt);
+        Assert.Null(asset.DeletedAt);
+
+        DeleteProfileCommand command = new() {
+            User = 1000,
+            Profile = profile.Id
+        };
+        await handler.Handle(command);
+
+        await context.Profiles.Entry(profile).ReloadAsync();
+        await context.Transactions.Entry(transaction).ReloadAsync();
+        await context.Assets.Entry(asset).ReloadAsync();
+
+        Assert.NotNull(profile.DeletedAt);
+        Assert.NotNull(transaction.DeletedAt);
+        Assert.NotNull(asset.DeletedAt);
     }
 }
