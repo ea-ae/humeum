@@ -3,6 +3,8 @@
 using Domain.AssetAggregate;
 using Domain.Common;
 using Domain.ProfileAggregate;
+using Domain.TaxSchemeAggregate;
+using Domain.TaxSchemeAggregate.ValueObjects;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 using Infrastructure.Identity;
@@ -18,6 +20,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<TransactionType> TransactionTypes { get; set; }
     public DbSet<TimeUnit> TransactionTimeUnits { get; set; }
     public DbSet<Asset> Assets { get; set; }
+    public DbSet<TaxScheme> TaxSchemes { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
         SavingChanges += SetTimestampFields; // add event handler
@@ -29,6 +32,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         base.OnModelCreating(builder); // configure Identity schema
 
         builder.Entity<Transaction>().HasOne(t => t.Profile).WithMany(p => p.Transactions);
+        builder.Entity<Transaction>().HasOne(t => t.TaxScheme).WithMany(ts => ts.Transactions);
+        builder.Entity<Transaction>().HasOne(t => t.Asset).WithMany(a => a.Transactions);
         builder.Entity<Transaction>().OwnsOne(t => t.PaymentTimeline, pt => {
             pt.OwnsOne(pt => pt.Period);
             pt.OwnsOne(pt => pt.Frequency, f => {
@@ -57,6 +62,31 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
                 "Bond funds provide great diversification potential and are stereotypically less volatile than other securities.",
                 returnRate: 1.9m,
                 standardDeviation: 3.0m)
+        );
+
+        builder.Entity<TaxScheme>().OwnsOne(ts => ts.IncentiveScheme);
+        builder.Entity<TaxScheme>().HasData(
+            new TaxScheme(
+                "Income tax", 
+                "Regular flat income tax in Estonia, applicable to all income by default. First 654EUR/mo aka 7848EUR/yr are tax-free.",
+                20,
+                new TaxIncentiveScheme(100, null, null, 7848)),
+            new TaxScheme(
+                "III pillar, post-2021",
+                "Asset income invested through III pillar, with an account opened in 2021 or later. " +
+                "Term pensions based on life expectancy, not included here, provide a 20% discount.",
+                20,
+                new TaxIncentiveScheme(10, 60, 15, 6000)),
+            new TaxScheme(
+                "III pillar, pre-2021",
+                "Asset income invested through III pillar, with an account opened before 2021. " +
+                "Term pensions based on life expectancy, not included here, provide a 20% discount.",
+                20,
+                new TaxIncentiveScheme(10, 55, 15, 6000)),
+            new TaxScheme(
+                "Non-taxable income",
+                "Income that due to special circumstances (e.g. charity) is not taxed whatsoever.",
+                0)
         );
     }
 

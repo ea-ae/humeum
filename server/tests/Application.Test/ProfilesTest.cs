@@ -50,12 +50,12 @@ public class ProfilesTests {
         var handler = new DeleteProfileCommandHandler(context);
 
         var profile = new Profile(1000, "My Profile Name", "About to delete", 5.5m);
-        var transaction = new Transaction(profile,
-                                          "My Transaction",
+        var transaction = new Transaction("My Transaction",
                                           null,
                                           1,
                                           context.GetEnumerationEntityByCode<TransactionType>("ALWAYS"),
-                                          new Timeline(new TimePeriod(new DateOnly(2021, 1, 1))));
+                                          new Timeline(new TimePeriod(new DateOnly(2021, 1, 1))),
+                                          profile);
         var asset = new Asset("My Asset", "About to delete", 7.9m, 11, profile);
 
         context.Profiles.Add(profile);

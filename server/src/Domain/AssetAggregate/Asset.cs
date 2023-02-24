@@ -1,6 +1,7 @@
 ﻿using Domain.Common;
 using Domain.Common.Exceptions;
 using Domain.ProfileAggregate;
+using Domain.TransactionAggregate;
 
 namespace Domain.AssetAggregate;
 
@@ -39,6 +40,9 @@ public class Asset : TimestampedEntity {
             _standardDeviation = value;
         }
     }
+
+    HashSet<Transaction> _transactions = null!;
+    public IReadOnlyCollection<Transaction> Transactions => _transactions;
 
     public int? ProfileId { get; private set; }
     public Profile? Profile { get; private set; }

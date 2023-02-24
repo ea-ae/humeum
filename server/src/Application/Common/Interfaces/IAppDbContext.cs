@@ -1,5 +1,6 @@
 ﻿using Domain.AssetAggregate;
 using Domain.ProfileAggregate;
+using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 
@@ -14,6 +15,7 @@ public interface IAppDbContext {
     DbSet<TransactionType> TransactionTypes { get; set; }
     DbSet<TimeUnit> TransactionTimeUnits { get; set; }
     DbSet<Asset> Assets { get; set; }
+    DbSet<TaxScheme> TaxSchemes { get; set; }
 
     public DatabaseFacade Database { get; }
 

@@ -1,5 +1,7 @@
-﻿using Domain.Common;
+﻿using Domain.AssetAggregate;
+using Domain.Common;
 using Domain.ProfileAggregate;
+using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 
 namespace Domain.TransactionAggregate;
@@ -26,22 +28,32 @@ public class Transaction : TimestampedEntity {
     public int ProfileId { get; private set; }
     public Profile Profile { get; private set; } = null!;
 
-    public Transaction(Profile profile,
-                       string? name,
+    public int TaxSchemeId { get; private set; }
+    public TaxScheme TaxScheme { get; private set; } = null!;
+
+    public int? AssetId { get; private set; }
+    public Asset? Asset { get; private set; }
+
+    public Transaction(string? name,
                        string? description,
                        decimal amount,
                        TransactionType type,
-                       Timeline paymentTimeline)
-        : this(profile.Id, name, description, amount, type, paymentTimeline) {
+                       Timeline paymentTimeline,
+                       Profile profile,
+                       TaxScheme taxScheme,
+                       Asset? asset = null)
+        : this(name, description, amount, type, paymentTimeline, profile.Id, taxScheme.Id, asset?.Id) {
         Profile = profile;
     }
 
-    public Transaction(int profileId,
-                       string? name,
+    public Transaction(string? name,
                        string? description,
                        decimal amount,
                        TransactionType type,
-                       Timeline paymentTimeline) {
+                       Timeline paymentTimeline,
+                       int profileId,
+                       int taxSchemeId,
+                       int? assetId = null) {
         Name = name;
         Description = description;
         Amount = amount;
@@ -49,6 +61,8 @@ public class Transaction : TimestampedEntity {
         TypeId = type.Id;
         Type = type;
         ProfileId = profileId;
+        TaxSchemeId = taxSchemeId;
+        AssetId = assetId;
     }
 
     private Transaction() { }

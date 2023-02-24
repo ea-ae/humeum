@@ -38,18 +38,18 @@ public class TransactionsTests
         context.TransactionTypes.Attach(transactionType);
 
         var timeline = new Timeline(new TimePeriod(new DateOnly(2023, 2, 3)));
-        var transaction = new Transaction(profile, "Test", null, 42, transactionType, timeline);
+        var transaction = new Transaction("Test", null, 42, transactionType, timeline, profile);
         context.Transactions.Add(transaction);
 
         var timeUnit = TimeUnit.Years;
         context.TransactionTimeUnits.Attach(timeUnit);
         timeline = new Timeline(new TimePeriod(new DateOnly(2022, 6, 6), new DateOnly(2024, 1, 1)), new Frequency(timeUnit, 2, 3));
 
-        transaction = new Transaction(profile, "Test2", null, 43, transactionType, timeline);
+        transaction = new Transaction("Test2", null, 43, transactionType, timeline, profile);
         context.Transactions.Add(transaction);
 
         timeline = new Timeline(new TimePeriod(new DateOnly(2013, 1, 1)));
-        transaction = new Transaction(profile, "Test2", null, 43, transactionType, timeline);
+        transaction = new Transaction("Test2", null, 43, transactionType, timeline, profile);
         context.Transactions.Add(transaction);
 
         await context.SaveChangesAsync();

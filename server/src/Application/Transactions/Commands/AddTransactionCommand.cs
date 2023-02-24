@@ -60,12 +60,12 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
             var paymentPeriod = new TimePeriod((DateOnly)request.PaymentStart!, (DateOnly)request.PaymentEnd!);
             var paymentFrequency = new Frequency(timeUnit, (int)request.TimesPerCycle!, (int)request.UnitsInCycle!);
             var paymentTimeline = new Timeline(paymentPeriod, paymentFrequency);
-            transaction = new Transaction(request.Profile!, request.Name, request.Description,
-                                          (decimal)request.Amount!, transactionType, paymentTimeline);
+            transaction = new Transaction(request.Name, request.Description, (decimal)request.Amount!, transactionType, 
+                                          paymentTimeline, request.Profile!);
         } else {
             var timeline = new Timeline(new TimePeriod((DateOnly)request.PaymentStart!));
-            transaction = new Transaction(request.Profile!, request.Name, request.Description,
-                                          (decimal)request.Amount!, transactionType, timeline);
+            transaction = new Transaction(request.Name, request.Description, (decimal)request.Amount!, transactionType, 
+                                          timeline, request.Profile!);
         }
 
         _context.Transactions.Add(transaction);
