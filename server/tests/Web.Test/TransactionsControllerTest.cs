@@ -102,7 +102,7 @@ public class TransactionsControllerTest {
         HttpResponseMessage response;
         foreach (int profileId in new[] { profileOneId, profileTwoId }) {
             for (int i = 0; i < transactionsPerProfile; i++) {
-                const string transactionQuery = "amount=5&type=RETIREMENTONLY&paymentStart=2030-06-06";
+                const string transactionQuery = "amount=5&type=RETIREMENTONLY&paymentStart=2030-06-06&taxScheme=1";
                 string transactionUrl = $"users/{userId}/profiles/{profileId}/transactions?{transactionQuery}";
 
                 message = new HttpRequestMessage(HttpMethod.Post, transactionUrl).WithJwtCookie(jwtToken);
@@ -139,12 +139,10 @@ public class TransactionsControllerTest {
 
         message = new HttpRequestMessage(HttpMethod.Get, $"users/{userId}/profiles/{profileOneId}/transactions").WithJwtCookie(jwtToken);
         response = await client.SendAsync(message);
-        var firstProfileTransactions = await response.Content.ReadAsStringAsync();
-        Assert.True(firstProfileTransactions.Length >= 3);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
         message = new HttpRequestMessage(HttpMethod.Get, $"users/{userId}/profiles/{profileTwoId}/transactions").WithJwtCookie(jwtToken);
         response = await client.SendAsync(message);
-        var secondProfileTransactions = await response.Content.ReadAsStringAsync();
-        Assert.True(secondProfileTransactions.Length < 3);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode); // profile not found (since it is deleted)
     }
 }

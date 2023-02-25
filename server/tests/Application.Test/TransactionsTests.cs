@@ -25,6 +25,7 @@ public class TransactionsTests
     [Fact]
     public async Task GetTransactionsQuery_TransactionsAndProfiles_ReturnsAuthenticatedProfileTransactions()
     {
+        const int taxSchemeId = 1;
         var context = _dbContextFixture.CreateDbContext();
         var mapperConfig = new MapperConfiguration(cfg => { cfg.AddProfile(new AppMappingProfile()); });
         var handler = new GetTransactionsQueryHandler(context, mapperConfig.CreateMapper());
@@ -33,23 +34,24 @@ public class TransactionsTests
 
         var profile = new Domain.ProfileAggregate.Profile(100, "Default");
         context.Profiles.Add(profile);
+        await context.SaveChangesAsync();
 
         var transactionType = TransactionType.Always;
         context.TransactionTypes.Attach(transactionType);
 
         var timeline = new Timeline(new TimePeriod(new DateOnly(2023, 2, 3)));
-        var transaction = new Transaction("Test", null, 42, transactionType, timeline, profile);
+        var transaction = new Transaction("Test", null, 42, transactionType, timeline, profile.Id, taxSchemeId);
         context.Transactions.Add(transaction);
 
         var timeUnit = TimeUnit.Years;
         context.TransactionTimeUnits.Attach(timeUnit);
         timeline = new Timeline(new TimePeriod(new DateOnly(2022, 6, 6), new DateOnly(2024, 1, 1)), new Frequency(timeUnit, 2, 3));
 
-        transaction = new Transaction("Test2", null, 43, transactionType, timeline, profile);
+        transaction = new Transaction("Test2", null, 43, transactionType, timeline, profile.Id, taxSchemeId);
         context.Transactions.Add(transaction);
 
         timeline = new Timeline(new TimePeriod(new DateOnly(2013, 1, 1)));
-        transaction = new Transaction("Test2", null, 43, transactionType, timeline, profile);
+        transaction = new Transaction("Test2", null, 43, transactionType, timeline, profile.Id, taxSchemeId);
         context.Transactions.Add(transaction);
 
         await context.SaveChangesAsync();
@@ -107,7 +109,8 @@ public class TransactionsTests
             Name = "Groceries",
             Description = "My groceries",
             Type = "ALWAYS",
-            PaymentStart = new DateOnly(2022, 3, 1)
+            PaymentStart = new DateOnly(2022, 3, 1),
+            TaxScheme = 1
         };
 
         // create transaction
@@ -150,7 +153,8 @@ public class TransactionsTests
             PaymentEnd = new DateOnly(2021, 1, 1),
             TimeUnit = "WEEKS",
             TimesPerCycle = 3,
-            UnitsInCycle = 2
+            UnitsInCycle = 2,
+            TaxScheme = 1,
         };
 
         // create transaction

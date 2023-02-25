@@ -9,7 +9,7 @@ public class TransactionTest {
     [Fact]
     public void TotalTransactionCount_InstantEnd_ReturnsOne() {
         var timePeriod = new Timeline(new TimePeriod(new DateOnly(2022, 1, 1)));
-        var transaction = new Transaction(null, null, -1, TransactionType.RetirementOnly, timePeriod, profileId: 1);
+        var transaction = new Transaction(null, null, -1, TransactionType.RetirementOnly, timePeriod, profileId: 1, taxSchemeId: 1);
 
         int expected = 1;
 
@@ -155,6 +155,6 @@ public class TransactionTest {
     /// <returns>Partially instantiated transaction.</returns>
     static Transaction BuildTransaction(TimeUnit timeUnit, DateOnly paymentStart, DateOnly paymentEnd) {
         var timeline = new Timeline(new TimePeriod(paymentStart, paymentEnd), new Frequency(timeUnit, 1, 1));
-        return new Transaction(null, null, 1, TransactionType.Always, timeline, profileId: 1);
+        return new Transaction(null, null, 1, TransactionType.Always, timeline, profileId: 1, taxSchemeId: 1);
     }
 }

@@ -24,10 +24,11 @@ public class Transaction : TimestampedEntity {
         get => _amount;
         private set {
             if (value == 0) {
-                throw new DomainException(new ArgumentOutOfRangeException("Transaction amount cannot be zero."));
+                throw new DomainException(new ArgumentOutOfRangeException(nameof(value), "Transaction amount cannot be zero."));
             } else if (Asset is not null && value >= 0) {
                 throw new DomainException(new InvalidOperationException("Asset transactions can only be expenses (negative amount)."));
             }
+            _amount = value;
         }
     }
 

@@ -8,6 +8,7 @@ using Application.Profiles.Commands.DeleteProfile;
 using Domain.AssetAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
+using Domain.TaxSchemeAggregate;
 
 namespace Application.Test;
 
@@ -46,19 +47,23 @@ public class ProfilesTests {
 
     [Fact]
     public async Task DeleteProfileCommand_ValidProfileAndChildren_CascadeDeletesProfile() {
+        const int taxSchemeId = 1;
         var context = _dbContextFixture.CreateDbContext();
         var handler = new DeleteProfileCommandHandler(context);
 
         var profile = new Profile(1000, "My Profile Name", "About to delete", 5.5m);
+        context.Profiles.Add(profile);
+        await context.SaveChangesAsync();
+
         var transaction = new Transaction("My Transaction",
                                           null,
                                           1,
                                           context.GetEnumerationEntityByCode<TransactionType>("ALWAYS"),
                                           new Timeline(new TimePeriod(new DateOnly(2021, 1, 1))),
-                                          profile);
+                                          profile.Id,
+                                          taxSchemeId);
         var asset = new Asset("My Asset", "About to delete", 7.9m, 11, profile);
 
-        context.Profiles.Add(profile);
         context.Transactions.Add(transaction);
         context.Assets.Add(asset);
         await context.SaveChangesAsync();
