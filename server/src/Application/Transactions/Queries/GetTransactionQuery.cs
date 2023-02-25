@@ -27,7 +27,9 @@ public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, Tra
     }
 
     public async Task<TransactionDto> Handle(GetTransactionQuery request, CancellationToken _) {
-        var transaction = _context.Transactions.Include(t => t.Profile)
+        var transaction = _context.Transactions.AsNoTracking()
+                                               .Include(t => t.Profile)
+                                               .Include(t => t.Categories)
                                                .FirstOrDefault(t => t.Id == request.Transaction
                                                                     && t.ProfileId == request.Profile
                                                                     && t.Profile.UserId == request.User

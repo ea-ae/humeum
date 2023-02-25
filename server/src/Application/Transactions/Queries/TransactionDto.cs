@@ -7,6 +7,7 @@ public record TransactionDto
 
     public required int TaxSchemeId { get; init; }
     public required int? AssetId { get; init; }
+    public required IEnumerable<string> Categories { get; init; }
 
     public required string? PaymentTimelineFrequencyUnitName { get; init; }
     public required string? PaymentTimelineFrequencyUnitCode { get; init; }

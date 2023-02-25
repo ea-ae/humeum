@@ -31,6 +31,7 @@ public class GetTransactionsQueryHandler : IQueryHandler<GetTransactionsQuery, L
     public async Task<List<TransactionDto>> Handle(GetTransactionsQuery request, CancellationToken token = default) {
         var transactions = _context.Transactions.AsNoTracking()
                                                 .Include(t => t.Profile)
+                                                .Include(t => t.Categories)
                                                 .Where(t => t.ProfileId == request.Profile
                                                             && t.Profile.UserId == request.User
                                                             && t.DeletedAt == null);
