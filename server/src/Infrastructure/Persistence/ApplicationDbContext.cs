@@ -68,27 +68,27 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
             new TaxScheme(1,
                 "Income tax",
                 "Regular flat income tax in Estonia, applicable to all income by default. First 654EUR/mo aka 7848EUR/yr are tax-free.",
-                20,
-                new TaxIncentiveScheme(20, null, null, 7848)),
+                20),
             new TaxScheme(2,
                 "III pillar, post-2021",
                 "Asset income invested through III pillar, with an account opened in 2021 or later. " +
                 "Term pensions based on life expectancy, not included here, provide a 20% discount.",
-                20,
-                new TaxIncentiveScheme(10, 60, 15, 6000)),
+                20),
             new TaxScheme(3,
                 "III pillar, pre-2021",
                 "Asset income invested through III pillar, with an account opened before 2021. " +
                 "Term pensions based on life expectancy, not included here, provide a 20% discount.",
-                20,
-                new TaxIncentiveScheme(10, 55, 15, 6000)),
+                20),
             new TaxScheme(4,
                 "Non-taxable income",
                 "Income that due to special circumstances (e.g. charity) is not taxed whatsoever.",
                 0)
         );
-        builder.Entity<TaxScheme>().OwnsOne(ts => ts.IncentiveScheme).HasData( // required workaround for EF core owned entity seeding
-            new TaxIncentiveScheme(20, null, null, 7848) { TaxSchemeId = 1 });
+        builder.Entity<TaxScheme>().OwnsOne(ts => ts.IncentiveScheme).HasData( // required workaround for EF core owned entity seeding bug
+            new { TaxSchemeId = 1, TaxRefundRate = 20m, MaxApplicableIncome = 7848 },
+            new { TaxSchemeId = 2, TaxRefundRate = 10m, MinAge = 60, MaxIncomePercentage = 15m, MaxApplicableIncome = 6000 },
+            new { TaxSchemeId = 3, TaxRefundRate = 10m, MinAge = 55, MaxIncomePercentage = 15m, MaxApplicableIncome = 6000 }
+        );
     }
 
     public override int SaveChanges() {
