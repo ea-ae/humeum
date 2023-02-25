@@ -13,7 +13,7 @@ public class TaxIncentiveScheme : ValueObject {
         get => _taxRefundRate;
         private set {
             if (value < 0 || value > 100) {
-                throw new DomainException(new ArgumentOutOfRangeException(nameof(value), "Invalid tax refund rate percentage."));
+                throw new DomainException(new ArgumentOutOfRangeException(nameof(TaxRefundRate), "Invalid tax refund rate percentage."));
             }
             _taxRefundRate = value;
         }
@@ -25,7 +25,7 @@ public class TaxIncentiveScheme : ValueObject {
         get => _minAge;
         private set {
             if (value < 0) {
-                throw new DomainException(new ArgumentOutOfRangeException(nameof(value), "Age cannot be negative."));
+                throw new DomainException(new ArgumentOutOfRangeException(nameof(MinAge), "Age cannot be negative."));
             } else if (value == 0) {
                 _minAge = null;
             } else {
@@ -43,7 +43,7 @@ public class TaxIncentiveScheme : ValueObject {
         get => _maxIncomePercentage;
         private set {
             if (value < 0 || value > 100) {
-                throw new DomainException(new ArgumentOutOfRangeException(nameof(value), "Invalid income percentage."));
+                throw new DomainException(new ArgumentOutOfRangeException(nameof(MaxIncomePercentage), "Invalid income percentage."));
             } else if (value == 100) {
                 _maxIncomePercentage = null;
             } else {
@@ -61,7 +61,8 @@ public class TaxIncentiveScheme : ValueObject {
         get => _maxApplicableIncome;
         private set {
             if (value < 0) {
-                throw new DomainException(new ArgumentOutOfRangeException(nameof(value), "Applicable income is below zero."));
+                throw new DomainException(
+                    new ArgumentOutOfRangeException(nameof(MaxApplicableIncome), "Maximum applicable income is below zero."));
             }
             _maxApplicableIncome = value;
         }

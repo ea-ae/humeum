@@ -21,7 +21,7 @@ public class TaxScheme : TimestampedEntity {
         get => _taxRate;
         private set {
             if (value < 0 && value > 100) {
-                throw new DomainException(new ArgumentOutOfRangeException(nameof(value), "Invalid tax rate percentage value."));
+                throw new DomainException(new ArgumentOutOfRangeException(nameof(TaxRate), "Invalid tax rate percentage value."));
             }
             _taxRate = value;
         }
