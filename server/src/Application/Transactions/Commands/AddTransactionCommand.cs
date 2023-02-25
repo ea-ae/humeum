@@ -63,10 +63,16 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
 
         if (request.Asset is not null) {
             // valid asset IDs are those provided either by default or created in a profile
-            var validAssetIds = _context.Assets.Where(a => (a.ProfileId == request.Profile || a.ProfileId == null) && a.DeletedAt == null)
-                                               .Select(a => a.Id)
-                                               .ToList();
-            if (!validAssetIds.Contains((int)request.Asset)) {
+            //var validAssetIds = _context.Assets.Where(a => (a.ProfileId == request.Profile || a.ProfileId == null) && a.DeletedAt == null)
+            //                                   .Select(a => a.Id)
+            //                                   .ToList();
+            //if (!validAssetIds.Contains((int)request.Asset)) {
+            //    throw new NotFoundValidationException("Asset with given ID was not found for profile.");
+            //}
+            var assetExists = _context.Assets.Any(a => (a.ProfileId == request.Profile || a.ProfileId == null)
+                                                       && a.Id == request.Asset
+                                                       && a.DeletedAt == null);
+            if (!assetExists) {
                 throw new NotFoundValidationException("Asset with given ID was not found for profile.");
             }
         }

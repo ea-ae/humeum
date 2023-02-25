@@ -46,4 +46,6 @@ public static class AppDbContextExtensions {
             throw new NotFoundValidationException(typeof(Profile));
         }
     }
+
+    // TODO: A simple entity Exists() extension method for validation with a pre-made exception
 }
