@@ -12,8 +12,9 @@ Humeum is a webapp for retirement planning.
 
 1. Clone repository
 2. Open VS (or use the `dotnet` CLI)
-3. Run tests
-4. Run the `Web` project
+3. Run backend tests with `cd server && dotnet test`
+4. Run the backend ASP.NET `Web` project with `cd server && dotnet run --project src/Web`
+5. Run the frontend React project with `cd client && npm install && npm run server` (a proxy to the backend REST API will be added at `localhost:port/api/`)
 
 ### Databases
 
@@ -24,9 +25,3 @@ Create a migration:
 Update database:
 
     dotnet ef database update -s Web -p Infrastructure
-
-### REST API
-
-Create a basic sample transaction:
-
-    {{url}}/api/v1/users/3/transactions?amount=150&type=INCOME&paymentStart=2023-02-04
