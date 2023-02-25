@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.Contracts;
+using System.Linq;
 
 using Application.Common.Exceptions;
 using Application.Common.Extensions;
@@ -8,6 +9,8 @@ using Application.Common.Interfaces;
 using Domain.ProfileAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Transactions.Commands.AddTransaction;
 
@@ -20,7 +23,7 @@ public record AddTransactionCommand : ICommand<int> {
     [Required] public decimal? Amount { get; init; }
     [Required] public required string Type { get; init; }
     [Required] public DateOnly? PaymentStart { get; init; }
-    [Required] public required int TaxScheme { get; init; }
+    [Required] public required int? TaxScheme { get; init; }
     public int? Asset { get; init; }
 
     public DateOnly? PaymentEnd { get; init; }
@@ -53,6 +56,21 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
 
         _context.AssertUserOwnsProfile(request.User, request.Profile);
 
+        var taxSchemeExists = _context.TaxSchemes.Any(ts => ts.Id == request.TaxScheme && ts.DeletedAt == null);
+        if (!taxSchemeExists) {
+            throw new NotFoundValidationException("Tax scheme with given ID was not found.");
+        }
+
+        if (request.Asset is not null) {
+            // valid asset IDs are those provided either by default or created in a profile
+            var validAssetIds = _context.Assets.Where(a => (a.ProfileId == request.Profile || a.ProfileId == null) && a.DeletedAt == null)
+                                               .Select(a => a.Id)
+                                               .ToList();
+            if (!validAssetIds.Contains((int)request.Asset)) {
+                throw new NotFoundValidationException("Asset with given ID was not found for profile.");
+            }
+        }
+
         // handling
 
         var transactionType = _context.GetEnumerationEntityByCode<TransactionType>(request.Type);
@@ -64,11 +82,11 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
             var paymentFrequency = new Frequency(timeUnit, (int)request.TimesPerCycle!, (int)request.UnitsInCycle!);
             var paymentTimeline = new Timeline(paymentPeriod, paymentFrequency);
             transaction = new Transaction(request.Name, request.Description, (decimal)request.Amount!, transactionType, 
-                                          paymentTimeline, request.Profile!, request.TaxScheme);
+                                          paymentTimeline, request.Profile!, (int)request.TaxScheme!, request.Asset);
         } else {
             var timeline = new Timeline(new TimePeriod((DateOnly)request.PaymentStart!));
             transaction = new Transaction(request.Name, request.Description, (decimal)request.Amount!, transactionType, 
-                                          timeline, request.Profile!, request.TaxScheme);
+                                          timeline, request.Profile!, (int)request.TaxScheme!, request.Asset);
         }
 
         _context.Transactions.Add(transaction);

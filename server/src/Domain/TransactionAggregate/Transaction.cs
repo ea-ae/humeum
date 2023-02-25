@@ -1,5 +1,6 @@
 ﻿using Domain.AssetAggregate;
 using Domain.Common;
+using Domain.Common.Exceptions;
 using Domain.ProfileAggregate;
 using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate.ValueObjects;
@@ -18,7 +19,17 @@ public class Transaction : TimestampedEntity {
 
     public string? Description { get; private set; }
 
-    public decimal Amount { get; private set; }
+    decimal _amount;
+    public decimal Amount {
+        get => _amount;
+        private set {
+            if (value == 0) {
+                throw new DomainException(new ArgumentOutOfRangeException("Transaction amount cannot be zero."));
+            } else if (Asset is not null && value >= 0) {
+                throw new DomainException(new InvalidOperationException("Asset transactions can only be expenses (negative amount)."));
+            }
+        }
+    }
 
     public Timeline PaymentTimeline { get; private set; } = null!;
 
@@ -56,13 +67,13 @@ public class Transaction : TimestampedEntity {
                        int? assetId = null) {
         Name = name;
         Description = description;
-        Amount = amount;
         PaymentTimeline = paymentTimeline;
         TypeId = type.Id;
         Type = type;
         ProfileId = profileId;
         TaxSchemeId = taxSchemeId;
         AssetId = assetId;
+        Amount = amount;
     }
 
     private Transaction() { }

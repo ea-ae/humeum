@@ -41,7 +41,7 @@ public static class AppDbContextExtensions {
     /// <param name="profileId">The profile to check ownership of.</param>
     /// <exception cref="NotFoundValidationException">Thrown when the ownership assertion fails.</exception>
     public static void AssertUserOwnsProfile(this IAppDbContext context, int userId, int profileId) {
-        bool userOwnsProfile = context.Profiles.Any(p => p.Id == profileId && p.UserId == userId);
+        bool userOwnsProfile = context.Profiles.Any(p => p.Id == profileId && p.UserId == userId && p.DeletedAt == null);
         if (!userOwnsProfile) {
             throw new NotFoundValidationException(typeof(Profile));
         }

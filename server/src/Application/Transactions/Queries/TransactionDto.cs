@@ -5,6 +5,9 @@ public record TransactionDto
     public required int Id { get; init; }
     public required decimal Amount { get; init; }
 
+    public required int TaxSchemeId { get; init; }
+    public required int? AssetId { get; init; }
+
     public required string? PaymentTimelineFrequencyUnitName { get; init; }
     public required string? PaymentTimelineFrequencyUnitCode { get; init; }
     public required int? PaymentTimelineFrequencyTimesPerUnit { get; init; }
