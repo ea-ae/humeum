@@ -34,7 +34,7 @@ public class TimeUnit : Enumeration {
         return years + 1;
     });
 
-    public Func<DateOnly, DateOnly, int> InTimeSpan { get; init; } = null!;
+    public Func<DateOnly, DateOnly, int> InTimeSpan { get; private init; } = null!;
 
 #pragma warning disable IDE0051 // Remove unused private members
     TimeUnit(string code, string name) : base(code, name) {

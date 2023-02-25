@@ -8,7 +8,7 @@ public class Frequency : ValueObject {
     /// <summary>How many times per cycle the payment is made.</summary>
     public int TimesPerCycle {
         get => _timesPerCycle;
-        private set {
+        private init {
             if (value <= 0) {
                 throw new DomainException(new ArgumentException("Times per period must be greater than zero."));
             }
@@ -20,7 +20,7 @@ public class Frequency : ValueObject {
     /// <summary>How many time units a single cycle lasts.</summary>
     public int UnitsInCycle {
         get => _unitsInCycle;
-        private set {
+        private init {
             if (value <= 0) {
                 throw new DomainException(new ArgumentException("Units in period must be greater than zero."));
             }
@@ -28,9 +28,9 @@ public class Frequency : ValueObject {
         }
     }
 
-    public int TimeUnitId { get; private set; }
+    public int TimeUnitId { get; private init; }
     /// <summary>Time unit used to determine cycle length.</summary>
-    public TimeUnit TimeUnit { get; private set; } = null!;
+    public TimeUnit TimeUnit { get; private init; } = null!;
 
     public Frequency(TimeUnit unit, int timesPerCycle, int unitsInCycle) {
         TimesPerCycle = timesPerCycle;

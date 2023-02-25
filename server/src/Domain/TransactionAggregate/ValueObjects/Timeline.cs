@@ -8,7 +8,7 @@ public class Timeline : ValueObject {
     /// <summary>The frequency at which payments are made in the time period.</summary>
     public Frequency? Frequency {
         get => _frequency;
-        private set {
+        private init {
             if (value is null && Period.IsRecurring) {
                 throw new DomainException(new InvalidOperationException("Cannot set frequency to null with a payment end date."));
             } else if (value is not null && !Period.IsRecurring) {
@@ -22,7 +22,7 @@ public class Timeline : ValueObject {
     /// <summary>The time period within which payments are made. Lack of end date signifies a single-time payment.</summary>
     public TimePeriod Period {
         get => _period;
-        private set {
+        private init {
             if (value.End is null && Frequency is not null) {
                 throw new DomainException(new InvalidOperationException("Cannot set payment end date to null when there is a frequency."));
             } else if (value.End is not null && Frequency is null) {

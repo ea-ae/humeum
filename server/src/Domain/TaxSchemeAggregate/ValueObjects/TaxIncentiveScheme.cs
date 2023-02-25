@@ -11,7 +11,7 @@ public class TaxIncentiveScheme : ValueObject {
     /// <summary>Income tax refund rate for investments. E.g. for a 20% tax rate, a 10% discount would mean a 50% return.</summary>
     public decimal TaxRefundRate {
         get => _taxRefundRate;
-        private set {
+        private init {
             if (value < 0 || value > 100) {
                 throw new DomainException(new ArgumentOutOfRangeException(nameof(TaxRefundRate), "Invalid tax refund rate percentage."));
             }
@@ -23,7 +23,7 @@ public class TaxIncentiveScheme : ValueObject {
     int? _minAge;
     public int? MinAge {
         get => _minAge;
-        private set {
+        private init {
             if (value < 0) {
                 throw new DomainException(new ArgumentOutOfRangeException(nameof(MinAge), "Age cannot be negative."));
             } else if (value == 0) {
@@ -41,7 +41,7 @@ public class TaxIncentiveScheme : ValueObject {
     /// </summary>
     public decimal? MaxIncomePercentage {
         get => _maxIncomePercentage;
-        private set {
+        private init {
             if (value < 0 || value > 100) {
                 throw new DomainException(new ArgumentOutOfRangeException(nameof(MaxIncomePercentage), "Invalid income percentage."));
             } else if (value == 100) {
@@ -59,7 +59,7 @@ public class TaxIncentiveScheme : ValueObject {
     /// </summary>
     public int? MaxApplicableIncome {
         get => _maxApplicableIncome;
-        private set {
+        private init {
             if (value < 0) {
                 throw new DomainException(
                     new ArgumentOutOfRangeException(nameof(MaxApplicableIncome), "Maximum applicable income is below zero."));

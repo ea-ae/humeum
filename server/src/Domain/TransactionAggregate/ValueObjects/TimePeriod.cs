@@ -8,10 +8,10 @@ namespace Domain.TransactionAggregate.ValueObjects;
 /// </summary>
 public class TimePeriod : ValueObject {
     /// <summary>Start of time period.</summary>
-    public DateOnly Start { get; private set; }
+    public DateOnly Start { get; private init; }
 
     /// <summary>End of time period. Lack of value signifies a singular time point (single-time payment).</summary>
-    public DateOnly? End { get; private set; }
+    public DateOnly? End { get; private init; }
 
     /// <summary>Whether the payment is recurring or single-time.</summary>
     public bool IsRecurring => End is not null;
