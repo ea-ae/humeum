@@ -65,10 +65,12 @@ public class TransactionsController : ControllerBase {
     /// negative amounts are expenses.
     /// </summary>
     /// <response code="201">Returns a location header to the newly created item.</response>
-    /// <response code="400">If the optional fields were only partially specified or didn't satisfy domain invariants.</response>
+    /// <response code="400">If fields didn't satisfy domain invariants or the optional ones were only partially specified.</response>
+    /// <response code="404">If a profile, tax scheme, or asset with a specified ID could not be found.</response>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddTransaction(AddTransactionCommand command) {
         int id = await _mediator.Send(command);
         return CreatedAtAction(nameof(GetTransaction), new { command.User, command.Profile, Transaction = id }, null);

@@ -32,7 +32,7 @@ public static class AppDbContextExtensions {
     
     /// <summary>
     /// Finds out whether a profile is owned by given user. Simplicity of method is paid for through an
-    /// additional light SQL query.. This can be a useful check for entities that fall under a profile 
+    /// additional light SQL query. This can be a useful check for entities that fall under a profile 
     /// scenarios where one must distinguish between no results returned (an empty list) due to lack of 
     /// data and due to an invalid profile condition.
     /// </summary>
@@ -41,6 +41,7 @@ public static class AppDbContextExtensions {
     /// <param name="profileId">The profile to check ownership of.</param>
     /// <exception cref="NotFoundValidationException">Thrown when the ownership assertion fails.</exception>
     public static void AssertUserOwnsProfile(this IAppDbContext context, int userId, int profileId) {
+        // TODO: In the future, we'll provide a JWT override here. Make profile authentication an Infrastructure service.
         bool userOwnsProfile = context.Profiles.Any(p => p.Id == profileId && p.UserId == userId && p.DeletedAt == null);
         if (!userOwnsProfile) {
             throw new NotFoundValidationException(typeof(Profile));

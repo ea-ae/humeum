@@ -26,7 +26,7 @@ public class UsersController : ControllerBase {
     /// </summary>
     [HttpGet("{user}")]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public IActionResult Get() {
+    public IActionResult GetUser() {
         return StatusCode(StatusCodes.Status503ServiceUnavailable);
     }
 
@@ -40,7 +40,7 @@ public class UsersController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> RegisterUser(RegisterUserCommand command) {
         int id = await _mediator.Send(command);
-        return CreatedAtAction(nameof(Get), new { User = id }, null);
+        return CreatedAtAction(nameof(GetUser), new { User = id }, null);
     }
 
     /// <summary>

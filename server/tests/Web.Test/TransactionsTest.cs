@@ -11,13 +11,13 @@ using Microsoft.EntityFrameworkCore;
 namespace Web.Test;
 
 /// <summary>
-/// End-to-end tests for TransactionsController actions and its dependencies.
+/// End-to-end tests for transactions (and related entities) through controller actions.
 /// </summary>
 [Collection(WebAppFactoryCollection.COLLECTION_NAME)]
-public class TransactionsControllerTest {
+public class TransactionsTest {
     readonly CustomWebAppFactory _webapp;
 
-    public TransactionsControllerTest(CustomWebAppFactory webapp) {
+    public TransactionsTest(CustomWebAppFactory webapp) {
         _webapp = webapp;
     }
 
