@@ -1,6 +1,7 @@
 ﻿using Domain.AssetAggregate;
 using Domain.Common;
 using Domain.TransactionAggregate;
+using Domain.TransactionCategoryAggregate;
 
 namespace Domain.ProfileAggregate;
 
@@ -25,6 +26,9 @@ public class Profile : TimestampedEntity {
 
     HashSet<Transaction> _transactions = null!;
     public IReadOnlyCollection<Transaction> Transactions => _transactions;
+
+    HashSet<TransactionCategory> _transactionCategories = null!;
+    public IReadOnlyCollection<TransactionCategory> TransactionCategories => _transactionCategories;
 
     HashSet<Asset> _assets = null!;
     public IReadOnlyCollection<Asset> Assets => _assets;

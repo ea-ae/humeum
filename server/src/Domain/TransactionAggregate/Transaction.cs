@@ -4,6 +4,7 @@ using Domain.Common.Exceptions;
 using Domain.ProfileAggregate;
 using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate.ValueObjects;
+using Domain.TransactionCategoryAggregate;
 
 namespace Domain.TransactionAggregate;
 
@@ -45,6 +46,9 @@ public class Transaction : TimestampedEntity {
 
     public int? AssetId { get; private set; }
     public Asset? Asset { get; private set; }
+
+    HashSet<TransactionCategory> _categories = null!;
+    public IReadOnlyCollection<TransactionCategory> Categories => _categories;
 
     public Transaction(string? name,
                        string? description,

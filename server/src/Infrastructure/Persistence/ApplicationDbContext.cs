@@ -7,6 +7,7 @@ using Domain.TaxSchemeAggregate;
 using Domain.TaxSchemeAggregate.ValueObjects;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
+using Domain.TransactionCategoryAggregate;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -19,6 +20,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<TransactionType> TransactionTypes { get; set; }
     public DbSet<TimeUnit> TransactionTimeUnits { get; set; }
+    public DbSet<TransactionCategory> TransactionCategories { get; set; } 
     public DbSet<Asset> Assets { get; set; }
     public DbSet<TaxScheme> TaxSchemes { get; set; }
 
@@ -31,9 +33,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     protected override void OnModelCreating(ModelBuilder builder) {
         base.OnModelCreating(builder); // configure Identity schema
 
+        builder.Entity<Transaction>().HasOne(t => t.Type);
         builder.Entity<Transaction>().HasOne(t => t.Profile).WithMany(p => p.Transactions);
         builder.Entity<Transaction>().HasOne(t => t.TaxScheme).WithMany(ts => ts.Transactions);
         builder.Entity<Transaction>().HasOne(t => t.Asset).WithMany(a => a.Transactions);
+        builder.Entity<Transaction>().HasMany(t => t.Categories).WithMany(tc => tc.Transactions)
+                                     .UsingEntity(j => j.ToTable("TransactionWithCategory"));
         builder.Entity<Transaction>().OwnsOne(t => t.PaymentTimeline, pt => {
             pt.OwnsOne(pt => pt.Period);
             pt.OwnsOne(pt => pt.Frequency, f => {
@@ -49,6 +54,18 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         builder.Entity<TimeUnit>().HasIndex(tu => tu.Code).IsUnique();
         builder.Entity<TimeUnit>().Ignore(tu => tu.InTimeSpan);
         builder.Entity<TimeUnit>().HasData(TimeUnit.Days, TimeUnit.Weeks, TimeUnit.Months, TimeUnit.Years);
+
+        builder.Entity<TransactionCategory>().HasOne(tc => tc.Profile).WithMany(p => p.TransactionCategories);
+        builder.Entity<TransactionCategory>().HasData(
+            new TransactionCategory(1, "General"),
+            new TransactionCategory(2, "Investing"),
+            new TransactionCategory(3, "Work, Education, & Business"),
+            new TransactionCategory(4, "Recreation & Lifestyle"),
+            new TransactionCategory(5, "Food & Clothing"),
+            new TransactionCategory(6, "Housing & Utilities"),
+            new TransactionCategory(7, "Transportation"),
+            new TransactionCategory(8, "Gifts & Donations")
+        );
 
         builder.Entity<Asset>().HasOne(a => a.Profile).WithMany(p => p.Assets).OnDelete(DeleteBehavior.Cascade);
         builder.Entity<Asset>().HasData(

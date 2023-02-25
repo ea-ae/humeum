@@ -3,7 +3,7 @@ using Domain.ProfileAggregate;
 using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
-
+using Domain.TransactionCategoryAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
@@ -14,6 +14,7 @@ public interface IAppDbContext {
     DbSet<Transaction> Transactions { get; set; }
     DbSet<TransactionType> TransactionTypes { get; set; }
     DbSet<TimeUnit> TransactionTimeUnits { get; set; }
+    DbSet<TransactionCategory> TransactionCategories { get; set; }
     DbSet<Asset> Assets { get; set; }
     DbSet<TaxScheme> TaxSchemes { get; set; }
 

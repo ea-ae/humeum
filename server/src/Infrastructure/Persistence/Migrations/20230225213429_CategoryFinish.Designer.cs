@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230225213429_CategoryFinish")]
+    partial class CategoryFinish
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.2");
@@ -58,9 +61,9 @@ namespace Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(4675),
+                            CreatedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(6540),
                             Description = "Index funds track the performance of a particular market index; great diversification, low fees, and easy management.",
-                            ModifiedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(4676),
+                            ModifiedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(6541),
                             Name = "Index fund (default)",
                             ReturnRate = 8.1m,
                             StandardDeviation = 15.2m
@@ -68,9 +71,9 @@ namespace Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(4685),
+                            CreatedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(6555),
                             Description = "Bond funds provide great diversification potential and are stereotypically less volatile than other securities.",
-                            ModifiedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(4686),
+                            ModifiedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(6556),
                             Name = "Bond fund (default)",
                             ReturnRate = 1.9m,
                             StandardDeviation = 3.0m
@@ -143,36 +146,36 @@ namespace Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(4717),
+                            CreatedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(6610),
                             Description = "Regular flat income tax in Estonia, applicable to all income by default. First 654EUR/mo aka 7848EUR/yr are tax-free.",
-                            ModifiedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(4717),
+                            ModifiedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(6610),
                             Name = "Income tax",
                             TaxRate = 20m
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(4720),
+                            CreatedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(6613),
                             Description = "Asset income invested through III pillar, with an account opened in 2021 or later. Term pensions based on life expectancy, not included here, provide a 20% discount.",
-                            ModifiedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(4720),
+                            ModifiedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(6613),
                             Name = "III pillar, post-2021",
                             TaxRate = 20m
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(4721),
+                            CreatedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(6614),
                             Description = "Asset income invested through III pillar, with an account opened before 2021. Term pensions based on life expectancy, not included here, provide a 20% discount.",
-                            ModifiedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(4722),
+                            ModifiedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(6615),
                             Name = "III pillar, pre-2021",
                             TaxRate = 20m
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(4722),
+                            CreatedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(6616),
                             Description = "Income that due to special circumstances (e.g. charity) is not taxed whatsoever.",
-                            ModifiedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(4723),
+                            ModifiedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(6616),
                             Name = "Non-taxable income",
                             TaxRate = 0m
                         });
@@ -349,57 +352,57 @@ namespace Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(3595),
-                            ModifiedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(3596),
+                            CreatedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(5389),
+                            ModifiedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(5392),
                             Name = "General"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(3599),
-                            ModifiedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(3599),
+                            CreatedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(5394),
+                            ModifiedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(5394),
                             Name = "Investing"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(3600),
-                            ModifiedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(3600),
+                            CreatedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(5395),
+                            ModifiedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(5395),
                             Name = "Work, Education, & Business"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(3601),
-                            ModifiedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(3601),
+                            CreatedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(5396),
+                            ModifiedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(5396),
                             Name = "Recreation & Lifestyle"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(3602),
-                            ModifiedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(3603),
+                            CreatedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(5397),
+                            ModifiedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(5397),
                             Name = "Food & Clothing"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(3604),
-                            ModifiedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(3604),
+                            CreatedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(5398),
+                            ModifiedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(5398),
                             Name = "Housing & Utilities"
                         },
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(3606),
-                            ModifiedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(3606),
+                            CreatedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(5399),
+                            ModifiedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(5399),
                             Name = "Transportation"
                         },
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(3615),
-                            ModifiedAt = new DateTime(2023, 2, 25, 21, 45, 20, 997, DateTimeKind.Utc).AddTicks(3615),
+                            CreatedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(5400),
+                            ModifiedAt = new DateTime(2023, 2, 25, 21, 34, 28, 684, DateTimeKind.Utc).AddTicks(5401),
                             Name = "Gifts & Donations"
                         });
                 });
@@ -615,7 +618,7 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("TransactionsId");
 
-                    b.ToTable("TransactionWithCategory", (string)null);
+                    b.ToTable("TransactionTransactionCategory");
                 });
 
             modelBuilder.Entity("Domain.AssetAggregate.Asset", b =>
