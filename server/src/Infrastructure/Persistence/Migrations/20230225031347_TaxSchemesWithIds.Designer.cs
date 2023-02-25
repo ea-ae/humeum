@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230225031347_TaxSchemesWithIds")]
+    partial class TaxSchemesWithIds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.2");
@@ -58,9 +61,9 @@ namespace Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 2, 25, 3, 15, 39, 140, DateTimeKind.Utc).AddTicks(3271),
+                            CreatedAt = new DateTime(2023, 2, 25, 3, 13, 47, 38, DateTimeKind.Utc).AddTicks(3137),
                             Description = "Index funds track the performance of a particular market index; great diversification, low fees, and easy management.",
-                            ModifiedAt = new DateTime(2023, 2, 25, 3, 15, 39, 140, DateTimeKind.Utc).AddTicks(3275),
+                            ModifiedAt = new DateTime(2023, 2, 25, 3, 13, 47, 38, DateTimeKind.Utc).AddTicks(3140),
                             Name = "Index fund (default)",
                             ReturnRate = 8.1m,
                             StandardDeviation = 15.2m
@@ -68,9 +71,9 @@ namespace Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 2, 25, 3, 15, 39, 140, DateTimeKind.Utc).AddTicks(3285),
+                            CreatedAt = new DateTime(2023, 2, 25, 3, 13, 47, 38, DateTimeKind.Utc).AddTicks(3149),
                             Description = "Bond funds provide great diversification potential and are stereotypically less volatile than other securities.",
-                            ModifiedAt = new DateTime(2023, 2, 25, 3, 15, 39, 140, DateTimeKind.Utc).AddTicks(3286),
+                            ModifiedAt = new DateTime(2023, 2, 25, 3, 13, 47, 38, DateTimeKind.Utc).AddTicks(3149),
                             Name = "Bond fund (default)",
                             ReturnRate = 1.9m,
                             StandardDeviation = 3.0m

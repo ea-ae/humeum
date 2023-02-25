@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.Contracts;
 
 using Application.Common.Exceptions;
 using Application.Common.Extensions;
@@ -19,6 +20,8 @@ public record AddTransactionCommand : ICommand<int> {
     [Required] public decimal? Amount { get; init; }
     [Required] public required string Type { get; init; }
     [Required] public DateOnly? PaymentStart { get; init; }
+    [Required] public required int TaxScheme { get; init; }
+    public int? Asset { get; init; }
 
     public DateOnly? PaymentEnd { get; init; }
     public string? TimeUnit { get; init; }
@@ -61,11 +64,11 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
             var paymentFrequency = new Frequency(timeUnit, (int)request.TimesPerCycle!, (int)request.UnitsInCycle!);
             var paymentTimeline = new Timeline(paymentPeriod, paymentFrequency);
             transaction = new Transaction(request.Name, request.Description, (decimal)request.Amount!, transactionType, 
-                                          paymentTimeline, request.Profile!);
+                                          paymentTimeline, request.Profile!, request.TaxScheme);
         } else {
             var timeline = new Timeline(new TimePeriod((DateOnly)request.PaymentStart!));
             transaction = new Transaction(request.Name, request.Description, (decimal)request.Amount!, transactionType, 
-                                          timeline, request.Profile!);
+                                          timeline, request.Profile!, request.TaxScheme);
         }
 
         _context.Transactions.Add(transaction);

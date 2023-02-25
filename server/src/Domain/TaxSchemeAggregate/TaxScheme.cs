@@ -41,9 +41,18 @@ public class TaxScheme : TimestampedEntity {
     HashSet<Transaction> _transactions = null!;
     public IReadOnlyCollection<Transaction> Transactions => _transactions;
 
+    public TaxScheme(int taxSchemeId, string name, string description, decimal taxRate, TaxIncentiveScheme incentiveScheme)
+        : this(name, description, taxRate, incentiveScheme) {
+        Id = taxSchemeId;
+    }
+
     public TaxScheme(string name, string description, decimal taxRate, TaxIncentiveScheme incentiveScheme)
         : this(name, description, taxRate) {
         IncentiveScheme = incentiveScheme;
+    }
+
+    public TaxScheme(int taxSchemeId, string name, string description, decimal taxRate) : this(name, description, taxRate) {
+        Id = taxSchemeId;
     }
 
     public TaxScheme(string name, string description, decimal taxRate) {
