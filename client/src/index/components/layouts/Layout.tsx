@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import AddItemDial from './AddItemDial';
 import NavigationBar from './NavigationBar';
 
 interface Props {
@@ -22,6 +23,7 @@ function Layout({ children, sidebar }: Props) {
           </div>
         </div>
       </div>
+      <AddItemDial />
     </div>
   );
 }
