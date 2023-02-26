@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-using Application.Common.Exceptions;
 using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
@@ -8,16 +7,14 @@ using Domain.TransactionCategoryAggregate;
 
 namespace Application.TransactionCategories.Commands.AddCategory;
 
-public record AddCategoryCommand : ICommand<int>
-{
+public record AddCategoryCommand : ICommand<int> {
     [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }
 
     [Required] public required string Name { get; init; }
 }
 
-public class AddCategoryCommandHandler : ICommandHandler<AddCategoryCommand, int>
-{
+public class AddCategoryCommandHandler : ICommandHandler<AddCategoryCommand, int> {
     private readonly IAppDbContext _context;
 
     public AddCategoryCommandHandler(IAppDbContext context) => _context = context;

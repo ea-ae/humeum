@@ -3,15 +3,14 @@ using System.Text;
 
 using Application.Common.Interfaces;
 
-using Infrastructure.Identity;
 using Infrastructure.Common.Settings;
+using Infrastructure.Identity;
 using Infrastructure.Persistence;
 using Infrastructure.Services;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;

@@ -1,14 +1,14 @@
-﻿using Xunit;
-
-using Application.Test.Common;
-using Application.Common.Extensions;
+﻿using Application.Common.Extensions;
 using Application.Profiles.Commands.AddProfile;
-using Domain.ProfileAggregate;
 using Application.Profiles.Commands.DeleteProfile;
+using Application.Test.Common;
+
 using Domain.AssetAggregate;
+using Domain.ProfileAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
-using Domain.TaxSchemeAggregate;
+
+using Xunit;
 
 namespace Application.Test;
 
@@ -28,7 +28,7 @@ public class ProfilesTests {
         string profileName = "Test";
         string profileDescription = "Desc";
         decimal profileWithdrawalRate = 1.5m;
-        
+
         AddProfileCommand command = new() {
             User = userId,
             Name = profileName,

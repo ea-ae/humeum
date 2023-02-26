@@ -1,11 +1,5 @@
 ﻿using System.Net;
 
-using Domain.UserAggregate;
-
-using Microsoft.AspNetCore.Http;
-
-using Xunit;
-
 namespace Web.Test.Common;
 
 public static class AuthenticationExtensions {
@@ -18,7 +12,7 @@ public static class AuthenticationExtensions {
         }
 
         var setCookieHeaderFound = message.Headers.TryGetValues("Set-Cookie", out var cookies);
-        
+
         if (!setCookieHeaderFound) {
             throw new ArgumentException("No cookie header was found.");
         }

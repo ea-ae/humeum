@@ -4,11 +4,12 @@ using Domain.AssetAggregate;
 using Domain.Common;
 using Domain.ProfileAggregate;
 using Domain.TaxSchemeAggregate;
-using Domain.TaxSchemeAggregate.ValueObjects;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 using Domain.TransactionCategoryAggregate;
+
 using Infrastructure.Identity;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<TransactionType> TransactionTypes { get; set; }
     public DbSet<TimeUnit> TransactionTimeUnits { get; set; }
-    public DbSet<TransactionCategory> TransactionCategories { get; set; } 
+    public DbSet<TransactionCategory> TransactionCategories { get; set; }
     public DbSet<Asset> Assets { get; set; }
     public DbSet<AssetType> AssetTypes { get; set; }
     public DbSet<TaxScheme> TaxSchemes { get; set; }

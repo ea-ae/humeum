@@ -1,4 +1,5 @@
 ﻿using Domain.UserAggregate;
+
 using Infrastructure.Identity;
 
 namespace Infrastructure.Common.Extensions;

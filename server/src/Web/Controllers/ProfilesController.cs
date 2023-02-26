@@ -1,6 +1,5 @@
 ﻿using Application.Profiles.Commands.AddProfile;
 using Application.Profiles.Commands.DeleteProfile;
-using Application.Profiles.Queries;
 using Application.Profiles.Queries.GetProfileDetails;
 using Application.Profiles.Queries.GetProfilesQuery;
 

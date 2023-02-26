@@ -5,8 +5,6 @@ using Infrastructure.Persistence;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-using Xunit;
-
 namespace Application.Test.Common;
 
 public class InMemorySqliteDbContextFixture : IDisposable {

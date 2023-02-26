@@ -51,13 +51,13 @@ public class Asset : TimestampedEntity {
     public int? ProfileId { get; private set; }
     public Profile? Profile { get; private set; }
 
-    public Asset(string name, string? description, decimal returnRate, decimal standardDeviation, AssetType type, Profile profile) 
+    public Asset(string name, string? description, decimal returnRate, decimal standardDeviation, AssetType type, Profile profile)
         : this(name, description, returnRate, standardDeviation, type.Id, profile.Id) {
         Type = type;
         Profile = profile;
     }
 
-    public Asset(string name, string? description, decimal returnRate, decimal standardDeviation, int typeId, int profileId) 
+    public Asset(string name, string? description, decimal returnRate, decimal standardDeviation, int typeId, int profileId)
         : this(name, description, returnRate, standardDeviation, typeId) {
         ProfileId = profileId;
     }

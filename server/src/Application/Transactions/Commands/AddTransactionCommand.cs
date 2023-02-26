@@ -1,16 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.Contracts;
-using System.Linq;
 
 using Application.Common.Exceptions;
 using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
-using Domain.ProfileAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
-
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Transactions.Commands.AddTransaction;
 
@@ -87,11 +82,11 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
             var paymentPeriod = new TimePeriod((DateOnly)request.PaymentStart!, (DateOnly)request.PaymentEnd!);
             var paymentFrequency = new Frequency(timeUnit, (int)request.TimesPerCycle!, (int)request.UnitsInCycle!);
             var paymentTimeline = new Timeline(paymentPeriod, paymentFrequency);
-            transaction = new Transaction(request.Name, request.Description, (decimal)request.Amount!, transactionType, 
+            transaction = new Transaction(request.Name, request.Description, (decimal)request.Amount!, transactionType,
                                           paymentTimeline, request.Profile!, (int)request.TaxScheme!, request.Asset);
         } else {
             var timeline = new Timeline(new TimePeriod((DateOnly)request.PaymentStart!));
-            transaction = new Transaction(request.Name, request.Description, (decimal)request.Amount!, transactionType, 
+            transaction = new Transaction(request.Name, request.Description, (decimal)request.Amount!, transactionType,
                                           timeline, request.Profile!, (int)request.TaxScheme!, request.Asset);
         }
 

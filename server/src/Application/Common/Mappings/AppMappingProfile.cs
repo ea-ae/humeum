@@ -4,7 +4,6 @@ using Application.Transactions.Queries;
 using AutoMapper;
 
 using Domain.TransactionAggregate;
-using Domain.TransactionCategoryAggregate;
 
 namespace Application.Common.Mappings;
 

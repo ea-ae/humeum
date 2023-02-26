@@ -4,9 +4,6 @@ using Application.Common.Interfaces;
 using Domain.Common;
 using Domain.ProfileAggregate;
 
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-
 namespace Application.Common.Extensions;
 
 public static class AppDbContextExtensions {
@@ -29,7 +26,7 @@ public static class AppDbContextExtensions {
         context.Set<T>().Attach(enumEntity);
         return enumEntity;
     }
-    
+
     /// <summary>
     /// Finds out whether a profile is owned by given user. Simplicity of method is paid for through an
     /// additional light SQL query. This can be a useful check for entities that fall under a profile 

@@ -8,7 +8,6 @@ using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 using Web.Filters;
@@ -44,7 +43,7 @@ public class TransactionsController : ControllerBase {
         var transactions = await _mediator.Send(query);
         return transactions;
     }
-    
+
     /// <summary>
     /// Get transaction with given ID.
     /// </summary>

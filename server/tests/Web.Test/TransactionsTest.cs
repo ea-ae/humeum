@@ -1,12 +1,13 @@
 ﻿using System.Net;
 
+using Application.Common.Interfaces;
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 using Web.Test.Common;
 
 using Xunit;
-using Application.Common.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace Web.Test;
 

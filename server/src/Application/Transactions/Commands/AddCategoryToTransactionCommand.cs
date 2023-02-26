@@ -1,14 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.Contracts;
-using System.Linq;
 
 using Application.Common.Exceptions;
 using Application.Common.Extensions;
 using Application.Common.Interfaces;
-
-using Domain.ProfileAggregate;
-using Domain.TransactionAggregate;
-using Domain.TransactionAggregate.ValueObjects;
 
 using MediatR;
 
@@ -20,7 +14,7 @@ public record AddCategoryToTransactionCommand : ICommand {
     [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }
     [Required] public required int Transaction { get; init; }
-    
+
     [Required] public required int? Category { get; init; }
 }
 

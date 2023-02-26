@@ -1,6 +1,4 @@
-﻿using Application.TransactionCategories.Commands;
-using Application.TransactionCategories.Commands.AddCategory;
-using Application.Transactions.Commands.AddTransaction;
+﻿using Application.TransactionCategories.Commands.AddCategory;
 
 using MediatR;
 
