@@ -49,7 +49,7 @@ public class TransactionsController : ControllerBase {
     /// <summary>
     /// Get transaction with given ID.
     /// </summary>
-    /// <response code="200">Returns the transaction</response>
+    /// <response code="200">Returns the transaction.</response>
     /// <response code="404">If transaction or profile was not found.</response>
     [HttpGet("{transaction}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
