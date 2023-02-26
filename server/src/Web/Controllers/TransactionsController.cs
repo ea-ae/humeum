@@ -88,7 +88,7 @@ public class TransactionsController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> AddCategoryToTransaction(AddCategoryToTransactionCommand command) {
         await _mediator.Send(command);
-        return CreatedAtAction(null, null);
+        return new ObjectResult(null) { StatusCode = StatusCodes.Status201Created };
     }
 
     /// <summary>
@@ -100,6 +100,19 @@ public class TransactionsController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteTransaction(DeleteTransactionCommand command) {
+        await _mediator.Send(command);
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Remove a category from a transaction.
+    /// </summary>
+    /// <response code="204">If the category was successfully removed.</response>
+    /// <response code="404">If a profile, transaction, or category with corresponding ID was not found on the transaction.</response>
+    [HttpDelete("{transaction}/categories")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> RemoveCategoryFromTransaction(RemoveCategoryFromTransactionCommand command) {
         await _mediator.Send(command);
         return NoContent();
     }

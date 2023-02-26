@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Transactions.Commands.AddTransaction;
 
-public record AddCategoryToTransactionCommand : ICommand {
+public record RemoveCategoryFromTransactionCommand : ICommand {
     [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }
     [Required] public required int Transaction { get; init; }
@@ -18,12 +18,12 @@ public record AddCategoryToTransactionCommand : ICommand {
     [Required] public required int? Category { get; init; }
 }
 
-public class AddCategoryToTransactionCommandHandler : ICommandHandler<AddCategoryToTransactionCommand> {
+public class RemoveCategoryFromTransactionCommandHandler : ICommandHandler<RemoveCategoryFromTransactionCommand> {
     private readonly IAppDbContext _context;
 
-    public AddCategoryToTransactionCommandHandler(IAppDbContext context) => _context = context;
+    public RemoveCategoryFromTransactionCommandHandler(IAppDbContext context) => _context = context;
 
-    public async Task<Unit> Handle(AddCategoryToTransactionCommand request, CancellationToken token = default) {
+    public async Task<Unit> Handle(RemoveCategoryFromTransactionCommand request, CancellationToken token = default) {
         // validation
 
         _context.AssertUserOwnsProfile(request.User, request.Profile);
@@ -44,10 +44,10 @@ public class AddCategoryToTransactionCommandHandler : ICommandHandler<AddCategor
 
         // handling
 
-        bool categoryAdded = transaction.AddCategory(category); // if category was already assigned, we won't assign it again
+        bool categoryRemoved = transaction.RemoveCategory(category);
 
-        if (!categoryAdded) { // throw conflict error as many-to-many link already exists
-            throw new ConflictValidationException("Category is already assigned.");
+        if (!categoryRemoved) {
+            throw new NotFoundValidationException("Specified category was not found on the transaction.");
         }
 
         await _context.SaveChangesAsync(token);

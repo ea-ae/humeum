@@ -92,6 +92,15 @@ public class Transaction : TimestampedEntity {
         return _categories.Add(category);
     }
 
+    /// <summary>
+    /// Removes a category from a transaction in case it was previously assigned.
+    /// </summary>
+    /// <param name="category">Category to remove.</param>
+    /// <returns>Whether the category was removed (in other words, whether it was previously assigned).</returns>
+    public bool RemoveCategory(TransactionCategory category) {
+        return _categories.Remove(category);
+    }
+
     public int TotalTransactionCount {
         get {
             if (!PaymentTimeline.Period.IsRecurring || PaymentTimeline.Frequency is null) {
