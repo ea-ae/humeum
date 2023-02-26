@@ -1,5 +1,7 @@
 ﻿using Application.Transactions.Commands.AddTransaction;
+using Application.Transactions.Commands.AddTransactionCategory;
 using Application.Transactions.Commands.DeleteTransaction;
+using Application.Transactions.Commands.RemoveTransactionCategory;
 using Application.Transactions.Queries;
 using Application.Transactions.Queries.GetTransaction;
 using Application.Transactions.Queries.GetTransactions;
@@ -86,7 +88,7 @@ public class TransactionsController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> AddCategoryToTransaction(AddCategoryToTransactionCommand command) {
+    public async Task<IActionResult> AddCategoryToTransaction(AddTransactionCategoryCommand command) {
         await _mediator.Send(command);
         return new ObjectResult(null) { StatusCode = StatusCodes.Status201Created };
     }
@@ -112,7 +114,7 @@ public class TransactionsController : ControllerBase {
     [HttpDelete("{transaction}/categories")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> RemoveCategoryFromTransaction(RemoveCategoryFromTransactionCommand command) {
+    public async Task<IActionResult> RemoveCategoryFromTransaction(RemoveTransactionCategoryCommand command) {
         await _mediator.Send(command);
         return NoContent();
     }

@@ -8,9 +8,9 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Transactions.Commands.AddTransaction;
+namespace Application.Transactions.Commands.AddTransactionCategory;
 
-public record AddCategoryToTransactionCommand : ICommand {
+public record AddTransactionCategoryCommand : ICommand {
     [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }
     [Required] public required int Transaction { get; init; }
@@ -18,12 +18,12 @@ public record AddCategoryToTransactionCommand : ICommand {
     [Required] public required int? Category { get; init; }
 }
 
-public class AddCategoryToTransactionCommandHandler : ICommandHandler<AddCategoryToTransactionCommand> {
+public class AddTransactionCategoryCommandHandler : ICommandHandler<AddTransactionCategoryCommand> {
     private readonly IAppDbContext _context;
 
-    public AddCategoryToTransactionCommandHandler(IAppDbContext context) => _context = context;
+    public AddTransactionCategoryCommandHandler(IAppDbContext context) => _context = context;
 
-    public async Task<Unit> Handle(AddCategoryToTransactionCommand request, CancellationToken token = default) {
+    public async Task<Unit> Handle(AddTransactionCategoryCommand request, CancellationToken token = default) {
         // validation
 
         _context.AssertUserOwnsProfile(request.User, request.Profile);

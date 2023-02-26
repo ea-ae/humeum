@@ -107,9 +107,8 @@ public class Transaction : TimestampedEntity {
                 return 1;
             }
 
-            // todo: change this param/arg to just the type itself
             int count = PaymentTimeline.Frequency.TimeUnit.InTimeSpan(PaymentTimeline.Period.Start,
-                                                                  (DateOnly)PaymentTimeline.Period.End!);
+                                                                      (DateOnly)PaymentTimeline.Period.End!);
             return count;
         }
     }
