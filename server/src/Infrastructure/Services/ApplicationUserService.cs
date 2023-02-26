@@ -1,10 +1,9 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 
 using Domain.UserAggregate;
 
 using Infrastructure.Persistence;
-
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Services;
 
@@ -17,14 +16,21 @@ public abstract class ApplicationUserService : IApplicationUserService {
 
     public abstract Task<int> SignInUserAsync(string username, string password, bool rememberMe);
 
-    public async Task<User> GetUserById(int id) {
+    public User GetUserById(int id) {
         if (_context is ApplicationDbContext identityContext) {
-            var appUser = await identityContext.Users.SingleAsync(au => au.Id == id);
+            var appUser = identityContext.Users.FirstOrDefault(au => au.Id == id);
+
+            if (appUser is null) {
+                throw new NotFoundValidationException("User with provided ID could not be found.");
+            }
+
+            var profiles = identityContext.Profiles.Where(p => p.UserId == id && p.DeletedAt == null).ToList();
             var user = new User(appUser.Id,
-                                appUser.UserName ?? throw new InvalidOperationException("No username found"),
-                                appUser.Email ?? throw new InvalidOperationException("No email found"));
+                                appUser.UserName ?? throw new NotFoundValidationException("No username found"),
+                                appUser.Email ?? throw new NotFoundValidationException("No email found"),
+                                profiles);
             return user;
         }
-        throw new InvalidOperationException("Invalid service combination provided.");
+        throw new InvalidOperationException("Invalid DbContext service provided.");
     }
 }

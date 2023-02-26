@@ -1,8 +1,11 @@
 ﻿using Application.Users.Commands.RegisterUser;
 using Application.Users.Commands.SignInUser;
+using Application.Users.Queries.GetUserQuery;
 
 using MediatR;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using Web.Filters;
@@ -22,12 +25,21 @@ public class UsersController : ControllerBase {
     public UsersController(IMediator mediator) => _mediator = mediator;
 
     /// <summary>
-    /// Get details of an user with given ID.
+    /// Get details of an user with a given ID.
     /// </summary>
+    /// <response code="200">Details of user with given ID.</response>
+    /// <response code="401">If a user route is accessed without an authentication token.</response>
+    /// <response code="403">If a user route is accessed with an authentication token assigned to another user ID.</response>
+    /// <response code="404">If a user with the specified ID could not be found.</response>
     [HttpGet("{user}")]
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public IActionResult GetUser() {
-        return StatusCode(StatusCodes.Status503ServiceUnavailable);
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleUserData")]
+    public async Task<IActionResult> GetUser(GetUserQuery query) {
+        var user = await _mediator.Send(query);
+        return Ok(user);
     }
 
     /// <summary>
@@ -38,6 +50,8 @@ public class UsersController : ControllerBase {
     /// <response code="401">If the user creation attempt fails, e.g. username or email is already in use.</response>
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> RegisterUser(RegisterUserCommand command) {
         int id = await _mediator.Send(command);
         return CreatedAtAction(nameof(GetUser), new { User = id }, null);
@@ -50,6 +64,7 @@ public class UsersController : ControllerBase {
     /// <response code="401">If the authentication attempt fails, e.g. incorrect password.</response>
     [HttpPost("sign-in")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> SignInUser(SignInUserCommand command) {
         int id = await _mediator.Send(command);
         return Ok(new { UserId = id });

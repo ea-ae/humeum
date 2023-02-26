@@ -7,5 +7,5 @@ public interface IApplicationUserService {
 
     public Task<int> SignInUserAsync(string username, string password, bool rememberMe);
 
-    public Task<User> GetUserById(int id);
+    public User GetUserById(int id);
 }

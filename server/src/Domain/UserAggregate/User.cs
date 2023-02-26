@@ -2,6 +2,7 @@
 
 using Domain.Common;
 using Domain.Common.Exceptions;
+using Domain.ProfileAggregate;
 using Domain.UserAggregate.ValueObjects;
 
 namespace Domain.UserAggregate;
@@ -36,7 +37,11 @@ public class User : Entity {
         }
     }
 
-    // public User(Username username, string email) {}
+    public IReadOnlyCollection<Profile> Profiles { get; private set; } = null!;
+
+    public User(int id, string username, string email, IReadOnlyCollection<Profile> profiles) : this(id, username, email) {
+        Profiles = profiles;
+    }
 
     public User(int id, string username, string email) : this(id, username) {
         Email = email;
