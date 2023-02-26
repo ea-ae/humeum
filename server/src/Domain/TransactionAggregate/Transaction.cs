@@ -83,6 +83,15 @@ public class Transaction : TimestampedEntity {
 
     private Transaction() { }
 
+    /// <summary>
+    /// Assigns a category to the transaction if it wasn't already added before.
+    /// </summary>
+    /// <param name="category">Category to assign.</param>
+    /// <returns>Whether the category was assigned (in other words, it didn't exist before).</returns>
+    public bool AddCategory(TransactionCategory category) {
+        return _categories.Add(category);
+    }
+
     public int TotalTransactionCount {
         get {
             if (!PaymentTimeline.Period.IsRecurring || PaymentTimeline.Frequency is null) {

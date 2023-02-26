@@ -1,5 +1,10 @@
 ﻿namespace Application.Common.Exceptions;
 
+/// <summary>
+/// This application exception signifies that an entity with given constraints couldn't be found. For example a profile owned by
+/// some user, or a transaction made by a profile. The entity could technically still exist, just not by the user/profile/etc specified
+/// or as a soft-deleted entity.
+/// </summary>
 public class NotFoundValidationException : ApplicationValidationException {
     public NotFoundValidationException(string message) : base(message) { }
 

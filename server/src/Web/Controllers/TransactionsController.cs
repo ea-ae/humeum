@@ -8,6 +8,7 @@ using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 using Web.Filters;
@@ -74,6 +75,21 @@ public class TransactionsController : ControllerBase {
     public async Task<IActionResult> AddTransaction(AddTransactionCommand command) {
         int id = await _mediator.Send(command);
         return CreatedAtAction(nameof(GetTransaction), new { command.User, command.Profile, Transaction = id }, null);
+    }
+
+    /// <summary>
+    /// Assign a category to transaction.
+    /// </summary>
+    /// <response code="201">If the category was successfully added.</response>
+    /// <response code="404">If a profile or transaction with a corresponding ID could not be found.</response>
+    /// <response code="409">If the category already exists on the transaction.</response>
+    [HttpPost("{transaction}/categories")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> AddCategoryToTransaction(AddCategoryToTransactionCommand command) {
+        await _mediator.Send(command);
+        return CreatedAtAction(null, null);
     }
 
     /// <summary>

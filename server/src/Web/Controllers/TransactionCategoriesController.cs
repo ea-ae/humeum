@@ -43,7 +43,7 @@ public class TransactionCategoriesController : ControllerBase {
     /// </summary>
     /// <response code="201">Returns a location header to the newly created item.</response>
     /// <response code="400">If the fields did not satisfy the domain invariants.</response>
-    /// <response code="404">If a profile or transaction with a specified ID could not be found.</response>
+    /// <response code="404">If a profile or transaction with the specified ID could not be found.</response>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

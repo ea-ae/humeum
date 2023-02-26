@@ -28,6 +28,17 @@ public class ApplicationExceptionFilterAttribute : ExceptionFilterAttribute {
                 StatusCode = StatusCodes.Status404NotFound
             };
             context.ExceptionHandled = true;
+        } else if (context.Exception is ConflictValidationException) {
+            var error = new ProblemDetails {
+                Title = "Validation Error",
+                Detail = context.Exception.Message,
+                Status = StatusCodes.Status409Conflict
+            };
+
+            context.Result = new ObjectResult(error) {
+                StatusCode = StatusCodes.Status409Conflict
+            };
+            context.ExceptionHandled = true;
         } else if (context.Exception is ApplicationValidationException or DomainException) {
             var error = new ProblemDetails {
                 Title = "Validation Error",
