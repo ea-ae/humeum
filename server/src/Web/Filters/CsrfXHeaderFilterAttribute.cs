@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Web.Filters;
@@ -12,7 +13,7 @@ namespace Web.Filters;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 internal class CsrfXHeaderFilterAttribute : Attribute, IResourceFilter {
     /// <summary>Name of CSRF-check header.</summary>
-    public string XHeaderName { get; init; } = "X-Requested-With";
+    public string XHeaderName { get; init; } = "X-Requested-With"; // TODO: put this in config
 
     /// <summary>Whether to exempt GET requests from CSRF checks.</summary>
     public bool AllowGet { get; init; } = true;
@@ -21,7 +22,16 @@ internal class CsrfXHeaderFilterAttribute : Attribute, IResourceFilter {
         if (!AllowGet || context.HttpContext.Request.Method != "GET") {
             if (!context.HttpContext.Request.Headers.TryGetValue(XHeaderName, out _)) {
                 // CSRF header missing, short-circuit pipeline
-                context.Result = new StatusCodeResult(StatusCodes.Status403Forbidden);
+                var error = new ProblemDetails {
+                    Title = "CSRF Header Failure",
+                    Detail = $"CSRF safety check header called '{XHeaderName}' could not be found.",
+                    Status = StatusCodes.Status403Forbidden
+                };
+
+                context.Result = new ObjectResult(error) {
+                    StatusCode = StatusCodes.Status403Forbidden
+                };
+                //context.Result = new StatusCodeResult(StatusCodes.Status403Forbidden);
             }
         }
     }
