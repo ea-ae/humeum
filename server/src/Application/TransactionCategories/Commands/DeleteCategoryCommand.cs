@@ -26,16 +26,18 @@ public class DeleteCategoryCommandHandler : ICommandHandler<DeleteCategoryComman
 
     public async Task<Unit> Handle(DeleteCategoryCommand request, CancellationToken token = default) {
         var category = _context.TransactionCategories.Include(tc => tc.Profile)
-                                                     .Where(tc => tc.Id == request.Category
-                                                                  && tc.Profile != null
-                                                                  && tc.ProfileId == request.Profile
-                                                                  && tc.Profile.UserId == request.User
-                                                                  && tc.Profile.DeletedAt == null)
-                                                     .FirstOrDefault();
+            .Where(tc => tc.Id == request.Category
+                         && (tc.ProfileId == null || (tc.ProfileId == request.Profile && tc.Profile!.UserId == request.User))
+                         && tc.DeletedAt == null)
+            .FirstOrDefault();
 
         if (category is null) {
             _context.AssertUserOwnsProfile(request.User, request.Profile);
             throw new NotFoundValidationException(typeof(TransactionCategory));
+        }
+
+        if (category.ProfileId is null) {
+            throw new ApplicationValidationException("Cannot delete default transaction category.");
         }
 
         _context.TransactionCategories.Remove(category);

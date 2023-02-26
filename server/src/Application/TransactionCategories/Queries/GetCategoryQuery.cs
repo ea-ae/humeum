@@ -6,9 +6,7 @@ using Application.Common.Interfaces;
 using Application.TransactionCategories.Queries;
 
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 
-using Domain.TransactionAggregate;
 using Domain.TransactionCategoryAggregate;
 
 using Microsoft.EntityFrameworkCore;
