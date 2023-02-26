@@ -18,48 +18,30 @@ public class ApplicationExceptionFilterAttribute : ExceptionFilterAttribute {
     /// </summary>
     public override void OnException(ExceptionContext context) {
         if (context.Exception is NotFoundValidationException) {
-            var error = new ProblemDetails {
-                Title = "Not Found",
-                Detail = context.Exception.Message,
-                Status = StatusCodes.Status404NotFound
-            };
-
-            context.Result = new ObjectResult(error) {
-                StatusCode = StatusCodes.Status404NotFound
-            };
-            context.ExceptionHandled = true;
+            HandleException(context, "Not Found", StatusCodes.Status404NotFound);
         } else if (context.Exception is ConflictValidationException) {
-            var error = new ProblemDetails {
-                Title = "Validation Error",
-                Detail = context.Exception.Message,
-                Status = StatusCodes.Status409Conflict
-            };
-
-            context.Result = new ObjectResult(error) {
-                StatusCode = StatusCodes.Status409Conflict
-            };
-            context.ExceptionHandled = true;
+            HandleException(context, "Validation Error", StatusCodes.Status409Conflict);
         } else if (context.Exception is ApplicationValidationException or DomainException) {
-            var error = new ProblemDetails {
-                Title = "Validation Error",
-                Detail = context.Exception.Message,
-                Status = StatusCodes.Status400BadRequest
-            };
-
-            context.Result = new ObjectResult(error) {
-                StatusCode = StatusCodes.Status400BadRequest
-            };
-            context.ExceptionHandled = true;
+            HandleException(context, "Validation Error", StatusCodes.Status400BadRequest);
         } else if (context.Exception is IAuthenticationException) {
-            var error = new ProblemDetails {
-                Title = "Authentication Error",
-                Detail = context.Exception.Message,
-                Status = StatusCodes.Status401Unauthorized
-            };
-
-            context.Result = new ObjectResult(error) {
-                StatusCode = StatusCodes.Status401Unauthorized
-            };
+            HandleException(context, "Authentication Error", StatusCodes.Status401Unauthorized);
         }
+    }
+
+    /// <summary>
+    /// Helper method that generates an error response and marks the exception as handled.
+    /// </summary>
+    static void HandleException(ExceptionContext context, string title, int statusCode) {
+        var error = new ProblemDetails {
+            Title = title,
+            Detail = context.Exception.Message,
+            Status = statusCode
+        };
+
+        context.Result = new ObjectResult(error) {
+            StatusCode = statusCode
+        };
+
+        context.ExceptionHandled = true;
     }
 }
