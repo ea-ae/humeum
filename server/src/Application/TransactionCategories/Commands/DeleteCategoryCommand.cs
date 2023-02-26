@@ -3,7 +3,6 @@
 using Application.Common.Exceptions;
 using Application.Common.Extensions;
 using Application.Common.Interfaces;
-using Application.TransactionCategories.Commands.AddCategory;
 
 using Domain.TransactionCategoryAggregate;
 
