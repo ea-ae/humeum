@@ -31,7 +31,7 @@ public class ProfilesController : ControllerBase {
     public ProfilesController(IMediator mediator) => _mediator = mediator;
 
     /// <summary>
-    /// Get profiles owned by an user.
+    /// Get profiles owned by a user.
     /// </summary>
     /// <response code="200">Returns the profiles.</response>
     [HttpGet]

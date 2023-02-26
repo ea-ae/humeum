@@ -1,4 +1,5 @@
 ﻿using Application.TransactionCategories.Commands.AddCategory;
+using Application.TransactionCategories.Commands.DeleteCategory;
 
 using MediatR;
 
@@ -49,5 +50,18 @@ public class TransactionCategoriesController : ControllerBase {
     public async Task<IActionResult> AddCategory(AddCategoryCommand command) {
         int id = await _mediator.Send(command);
         return CreatedAtAction(nameof(GetCategory), new { command.User, command.Profile, Category = id }, null);
+    }
+
+    /// <summary>
+    /// Delete a category by its ID.
+    /// </summary>
+    /// <response code="204">If category is successfully deleted.</response>
+    /// <response code="404">If a profile or profile-owned category with the specified ID could not be found.</response>
+    [HttpDelete("{category}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteCategory(DeleteCategoryCommand command) {
+        await _mediator.Send(command);
+        return NoContent();
     }
 }

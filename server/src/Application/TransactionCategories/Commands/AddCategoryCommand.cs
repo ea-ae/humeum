@@ -28,7 +28,7 @@ public class AddCategoryCommandHandler : ICommandHandler<AddCategoryCommand, int
 
         var category = new TransactionCategory(request.Name, request.Profile);
         _context.TransactionCategories.Add(category);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(token);
 
         return category.Id;
     }
