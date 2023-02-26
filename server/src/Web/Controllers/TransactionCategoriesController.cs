@@ -1,5 +1,6 @@
 ﻿using Application.TransactionCategories.Commands.AddCategory;
 using Application.TransactionCategories.Commands.DeleteCategory;
+using Application.Transactions.Queries.GetCategories;
 
 using MediatR;
 
@@ -27,6 +28,15 @@ public class TransactionCategoriesController : ControllerBase {
 
     /// <summary>Initializes a new controller.</summary>
     public TransactionCategoriesController(IMediator mediator) => _mediator = mediator;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetCategories(GetCategoriesQuery query) {
+        var categories = await _mediator.Send(query);
+        return Ok(categories);
+    }
 
     /// <summary>
     /// Get details of a category with given ID.
