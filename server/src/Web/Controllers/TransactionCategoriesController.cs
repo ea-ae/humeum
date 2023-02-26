@@ -1,6 +1,7 @@
 ﻿using Application.TransactionCategories.Commands.AddCategory;
 using Application.TransactionCategories.Commands.DeleteCategory;
 using Application.Transactions.Queries.GetCategories;
+using Application.Transactions.Queries.GetCategory;
 
 using MediatR;
 
@@ -30,7 +31,7 @@ public class TransactionCategoriesController : ControllerBase {
     public TransactionCategoriesController(IMediator mediator) => _mediator = mediator;
 
     /// <summary>
-    /// 
+    /// Get all categories that are either default or created by the profile.
     /// </summary>
     [HttpGet]
     public async Task<IActionResult> GetCategories(GetCategoriesQuery query) {
@@ -42,9 +43,9 @@ public class TransactionCategoriesController : ControllerBase {
     /// Get details of a category with given ID.
     /// </summary>
     [HttpGet("{category}")]
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public IActionResult GetCategory() {
-        return StatusCode(StatusCodes.Status503ServiceUnavailable);
+    public async Task<IActionResult> GetCategory(GetCategoryQuery query) {
+        var category = await _mediator.Send(query);
+        return Ok(category);
     }
 
     /// <summary>
