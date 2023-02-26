@@ -62,7 +62,8 @@ public class ProfilesTests {
                                           new Timeline(new TimePeriod(new DateOnly(2021, 1, 1))),
                                           profile.Id,
                                           taxSchemeId);
-        var asset = new Asset("My Asset", "About to delete", 7.9m, 11, profile);
+        context.AssetTypes.Attach(AssetType.RealEstate);
+        var asset = new Asset("My Asset", "About to delete", 7.9m, 11, AssetType.RealEstate, profile);
 
         context.Transactions.Add(transaction);
         context.Assets.Add(asset);
