@@ -2,6 +2,7 @@
 using Domain.Common.Exceptions;
 using Domain.ProfileAggregate;
 using Domain.TransactionAggregate;
+using Domain.TransactionAggregate.ValueObjects;
 
 namespace Domain.AssetAggregate;
 
@@ -41,32 +42,37 @@ public class Asset : TimestampedEntity {
         }
     }
 
+    public int TypeId { get; private set; }
+    public AssetType Type { get; private set; } = null!;
+
     HashSet<Transaction> _transactions = null!;
     public IReadOnlyCollection<Transaction> Transactions => _transactions;
 
     public int? ProfileId { get; private set; }
     public Profile? Profile { get; private set; }
 
-    public Asset(string name, string? description, decimal returnRate, decimal standardDeviation, Profile profile) 
-        : this(name, description, returnRate, standardDeviation, profile.Id) {
+    public Asset(string name, string? description, decimal returnRate, decimal standardDeviation, AssetType type, Profile profile) 
+        : this(name, description, returnRate, standardDeviation, type.Id, profile.Id) {
+        Type = type;
         Profile = profile;
     }
 
-    public Asset(string name, string? description, decimal returnRate, decimal standardDeviation, int profileId) 
-        : this(name, description, returnRate, standardDeviation) {
+    public Asset(string name, string? description, decimal returnRate, decimal standardDeviation, int typeId, int profileId) 
+        : this(name, description, returnRate, standardDeviation, typeId) {
         ProfileId = profileId;
     }
 
-    public Asset(int assetId, string name, string? description, decimal returnRate, decimal standardDeviation)
-        : this(name, description, returnRate, standardDeviation) {
+    public Asset(int assetId, string name, string? description, decimal returnRate, decimal standardDeviation, int typeId)
+        : this(name, description, returnRate, standardDeviation, typeId) {
         Id = assetId;
     }
 
-    public Asset(string name, string? description, decimal returnRate, decimal standardDeviation) {
+    public Asset(string name, string? description, decimal returnRate, decimal standardDeviation, int typeId) {
         Name = name;
         Description = description;
         ReturnRate = returnRate;
         StandardDeviation = standardDeviation;
+        TypeId = typeId;
     }
 
     private Asset() { }

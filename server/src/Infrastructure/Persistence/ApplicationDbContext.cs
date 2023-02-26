@@ -22,6 +22,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<TimeUnit> TransactionTimeUnits { get; set; }
     public DbSet<TransactionCategory> TransactionCategories { get; set; } 
     public DbSet<Asset> Assets { get; set; }
+    public DbSet<AssetType> AssetTypes { get; set; }
     public DbSet<TaxScheme> TaxSchemes { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
@@ -67,19 +68,30 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
             new TransactionCategory(8, "Gifts & Donations")
         );
 
+        builder.Entity<Asset>().HasOne(a => a.Type);
         builder.Entity<Asset>().HasOne(a => a.Profile).WithMany(p => p.Assets).OnDelete(DeleteBehavior.Cascade);
         builder.Entity<Asset>().HasData(
             new Asset(1,
                 "Index fund (default)",
                 "Index funds track the performance of a particular market index; great diversification, low fees, and easy management.",
                 returnRate: 8.1m,
-                standardDeviation: 15.2m),
+                standardDeviation: 15.2m,
+                typeId: AssetType.Index.Id),
             new Asset(2,
                 "Bond fund (default)",
                 "Bond funds provide great diversification potential and are stereotypically less volatile than other securities.",
                 returnRate: 1.9m,
-                standardDeviation: 3.0m)
+                standardDeviation: 3.0m,
+                typeId: AssetType.Bond.Id)
         );
+
+        builder.Entity<AssetType>().HasData(AssetType.Liquid,
+                                            AssetType.Index,
+                                            AssetType.Managed,
+                                            AssetType.RealEstate,
+                                            AssetType.Bond,
+                                            AssetType.Stock,
+                                            AssetType.Other);
 
         builder.Entity<TaxScheme>().HasData(
             new TaxScheme(1,

@@ -16,6 +16,7 @@ public interface IAppDbContext {
     DbSet<TimeUnit> TransactionTimeUnits { get; set; }
     DbSet<TransactionCategory> TransactionCategories { get; set; }
     DbSet<Asset> Assets { get; set; }
+    DbSet<AssetType> AssetTypes { get; set; }
     DbSet<TaxScheme> TaxSchemes { get; set; }
 
     public DatabaseFacade Database { get; }

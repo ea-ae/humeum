@@ -31,7 +31,6 @@ internal class CsrfXHeaderFilterAttribute : Attribute, IResourceFilter {
                 context.Result = new ObjectResult(error) {
                     StatusCode = StatusCodes.Status403Forbidden
                 };
-                //context.Result = new StatusCodeResult(StatusCodes.Status403Forbidden);
             }
         }
     }
