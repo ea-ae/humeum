@@ -1,4 +1,5 @@
-﻿using Application.Profiles.Queries;
+﻿using Application.Assets.Queries;
+using Application.Profiles.Queries;
 using Application.TaxSchemes.Queries;
 using Application.TransactionCategories.Queries;
 using Application.Transactions.Queries;
@@ -10,6 +11,7 @@ using Domain.AssetAggregate;
 using Domain.TaxSchemeAggregate;
 using Domain.TaxSchemeAggregate.ValueObjects;
 using Domain.TransactionAggregate;
+using Domain.TransactionAggregate.ValueObjects;
 using Domain.TransactionCategoryAggregate;
 using Domain.UserAggregate;
 
@@ -25,16 +27,14 @@ public class AppMappingProfile : Profile {
                        o => o.MapFrom(src => src.Categories.Select(
                            c => new TransactionDto.BriefTransactionCategory { Id = c.Id, Name = c.Name})));
 
-
-        CreateMap<Domain.ProfileAggregate.Profile, ProfileDto>();
+        CreateMap<AssetType, AssetTypeDto>();
+        CreateMap<Asset, AssetDto>()
+            .ForMember(dest => dest.Default,
+                       o => o.MapFrom(src => src.ProfileId == null));
 
         CreateMap<TaxScheme, TaxSchemeDto>();
-        //    .AfterMap((src, dest, context) => {
-        //        if (src.IncentiveScheme != null) {
-        //            context.Mapper.Map(src.IncentiveScheme, dest);
-        //        }
-        //    });
-        //CreateMap<TaxIncentiveScheme, TaxSchemeDto>();
+
+        CreateMap<Domain.ProfileAggregate.Profile, ProfileDto>();
 
         CreateMap<User, UserDto>()
             .ForMember(dest => dest.Profiles, 

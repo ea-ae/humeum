@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 using Application.Common.Exceptions;
 using Application.Common.Extensions;
@@ -28,17 +29,17 @@ public class GetCategoriesQueryHandler : IQueryHandler<GetCategoriesQuery, List<
         _mapper = mapper;
     }
 
-    public async Task<List<CategoryDto>> Handle(GetCategoriesQuery request, CancellationToken token = default) {
+    public Task<List<CategoryDto>> Handle(GetCategoriesQuery request, CancellationToken token = default) {
+        _context.AssertUserOwnsProfile(request.User, request.Profile);
+
         var categories = _context.TransactionCategories.AsNoTracking().Include(t => t.Profile)
             .Where(tc => ((tc.ProfileId == request.Profile && tc.Profile!.UserId == request.User) || tc.ProfileId == null)
                          && tc.DeletedAt == null)
             .OrderBy(tc => tc.Id);
 
-        if (categories is null) {
-            _context.AssertUserOwnsProfile(request.User, request.Profile);
-        }
+        var categoryDtos = categories.ProjectTo<CategoryDto>(_mapper.ConfigurationProvider).ToList();
 
-        return await categories.ProjectTo<CategoryDto>(_mapper.ConfigurationProvider).ToListAsync(token);
+        return Task.Run(() => categoryDtos);
     }
 }
 

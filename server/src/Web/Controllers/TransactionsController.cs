@@ -41,9 +41,9 @@ public class TransactionsController : ControllerBase {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<List<TransactionDto>> GetTransactions(GetTransactionsQuery query) {
+    public async Task<IActionResult> GetTransactions(GetTransactionsQuery query) {
         var transactions = await _mediator.Send(query);
-        return transactions;
+        return Ok(transactions);
     }
 
     /// <summary>

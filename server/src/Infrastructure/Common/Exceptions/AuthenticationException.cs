@@ -1,4 +1,6 @@
-﻿namespace Application.Common.Exceptions;
+﻿using Application.Common.Interfaces;
+
+namespace Application.Common.Exceptions;
 
 public class AuthenticationException : Exception, IAuthenticationException {
     public AuthenticationException(string message) : base(message) { }

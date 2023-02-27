@@ -44,4 +44,3 @@ public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, Tra
         return await Task.Run(() => _mapper.Map<TransactionDto>(transaction));
     }
 }
-

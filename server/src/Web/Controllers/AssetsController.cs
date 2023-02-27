@@ -1,7 +1,5 @@
 ﻿using Application.Transactions.Commands.AddTransaction;
 using Application.Transactions.Queries.GetTransaction;
-using Application.Transactions.Queries.GetTransactions;
-using Application.Transactions.Queries;
 using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -38,9 +36,9 @@ public class AssetsController : ControllerBase {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<List<AssetDto>> GetAssets(GetTransactionsQuery query) {
+    public async Task<IActionResult> GetAssets(GetAssetsQuery query) {
         var assets = await _mediator.Send(query);
-        return assets;
+        return Ok(assets);
     }
 
     /// <summary>

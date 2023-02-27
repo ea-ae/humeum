@@ -27,18 +27,13 @@ public class GetTransactionsQueryHandler : IQueryHandler<GetTransactionsQuery, L
         _mapper = mapper;
     }
 
-    public async Task<List<TransactionDto>> Handle(GetTransactionsQuery request, CancellationToken token = default) {
+    public Task<List<TransactionDto>> Handle(GetTransactionsQuery request, CancellationToken token = default) {
         var transactions = _context.Transactions.AsNoTracking()
                                                 .Include(t => t.Profile)
                                                 .Include(t => t.Categories)
                                                 .Where(t => t.ProfileId == request.Profile
                                                             && t.Profile.UserId == request.User
                                                             && t.DeletedAt == null);
-
-        // check whether profile is owned by user in case no transactions were loaded (extra query required)
-        if (!transactions.Any()) {
-            _context.AssertUserOwnsProfile(request.User, request.Profile);
-        }
 
         if (request.StartBefore is not null) {
             transactions = transactions.Where(t => t.PaymentTimeline.Period.Start <= request.StartBefore);
@@ -47,6 +42,12 @@ public class GetTransactionsQueryHandler : IQueryHandler<GetTransactionsQuery, L
             transactions = transactions.Where(t => t.PaymentTimeline.Period.Start >= request.StartAfter);
         }
 
-        return await transactions.ProjectTo<TransactionDto>(_mapper.ConfigurationProvider).ToListAsync(token);
+        var transactionDtos = transactions.ProjectTo<TransactionDto>(_mapper.ConfigurationProvider).ToList();
+
+        if (transactionDtos.Count == 0) {
+            _context.AssertUserOwnsProfile(request.User, request.Profile);
+        }
+
+        return Task.Run(() => transactionDtos);
     }
 }
