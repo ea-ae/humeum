@@ -28,7 +28,7 @@ public class GetCategoryQueryHandler : IQueryHandler<GetCategoryQuery, CategoryD
         _mapper = mapper;
     }
 
-    public async Task<CategoryDto> Handle(GetCategoryQuery request, CancellationToken token = default) {
+    public Task<CategoryDto> Handle(GetCategoryQuery request, CancellationToken token = default) {
         var category = _context.TransactionCategories.AsNoTracking().Include(t => t.Profile)
             .FirstOrDefault(tc => tc.Id == request.Category
                                   && ((tc.ProfileId == request.Profile && tc.Profile!.UserId == request.User) || tc.ProfileId == null)
@@ -39,7 +39,7 @@ public class GetCategoryQueryHandler : IQueryHandler<GetCategoryQuery, CategoryD
             throw new NotFoundValidationException(typeof(TransactionCategory));
         }
 
-        return await Task.Run(() => _mapper.Map<CategoryDto>(category));
+        return Task.Run(() => _mapper.Map<CategoryDto>(category));
     }
 }
 

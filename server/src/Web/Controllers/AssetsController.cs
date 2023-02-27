@@ -49,7 +49,7 @@ public class AssetsController : ControllerBase {
     [HttpGet("{asset}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAsset(GetTransactionQuery query) {
+    public async Task<IActionResult> GetAsset(GetAssetQuery query) {
         var asset = await _mediator.Send(query);
         return Ok(asset);
     }
