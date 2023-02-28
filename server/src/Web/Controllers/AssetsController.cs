@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Web.Filters;
 using Application.Assets.Queries;
 using Application.Assets.Commands;
+using Application.Transactions.Commands.DeleteTransaction;
 
 namespace Web.Controllers;
 
@@ -68,5 +69,18 @@ public class AssetsController : ControllerBase {
     public async Task<IActionResult> AddAsset(AddAssetCommand command) {
         int id = await _mediator.Send(command);
         return CreatedAtAction(nameof(GetAsset), new { command.User, command.Profile, Asset = id }, null);
+    }
+
+    /// <summary>
+    /// Deletes a custom asset with given ID from a profile.
+    /// </summary>
+    /// <response code="204">If asset was deleted.</response>
+    /// <response code="404">If asset or profile was not found.</response>
+    [HttpDelete("{asset}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteTransaction(DeleteAssetCommand command) {
+        await _mediator.Send(command);
+        return NoContent();
     }
 }

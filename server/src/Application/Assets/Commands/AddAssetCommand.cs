@@ -6,8 +6,6 @@ using Application.Common.Interfaces;
 
 using Domain.AssetAggregate;
 
-using MediatR;
-
 namespace Application.Assets.Commands;
 
 public record AddAssetCommand : ICommand<int> {
