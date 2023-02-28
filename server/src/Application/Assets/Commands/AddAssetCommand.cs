@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-using Application.Common.Exceptions;
 using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using Domain.AssetAggregate;
+using Domain.TransactionAggregate.ValueObjects;
 
 namespace Application.Assets.Commands;
 
@@ -16,7 +16,7 @@ public record AddAssetCommand : ICommand<int> {
     public required string? Description { get; init; }
     [Required] public required decimal? ReturnRate { get; init; }
     [Required] public required decimal? StandardDeviation { get; init; }
-    [Required] public required int? AssetType { get; init; }
+    [Required] public required string AssetType { get; init; }
 }
 
 public class AddAssetCommandHandler : ICommandHandler<AddAssetCommand, int> {
@@ -27,12 +27,9 @@ public class AddAssetCommandHandler : ICommandHandler<AddAssetCommand, int> {
     public async Task<int> Handle(AddAssetCommand request, CancellationToken token = default) {
         // validation
 
-        _context.AssertUserOwnsProfile(request.User, request.Profile);
+        var assetType = _context.GetEnumerationEntityByCode<AssetType>(request.AssetType);
 
-        var assetTypeExists = _context.AssetTypes.Any(at => at.Id == request.AssetType);
-        if (!assetTypeExists) {
-            throw new NotFoundValidationException(typeof(Asset));
-        }
+        _context.AssertUserOwnsProfile(request.User, request.Profile);
 
         // handling
 
@@ -40,7 +37,7 @@ public class AddAssetCommandHandler : ICommandHandler<AddAssetCommand, int> {
                               request.Description,
                               (decimal)request.ReturnRate!,
                               (decimal)request.StandardDeviation!,
-                              (int)request.AssetType!,
+                              assetType.Id,
                               request.Profile);
         _context.Assets.Add(asset);
         await _context.SaveChangesAsync(token);
