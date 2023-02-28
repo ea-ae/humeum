@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using Web.Filters;
 using Application.Assets.Queries;
+using Application.Assets.Commands;
 
 namespace Web.Controllers;
 
@@ -59,12 +60,12 @@ public class AssetsController : ControllerBase {
     /// </summary>
     /// <response code="201">Returns a location header to the newly created item.</response>
     /// <response code="400">If the domain invariants or application validation rules weren't satisfied.</response>
-    /// <response code="404">If a profile with the specified ID could not be found for the user.</response>
+    /// <response code="404">If a profile or asset type with the specified ID could not be found for the user.</response>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> AddAsset(AddTransactionCommand command) {
+    public async Task<IActionResult> AddAsset(AddAssetCommand command) {
         int id = await _mediator.Send(command);
         return CreatedAtAction(nameof(GetAsset), new { command.User, command.Profile, Asset = id }, null);
     }
