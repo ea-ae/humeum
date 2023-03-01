@@ -1,12 +1,37 @@
 # Humeum
 
-Humeum is a webapp for retirement planning.
+Humeum is a webapp for retirement planning. Still in progress, not all features outlined are complete.
 
-* ASP.NET Core backend following Clean Architecture (with a few specks of dirt), (compromised) CQRS, and (somewhat) domain-driven design.
-* Backend developed with MediatR, EF Core, PostgreSQL, optional JWT authentication, and Docker Compose.
-* Frontend developed with Webpack, React & React Router, ECharts, and TailwindCSS.
+## Features
 
-## Usage
+* Financial simulations (simple + Monte-Carlo). Income and expense tracking throughout time. Calculations accounting for income taxes and tax discounts.
+* Simple premade security options (index funds, III pillar funds, bonds) with configurable asset allocation ratios, as well as custom asset type creation.
+
+## Tech
+
+* ASP.NET backend following Clean Architecture (with a few specks of dirt), (compromising) CQS, and (mostly) domain-driven design.
+* EF Core, ASP.NET Identity with JWT, MediatR, AutoMapper, xUnit, Moq, and PostgreSQL.
+* Webpack, React and React Router. Apache ECharts for data visualization. TailwindCSS and MUI for styling.
+* Eventually deployed through CI/CD with Docker Swarms & nginx.
+* Future plans may include trying out new tech like RabbitMQ, GraphQL, load balancing, SSR, event sourcing, etc.
+
+## Testing
+
+* Unit tests for the domain model.
+* Integration tests for the application services (queries/commands) with mocked infrastructure services (e.g. authentication) and an in-memory database.
+* Integration tests for the web controllers through a test server & HTTP client with an in-memory database.
+
+## Design
+
+The project is composed of four layers: domain, application, infrastructure, and presentation. The domain layer consists of rich domain objects that double up as EF entity models, but are themselves ignorant of EF, thanks to Fluent API configuration in a higher persistence-aware layer. Domain objects are organized into aggregates. Enumeration classes and ValueObjects are used extensively to store enumeration data in reference tables and encapsulate domain validation, respectively.
+
+The application layer describes the use cases for our domain. It is composed primarily of queries and commands that perform application-specific validation and work with domain objects and their methods. This layer also contains interfaces for classes that are implemented and provided through dependency injection in the infrastructure layer.
+
+The infrastructure layer contains all the implementations that the application layer needs, such as persistence & DbContext, authentication, and other external services. 
+
+Finally, the presentation layer, which is where ASP.NET is configured, depends on the application layer but not the infrastructure layer (although it does reference it for DI configuration). The presentation layer contains all the controllers & filters, as well as the application entry point.
+
+When a request is received, it first runs through authentication/authorization middleware and our controller filters. After model binding is successfully performed, the controller sends a request through MediatR that arrives at a command/query handler, where further validation and business logic is performed (through infrastructure services & domain methods). Finally, a result is returned (e.g. through an automapped DTO) that is passed back to the controller and finally the client.
 
 ### Startup
 
