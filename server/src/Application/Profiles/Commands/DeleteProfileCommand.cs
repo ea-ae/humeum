@@ -18,8 +18,12 @@ public record DeleteProfileCommand : ICommand {
 
 public class DeleteProfileCommandHandler : ICommandHandler<DeleteProfileCommand> {
     private readonly IAppDbContext _context;
+    private readonly IApplicationUserService _userService;
 
-    public DeleteProfileCommandHandler(IAppDbContext context) => _context = context;
+    public DeleteProfileCommandHandler(IAppDbContext context, IApplicationUserService userService) {
+        _context = context;
+        _userService = userService;
+    }
 
     public async Task<Unit> Handle(DeleteProfileCommand request, CancellationToken token = default) {
         var profile = _context.Profiles.Include(p => p.Transactions)
@@ -34,6 +38,7 @@ public class DeleteProfileCommandHandler : ICommandHandler<DeleteProfileCommand>
 
         _context.Profiles.Remove(profile);
         await _context.SaveChangesAsync(token);
+        await _userService.UpdateClientToken(request.User); // token should reflect a valid list of profiles
 
         return Unit.Value;
     }

@@ -8,6 +8,8 @@ using Domain.ProfileAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 
+using Infrastructure.Services;
+
 using Xunit;
 
 namespace Application.Test;

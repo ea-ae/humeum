@@ -75,7 +75,7 @@ public class JwtApplicationUserService : ApplicationUserService {
         throw new AuthenticationException("Sign-in attempt failed.");
     }
 
-    async Task<string> CreateToken(ApplicationUser user) {
+    protected override async Task<string> CreateToken(ApplicationUser user) {
         var key = Encoding.UTF8.GetBytes(_jwtSettings.Key);
         var secret = new SymmetricSecurityKey(key);
         var credentials = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
@@ -105,7 +105,7 @@ public class JwtApplicationUserService : ApplicationUserService {
         return claims;
     }
 
-    void AddTokenAsCookie(string token) {
+    protected override void AddTokenAsCookie(string token) {
         var cookieName = _jwtSettings.Cookie;
         var cookieOptions = new CookieOptions() {
             HttpOnly = true,

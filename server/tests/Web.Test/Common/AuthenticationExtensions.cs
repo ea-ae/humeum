@@ -79,7 +79,7 @@ public static class AuthenticationExtensions {
     /// <param name="userId">ID of user to create the account for.</param>
     /// <param name="jwtToken">JWT token to use for authorization.</param>
     /// <returns>ID of newly created profile.</returns>
-    public static async Task<int> CreateProfile(this HttpClient client, int userId, string jwtToken) {
+    public static async Task<(int profileId, string jwtToken)> CreateProfile(this HttpClient client, int userId, string jwtToken) {
         var message = new HttpRequestMessage(HttpMethod.Post, $"users/{userId}/profiles?name=Default").WithJwtCookie(jwtToken);
         var response = await client.SendAsync(message);
 
@@ -95,6 +95,6 @@ public static class AuthenticationExtensions {
 
         int profileId = int.Parse(response.Headers.Location.ToString().Split("/").Last());
 
-        return profileId;
+        return (profileId, response.GetJwtToken());
     }
 }

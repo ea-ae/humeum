@@ -67,9 +67,9 @@ public class TransactionsTest {
         // create 2 user accounts and 2 profiles
 
         (int firstUserId, string firstJwtToken) = await client.CreateUser("firstUser");
-        int firstProfileId = await client.CreateProfile(firstUserId, firstJwtToken);
+        (int firstProfileId, firstJwtToken) = await client.CreateProfile(firstUserId, firstJwtToken);
         (int secondUserId, string secondJwtToken) = await client.CreateUser("secondUser");
-        int secondProfileId = await client.CreateProfile(secondUserId, secondJwtToken);
+        (int secondProfileId, secondJwtToken) = await client.CreateProfile(secondUserId, secondJwtToken);
 
         // attempt to get transaction of second profile with first user
 
@@ -94,8 +94,8 @@ public class TransactionsTest {
 
         const string username = "softDeleteTestUser";
         (int userId, string jwtToken) = await client.CreateUser(username);
-        int profileOneId = await client.CreateProfile(userId, jwtToken);
-        int profileTwoId = await client.CreateProfile(userId, jwtToken);
+        (int profileOneId, jwtToken) = await client.CreateProfile(userId, jwtToken);
+        (int profileTwoId, jwtToken) = await client.CreateProfile(userId, jwtToken);
         jwtToken = await client.SignInUser(username);
 
         // create 3 transactions per profile
@@ -118,6 +118,7 @@ public class TransactionsTest {
 
         message = new HttpRequestMessage(HttpMethod.Delete, $"users/{userId}/profiles/{profileTwoId}").WithJwtCookie(jwtToken);
         response = await client.SendAsync(message);
+        jwtToken = response.GetJwtToken(); // update jwt token profile list
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
         // confirm that soft deletion was applied correctly in DB
