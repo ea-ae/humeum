@@ -12,7 +12,7 @@ using Xunit;
 namespace Web.Test;
 
 /// <summary>
-/// End-to-end tests for transactions (and related entities) through controller actions.
+/// Integration tests generally centered around transactions. These tests will be reorganized later!
 /// </summary>
 [Collection(WebAppFactoryCollection.COLLECTION_NAME)]
 public class TransactionsTest {

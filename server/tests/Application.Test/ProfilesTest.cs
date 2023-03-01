@@ -54,9 +54,13 @@ public class ProfilesTests {
         var context = _dbContextFixture.CreateDbContext();
         var handler = new DeleteProfileCommandHandler(context, new ApplicationUserServiceStub());
 
+        // create a new profile
+
         var profile = new Profile(1000, "My Profile Name", "About to delete", 5.5m);
         context.Profiles.Add(profile);
         await context.SaveChangesAsync();
+
+        // add profile entities that will be cascade-soft-deleted alongside the profile
 
         var transaction = new Transaction("My Transaction",
                                           null,
@@ -72,15 +76,21 @@ public class ProfilesTests {
         context.Assets.Add(asset);
         await context.SaveChangesAsync();
 
+        // assert that nothing is deleted yet
+
         Assert.Null(profile.DeletedAt);
         Assert.Null(profile.DeletedAt);
         Assert.Null(asset.DeletedAt);
+
+        // delete profile (as well as the associated entities)
 
         DeleteProfileCommand command = new() {
             User = 1000,
             Profile = profile.Id
         };
         await handler.Handle(command);
+
+        // assert that profile and profile entities are deleted
 
         await context.Profiles.Entry(profile).ReloadAsync();
         await context.Transactions.Entry(transaction).ReloadAsync();
