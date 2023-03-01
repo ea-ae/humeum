@@ -8,34 +8,49 @@ namespace Domain.Test.TransactionAggregate;
 public class TransactionTest {
     [Fact]
     public void TotalTransactionCount_InstantEnd_ReturnsOne() {
+        // arrange
+
         var timePeriod = new Timeline(new TimePeriod(new DateOnly(2022, 1, 1)));
         var transaction = new Transaction(null, null, -1, TransactionType.RetirementOnly, timePeriod, profileId: 1, taxSchemeId: 1);
-
         int expected = 1;
 
+        // act
+
         int actual = transaction.TotalTransactionCount;
+
+        // assert
 
         Assert.Equal(expected, actual);
     }
 
     [Fact]
     public void TotalTransactionCount_Days_CountsCorrectly() {
-        var transaction = BuildTransaction(TimeUnit.Days, new DateOnly(2045, 5, 4), new DateOnly(2045, 5, 15));
+        // arrange
 
+        var transaction = BuildTransaction(TimeUnit.Days, new DateOnly(2045, 5, 4), new DateOnly(2045, 5, 15));
         int expected = 15 - 4 + 1; // 12
 
+        // act
+
         int actual = transaction.TotalTransactionCount;
+
+        // assert
 
         Assert.Equal(expected, actual);
     }
 
     [Fact]
     public void TotalTransactionCount_CompleteWeeks_CountsCorrectly() {
-        var transaction = BuildTransaction(TimeUnit.Weeks, new DateOnly(2045, 5, 1), new DateOnly(2046, 5, 15));
+        // arrange
 
+        var transaction = BuildTransaction(TimeUnit.Weeks, new DateOnly(2045, 5, 1), new DateOnly(2046, 5, 15));
         int expected = 52 + 2 + 1; // 55
 
+        // act
+
         int actual = transaction.TotalTransactionCount;
+
+        // assert
 
         Assert.Equal(expected, actual);
     }
@@ -45,11 +60,16 @@ public class TransactionTest {
     /// </summary>
     [Fact]
     public void TotalTransactionCount_IncompleteWeeks_CountsCorrectly() {
-        var transaction = BuildTransaction(TimeUnit.Weeks, new DateOnly(2023, 1, 1), new DateOnly(2023, 1, 14));
+        // arrange
 
+        var transaction = BuildTransaction(TimeUnit.Weeks, new DateOnly(2023, 1, 1), new DateOnly(2023, 1, 14));
         int expected = 1 + 1; // 2
 
+        // act
+
         int actual = transaction.TotalTransactionCount;
+
+        // assert
 
         Assert.Equal(expected, actual);
     }
@@ -60,22 +80,32 @@ public class TransactionTest {
     /// </summary>
     [Fact]
     public void TotalTransactionCount_IncompleteWeeksOverYears_CountsCorrectly() {
-        var transaction = BuildTransaction(TimeUnit.Weeks, new DateOnly(2023, 1, 1), new DateOnly(2024, 1, 8));
+        // arrange
 
+        var transaction = BuildTransaction(TimeUnit.Weeks, new DateOnly(2023, 1, 1), new DateOnly(2024, 1, 8));
         int expected = 53 + 1; // 2
 
+        // act
+
         int actual = transaction.TotalTransactionCount;
+
+        // assert
 
         Assert.Equal(expected, actual);
     }
 
     [Fact]
     public void TotalTransactionCount_CompleteMonths_CountsCorrectly() {
-        var transaction = BuildTransaction(TimeUnit.Months, new DateOnly(2023, 1, 1), new DateOnly(2023, 3, 2));
+        // arrange
 
+        var transaction = BuildTransaction(TimeUnit.Months, new DateOnly(2023, 1, 1), new DateOnly(2023, 3, 2));
         int expected = 2 + 1; // 3
 
+        // act
+
         int actual = transaction.TotalTransactionCount;
+
+        // assert
 
         Assert.Equal(expected, actual);
     }
@@ -85,66 +115,96 @@ public class TransactionTest {
     /// </summary>
     [Fact]
     public void TotalTransactionCount_IncompleteMonths_CountsCorrectly() {
-        var transaction = BuildTransaction(TimeUnit.Months, new DateOnly(2023, 1, 2), new DateOnly(2023, 3, 1));
+        // arrange
 
+        var transaction = BuildTransaction(TimeUnit.Months, new DateOnly(2023, 1, 2), new DateOnly(2023, 3, 1));
         int expected = 1 + 1; // 2
 
+        // act
+
         int actual = transaction.TotalTransactionCount;
+
+        // assert
 
         Assert.Equal(expected, actual);
     }
 
     [Fact]
     public void TotalTransactionCount_IncompleteMonthsOverYears_CountsCorrectly() {
-        var transaction = BuildTransaction(TimeUnit.Months, new DateOnly(2023, 1, 2), new DateOnly(2025, 2, 1));
+        // arrange
 
+        var transaction = BuildTransaction(TimeUnit.Months, new DateOnly(2023, 1, 2), new DateOnly(2025, 2, 1));
         int expected = 2 * 12 + 1; // 25
 
+        // act
+
         int actual = transaction.TotalTransactionCount;
+
+        // assert
 
         Assert.Equal(expected, actual);
     }
 
     [Fact]
     public void TotalTransactionCount_IncompleteMonthsOverYearsWithLeapYear_CountsCorrectly() {
-        var transaction = BuildTransaction(TimeUnit.Months, new DateOnly(2020, 2, 29), new DateOnly(2021, 2, 28));
+        // arrange
 
+        var transaction = BuildTransaction(TimeUnit.Months, new DateOnly(2020, 2, 29), new DateOnly(2021, 2, 28));
         int expected = 12 + 1; // 13
 
+        // act
+
         int actual = transaction.TotalTransactionCount;
+
+        // assert
 
         Assert.Equal(expected, actual);
     }
 
     [Fact]
     public void TotalTransactionCount_CompleteYears_CountsCorrectly() {
-        var transaction = BuildTransaction(TimeUnit.Years, new DateOnly(2023, 1, 1), new DateOnly(2030, 1, 1));
+        // arrange
 
+        var transaction = BuildTransaction(TimeUnit.Years, new DateOnly(2023, 1, 1), new DateOnly(2030, 1, 1));
         int expected = 7 + 1; // 8
 
+        // act
+
         int actual = transaction.TotalTransactionCount;
+
+        // assert
 
         Assert.Equal(expected, actual);
     }
 
     [Fact]
     public void TotalTransactionCount_IncompleteYears_CountsCorrectly() {
-        var transaction = BuildTransaction(TimeUnit.Years, new DateOnly(2023, 1, 2), new DateOnly(2030, 1, 1));
+        // arrange
 
+        var transaction = BuildTransaction(TimeUnit.Years, new DateOnly(2023, 1, 2), new DateOnly(2030, 1, 1));
         int expected = 6 + 1; // 7
 
+        // act
+
         int actual = transaction.TotalTransactionCount;
+
+        // assert
 
         Assert.Equal(expected, actual);
     }
 
     [Fact]
     public void TotalTransactionCount_IncompleteYearsWithLeapDay_CountsCorrectly() {
-        var transaction = BuildTransaction(TimeUnit.Years, new DateOnly(2020, 2, 29), new DateOnly(2030, 2, 28));
+        // arrange
 
+        var transaction = BuildTransaction(TimeUnit.Years, new DateOnly(2020, 2, 29), new DateOnly(2030, 2, 28));
         int expected = 10 + 1; // 11
 
+        // act
+
         int actual = transaction.TotalTransactionCount;
+
+        // assert
 
         Assert.Equal(expected, actual);
     }

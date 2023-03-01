@@ -12,18 +12,18 @@ using Xunit;
 namespace Web.Test;
 
 /// <summary>
-/// Integration tests generally centered around transactions. These tests will be reorganized later!
+/// Integration tests. I am having some trouble finding a suitable naming system for these.
 /// </summary>
 [Collection(WebAppFactoryCollection.COLLECTION_NAME)]
-public class TransactionsTest {
+public class WebTest {
     readonly CustomWebAppFactory _webapp;
 
-    public TransactionsTest(CustomWebAppFactory webapp) {
+    public WebTest(CustomWebAppFactory webapp) {
         _webapp = webapp;
     }
 
     [Fact]
-    public async Task GetTransactionsAction_UnauthorizedUser_ReturnsUnauthorized() {
+    public async Task UnauthorizedUserStory_ReturnsUnauthorized() {
         var client = _webapp.ConfiguredClient;
 
         var expected = HttpStatusCode.Unauthorized;
@@ -35,7 +35,7 @@ public class TransactionsTest {
     }
 
     [Fact]
-    public async Task GetTransactionsAction_AuthorizedUserWrongId_ReturnsForbidden() {
+    public async Task AuthorizedUserWrongIdStory_ReturnsForbidden() {
         var client = _webapp.ConfiguredClient;
         using var scope = _webapp.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
@@ -58,7 +58,7 @@ public class TransactionsTest {
     }
 
     [Fact]
-    public async Task GetTransactionsAction_AuthorizedUserWrongProfile_ReturnsNotFound() {
+    public async Task AuthorizedUserWrongProfileStory_ReturnsNotFound() {
         var client = _webapp.ConfiguredClient;
         using var scope = _webapp.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
@@ -84,7 +84,7 @@ public class TransactionsTest {
     }
 
     [Fact]
-    public async Task TransactionController_CreateProfileAndTransactionsAndDeleteProfile_AuthorizesCreatesSoftDeletes() {
+    public async Task ProfileDataDeletionStory_AuthorizesCreatesSoftDeletes() {
         var client = _webapp.ConfiguredClient;
         using var scope = _webapp.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();

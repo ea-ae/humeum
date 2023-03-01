@@ -15,6 +15,9 @@ using Xunit;
 
 namespace Application.Test;
 
+/// <summary>
+/// Tests centered generally around profile services.
+/// </summary>
 [Collection(InMemoryDbContextCollection.COLLECTION_NAME)]
 public class ProfilesTests {
     readonly InMemorySqliteDbContextFixture _dbContextFixture;

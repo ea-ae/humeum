@@ -13,6 +13,9 @@ using Xunit;
 
 namespace Application.Test;
 
+/// <summary>
+/// Tests centered generally around transaction services.
+/// </summary>
 [Collection(InMemoryDbContextCollection.COLLECTION_NAME)]
 public class TransactionsTests {
     readonly InMemorySqliteDbContextFixture _dbContextFixture;
@@ -136,6 +139,8 @@ public class TransactionsTests {
         context.Profiles.Add(profile);
         await context.SaveChangesAsync();
 
+        // create transaction
+
         AddTransactionCommand command = new() {
             User = 1,
             Profile = profile.Id,
@@ -150,8 +155,6 @@ public class TransactionsTests {
             UnitsInCycle = 2,
             TaxScheme = 1,
         };
-
-        // create transaction
 
         var result = await handler.Handle(command);
         var transaction = context.Transactions.First(t => t.Id == result);
