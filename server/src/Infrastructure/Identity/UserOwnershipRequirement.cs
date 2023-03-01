@@ -2,4 +2,4 @@
 
 namespace Infrastructure.Identity;
 
-public class UserDataAccessRequirement : IAuthorizationRequirement { }
+public class UserOwnershipRequirement : IAuthorizationRequirement { }

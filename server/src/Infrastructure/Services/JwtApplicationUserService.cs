@@ -96,12 +96,11 @@ public class JwtApplicationUserService : ApplicationUserService {
 
     async Task<IEnumerable<Claim>> GetUserClaims(ApplicationUser user) {
         var claims = await _userManager.GetClaimsAsync(user);
-
-        //claims.Add(new Claim(ClaimTypes.Name, user.UserName ?? throw new InvalidOperationException()));
+        var profiles = _context.Profiles.Where(p => p.UserId == user.Id && p.DeletedAt == null).ToList();
 
         claims.Add(new Claim("uid", user.Id.ToString()));
         claims.Add(new Claim("name", user.UserName ?? throw new InvalidOperationException()));
-        //claims.Add(new Claim("what", "now"));
+        claims.Add(new Claim("profiles", string.Join(",", profiles.Select(p => p.Id))));
 
         return claims;
     }

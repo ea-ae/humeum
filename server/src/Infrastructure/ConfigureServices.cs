@@ -61,10 +61,13 @@ public static class ConfigureServices {
             });
 
         services.AddAuthorization(o => {
-            o.AddPolicy("CanHandleUserData", builder => builder.AddRequirements(new UserDataAccessRequirement()));
+            o.AddPolicy("CanHandleUserData", builder => builder.AddRequirements(new UserOwnershipRequirement()));
+            o.AddPolicy("CanHandleProfileData", builder => builder.AddRequirements(new UserOwnershipRequirement(),
+                                                                                   new ProfileOwnershipRequirement()));
         });
 
-        services.AddSingleton<IAuthorizationHandler, UserIdMatchHandler>();
+        services.AddSingleton<IAuthorizationHandler, UserIdHandler>();
+        services.AddSingleton<IAuthorizationHandler, ProfileIdHandler>();
 
         services
             .AddIdentity<ApplicationUser, IdentityRole<int>>(o => {
