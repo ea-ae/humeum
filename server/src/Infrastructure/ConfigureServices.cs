@@ -47,7 +47,6 @@ public static class ConfigureServices {
                     ValidIssuer = jwtSettings.Issuer,
                     ValidAudience = jwtSettings.Issuer,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
-
                     ClockSkew = TimeSpan.Zero,
                 };
                 o.Events = new JwtBearerEvents {

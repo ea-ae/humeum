@@ -2,6 +2,7 @@
 using Application.Profiles.Commands.AddProfile;
 using Application.Profiles.Commands.DeleteProfile;
 using Application.Test.Common;
+using Application.Test.Common.Stubs;
 
 using Domain.AssetAggregate;
 using Domain.ProfileAggregate;
@@ -25,7 +26,7 @@ public class ProfilesTests {
     [Fact]
     public async Task AddProfileCommand_ValidProfile_ReturnsCreatedProfileId() {
         var context = _dbContextFixture.CreateDbContext();
-        var handler = new AddProfileCommandHandler(context);
+        var handler = new AddProfileCommandHandler(context, new ApplicationUserServiceStub());
         int userId = 5;
         string profileName = "Test";
         string profileDescription = "Desc";
@@ -51,7 +52,7 @@ public class ProfilesTests {
     public async Task DeleteProfileCommand_ValidProfileAndChildren_CascadeDeletesProfile() {
         const int taxSchemeId = 1;
         var context = _dbContextFixture.CreateDbContext();
-        var handler = new DeleteProfileCommandHandler(context);
+        var handler = new DeleteProfileCommandHandler(context, new ApplicationUserServiceStub());
 
         var profile = new Profile(1000, "My Profile Name", "About to delete", 5.5m);
         context.Profiles.Add(profile);
