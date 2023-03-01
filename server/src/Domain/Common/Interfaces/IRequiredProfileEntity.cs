@@ -1,0 +1,11 @@
+﻿using Domain.ProfileAggregate;
+
+namespace Domain.Common.Interfaces;
+
+/// <summary>
+/// Entities that must be owned by profiles.
+/// </summary>
+public interface IRequiredProfileEntity : IProfileEntity {
+    int ProfileId { get; }
+    Profile Profile { get; }
+}

@@ -2,7 +2,13 @@
 using Application.Common.Interfaces;
 
 using Domain.Common;
+using Domain.Common.Interfaces;
 using Domain.ProfileAggregate;
+using Domain.TransactionCategoryAggregate;
+
+using MediatR;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Common.Extensions;
 
@@ -43,6 +49,25 @@ public static class AppDbContextExtensions {
         if (!userOwnsProfile) {
             throw new NotFoundValidationException(typeof(Profile));
         }
+    }
+
+    public static T GetProfileEntity<T>(this IAppDbContext context,
+                                        int id,
+                                        int profileId,
+                                        int userId) where T : class, IOptionalProfileEntity {
+        T? entity = context.Set<T>().AsNoTracking()
+                                    .Include(x => x.Profile)
+                                    .FirstOrDefault(x => x.Id == id
+                                                         && ((x.ProfileId == profileId && x.Profile!.UserId == userId)
+                                                             || x.ProfileId == null)
+                                                         && x.DeletedAt == null);
+
+        if (entity is null) {
+            context.AssertUserOwnsProfile(userId, profileId);
+            throw new NotFoundValidationException(typeof(TransactionCategory));
+        }
+
+        return entity;
     }
 
     // TODO: A simple entity Exists() extension method for validation with a pre-made exception

@@ -1,6 +1,7 @@
 ﻿using Domain.AssetAggregate;
 using Domain.Common;
 using Domain.Common.Exceptions;
+using Domain.Common.Interfaces;
 using Domain.ProfileAggregate;
 using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate.ValueObjects;
@@ -15,7 +16,7 @@ namespace Domain.TransactionAggregate;
 /// can also be conditional on the dynamic time point at which one retires, which is signified through
 /// the transaction type.
 /// </summary>
-public class Transaction : TimestampedEntity {
+public class Transaction : TimestampedEntity, IRequiredProfileEntity {
     public string? Name { get; private set; }
 
     public string? Description { get; private set; }
