@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Xml.Linq;
 
 namespace Web.Test.Common;
 
@@ -46,11 +47,9 @@ public static class AuthenticationExtensions {
 
         if (response is null) {
             throw new InvalidOperationException("No response returned.");
-        }
-        if (response.StatusCode != HttpStatusCode.Created) {
+        } else if (response.StatusCode != HttpStatusCode.Created) {
             throw new InvalidOperationException("User could not be created.");
-        }
-        if (response.Headers.Location is null) {
+        } else if (response.Headers.Location is null) {
             throw new InvalidOperationException("Location header was not returned by API endpoint.");
         }
 
@@ -58,6 +57,19 @@ public static class AuthenticationExtensions {
         string jwtToken = response.GetJwtToken();
 
         return (userId, jwtToken);
+    }
+
+    public static async Task<string> SignInUser(this HttpClient client, string name) {
+        string userQuery = $"username={name}&password=testingtesting";
+        var response = await client.PostAsync($"users/sign-in?{userQuery}", null);
+
+        if (response is null) {
+            throw new InvalidOperationException("No response returned.");
+        } else if (response.StatusCode != HttpStatusCode.OK) {
+            throw new InvalidOperationException("User could not be signed in.");
+        }
+        
+        return response.GetJwtToken();
     }
 
     /// <summary>

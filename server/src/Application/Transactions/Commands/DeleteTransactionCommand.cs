@@ -24,15 +24,11 @@ public class DeleteTransactionCommandHandler : ICommandHandler<DeleteTransaction
     public DeleteTransactionCommandHandler(IAppDbContext context) => _context = context;
 
     public async Task<Unit> Handle(DeleteTransactionCommand request, CancellationToken token = default) {
-        var transaction = _context.Transactions.Include(t => t.Profile)
-                                               .Where(t => t.Id == request.Transaction
-                                                           && t.ProfileId == request.Profile
-                                                           && t.Profile.UserId == request.User
-                                                           && t.DeletedAt == null)
-                                               .FirstOrDefault();
+        var transaction = _context.Transactions.FirstOrDefault(t => t.Id == request.Transaction
+                                                                    && t.ProfileId == request.Profile
+                                                                    && t.DeletedAt == null);
 
         if (transaction is null) {
-            _context.AssertUserOwnsProfile(request.User, request.Profile);
             throw new NotFoundValidationException(typeof(Transaction));
         }
 

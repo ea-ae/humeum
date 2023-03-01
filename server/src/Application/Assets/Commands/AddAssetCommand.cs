@@ -25,20 +25,14 @@ public class AddAssetCommandHandler : ICommandHandler<AddAssetCommand, int> {
     public AddAssetCommandHandler(IAppDbContext context) => _context = context;
 
     public async Task<int> Handle(AddAssetCommand request, CancellationToken token = default) {
-        // validation
-
         var assetType = _context.GetEnumerationEntityByCode<AssetType>(request.AssetType);
-
-        _context.AssertUserOwnsProfile(request.User, request.Profile);
-
-        // handling
-
         var asset = new Asset(request.Name,
                               request.Description,
                               (decimal)request.ReturnRate!,
                               (decimal)request.StandardDeviation!,
                               assetType.Id,
                               request.Profile);
+
         _context.Assets.Add(asset);
         await _context.SaveChangesAsync(token);
 

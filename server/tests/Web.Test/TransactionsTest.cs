@@ -73,7 +73,7 @@ public class TransactionsTest {
 
         // attempt to get transaction of second profile with first user
 
-        var expected = HttpStatusCode.NotFound;
+        var expected = HttpStatusCode.Forbidden;
 
         string url = $"users/{firstUserId}/profiles/{secondProfileId}/transactions";
         var message = new HttpRequestMessage(HttpMethod.Get, url).WithJwtCookie(firstJwtToken);
@@ -92,9 +92,11 @@ public class TransactionsTest {
 
         // create user account and 2 profiles
 
-        (int userId, string jwtToken) = await client.CreateUser("softDeleteTestUser");
+        const string username = "softDeleteTestUser";
+        (int userId, string jwtToken) = await client.CreateUser(username);
         int profileOneId = await client.CreateProfile(userId, jwtToken);
         int profileTwoId = await client.CreateProfile(userId, jwtToken);
+        jwtToken = await client.SignInUser(username);
 
         // create 3 transactions per profile
 
@@ -144,6 +146,6 @@ public class TransactionsTest {
 
         message = new HttpRequestMessage(HttpMethod.Get, $"users/{userId}/profiles/{profileTwoId}/transactions").WithJwtCookie(jwtToken);
         response = await client.SendAsync(message);
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode); // profile not found (since it is deleted)
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode); // profile not found (since it is deleted)
     }
 }

@@ -28,8 +28,7 @@ public class GetAssetsQueryHandler : IQueryHandler<GetAssetsQuery, List<AssetDto
         _context.AssertUserOwnsProfile(request.User, request.Profile);
 
         var assets = _context.Assets.AsNoTracking().Include(a => a.Type)
-            .Where(a => ((a.ProfileId == request.Profile && a.Profile!.UserId == request.User) || a.ProfileId == null)
-                         && a.DeletedAt == null)
+            .Where(a => (a.ProfileId == request.Profile || a.ProfileId == null) && a.DeletedAt == null)
             .OrderBy(a => a.Id);
 
         var assetDtos = assets.ProjectTo<AssetDto>(_mapper.ConfigurationProvider).ToList();

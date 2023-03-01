@@ -29,10 +29,8 @@ public class GetTransactionsQueryHandler : IQueryHandler<GetTransactionsQuery, L
 
     public Task<List<TransactionDto>> Handle(GetTransactionsQuery request, CancellationToken token = default) {
         var transactions = _context.Transactions.AsNoTracking()
-                                                .Include(t => t.Profile)
                                                 .Include(t => t.Categories)
                                                 .Where(t => t.ProfileId == request.Profile
-                                                            && t.Profile.UserId == request.User
                                                             && t.DeletedAt == null);
 
         if (request.StartBefore is not null) {
@@ -42,12 +40,6 @@ public class GetTransactionsQueryHandler : IQueryHandler<GetTransactionsQuery, L
             transactions = transactions.Where(t => t.PaymentTimeline.Period.Start >= request.StartAfter);
         }
 
-        var transactionDtos = transactions.ProjectTo<TransactionDto>(_mapper.ConfigurationProvider).ToList();
-
-        if (transactionDtos.Count == 0) {
-            _context.AssertUserOwnsProfile(request.User, request.Profile);
-        }
-
-        return Task.Run(() => transactionDtos);
+        return Task.Run(() => transactions.ProjectTo<TransactionDto>(_mapper.ConfigurationProvider).ToList());
     }
 }

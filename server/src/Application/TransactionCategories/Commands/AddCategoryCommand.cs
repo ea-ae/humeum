@@ -20,13 +20,8 @@ public class AddCategoryCommandHandler : ICommandHandler<AddCategoryCommand, int
     public AddCategoryCommandHandler(IAppDbContext context) => _context = context;
 
     public async Task<int> Handle(AddCategoryCommand request, CancellationToken token = default) {
-        // validation
-
-        _context.AssertUserOwnsProfile(request.User, request.Profile);
-
-        // handling
-
         var category = new TransactionCategory(request.Name, request.Profile);
+
         _context.TransactionCategories.Add(category);
         await _context.SaveChangesAsync(token);
 

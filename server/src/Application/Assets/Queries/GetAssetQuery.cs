@@ -31,13 +31,12 @@ public class GetAssetQueryHandler : IQueryHandler<GetAssetQuery, AssetDto> {
     }
 
     public Task<AssetDto> Handle(GetAssetQuery request, CancellationToken token = default) {
-        var asset = _context.Assets.AsNoTracking().Include(a => a.Profile).Include(a => a.Type)
+        var asset = _context.Assets.AsNoTracking().Include(a => a.Type)
             .FirstOrDefault(a => a.Id == request.Asset
-                                 && ((a.ProfileId == request.Profile && a.Profile!.UserId == request.User) || a.ProfileId == null)
+                                 && (a.ProfileId == request.Profile || a.ProfileId == null)
                                  && a.DeletedAt == null);
 
         if (asset is null) {
-            _context.AssertUserOwnsProfile(request.User, request.Profile);
             throw new NotFoundValidationException(typeof(Asset));
         }
 

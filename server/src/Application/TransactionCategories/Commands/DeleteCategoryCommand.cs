@@ -26,11 +26,10 @@ public class DeleteCategoryCommandHandler : ICommandHandler<DeleteCategoryComman
     public async Task<Unit> Handle(DeleteCategoryCommand request, CancellationToken token = default) {
         var category = _context.TransactionCategories.Include(tc => tc.Profile)
             .FirstOrDefault(tc => tc.Id == request.Category
-                                  && (tc.ProfileId == null || (tc.ProfileId == request.Profile && tc.Profile!.UserId == request.User))
+                                  && tc.ProfileId == null || (tc.ProfileId == request.Profile)
                                   && tc.DeletedAt == null);
 
         if (category is null) {
-            _context.AssertUserOwnsProfile(request.User, request.Profile);
             throw new NotFoundValidationException(typeof(TransactionCategory));
         }
 

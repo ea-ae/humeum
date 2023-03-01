@@ -17,7 +17,7 @@ namespace Web.Controllers;
 /// <response code="401">If a user route is accessed without an authentication token.</response>
 /// <response code="403">If a user route is accessed with an authentication token assigned to another user ID.</response>
 [Route("api/v1/users/{user}/profiles/{profile}/[controller]")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleUserData")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleProfileData")]
 [ApplicationExceptionFilter]
 [CsrfXHeaderFilter]
 [Produces("application/json")]

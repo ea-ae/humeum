@@ -24,15 +24,10 @@ public class DeleteAssetCommandHandler : ICommandHandler<DeleteAssetCommand> {
     public DeleteAssetCommandHandler(IAppDbContext context) => _context = context;
 
     public async Task<Unit> Handle(DeleteAssetCommand request, CancellationToken token = default) {
-        var asset = _context.Assets.Include(a => a.Profile)
-            .Where(a => a.Id == request.Asset
-                        && a.ProfileId == request.Profile 
-                        && a.Profile!.UserId == request.User
-                        && a.DeletedAt == null)
-            .FirstOrDefault();
+        var asset = _context.Assets.Where(a => a.Id == request.Asset && a.ProfileId == request.Profile && a.DeletedAt == null)
+                                   .FirstOrDefault();
 
         if (asset is null) {
-            _context.AssertUserOwnsProfile(request.User, request.Profile);
             throw new NotFoundValidationException(typeof(Asset));
         }
 

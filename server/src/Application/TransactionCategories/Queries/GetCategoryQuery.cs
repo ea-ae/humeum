@@ -29,9 +29,9 @@ public class GetCategoryQueryHandler : IQueryHandler<GetCategoryQuery, CategoryD
     }
 
     public Task<CategoryDto> Handle(GetCategoryQuery request, CancellationToken token = default) {
-        var category = _context.TransactionCategories.AsNoTracking().Include(t => t.Profile)
+        var category = _context.TransactionCategories.AsNoTracking()
             .FirstOrDefault(tc => tc.Id == request.Category
-                                  && ((tc.ProfileId == request.Profile && tc.Profile!.UserId == request.User) || tc.ProfileId == null)
+                                  && (tc.ProfileId == request.Profile || tc.ProfileId == null)
                                   && tc.DeletedAt == null);
 
         if (category is null) {

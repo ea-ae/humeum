@@ -29,15 +29,12 @@ public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, Tra
 
     public async Task<TransactionDto> Handle(GetTransactionQuery request, CancellationToken _) {
         var transaction = _context.Transactions.AsNoTracking()
-                                               .Include(t => t.Profile)
                                                .Include(t => t.Categories)
                                                .FirstOrDefault(t => t.Id == request.Transaction
                                                                     && t.ProfileId == request.Profile
-                                                                    && t.Profile.UserId == request.User
                                                                     && t.DeletedAt == null);
 
         if (transaction is null) {
-            _context.AssertUserOwnsProfile(request.User, request.Profile);
             throw new NotFoundValidationException(typeof(Transaction));
         }
 
