@@ -9,11 +9,11 @@ Humeum is a webapp for retirement planning. Still in progress, not all features 
 
 ## Tech
 
-* ASP.NET backend following Clean Architecture (with a few specks of dirt), (compromising) CQS, and (mostly) domain-driven design.
-* EF Core, ASP.NET Identity with JWT, MediatR, AutoMapper, xUnit, Moq, and PostgreSQL.
-* Webpack, React and React Router. Apache ECharts for data visualization. TailwindCSS and MUI for styling.
-* Eventually deployed through CI/CD with Docker Swarms & nginx.
-* Future plans may include trying out new tech like RabbitMQ, GraphQL, load balancing, SSR, event sourcing, etc.
+* ASP.NET backend following Clean Architecture (with a few specks of dirt), (compromising) CQS, OpenAPI REST, and (mostly) domain-driven design.
+* Backend: EF Core, ASP.NET Identity with JWT, MediatR, AutoMapper, xUnit, Moq, and PostgreSQL.
+* Frontend: Webpack, React and React Router. Apache ECharts for data visualization. TailwindCSS and MUI for styling.
+* Deployment: CI/CD with Docker Swarms & nginx.
+* Future plans may include trying out tech like RabbitMQ, GraphQL, load balancing, SSR, event sourcing, etc.
 
 ## Testing
 
