@@ -1,5 +1,6 @@
 ﻿using Application.Profiles.Commands.AddProfile;
 using Application.Profiles.Commands.DeleteProfile;
+using Application.Profiles.Queries;
 using Application.Profiles.Queries.GetProfileDetails;
 using Application.Profiles.Queries.GetProfilesQuery;
 
@@ -14,8 +15,6 @@ using Web.Filters;
 namespace Web.Controllers;
 
 /// <inheritdoc cref="Domain.ProfileAggregate.Profile"/>
-/// <response code="401">If a user route is accessed without an authentication token.</response>
-/// <response code="403">If a user route is accessed with an authentication token assigned to another user ID.</response>
 [Route("api/v1/users/{user}/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleUserData")]
 [ApplicationExceptionFilter]
@@ -34,9 +33,11 @@ public class ProfilesController : ControllerBase {
     /// Get profiles owned by a user.
     /// </summary>
     /// <response code="200">Returns the profiles.</response>
+    /// <response code="401">If a user route is accessed without an authentication token.</response>
+    /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetProfiles(GetProfilesQuery query) {
+    public async Task<ActionResult<IEnumerable<ProfileDto>>> GetProfiles(GetProfilesQuery query) {
         var profiles = await _mediator.Send(query);
         return Ok(profiles);
     }
@@ -45,11 +46,13 @@ public class ProfilesController : ControllerBase {
     /// Returns profile with given ID owned by user.
     /// </summary>
     /// <response code="200">Returns the profile.</response>
+    /// <response code="401">If a user route is accessed without an authentication token.</response>
+    /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     /// <response code="404">Profile with given ID was not found for user.</response>
     [HttpGet("{profile}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetProfile(GetProfileQuery query) {
+    public async Task<ActionResult<ProfileDto>> GetProfile(GetProfileQuery query) {
         var profile = await _mediator.Send(query);
         return Ok(profile);
     }
@@ -60,6 +63,8 @@ public class ProfilesController : ControllerBase {
     /// </summary>
     /// <response code="201">Returns a location header to the newly created item.</response>
     /// <response code="400">If the field values did not satisfy domain invariants.</response>
+    /// <response code="401">If a user route is accessed without an authentication token.</response>
+    /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -72,6 +77,8 @@ public class ProfilesController : ControllerBase {
     /// Deletes a profile with the given ID.
     /// </summary>
     /// <response code="204">If profile was deleted.</response>
+    /// <response code="401">If a user route is accessed without an authentication token.</response>
+    /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     /// <response code="404">If a profile with the given ID was not found.</response>
     [HttpDelete("{profile}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

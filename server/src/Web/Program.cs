@@ -9,8 +9,8 @@ builder.Services.ConfigureWebServices();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment()) {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    //app.UseSwagger();
+    //app.UseSwaggerUI();
 } else {
     app.UseExceptionHandler("/Error");
     //app.UseHsts();
@@ -18,6 +18,8 @@ if (app.Environment.IsDevelopment()) {
 
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseOpenApi();
+app.UseSwaggerUi3();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

@@ -1,4 +1,5 @@
-﻿using Application.TaxSchemes.Queries.GetTaxScheme;
+﻿using Application.TaxSchemes.Queries;
+using Application.TaxSchemes.Queries.GetTaxScheme;
 
 using MediatR;
 
@@ -27,7 +28,7 @@ public class TaxSchemesController : ControllerBase {
     /// </summary>
     /// <response code="200">List of tax schemes.</response>
     [HttpGet]
-    public async Task<IActionResult> GetTaxSchemes(GetTaxSchemesQuery query) {
+    public async Task<ActionResult<IEnumerable<TaxSchemeDto>>> GetTaxSchemes(GetTaxSchemesQuery query) {
         var taxSchemes = await _mediator.Send(query);
         return Ok(taxSchemes);
     }

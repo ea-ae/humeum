@@ -23,11 +23,13 @@ public static class ConfigureServices {
 
         services.AddEndpointsApiExplorer();
 
-        services.AddSwaggerGen(o => {
-            // add xml comment docs to swagger
-            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            o.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-        });
+        //services.AddSwaggerGen(o => {
+        //    // add xml comment docs to swagger
+        //    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        //    o.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+        //});
+
+        services.AddSwaggerDocument();
 
         services.AddHttpContextAccessor();
 

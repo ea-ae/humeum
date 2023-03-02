@@ -1,5 +1,6 @@
 ﻿using Application.Users.Commands.RegisterUser;
 using Application.Users.Commands.SignInUser;
+using Application.Users.Queries;
 using Application.Users.Queries.GetUserQuery;
 
 using MediatR;
@@ -37,7 +38,7 @@ public class UsersController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleUserData")]
-    public async Task<IActionResult> GetUser(GetUserQuery query) {
+    public async Task<ActionResult<UserDto>> GetUser(GetUserQuery query) {
         var user = await _mediator.Send(query);
         return Ok(user);
     }

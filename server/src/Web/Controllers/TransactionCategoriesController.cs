@@ -1,5 +1,6 @@
 ﻿using Application.TransactionCategories.Commands.AddCategory;
 using Application.TransactionCategories.Commands.DeleteCategory;
+using Application.TransactionCategories.Queries;
 using Application.Transactions.Queries.GetCategories;
 using Application.Transactions.Queries.GetCategory;
 
@@ -14,8 +15,6 @@ using Web.Filters;
 namespace Web.Controllers;
 
 /// <inheritdoc cref="Domain.TransactionCategoryAggregate.TransactionCategory"/>
-/// <response code="401">If a user route is accessed without an authentication token.</response>
-/// <response code="403">If a user route is accessed with an authentication token assigned to another user ID.</response>
 [Route("api/v1/users/{user}/profiles/{profile}/transactions/categories")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleProfileData")]
 [ApplicationExceptionFilter]
@@ -34,7 +33,7 @@ public class TransactionCategoriesController : ControllerBase {
     /// Get all categories that are either default or created by the profile.
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetCategories(GetCategoriesQuery query) {
+    public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories(GetCategoriesQuery query) {
         var categories = await _mediator.Send(query);
         return Ok(categories);
     }
@@ -43,7 +42,7 @@ public class TransactionCategoriesController : ControllerBase {
     /// Get details of a category with given ID.
     /// </summary>
     [HttpGet("{category}")]
-    public async Task<IActionResult> GetCategory(GetCategoryQuery query) {
+    public async Task<ActionResult<CategoryDto>> GetCategory(GetCategoryQuery query) {
         var category = await _mediator.Send(query);
         return Ok(category);
     }
@@ -53,6 +52,8 @@ public class TransactionCategoriesController : ControllerBase {
     /// </summary>
     /// <response code="201">Returns a location header to the newly created item.</response>
     /// <response code="400">If the fields did not satisfy the domain invariants.</response>
+    /// <response code="401">If a user route is accessed without an authentication token.</response>
+    /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     /// <response code="404">If a profile or transaction with the specified ID could not be found.</response>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -67,6 +68,8 @@ public class TransactionCategoriesController : ControllerBase {
     /// Delete a category by its ID.
     /// </summary>
     /// <response code="204">If category is successfully deleted.</response>
+    /// <response code="401">If a user route is accessed without an authentication token.</response>
+    /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     /// <response code="404">If a profile or profile-owned category with the specified ID could not be found.</response>
     [HttpDelete("{category}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
