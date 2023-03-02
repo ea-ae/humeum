@@ -9,8 +9,6 @@ using Domain.ProfileAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 
-using Infrastructure.Services;
-
 using Xunit;
 
 namespace Application.Test;
@@ -41,7 +39,7 @@ public class ProfilesTests {
             Description = profileDescription,
             WithdrawalRate = profileWithdrawalRate
         };
-        var profileId = await handler.Handle(command);
+        int profileId = await handler.Handle(command);
         var profile = context.Profiles.FirstOrDefault(p => p.Id == profileId);
 
         Assert.NotNull(profile);

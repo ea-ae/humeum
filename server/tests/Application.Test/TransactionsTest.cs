@@ -17,10 +17,10 @@ namespace Application.Test;
 /// Tests centered generally around transaction services.
 /// </summary>
 [Collection(InMemoryDbContextCollection.COLLECTION_NAME)]
-public class TransactionsTests {
+public class TransactionsTest {
     readonly InMemorySqliteDbContextFixture _dbContextFixture;
 
-    public TransactionsTests(InMemorySqliteDbContextFixture fixture) {
+    public TransactionsTest(InMemorySqliteDbContextFixture fixture) {
         _dbContextFixture = fixture;
     }
 
