@@ -35,7 +35,6 @@ public class GetCategoryQueryHandler : IQueryHandler<GetCategoryQuery, CategoryD
                                   && tc.DeletedAt == null);
 
         if (category is null) {
-            _context.AssertUserOwnsProfile(request.User, request.Profile);
             throw new NotFoundValidationException(typeof(TransactionCategory));
         }
 

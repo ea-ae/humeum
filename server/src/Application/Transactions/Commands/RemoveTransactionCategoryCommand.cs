@@ -26,8 +26,6 @@ public class RemoveTransactionCategoryCommandHandler : ICommandHandler<RemoveTra
     public async Task<Unit> Handle(RemoveTransactionCategoryCommand request, CancellationToken token = default) {
         // validation
 
-        _context.AssertUserOwnsProfile(request.User, request.Profile);
-
         var transaction = _context.Transactions.Include(t => t.Categories).FirstOrDefault(t => t.Id == request.Transaction
                                                                                                && t.ProfileId == request.Profile
                                                                                                && t.DeletedAt == null);

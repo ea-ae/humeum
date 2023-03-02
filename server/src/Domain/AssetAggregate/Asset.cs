@@ -1,5 +1,6 @@
 ﻿using Domain.Common;
 using Domain.Common.Exceptions;
+using Domain.Common.Interfaces;
 using Domain.ProfileAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
@@ -15,7 +16,7 @@ namespace Domain.AssetAggregate;
 /// In case of the latter, the asset types may utilize more complex forms of calculation such as
 /// referencing historical market rate return distributions. Assets are withdrawn in order of returns.
 /// </summary>
-public class Asset : TimestampedEntity {
+public class Asset : TimestampedEntity, IOptionalProfileEntity {
     public string Name { get; private set; } = null!;
 
     public string? Description { get; private set; }
@@ -23,7 +24,7 @@ public class Asset : TimestampedEntity {
     decimal _returnRate;
     public decimal ReturnRate {
         get => _returnRate;
-        private set {
+        set {
             if (value < 0) {
                 throw new DomainException(new ArgumentException("Return rate cannot be negative."));
             }
@@ -34,7 +35,7 @@ public class Asset : TimestampedEntity {
     decimal _standardDeviation;
     public decimal StandardDeviation {
         get => _standardDeviation;
-        private set {
+        set {
             if (value < 0) {
                 throw new DomainException(new ArgumentException("Standard deviation cannot be negative."));
             }
@@ -78,12 +79,4 @@ public class Asset : TimestampedEntity {
     private Asset() { }
 
     public bool IsDefaultAsset => ProfileId is not null || Profile is not null;
-
-    public void UpdateReturnRate(decimal percentage) {
-        ReturnRate = percentage;
-    }
-
-    public void UpdateStandardDeviation(decimal percentage) {
-        StandardDeviation = percentage;
-    }
 }

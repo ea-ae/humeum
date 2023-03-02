@@ -17,14 +17,34 @@ namespace Domain.TransactionAggregate;
 /// the transaction type.
 /// </summary>
 public class Transaction : TimestampedEntity, IRequiredProfileEntity {
-    public string? Name { get; private set; }
+    string? _name;
+    public string? Name {
+        get => _name;
+        set {
+            if (value == "") {
+                _name = null;
+            } else {
+                _name = value;
+            }
+        }
+    }
 
-    public string? Description { get; private set; }
+    string? _description;
+    public string? Description {
+        get => _description;
+        set {
+            if (value == "") {
+                _description = null;
+            } else {
+                _description = value;
+            }
+        }
+    }
 
     decimal _amount;
     public decimal Amount {
         get => _amount;
-        private set {
+        set {
             if (value == 0) {
                 throw new DomainException(new ArgumentOutOfRangeException(nameof(Amount), "Transaction amount cannot be zero."));
             } else if (Asset is not null && value >= 0) {
@@ -34,7 +54,7 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
         }
     }
 
-    public Timeline PaymentTimeline { get; private set; } = null!;
+    public Timeline PaymentTimeline { get; set; } = null!;
 
     public int TypeId { get; private set; }
     public TransactionType Type { get; private set; } = null!;
@@ -83,6 +103,15 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
     }
 
     private Transaction() { }
+
+    /// <summary>
+    /// Updates the transaction type for transaction.
+    /// </summary>
+    /// <param name="type">New transaction type.</param>
+    public void UpdateType(TransactionType type) {
+        TypeId = type.Id;
+        Type = type;
+    }
 
     /// <summary>
     /// Assigns a category to the transaction if it wasn't already added before.

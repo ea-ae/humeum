@@ -30,8 +30,6 @@ public class GetCategoriesQueryHandler : IQueryHandler<GetCategoriesQuery, List<
     }
 
     public Task<List<CategoryDto>> Handle(GetCategoriesQuery request, CancellationToken token = default) {
-        _context.AssertUserOwnsProfile(request.User, request.Profile);
-
         var categories = _context.TransactionCategories.AsNoTracking()
             .Where(tc => (tc.ProfileId == request.Profile || tc.ProfileId == null) && tc.DeletedAt == null)
             .OrderBy(tc => tc.Id);

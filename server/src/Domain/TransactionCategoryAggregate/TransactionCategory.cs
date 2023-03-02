@@ -1,5 +1,6 @@
 ﻿using Domain.Common;
 using Domain.Common.Exceptions;
+using Domain.Common.Interfaces;
 using Domain.ProfileAggregate;
 using Domain.TransactionAggregate;
 
@@ -9,7 +10,7 @@ namespace Domain.TransactionCategoryAggregate;
 /// Optional many-to-many categories/tags for transactions. Custom categories can
 /// be created by profiles for filtering and/or statistics.
 /// </summary>
-public class TransactionCategory : TimestampedEntity {
+public class TransactionCategory : TimestampedEntity, IOptionalProfileEntity {
     string _name = null!;
     public string Name {
         get => _name;

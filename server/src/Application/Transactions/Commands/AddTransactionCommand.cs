@@ -29,7 +29,7 @@ public record AddTransactionCommand : ICommand<int> {
 }
 
 public class AddTransactionCommandHandler : ICommandHandler<AddTransactionCommand, int> {
-    private readonly IAppDbContext _context;
+    readonly IAppDbContext _context;
 
     public AddTransactionCommandHandler(IAppDbContext context) => _context = context;
 
@@ -42,15 +42,7 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
             request.TimesPerCycle,
             request.UnitsInCycle
         };
-
-        int recurringTransactionFieldCount = recurringTransactionFields.Count(field => field is not null);
-        bool isRecurringTransaction = recurringTransactionFieldCount == recurringTransactionFields.Count;
-
-        if (!isRecurringTransaction && recurringTransactionFieldCount > 0) {
-            throw new ApplicationValidationException("Fields for recurrent transactions were only partially specified.");
-        }
-
-        _context.AssertUserOwnsProfile(request.User, request.Profile);
+        bool isRecurringTransaction = recurringTransactionFields.AssertOptionalFieldSetValidity();
 
         var taxSchemeExists = _context.TaxSchemes.Any(ts => ts.Id == request.TaxScheme && ts.DeletedAt == null);
         if (!taxSchemeExists) {

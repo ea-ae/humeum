@@ -25,8 +25,6 @@ public class GetAssetsQueryHandler : IQueryHandler<GetAssetsQuery, List<AssetDto
     }
 
     public Task<List<AssetDto>> Handle(GetAssetsQuery request, CancellationToken token = default) {
-        _context.AssertUserOwnsProfile(request.User, request.Profile);
-
         var assets = _context.Assets.AsNoTracking().Include(a => a.Type)
             .Where(a => (a.ProfileId == request.Profile || a.ProfileId == null) && a.DeletedAt == null)
             .OrderBy(a => a.Id);

@@ -63,7 +63,6 @@ public static class AppDbContextExtensions {
                                                          && x.DeletedAt == null);
 
         if (entity is null) {
-            context.AssertUserOwnsProfile(userId, profileId);
             throw new NotFoundValidationException(typeof(TransactionCategory));
         }
 
