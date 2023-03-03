@@ -1,7 +1,5 @@
-﻿using Application.Users.Commands.RegisterUser;
-using Application.Users.Commands.SignInUser;
+﻿using Application.Users.Commands;
 using Application.Users.Queries;
-using Application.Users.Queries.GetUserQuery;
 
 using MediatR;
 

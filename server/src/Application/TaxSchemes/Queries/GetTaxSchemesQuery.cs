@@ -9,7 +9,7 @@ using Domain.TaxSchemeAggregate;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.TaxSchemes.Queries.GetTaxScheme;
+namespace Application.TaxSchemes.Queries;
 
 public record GetTaxSchemesQuery : IQuery<List<TaxSchemeDto>> { }
 

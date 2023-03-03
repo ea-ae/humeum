@@ -8,7 +8,7 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Transactions.Commands.AddTransactionCategory;
+namespace Application.Transactions.Commands;
 
 public record AddTransactionCategoryCommand : ICommand {
     [Required] public required int User { get; init; }

@@ -8,7 +8,7 @@ using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 
-namespace Application.Transactions.Commands.AddTransaction;
+namespace Application.Transactions.Commands;
 
 public record AddTransactionCommand : ICommand<int> {
     [Required] public required int User { get; init; }

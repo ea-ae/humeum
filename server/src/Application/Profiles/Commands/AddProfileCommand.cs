@@ -4,7 +4,7 @@ using Application.Common.Interfaces;
 
 using Domain.ProfileAggregate;
 
-namespace Application.Profiles.Commands.AddProfile;
+namespace Application.Profiles.Commands;
 
 public record AddProfileCommand : ICommand<int> {
     [Required] public required int User { get; init; }

@@ -4,7 +4,7 @@ using Application.Common.Interfaces;
 
 using AutoMapper;
 
-namespace Application.Users.Queries.GetUserQuery;
+namespace Application.Users.Queries;
 
 public record GetUserQuery : IQuery<UserDto> {
     [Required] public required int User { get; init; }

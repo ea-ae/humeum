@@ -8,7 +8,7 @@ using AutoMapper.QueryableExtensions;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Transactions.Queries.GetTransactions;
+namespace Application.Transactions.Queries;
 
 public record GetTransactionsQuery : IQuery<List<TransactionDto>> {
     [Required] public required int User { get; init; }

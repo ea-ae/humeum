@@ -11,7 +11,7 @@ using Domain.TransactionCategoryAggregate;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Transactions.Queries.GetCategory;
+namespace Application.Transactions.Queries;
 
 public record GetCategoryQuery : IQuery<CategoryDto> {
     [Required] public required int User { get; init; }

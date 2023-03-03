@@ -5,7 +5,7 @@ using Application.Common.Interfaces;
 
 using Domain.TransactionCategoryAggregate;
 
-namespace Application.TransactionCategories.Commands.AddCategory;
+namespace Application.TransactionCategories.Commands;
 
 public record AddCategoryCommand : ICommand<int> {
     [Required] public required int User { get; init; }

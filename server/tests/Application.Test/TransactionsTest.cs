@@ -1,8 +1,8 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Mappings;
 using Application.Test.Common;
-using Application.Transactions.Commands.AddTransaction;
-using Application.Transactions.Queries.GetTransactions;
+using Application.Transactions.Commands;
+using Application.Transactions.Queries;
 
 using AutoMapper;
 

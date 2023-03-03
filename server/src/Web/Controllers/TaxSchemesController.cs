@@ -1,10 +1,7 @@
 ﻿using Application.TaxSchemes.Queries;
-using Application.TaxSchemes.Queries.GetTaxScheme;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using Web.Filters;

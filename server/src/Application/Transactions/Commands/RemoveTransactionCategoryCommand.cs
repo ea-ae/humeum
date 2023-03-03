@@ -8,7 +8,7 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Transactions.Commands.RemoveTransactionCategory;
+namespace Application.Transactions.Commands;
 
 public record RemoveTransactionCategoryCommand : ICommand {
     [Required] public required int User { get; init; }

@@ -7,7 +7,7 @@ using AutoMapper;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Profiles.Queries.GetProfileDetails;
+namespace Application.Profiles.Queries;
 
 public record GetProfileQuery : IQuery<ProfileDto> {
     [Required] public int User { get; init; }

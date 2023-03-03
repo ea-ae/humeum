@@ -7,7 +7,7 @@ using AutoMapper.QueryableExtensions;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Profiles.Queries.GetProfilesQuery;
+namespace Application.Profiles.Queries;
 
 /// <summary>
 /// Get list of profiles owned by user.

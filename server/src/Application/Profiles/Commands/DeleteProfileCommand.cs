@@ -9,7 +9,7 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Profiles.Commands.DeleteProfile;
+namespace Application.Profiles.Commands;
 
 public record DeleteProfileCommand : ICommand {
     [Required] public required int User { get; init; }

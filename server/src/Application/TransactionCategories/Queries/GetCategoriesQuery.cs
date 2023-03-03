@@ -13,7 +13,7 @@ using Domain.TransactionAggregate;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Transactions.Queries.GetCategories;
+namespace Application.Transactions.Queries;
 
 public record GetCategoriesQuery : IQuery<List<CategoryDto>> {
     [Required] public required int User { get; init; }

@@ -10,7 +10,7 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Transactions.Commands.DeleteTransaction;
+namespace Application.Transactions.Commands;
 
 public record DeleteTransactionCommand : ICommand {
     [Required] public required int User { get; init; }

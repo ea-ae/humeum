@@ -1,6 +1,5 @@
 ﻿using Application.Common.Extensions;
-using Application.Profiles.Commands.AddProfile;
-using Application.Profiles.Commands.DeleteProfile;
+using Application.Profiles.Commands;
 using Application.Test.Common;
 using Application.Test.Common.Stubs;
 

@@ -1,5 +1,6 @@
-﻿using Application.Transactions.Commands.AddTransaction;
-using Application.Transactions.Queries.GetTransaction;
+﻿using Application.Assets.Commands;
+using Application.Assets.Queries;
+
 using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -7,9 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using Web.Filters;
-using Application.Assets.Queries;
-using Application.Assets.Commands;
-using Application.Transactions.Commands.DeleteTransaction;
 
 namespace Web.Controllers;
 

@@ -10,7 +10,7 @@ using Domain.TransactionAggregate;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Transactions.Queries.GetTransaction;
+namespace Application.Transactions.Queries;
 
 public record GetTransactionQuery : IQuery<TransactionDto> {
     [Required] public required int User { get; init; }

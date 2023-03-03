@@ -2,7 +2,7 @@
 
 using Application.Common.Interfaces;
 
-namespace Application.Users.Commands.SignInUser;
+namespace Application.Users.Commands;
 
 public record SignInUserCommand : ICommand<int> {
     [Required] public required string Username { get; init; }
@@ -10,10 +10,10 @@ public record SignInUserCommand : ICommand<int> {
     public bool RememberMe { get; init; } = false;
 }
 
-public class RegisterUserCommandHandler : ICommandHandler<SignInUserCommand, int> {
+public class SignInUserCommandHandler : ICommandHandler<SignInUserCommand, int> {
     private readonly IApplicationUserService _userService;
 
-    public RegisterUserCommandHandler(IApplicationUserService userService) {
+    public SignInUserCommandHandler(IApplicationUserService userService) {
         _userService = userService;
     }
 

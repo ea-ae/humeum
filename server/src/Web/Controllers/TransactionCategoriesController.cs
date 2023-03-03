@@ -1,8 +1,6 @@
-﻿using Application.TransactionCategories.Commands.AddCategory;
-using Application.TransactionCategories.Commands.DeleteCategory;
+﻿using Application.TransactionCategories.Commands;
 using Application.TransactionCategories.Queries;
-using Application.Transactions.Queries.GetCategories;
-using Application.Transactions.Queries.GetCategory;
+using Application.Transactions.Queries;
 
 using MediatR;
 

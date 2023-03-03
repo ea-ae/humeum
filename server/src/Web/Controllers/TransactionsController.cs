@@ -1,10 +1,5 @@
-﻿using Application.Transactions.Commands.AddTransaction;
-using Application.Transactions.Commands.AddTransactionCategory;
-using Application.Transactions.Commands.DeleteTransaction;
-using Application.Transactions.Commands.RemoveTransactionCategory;
+﻿using Application.Transactions.Commands;
 using Application.Transactions.Queries;
-using Application.Transactions.Queries.GetTransaction;
-using Application.Transactions.Queries.GetTransactions;
 
 using MediatR;
 

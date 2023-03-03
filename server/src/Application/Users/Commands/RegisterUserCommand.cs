@@ -5,7 +5,7 @@ using Application.Common.Interfaces;
 
 using Domain.UserAggregate;
 
-namespace Application.Users.Commands.RegisterUser;
+namespace Application.Users.Commands;
 
 public record RegisterUserCommand : ICommand<int> {
     [Required] public required string Username { get; init; }

@@ -7,7 +7,6 @@ using Application.Test.Common;
 using AutoMapper;
 
 using Domain.AssetAggregate;
-using Domain.ProfileAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 
 using Xunit;
@@ -75,7 +74,7 @@ public class AssetsTest {
 
         // get asset DTO
 
-        GetAssetQuery query = new() { 
+        GetAssetQuery query = new() {
             User = 1,
             Profile = profile.Id,
             Asset = asset.Id
