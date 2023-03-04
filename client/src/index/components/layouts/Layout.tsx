@@ -6,10 +6,12 @@ import NavigationBar from './NavigationBar';
 interface Props {
   children: React.ReactNode;
   sidebar?: React.ReactNode;
+  centerFooter?: boolean;
 }
 
-function Layout({ children, sidebar }: Props) {
+function Layout({ children, sidebar, centerFooter }: Props) {
   const appLayout = sidebar !== undefined;
+  const footerLayout = centerFooter ? 'text-center' : '';
 
   return (
     <div className="h-screen flex flex-col flex-grow">
@@ -18,7 +20,7 @@ function Layout({ children, sidebar }: Props) {
         {appLayout ? sidebar : null}
         <div className="flex-grow flex flex-col">
           <div className="overflow-x-hidden flex-grow px-12 py-8">{children}</div>
-          <div className="mt-6 mb-4 mx-3 text-sm text-stone-500">
+          <div className={`mt-6 mb-4 mx-7 text-sm text-stone-500 ${footerLayout}`}>
             <span className="px-5 cursor-default hover:text-stone-800">Privacy</span>
             <span className="px-5 cursor-default hover:text-stone-800">Terms & Conditions</span>
             <span className="px-5 cursor-default hover:text-stone-800">About</span>
@@ -30,6 +32,9 @@ function Layout({ children, sidebar }: Props) {
   );
 }
 
-Layout.defaultProps = { sidebar: undefined };
+Layout.defaultProps = {
+  sidebar: undefined,
+  centerFooter: false,
+};
 
 export default Layout;

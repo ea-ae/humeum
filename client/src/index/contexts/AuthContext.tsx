@@ -1,9 +1,13 @@
 import * as React from 'react';
 
+import { UsersClient } from '../api/api';
+
 export interface AuthProps {
   isAuthenticated: boolean;
   setAuthentication: (authenticated: boolean) => void;
 }
+
+const client = new UsersClient();
 
 const AuthContext = React.createContext<AuthProps>({
   isAuthenticated: false,

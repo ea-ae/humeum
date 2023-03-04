@@ -8,21 +8,30 @@
 /* eslint-disable */
 // ReSharper disable InconsistentNaming
 
-export class AssetsClient {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+import axios, { AxiosError } from 'axios';
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
+import ApiClient from './ApiClient';
+
+export class AssetsClient extends ApiClient {
+    private instance: AxiosInstance;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        this.http = http ? http : window as any;
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        super();
+
+        this.instance = instance ? instance : axios.create();
+
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+
     }
 
     /**
      * Get asset options for a specific user.
      * @return Returns the assets.
      */
-    getAssets(user: number, profile: number): Promise<AssetDto[]> {
+    getAssets(user: number, profile: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<AssetDto[]>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/assets";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -32,39 +41,56 @@ export class AssetsClient {
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "GET",
+            url: url_,
             headers: {
                 "Accept": "application/json"
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processGetAssets(_response);
         });
     }
 
-    protected processGetAssets(response: Response): Promise<AssetDto[]> {
+    protected processGetAssets(response: AxiosResponse): Promise<SwaggerResponse<AssetDto[]>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 200) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData200  = _responseText;
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
@@ -73,21 +99,20 @@ export class AssetsClient {
             else {
                 result200 = <any>null;
             }
-            return result200;
-            });
+            return Promise.resolve<SwaggerResponse<AssetDto[]>>(new SwaggerResponse<AssetDto[]>(status, _headers, result200));
+
         } else if (status === 404) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData404  = _responseText;
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("If a profile with given ID wasn\'t found for the user.", status, _responseText, _headers, result404);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<AssetDto[]>(null as any);
+        return Promise.resolve<SwaggerResponse<AssetDto[]>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
@@ -99,7 +124,7 @@ export class AssetsClient {
      * @param assetType (optional) 
      * @return Returns a location header to the newly created item.
      */
-    addAsset(user: number, profile: number, name: string | null | undefined, description: string | null | undefined, returnRate: number | null | undefined, standardDeviation: number | null | undefined, assetType: string | null | undefined): Promise<void> {
+    addAsset(user: number, profile: number, name: string | null | undefined, description: string | null | undefined, returnRate: number | null | undefined, standardDeviation: number | null | undefined, assetType: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/assets?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -119,65 +144,81 @@ export class AssetsClient {
             url_ += "AssetType=" + encodeURIComponent("" + assetType) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "POST",
+            url: url_,
             headers: {
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processAddAsset(_response);
         });
     }
 
-    protected processAddAsset(response: Response): Promise<void> {
+    protected processAddAsset(response: AxiosResponse): Promise<SwaggerResponse<void>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 201) {
-            return response.text().then((_responseText) => {
-            return;
-            });
+            const _responseText = response.data;
+            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
+
         } else if (status === 400) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result400: any = null;
-            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData400  = _responseText;
             result400 = ProblemDetails.fromJS(resultData400);
             return throwException("If the domain invariants or application validation rules weren\'t satisfied.", status, _responseText, _headers, result400);
-            });
+
         } else if (status === 404) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData404  = _responseText;
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("If a profile or asset type with the specified ID could not be found for the user.", status, _responseText, _headers, result404);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
      * Get asset with given ID.
      * @return Returns the asset.
      */
-    getAsset(user: number, profile: number, asset: number): Promise<AssetDto> {
+    getAsset(user: number, profile: number, asset: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<AssetDto>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/assets/{asset}";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -190,62 +231,78 @@ export class AssetsClient {
         url_ = url_.replace("{Asset}", encodeURIComponent("" + asset));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "GET",
+            url: url_,
             headers: {
                 "Accept": "application/json"
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processGetAsset(_response);
         });
     }
 
-    protected processGetAsset(response: Response): Promise<AssetDto> {
+    protected processGetAsset(response: AxiosResponse): Promise<SwaggerResponse<AssetDto>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 200) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData200  = _responseText;
             result200 = AssetDto.fromJS(resultData200);
-            return result200;
-            });
+            return Promise.resolve<SwaggerResponse<AssetDto>>(new SwaggerResponse<AssetDto>(status, _headers, result200));
+
         } else if (status === 404) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData404  = _responseText;
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("If asset or profile was not found.", status, _responseText, _headers, result404);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<AssetDto>(null as any);
+        return Promise.resolve<SwaggerResponse<AssetDto>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
      * Deletes a custom asset with given ID from a profile.
      * @return If asset was deleted.
      */
-    deleteTransaction(user: number, profile: number, asset: number): Promise<void> {
+    deleteTransaction(user: number, profile: number, asset: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/assets/{asset}";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -258,108 +315,146 @@ export class AssetsClient {
         url_ = url_.replace("{Asset}", encodeURIComponent("" + asset));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "DELETE",
+            url: url_,
             headers: {
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processDeleteTransaction(_response);
         });
     }
 
-    protected processDeleteTransaction(response: Response): Promise<void> {
+    protected processDeleteTransaction(response: AxiosResponse): Promise<SwaggerResponse<void>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 204) {
-            return response.text().then((_responseText) => {
-            return;
-            });
+            const _responseText = response.data;
+            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
+
         } else if (status === 404) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData404  = _responseText;
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("If asset or profile was not found.", status, _responseText, _headers, result404);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
     }
 }
 
-export class ProfilesClient {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+export class ProfilesClient extends ApiClient {
+    private instance: AxiosInstance;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        this.http = http ? http : window as any;
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        super();
+
+        this.instance = instance ? instance : axios.create();
+
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+
     }
 
     /**
      * Get profiles owned by a user.
      * @return Returns the profiles.
      */
-    getProfiles(user: number): Promise<ProfileDto[]> {
+    getProfiles(user: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<ProfileDto[]>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "GET",
+            url: url_,
             headers: {
                 "Accept": "application/json"
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processGetProfiles(_response);
         });
     }
 
-    protected processGetProfiles(response: Response): Promise<ProfileDto[]> {
+    protected processGetProfiles(response: AxiosResponse): Promise<SwaggerResponse<ProfileDto[]>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 200) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData200  = _responseText;
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
@@ -368,14 +463,13 @@ export class ProfilesClient {
             else {
                 result200 = <any>null;
             }
-            return result200;
-            });
+            return Promise.resolve<SwaggerResponse<ProfileDto[]>>(new SwaggerResponse<ProfileDto[]>(status, _headers, result200));
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<ProfileDto[]>(null as any);
+        return Promise.resolve<SwaggerResponse<ProfileDto[]>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
@@ -386,7 +480,7 @@ export class ProfilesClient {
      * @param withdrawalRate (optional) 
      * @return Returns a location header to the newly created item.
      */
-    addProfile(user: number, name: string | null | undefined, description: string | null | undefined, withdrawalRate: number | null | undefined): Promise<void> {
+    addProfile(user: number, name: string | null | undefined, description: string | null | undefined, withdrawalRate: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -399,58 +493,74 @@ export class ProfilesClient {
             url_ += "WithdrawalRate=" + encodeURIComponent("" + withdrawalRate) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "POST",
+            url: url_,
             headers: {
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processAddProfile(_response);
         });
     }
 
-    protected processAddProfile(response: Response): Promise<void> {
+    protected processAddProfile(response: AxiosResponse): Promise<SwaggerResponse<void>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 201) {
-            return response.text().then((_responseText) => {
-            return;
-            });
+            const _responseText = response.data;
+            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
+
         } else if (status === 400) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result400: any = null;
-            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData400  = _responseText;
             result400 = ProblemDetails.fromJS(resultData400);
             return throwException("If the field values did not satisfy domain invariants.", status, _responseText, _headers, result400);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
      * Returns profile with given ID owned by user.
      * @return Returns the profile.
      */
-    getProfile(user: number, profile: number): Promise<ProfileDto> {
+    getProfile(user: number, profile: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<ProfileDto>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -460,62 +570,78 @@ export class ProfilesClient {
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "GET",
+            url: url_,
             headers: {
                 "Accept": "application/json"
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processGetProfile(_response);
         });
     }
 
-    protected processGetProfile(response: Response): Promise<ProfileDto> {
+    protected processGetProfile(response: AxiosResponse): Promise<SwaggerResponse<ProfileDto>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 200) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData200  = _responseText;
             result200 = ProfileDto.fromJS(resultData200);
-            return result200;
-            });
+            return Promise.resolve<SwaggerResponse<ProfileDto>>(new SwaggerResponse<ProfileDto>(status, _headers, result200));
+
         } else if (status === 404) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData404  = _responseText;
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("Profile with given ID was not found for user.", status, _responseText, _headers, result404);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<ProfileDto>(null as any);
+        return Promise.resolve<SwaggerResponse<ProfileDto>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
      * Deletes a profile with the given ID.
      * @return If profile was deleted.
      */
-    deleteProfile(user: number, profile: number): Promise<void> {
+    deleteProfile(user: number, profile: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -525,62 +651,83 @@ export class ProfilesClient {
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "DELETE",
+            url: url_,
             headers: {
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processDeleteProfile(_response);
         });
     }
 
-    protected processDeleteProfile(response: Response): Promise<void> {
+    protected processDeleteProfile(response: AxiosResponse): Promise<SwaggerResponse<void>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 204) {
-            return response.text().then((_responseText) => {
-            return;
-            });
+            const _responseText = response.data;
+            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
+
         } else if (status === 404) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData404  = _responseText;
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("If a profile with the given ID was not found.", status, _responseText, _headers, result404);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
     }
 }
 
-export class TaxSchemesClient {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+export class TaxSchemesClient extends ApiClient {
+    private instance: AxiosInstance;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        this.http = http ? http : window as any;
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        super();
+
+        this.instance = instance ? instance : axios.create();
+
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+
     }
 
     /**
@@ -588,31 +735,48 @@ export class TaxSchemesClient {
      * @param query (optional) 
      * @return List of tax schemes.
      */
-    getTaxSchemes(query: GetTaxSchemesQuery | null | undefined): Promise<TaxSchemeDto[]> {
+    getTaxSchemes(query: GetTaxSchemesQuery | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<TaxSchemeDto[]>> {
         let url_ = this.baseUrl + "/api/v1/tax-schemes?";
         if (query !== undefined && query !== null)
             url_ += "query=" + encodeURIComponent("" + query) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "GET",
+            url: url_,
             headers: {
                 "Accept": "application/json"
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processGetTaxSchemes(_response);
         });
     }
 
-    protected processGetTaxSchemes(response: Response): Promise<TaxSchemeDto[]> {
+    protected processGetTaxSchemes(response: AxiosResponse): Promise<SwaggerResponse<TaxSchemeDto[]>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 200) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData200  = _responseText;
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
@@ -621,31 +785,35 @@ export class TaxSchemesClient {
             else {
                 result200 = <any>null;
             }
-            return result200;
-            });
+            return Promise.resolve<SwaggerResponse<TaxSchemeDto[]>>(new SwaggerResponse<TaxSchemeDto[]>(status, _headers, result200));
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<TaxSchemeDto[]>(null as any);
+        return Promise.resolve<SwaggerResponse<TaxSchemeDto[]>>(new SwaggerResponse(status, _headers, null as any));
     }
 }
 
-export class TransactionCategoriesClient {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+export class TransactionCategoriesClient extends ApiClient {
+    private instance: AxiosInstance;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        this.http = http ? http : window as any;
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        super();
+
+        this.instance = instance ? instance : axios.create();
+
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+
     }
 
     /**
      * Get all categories that are either default or created by the profile.
      */
-    getCategories(user: number, profile: number): Promise<void> {
+    getCategories(user: number, profile: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/transactions/categories";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -655,40 +823,56 @@ export class TransactionCategoriesClient {
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "GET",
+            url: url_,
             headers: {
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processGetCategories(_response);
         });
     }
 
-    protected processGetCategories(response: Response): Promise<void> {
+    protected processGetCategories(response: AxiosResponse): Promise<SwaggerResponse<void>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("A server side error occurred.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("A server side error occurred.", status, _responseText, _headers, result403);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
@@ -696,7 +880,7 @@ export class TransactionCategoriesClient {
      * @param name (optional) 
      * @return Returns a location header to the newly created item.
      */
-    addCategory(user: number, profile: number, name: string | null | undefined): Promise<void> {
+    addCategory(user: number, profile: number, name: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/transactions/categories?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -708,64 +892,80 @@ export class TransactionCategoriesClient {
             url_ += "Name=" + encodeURIComponent("" + name) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "POST",
+            url: url_,
             headers: {
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processAddCategory(_response);
         });
     }
 
-    protected processAddCategory(response: Response): Promise<void> {
+    protected processAddCategory(response: AxiosResponse): Promise<SwaggerResponse<void>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 201) {
-            return response.text().then((_responseText) => {
-            return;
-            });
+            const _responseText = response.data;
+            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
+
         } else if (status === 400) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result400: any = null;
-            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData400  = _responseText;
             result400 = ProblemDetails.fromJS(resultData400);
             return throwException("If the fields did not satisfy the domain invariants.", status, _responseText, _headers, result400);
-            });
+
         } else if (status === 404) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData404  = _responseText;
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("If a profile or transaction with the specified ID could not be found.", status, _responseText, _headers, result404);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
      * Get details of a category with given ID.
      */
-    getCategory(user: number, profile: number, category: number): Promise<void> {
+    getCategory(user: number, profile: number, category: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/transactions/categories/{category}";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -778,47 +978,63 @@ export class TransactionCategoriesClient {
         url_ = url_.replace("{Category}", encodeURIComponent("" + category));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "GET",
+            url: url_,
             headers: {
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processGetCategory(_response);
         });
     }
 
-    protected processGetCategory(response: Response): Promise<void> {
+    protected processGetCategory(response: AxiosResponse): Promise<SwaggerResponse<void>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("A server side error occurred.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("A server side error occurred.", status, _responseText, _headers, result403);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
      * Delete a category by its ID.
      * @return If category is successfully deleted.
      */
-    deleteCategory(user: number, profile: number, category: number): Promise<void> {
+    deleteCategory(user: number, profile: number, category: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/transactions/categories/{category}";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -831,62 +1047,83 @@ export class TransactionCategoriesClient {
         url_ = url_.replace("{Category}", encodeURIComponent("" + category));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "DELETE",
+            url: url_,
             headers: {
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processDeleteCategory(_response);
         });
     }
 
-    protected processDeleteCategory(response: Response): Promise<void> {
+    protected processDeleteCategory(response: AxiosResponse): Promise<SwaggerResponse<void>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 204) {
-            return response.text().then((_responseText) => {
-            return;
-            });
+            const _responseText = response.data;
+            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
+
         } else if (status === 404) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData404  = _responseText;
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("If a profile or profile-owned category with the specified ID could not be found.", status, _responseText, _headers, result404);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
     }
 }
 
-export class TransactionsClient {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+export class TransactionsClient extends ApiClient {
+    private instance: AxiosInstance;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        this.http = http ? http : window as any;
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        super();
+
+        this.instance = instance ? instance : axios.create();
+
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+
     }
 
     /**
@@ -895,7 +1132,7 @@ export class TransactionsClient {
      * @param startAfter (optional) 
      * @return Returns the transactions.
      */
-    getTransactions(user: number, profile: number, startBefore: Date | null | undefined, startAfter: Date | null | undefined): Promise<TransactionDto[]> {
+    getTransactions(user: number, profile: number, startBefore: Date | null | undefined, startAfter: Date | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<TransactionDto[]>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/transactions?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -909,39 +1146,56 @@ export class TransactionsClient {
             url_ += "StartAfter=" + encodeURIComponent(startAfter ? "" + startAfter.toISOString() : "") + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "GET",
+            url: url_,
             headers: {
                 "Accept": "application/json"
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processGetTransactions(_response);
         });
     }
 
-    protected processGetTransactions(response: Response): Promise<TransactionDto[]> {
+    protected processGetTransactions(response: AxiosResponse): Promise<SwaggerResponse<TransactionDto[]>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 200) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData200  = _responseText;
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
@@ -950,21 +1204,20 @@ export class TransactionsClient {
             else {
                 result200 = <any>null;
             }
-            return result200;
-            });
+            return Promise.resolve<SwaggerResponse<TransactionDto[]>>(new SwaggerResponse<TransactionDto[]>(status, _headers, result200));
+
         } else if (status === 404) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData404  = _responseText;
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("If a profile with given ID wasn\'t found for the user.", status, _responseText, _headers, result404);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<TransactionDto[]>(null as any);
+        return Promise.resolve<SwaggerResponse<TransactionDto[]>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
@@ -986,7 +1239,7 @@ export class TransactionsClient {
      * @param unitsInCycle (optional) 
      * @return Returns a location header to the newly created item.
      */
-    addTransaction(user: number, profile: number, name: string | null | undefined, description: string | null | undefined, amount: number | null | undefined, type: string | undefined, paymentStart: Date | null | undefined, taxScheme: number | null | undefined, asset: number | null | undefined, paymentEnd: Date | null | undefined, timeUnit: string | null | undefined, timesPerCycle: number | null | undefined, unitsInCycle: number | null | undefined): Promise<void> {
+    addTransaction(user: number, profile: number, name: string | null | undefined, description: string | null | undefined, amount: number | null | undefined, type: string | undefined, paymentStart: Date | null | undefined, taxScheme: number | null | undefined, asset: number | null | undefined, paymentEnd: Date | null | undefined, timeUnit: string | null | undefined, timesPerCycle: number | null | undefined, unitsInCycle: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/transactions?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -1020,65 +1273,81 @@ export class TransactionsClient {
             url_ += "UnitsInCycle=" + encodeURIComponent("" + unitsInCycle) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "POST",
+            url: url_,
             headers: {
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processAddTransaction(_response);
         });
     }
 
-    protected processAddTransaction(response: Response): Promise<void> {
+    protected processAddTransaction(response: AxiosResponse): Promise<SwaggerResponse<void>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 201) {
-            return response.text().then((_responseText) => {
-            return;
-            });
+            const _responseText = response.data;
+            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
+
         } else if (status === 400) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result400: any = null;
-            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData400  = _responseText;
             result400 = ProblemDetails.fromJS(resultData400);
             return throwException("If fields didn\'t satisfy domain invariants or the optional ones were only partially specified.", status, _responseText, _headers, result400);
-            });
+
         } else if (status === 404) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData404  = _responseText;
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("If a profile, tax scheme, or asset with a specified ID could not be found.", status, _responseText, _headers, result404);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
      * Get transaction with given ID.
      * @return Returns the transaction.
      */
-    getTransaction(user: number, profile: number, transaction: number): Promise<TransactionDto> {
+    getTransaction(user: number, profile: number, transaction: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<TransactionDto>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/transactions/{transaction}";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -1091,62 +1360,78 @@ export class TransactionsClient {
         url_ = url_.replace("{Transaction}", encodeURIComponent("" + transaction));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "GET",
+            url: url_,
             headers: {
                 "Accept": "application/json"
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processGetTransaction(_response);
         });
     }
 
-    protected processGetTransaction(response: Response): Promise<TransactionDto> {
+    protected processGetTransaction(response: AxiosResponse): Promise<SwaggerResponse<TransactionDto>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 200) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData200  = _responseText;
             result200 = TransactionDto.fromJS(resultData200);
-            return result200;
-            });
+            return Promise.resolve<SwaggerResponse<TransactionDto>>(new SwaggerResponse<TransactionDto>(status, _headers, result200));
+
         } else if (status === 404) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData404  = _responseText;
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("If transaction or profile was not found.", status, _responseText, _headers, result404);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<TransactionDto>(null as any);
+        return Promise.resolve<SwaggerResponse<TransactionDto>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
      * Deletes a transaction with given ID from a profile.
      * @return If transaction was deleted.
      */
-    deleteTransaction(user: number, profile: number, transaction: number): Promise<void> {
+    deleteTransaction(user: number, profile: number, transaction: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/transactions/{transaction}";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -1159,51 +1444,67 @@ export class TransactionsClient {
         url_ = url_.replace("{Transaction}", encodeURIComponent("" + transaction));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "DELETE",
+            url: url_,
             headers: {
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processDeleteTransaction(_response);
         });
     }
 
-    protected processDeleteTransaction(response: Response): Promise<void> {
+    protected processDeleteTransaction(response: AxiosResponse): Promise<SwaggerResponse<void>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 204) {
-            return response.text().then((_responseText) => {
-            return;
-            });
+            const _responseText = response.data;
+            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
+
         } else if (status === 404) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData404  = _responseText;
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("If transaction or profile was not found.", status, _responseText, _headers, result404);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
@@ -1211,7 +1512,7 @@ export class TransactionsClient {
      * @param category (optional) 
      * @return If the category was successfully added.
      */
-    addCategoryToTransaction(user: number, profile: number, transaction: number, category: number | null | undefined): Promise<void> {
+    addCategoryToTransaction(user: number, profile: number, transaction: number, category: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/transactions/{transaction}/categories?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -1226,58 +1527,74 @@ export class TransactionsClient {
             url_ += "Category=" + encodeURIComponent("" + category) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "POST",
+            url: url_,
             headers: {
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processAddCategoryToTransaction(_response);
         });
     }
 
-    protected processAddCategoryToTransaction(response: Response): Promise<void> {
+    protected processAddCategoryToTransaction(response: AxiosResponse): Promise<SwaggerResponse<void>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 201) {
-            return response.text().then((_responseText) => {
-            return;
-            });
+            const _responseText = response.data;
+            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
+
         } else if (status === 404) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData404  = _responseText;
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("If a profile or transaction with a corresponding ID could not be found.", status, _responseText, _headers, result404);
-            });
+
         } else if (status === 409) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result409: any = null;
-            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData409  = _responseText;
             result409 = ProblemDetails.fromJS(resultData409);
             return throwException("If the category already exists on the transaction.", status, _responseText, _headers, result409);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
@@ -1285,7 +1602,7 @@ export class TransactionsClient {
      * @param category (optional) 
      * @return If the category was successfully removed.
      */
-    removeCategoryFromTransaction(user: number, profile: number, transaction: number, category: number | null | undefined): Promise<void> {
+    removeCategoryFromTransaction(user: number, profile: number, transaction: number, category: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/transactions/{transaction}/categories?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -1300,124 +1617,161 @@ export class TransactionsClient {
             url_ += "Category=" + encodeURIComponent("" + category) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "DELETE",
+            url: url_,
             headers: {
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processRemoveCategoryFromTransaction(_response);
         });
     }
 
-    protected processRemoveCategoryFromTransaction(response: Response): Promise<void> {
+    protected processRemoveCategoryFromTransaction(response: AxiosResponse): Promise<SwaggerResponse<void>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 204) {
-            return response.text().then((_responseText) => {
-            return;
-            });
+            const _responseText = response.data;
+            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
+
         } else if (status === 404) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData404  = _responseText;
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("If a profile, transaction, or category with corresponding ID was not found on the transaction.", status, _responseText, _headers, result404);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
     }
 }
 
-export class UsersClient {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+export class UsersClient extends ApiClient {
+    private instance: AxiosInstance;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        this.http = http ? http : window as any;
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        super();
+
+        this.instance = instance ? instance : axios.create();
+
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+
     }
 
     /**
-     * Get details of an user with a given ID.
+     * Get details of a user with a given ID.
      * @return Details of user with given ID.
      */
-    getUser(user: number): Promise<UserDto> {
+    getUser(user: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<UserDto>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "GET",
+            url: url_,
             headers: {
                 "Accept": "application/json"
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processGetUser(_response);
         });
     }
 
-    protected processGetUser(response: Response): Promise<UserDto> {
+    protected processGetUser(response: AxiosResponse): Promise<SwaggerResponse<UserDto>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 200) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData200  = _responseText;
             result200 = UserDto.fromJS(resultData200);
-            return result200;
-            });
+            return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse<UserDto>(status, _headers, result200));
+
         } else if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
-            });
+
         } else if (status === 403) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result403: any = null;
-            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
             return throwException("If a user route is accessed with an authentication token assigned to another user ID.", status, _responseText, _headers, result403);
-            });
+
         } else if (status === 404) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData404  = _responseText;
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("If a user with the specified ID could not be found.", status, _responseText, _headers, result404);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<UserDto>(null as any);
+        return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
@@ -1429,7 +1783,7 @@ export class UsersClient {
      * @param rememberMe (optional) 
      * @return Returns the location of newly created user and an authentication token.
      */
-    registerUser(username: string | null | undefined, email: string | null | undefined, password: string | null | undefined, confirmPassword: string | null | undefined, rememberMe: boolean | undefined): Promise<void> {
+    registerUser(username: string | null | undefined, email: string | null | undefined, password: string | null | undefined, confirmPassword: string | null | undefined, rememberMe: boolean | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
         let url_ = this.baseUrl + "/api/v1/users/register?";
         if (username !== undefined && username !== null)
             url_ += "Username=" + encodeURIComponent("" + username) + "&";
@@ -1445,54 +1799,70 @@ export class UsersClient {
             url_ += "RememberMe=" + encodeURIComponent("" + rememberMe) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "POST",
+            url: url_,
             headers: {
-            }
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processRegisterUser(_response);
         });
     }
 
-    protected processRegisterUser(response: Response): Promise<void> {
+    protected processRegisterUser(response: AxiosResponse): Promise<SwaggerResponse<void>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 201) {
-            return response.text().then((_responseText) => {
-            return;
-            });
+            const _responseText = response.data;
+            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
+
         } else if (status === 400) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result400: any = null;
-            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData400  = _responseText;
             result400 = ProblemDetails.fromJS(resultData400);
             return throwException("If the user fields do not match domain or application rules.", status, _responseText, _headers, result400);
-            });
+
         } else if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If the user creation attempt fails, e.g. username or email is already in use.", status, _responseText, _headers, result401);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
-     * Signs in as an user.
+     * Signs in as a user.
      * @param username (optional) 
      * @param password (optional) 
      * @param rememberMe (optional) 
-     * @return Returns the ID of user and authentication token.
+     * @return Details of signed in user.
      */
-    signInUser(username: string | null | undefined, password: string | null | undefined, rememberMe: boolean | undefined): Promise<void> {
+    signInUser(username: string | null | undefined, password: string | null | undefined, rememberMe: boolean | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<UserDto>> {
         let url_ = this.baseUrl + "/api/v1/users/sign-in?";
         if (username !== undefined && username !== null)
             url_ += "Username=" + encodeURIComponent("" + username) + "&";
@@ -1504,37 +1874,57 @@ export class UsersClient {
             url_ += "RememberMe=" + encodeURIComponent("" + rememberMe) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
+        let options_: AxiosRequestConfig = {
             method: "POST",
+            url: url_,
             headers: {
-            }
+                "Accept": "application/json"
+            },
+            cancelToken
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
             return this.processSignInUser(_response);
         });
     }
 
-    protected processSignInUser(response: Response): Promise<void> {
+    protected processSignInUser(response: AxiosResponse): Promise<SwaggerResponse<UserDto>> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = UserDto.fromJS(resultData200);
+            return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse<UserDto>(status, _headers, result200));
+
         } else if (status === 401) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             let result401: any = null;
-            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
             return throwException("If the authentication attempt fails, e.g. incorrect password.", status, _responseText, _headers, result401);
-            });
+
         } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse(status, _headers, null as any));
     }
 }
 
@@ -2079,8 +2469,21 @@ function formatDate(d: Date) {
         (d.getDate() < 10 ? ('0' + d.getDate()) : d.getDate());
 }
 
+export class SwaggerResponse<TResult> {
+    status: number;
+    headers: { [key: string]: any; };
+    result: TResult;
+
+    constructor(status: number, headers: { [key: string]: any; }, result: TResult)
+    {
+        this.status = status;
+        this.headers = headers;
+        this.result = result;
+    }
+}
+
 export class ApiException extends Error {
-    message: string;
+    override message: string;
     status: number;
     response: string;
     headers: { [key: string]: any; };
@@ -2108,4 +2511,8 @@ function throwException(message: string, status: number, response: string, heade
         throw result;
     else
         throw new ApiException(message, status, response, headers, null);
+}
+
+function isAxiosError(obj: any | undefined): obj is AxiosError {
+    return obj && obj.isAxiosError === true;
 }
