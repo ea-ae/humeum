@@ -30,6 +30,7 @@ module.exports = {
     indent: ['warn', 2],
     quotes: ['warn', 'single'],
     semi: ['error', 'always'],
+    'no-unused-vars': 'off',
     'import/extensions': [
       'warn',
       'ignorePackages',

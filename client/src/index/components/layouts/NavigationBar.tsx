@@ -7,7 +7,7 @@ interface Props {
 
 function NavigationBar({ appLayout }: Props) {
   return (
-    <div className="sticky top-0 z-10 flex flex-row justify-between drop-shadow-lg py-3 pl-5 pr-12 text-lg text-stone-50 bg-primary-500">
+    <div className="sticky top-0 z-10 flex flex-row justify-between drop-shadow-lg py-3 pl-5 pr-12 text-lg tracking-wide text-stone-50 bg-primary-500">
       <div className="flex items-center">
         {appLayout ? <DensitySmallIcon className="flex-shrink cursor-pointer" /> : null}
         <span className="ml-5 text-xl font-semibold cursor-default">Humeum</span>

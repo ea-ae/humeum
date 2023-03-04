@@ -8,9 +8,9 @@ interface Props {
 }
 
 function Authenticated({ children }: Props) {
-  const authenticated = useAuth() !== 'guest';
+  const authStatus = useAuth();
 
-  return authenticated ? children : <Router.Navigate to="/login" replace />;
+  return authStatus.isAuthenticated ? children : <Router.Navigate to="/login" replace />;
 }
 
 export default Authenticated;

@@ -6,8 +6,16 @@ interface Props {
   children: React.ReactNode;
 }
 
+const { Provider } = AuthContext;
+
 function ProvideAuth({ children }: Props) {
-  return <AuthContext.Provider value="guest">{children}</AuthContext.Provider>;
+  const [isAuthenticated, setIsAuthenticated] = React.useState<boolean>(false);
+
+  const setAuthentication = (authenticated: boolean) => {
+    setIsAuthenticated(authenticated);
+  };
+
+  return <Provider value={{ isAuthenticated, setAuthentication }}>{children}</Provider>;
 }
 
 export default ProvideAuth;

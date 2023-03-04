@@ -18,10 +18,10 @@ function Layout({ children, sidebar }: Props) {
         {appLayout ? sidebar : null}
         <div className="flex-grow flex flex-col">
           <div className="overflow-x-hidden flex-grow px-12 py-8">{children}</div>
-          <div className="mt-6 mb-4 mx-3 text-sm text-stone-400">
-            <span className="px-5 cursor-default hover:text-stone-600">Privacy</span>
-            <span className="px-5 cursor-default hover:text-stone-600">Terms & Conditions</span>
-            <span className="px-5 cursor-default hover:text-stone-600">About</span>
+          <div className="mt-6 mb-4 mx-3 text-sm text-stone-500">
+            <span className="px-5 cursor-default hover:text-stone-800">Privacy</span>
+            <span className="px-5 cursor-default hover:text-stone-800">Terms & Conditions</span>
+            <span className="px-5 cursor-default hover:text-stone-800">About</span>
           </div>
         </div>
       </div>
