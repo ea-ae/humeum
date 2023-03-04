@@ -8,7 +8,7 @@ using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 using Domain.TransactionCategoryAggregate;
 
-using Infrastructure.Identity;
+using Infrastructure.Auth;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

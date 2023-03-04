@@ -1,6 +1,6 @@
 ﻿using Domain.UserAggregate;
 
-using Infrastructure.Identity;
+using Infrastructure.Auth;
 
 namespace Infrastructure.Common.Extensions;
 

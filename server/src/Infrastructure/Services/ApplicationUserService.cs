@@ -3,7 +3,7 @@ using Application.Common.Interfaces;
 
 using Domain.UserAggregate;
 
-using Infrastructure.Identity;
+using Infrastructure.Auth;
 using Infrastructure.Persistence;
 
 namespace Infrastructure.Services;

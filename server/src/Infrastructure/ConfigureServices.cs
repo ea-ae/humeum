@@ -4,7 +4,7 @@ using System.Text;
 using Application.Common.Interfaces;
 
 using Infrastructure.Common.Settings;
-using Infrastructure.Identity;
+using Infrastructure.Auth;
 using Infrastructure.Persistence;
 using Infrastructure.Services;
 

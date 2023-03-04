@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Infrastructure.Identity;
+namespace Infrastructure.Auth;
 
 /// <summary>
 /// Checks whether the user ID in the route ("{user}") matches the user ID ("uid") in the user claims.

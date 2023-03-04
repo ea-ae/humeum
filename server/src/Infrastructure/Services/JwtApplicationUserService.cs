@@ -8,7 +8,7 @@ using Application.Common.Interfaces;
 using Domain.UserAggregate;
 
 using Infrastructure.Common.Settings;
-using Infrastructure.Identity;
+using Infrastructure.Auth;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -99,7 +99,7 @@ public class JwtApplicationUserService : ApplicationUserService {
         var profiles = _context.Profiles.Where(p => p.UserId == user.Id && p.DeletedAt == null).ToList();
 
         claims.Add(new Claim("uid", user.Id.ToString()));
-        claims.Add(new Claim("name", user.UserName ?? throw new InvalidOperationException()));
+        claims.Add(new Claim("name", user.DisplayName ?? throw new InvalidOperationException()));
         claims.Add(new Claim("profiles", string.Join(",", profiles.Select(p => p.Id))));
 
         return claims;

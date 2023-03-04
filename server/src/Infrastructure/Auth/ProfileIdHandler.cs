@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Infrastructure.Identity;
+namespace Infrastructure.Auth;
 
 public class ProfileIdHandler : AuthorizationHandler<ProfileOwnershipRequirement> {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ProfileOwnershipRequirement requirement) {
