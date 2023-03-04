@@ -6,6 +6,7 @@ import Layout from './components/layouts/Layout';
 import Sidebar from './components/layouts/Sidebar';
 import AssetsIndex from './pages/assets/AssetsIndex';
 import HomeIndex from './pages/home/HomeIndex';
+import LoginIndex from './pages/login/LoginIndex';
 import SettingsIndex from './pages/settings/SettingsIndex';
 import TaxesIndex from './pages/taxes/TaxesIndex';
 import TransactionsIndex from './pages/transactions/TransactionsIndex';
@@ -17,22 +18,12 @@ const withLayout = (element: React.ReactNode, activeTabLabel: string) => (
 const router = Router.createBrowserRouter(
   Router.createRoutesFromElements(
     <>
-      <Router.Route path="/login" element={<h1>Login</h1>} />
-      <Router.Route path="/admin" element={<Router.Navigate to="/login" replace />} />
-      <Router.Route
-        path="/secret"
-        element={
-          <Authenticated>
-            <b>Secret!</b>
-          </Authenticated>
-        }
-      />
-
-      <Router.Route path="/" element={withLayout(<HomeIndex />, 'home')} />
-      <Router.Route path="/transactions" element={withLayout(<TransactionsIndex />, 'transactions')} />
-      <Router.Route path="/assets" element={withLayout(<AssetsIndex />, 'assets')} />
-      <Router.Route path="/taxes" element={withLayout(<TaxesIndex />, 'taxes')} />
-      <Router.Route path="/settings" element={withLayout(<SettingsIndex />, 'settings')} />
+      <Router.Route path="/login" element={<LoginIndex />} />
+      <Router.Route path="/" element={<Authenticated>{withLayout(<HomeIndex />, 'home')}</Authenticated>} />
+      <Router.Route path="/transactions" element={<Authenticated>{withLayout(<TransactionsIndex />, 'transactions')}</Authenticated>} />
+      <Router.Route path="/assets" element={<Authenticated>{withLayout(<AssetsIndex />, 'assets')}</Authenticated>} />
+      <Router.Route path="/taxes" element={<Authenticated>{withLayout(<TaxesIndex />, 'taxes')}</Authenticated>} />
+      <Router.Route path="/settings" element={<Authenticated>{withLayout(<SettingsIndex />, 'settings')}</Authenticated>} />
     </>
   )
 );

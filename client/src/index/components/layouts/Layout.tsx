@@ -9,11 +9,13 @@ interface Props {
 }
 
 function Layout({ children, sidebar }: Props) {
+  const appLayout = sidebar !== undefined;
+
   return (
     <div className="h-screen flex flex-col flex-grow">
-      <NavigationBar />
+      <NavigationBar appLayout={appLayout} />
       <div className="flex-grow flex flex-row">
-        {sidebar === undefined ? null : sidebar}
+        {appLayout ? sidebar : null}
         <div className="flex-grow flex flex-col">
           <div className="overflow-x-hidden flex-grow px-12 py-8">{children}</div>
           <div className="mt-6 mb-4 mx-3 text-sm text-stone-400">
@@ -23,7 +25,7 @@ function Layout({ children, sidebar }: Props) {
           </div>
         </div>
       </div>
-      <AddItemDial />
+      {appLayout ? <AddItemDial /> : null}
     </div>
   );
 }

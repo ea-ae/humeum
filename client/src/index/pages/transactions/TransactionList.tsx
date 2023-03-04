@@ -1,5 +1,5 @@
 import * as Mui from '@mui/material';
-import { DataGrid, GridColDef, GridFooter, GridFooterContainer, GridSlotsComponent } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridFooter, GridFooterContainer } from '@mui/x-data-grid';
 import * as React from 'react';
 
 function CustomFooter() {
@@ -12,6 +12,8 @@ function CustomFooter() {
     </GridFooterContainer>
   );
 }
+
+const footer = () => <CustomFooter />; // defined outside of render
 
 function TransactionList() {
   const [pageSize, setPageSize] = React.useState<number>(10);
@@ -95,7 +97,7 @@ function TransactionList() {
       classes={{ cell: 'outline-none', columnHeader: 'outline-none' }}
       className="min-w-fit card"
       components={{
-        Footer: () => <CustomFooter />,
+        Footer: footer,
       }}
     />
   );

@@ -10,9 +10,7 @@ interface Props {
 
 function SidebarTab({ label, icon, path, activeLabel }: Props) {
   const extraClasses =
-    activeLabel.toLowerCase() === label.toLowerCase()
-      ? 'shadow-[inset_0_10px_15px_-15px] shadow-black bg-secondary-500'
-      : '';
+    activeLabel.toLowerCase() === label.toLowerCase() ? 'shadow-[inset_0_10px_15px_-15px] shadow-black bg-secondary-500' : '';
 
   return (
     <Router.Link to={path}>

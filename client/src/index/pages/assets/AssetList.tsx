@@ -18,12 +18,7 @@ function AssetList() {
         standardDeviation={3}
         readOnly
       />
-      <AssetCard
-        name="Custom asset type 1"
-        description="Custom asset description goes here."
-        returnRate={5}
-        standardDeviation={5}
-      />
+      <AssetCard name="Custom asset type 1" description="Custom asset description goes here." returnRate={5} standardDeviation={5} />
       <AssetCard
         name="Custom asset type 2"
         description={
@@ -33,12 +28,7 @@ function AssetList() {
         returnRate={9.4}
         standardDeviation={44.21}
       />
-      <AssetCard
-        name="Custom asset type 3"
-        description="Custom asset description goes here."
-        returnRate={1}
-        standardDeviation={1}
-      />
+      <AssetCard name="Custom asset type 3" description="Custom asset description goes here." returnRate={1} standardDeviation={1} />
       <NewItemCard text="Create custom asset" />
     </div>
   );

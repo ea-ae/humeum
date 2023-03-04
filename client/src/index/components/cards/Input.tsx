@@ -14,12 +14,14 @@ interface Props {
 function Input({ label, tooltip, defaultValue, disabled, typePattern, validPattern, symbol }: Props) {
   const [value, setValue] = React.useState<string>(defaultValue);
   const [isValid, setIsValid] = React.useState<boolean>(validPattern.test(value));
+  const [hasChanged, setHasChanged] = React.useState<boolean>(false);
 
   const validate = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     e.preventDefault();
     if (typePattern.test(e.target.value)) {
       setValue(e.target.value);
       setIsValid(validPattern.test(e.target.value));
+      setHasChanged(true);
     }
   };
 
@@ -33,10 +35,8 @@ function Input({ label, tooltip, defaultValue, disabled, typePattern, validPatte
         variant="standard"
         value={value}
         onChange={(e) => validate(e)}
-        InputLabelProps={{ className: isValid ? '' : 'text-red-600 border-red-500' }}
-        InputProps={
-          symbol === null ? {} : { endAdornment: <Mui.InputAdornment position="end">{symbol}</Mui.InputAdornment> }
-        }
+        InputLabelProps={{ className: isValid || !hasChanged ? '' : 'text-red-600 border-red-500' }}
+        InputProps={symbol === null ? {} : { endAdornment: <Mui.InputAdornment position="end">{symbol}</Mui.InputAdornment> }}
       />
     </Mui.Tooltip>
   );

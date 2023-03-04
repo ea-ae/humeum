@@ -4,6 +4,6 @@
 
 @layer components {
     .card {
-        @apply drop-shadow-sm border-[1px] border-solid rounded-sm border-stone-200 bg-stone-50;
+        @apply drop-shadow-sm border-[1px] border-solid rounded-sm border-stone-200 bg-primary-50;
     }
 }

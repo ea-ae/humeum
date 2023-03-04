@@ -14,12 +14,7 @@ function Sidebar({ activeTabLabel }: Props) {
   return (
     <div className="min-w-fit shadow-inner bg-secondary-400">
       <SidebarTab label="Home" activeLabel={activeTabLabel} icon={<HomeWorkOutlinedIcon />} path="/" />
-      <SidebarTab
-        label="Transactions"
-        activeLabel={activeTabLabel}
-        icon={<ReceiptLongOutlinedIcon />}
-        path="/transactions"
-      />
+      <SidebarTab label="Transactions" activeLabel={activeTabLabel} icon={<ReceiptLongOutlinedIcon />} path="/transactions" />
       <SidebarTab label="Assets" activeLabel={activeTabLabel} icon={<SavingsOutlinedIcon />} path="/assets" />
       <SidebarTab label="Taxes" activeLabel={activeTabLabel} icon={<AccountBalanceOutlinedIcon />} path="/taxes" />
       <SidebarTab label="Settings" activeLabel={activeTabLabel} icon={<SettingsOutlinedIcon />} path="/settings" />
