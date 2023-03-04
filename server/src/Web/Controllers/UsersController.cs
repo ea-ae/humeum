@@ -24,7 +24,7 @@ public class UsersController : ControllerBase {
     public UsersController(IMediator mediator) => _mediator = mediator;
 
     /// <summary>
-    /// Get details of an user with a given ID.
+    /// Get details of a user with a given ID.
     /// </summary>
     /// <response code="200">Details of user with given ID.</response>
     /// <response code="401">If a user route is accessed without an authentication token.</response>
@@ -57,15 +57,16 @@ public class UsersController : ControllerBase {
     }
 
     /// <summary>
-    /// Signs in as an user.
+    /// Signs in as a user.
     /// </summary>
-    /// <response code="200">Returns the ID of user and authentication token.</response>
+    /// <response code="200">Details of signed in user.</response>
     /// <response code="401">If the authentication attempt fails, e.g. incorrect password.</response>
     [HttpPost("sign-in")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> SignInUser(SignInUserCommand command) {
-        int id = await _mediator.Send(command);
-        return Ok(new { UserId = id });
+    public async Task<ActionResult<UserDto>> SignInUser(SignInUserCommand command) {
+        int userId = await _mediator.Send(command);
+        var user = await _mediator.Send(new GetUserQuery { User = userId });
+        return Ok(user);
     }
 }
