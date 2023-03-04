@@ -17,14 +17,14 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Persistence;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>, IAppDbContext {
-    public DbSet<Profile> Profiles { get; set; }
-    public DbSet<Transaction> Transactions { get; set; }
-    public DbSet<TransactionType> TransactionTypes { get; set; }
-    public DbSet<TimeUnit> TransactionTimeUnits { get; set; }
-    public DbSet<TransactionCategory> TransactionCategories { get; set; }
-    public DbSet<Asset> Assets { get; set; }
-    public DbSet<AssetType> AssetTypes { get; set; }
-    public DbSet<TaxScheme> TaxSchemes { get; set; }
+    public DbSet<Profile> Profiles { get; set; } = null!;
+    public DbSet<Transaction> Transactions { get; set; } = null!;
+    public DbSet<TransactionType> TransactionTypes { get; set; } = null!;
+    public DbSet<TimeUnit> TransactionTimeUnits { get; set; } = null!;
+    public DbSet<TransactionCategory> TransactionCategories { get; set; } = null!;
+    public DbSet<Asset> Assets { get; set; } = null!;
+    public DbSet<AssetType> AssetTypes { get; set; } = null!;
+    public DbSet<TaxScheme> TaxSchemes { get; set; } = null!;
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
         SavingChanges += SetTimestampFields; // add event handler
