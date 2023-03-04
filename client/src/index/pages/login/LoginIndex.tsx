@@ -21,28 +21,32 @@ function LoginIndex() {
     <Layout>
       <div className="flex flex-row justify-center mt-6">
         <Card className="flex flex-col">
-          <h1 className="mt-5 mb-4 text-3xl tracking-tighter font-semibold text-center">Welcome to Humeum</h1>
-          <Mui.TextField
-            className="min-w-[25vw] my-4"
-            id="return"
-            label="Email address"
-            variant="standard"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Mui.TextField
-            className="min-w-[25vw] my-4"
-            id="return"
-            label="Password"
-            variant="standard"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Mui.Button className="mt-10 mb-3 px-8 py-3 text-lg tracking-widest" variant="contained" onClick={login}>
-            Login
-          </Mui.Button>
+          <h1 className="pt-5 pb-4 text-3xl tracking-tighter font-semibold text-shadow text-center text-white bg-secondary-400">
+            Welcome to Humeum
+          </h1>
+          <div className="flex flex-col">
+            <Mui.TextField
+              className="min-w-[25vw] my-4"
+              id="return"
+              label="Email address"
+              variant="standard"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Mui.TextField
+              className="min-w-[25vw] my-4"
+              id="return"
+              label="Password"
+              variant="standard"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Mui.Button className="mt-10 mb-3 px-8 py-3 text-lg tracking-widest" variant="contained" onClick={login}>
+              Login
+            </Mui.Button>
+          </div>
         </Card>
       </div>
     </Layout>

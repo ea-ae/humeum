@@ -6,4 +6,8 @@
     .card {
         @apply drop-shadow-sm border-[1px] border-solid rounded-sm border-stone-200 bg-primary-50;
     }
+
+    .text-shadow {
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
+    }
 }
