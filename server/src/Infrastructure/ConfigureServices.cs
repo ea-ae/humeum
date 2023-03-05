@@ -36,7 +36,9 @@ public static class ConfigureServices {
             string connectionString = $"Data Source={dbPath}";
             services.AddDbContext<IAppDbContext, ApplicationDbContext>(options => options.UseSqlite());
         } else {
-            string connectionString = $"Host=localhost; Database={dbSettings.Name}; Username={dbSettings.Username}; Password={dbSettings.Password}";
+            string connectionString = 
+                $"Host={dbSettings.Host}; Pooling=true; Database={dbSettings.Name}; Port=5432;" +
+                $"Username={dbSettings.Username}; Password={dbSettings.Password}";
             services.AddDbContext<IAppDbContext, ApplicationDbContext>(options => options.UseNpgsql(connectionString));
         }
 

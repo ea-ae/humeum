@@ -8,21 +8,16 @@ EXPOSE 443
 # SDK image for building the app
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 
-# Copy the source project files and download dependencies
-WORKDIR /src
-COPY *.sln ./
-COPY */*.csproj ./
-RUN dotnet restore
-
-# Copy the source and build it
+# Restore dependencies and build project
+WORKDIR /build
 COPY . ./
-CMD dotnet build
+RUN dotnet build src/Web
 
 # Publish the app
 FROM build AS publish
-RUN dotnet publish -c Release -o /publish
+RUN dotnet publish src/Web -c Release -o /publish
 
-FROM base as final
+FROM base as app
 WORKDIR /app
 COPY --from=publish /publish ./
 ENTRYPOINT dotnet Web.dll
