@@ -1775,6 +1775,81 @@ export class UsersClient extends ApiClient {
     }
 
     /**
+     * Get details of a user with a given ID.
+     * @return Details of user with given ID.
+     */
+    getCurrentUser(  cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<UserDto>> {
+        let url_ = this.baseUrl + "/api/v1/users/me";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetCurrentUser(_response);
+        });
+    }
+
+    protected processGetCurrentUser(response: AxiosResponse): Promise<SwaggerResponse<UserDto>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = UserDto.fromJS(resultData200);
+            return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse<UserDto>(status, _headers, result200));
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            let result401: any = null;
+            let resultData401  = _responseText;
+            result401 = ProblemDetails.fromJS(resultData401);
+            return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            let result403: any = null;
+            let resultData403  = _responseText;
+            result403 = ProblemDetails.fromJS(resultData403);
+            return throwException("If a user route is accessed with an authentication token assigned to another user ID.", status, _responseText, _headers, result403);
+
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("If a user with the specified ID could not be found.", status, _responseText, _headers, result404);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse(status, _headers, null as any));
+    }
+
+    /**
      * Register a new user with a username, email address, and password.
      * @param username (optional) 
      * @param email (optional) 
@@ -2362,9 +2437,8 @@ export interface IBriefTransactionCategory {
 
 export class UserDto implements IUserDto {
     id!: number;
-    name!: string;
+    username!: string;
     email!: string;
-    displayName!: string;
     profiles!: BriefProfile[];
 
     constructor(data?: IUserDto) {
@@ -2382,9 +2456,8 @@ export class UserDto implements IUserDto {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
-            this.name = _data["name"];
+            this.username = _data["username"];
             this.email = _data["email"];
-            this.displayName = _data["displayName"];
             if (Array.isArray(_data["profiles"])) {
                 this.profiles = [] as any;
                 for (let item of _data["profiles"])
@@ -2403,9 +2476,8 @@ export class UserDto implements IUserDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["name"] = this.name;
+        data["username"] = this.username;
         data["email"] = this.email;
-        data["displayName"] = this.displayName;
         if (Array.isArray(this.profiles)) {
             data["profiles"] = [];
             for (let item of this.profiles)
@@ -2417,9 +2489,8 @@ export class UserDto implements IUserDto {
 
 export interface IUserDto {
     id: number;
-    name: string;
+    username: string;
     email: string;
-    displayName: string;
     profiles: BriefProfile[];
 }
 

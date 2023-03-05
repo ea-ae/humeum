@@ -30,13 +30,33 @@ public class UsersController : ControllerBase {
     /// <response code="401">If a user route is accessed without an authentication token.</response>
     /// <response code="403">If a user route is accessed with an authentication token assigned to another user ID.</response>
     /// <response code="404">If a user with the specified ID could not be found.</response>
-    [HttpGet("{user}")]
+    [HttpGet("{user:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleUserData")]
     public async Task<ActionResult<UserDto>> GetUser(GetUserQuery query) {
+        var user = await _mediator.Send(query);
+        return Ok(user);
+    }
+
+    /// <summary>
+    /// Get details of a user with a given ID.
+    /// </summary>
+    /// <response code="200">Details of user with given ID.</response>
+    /// <response code="401">If a user route is accessed without an authentication token.</response>
+    /// <response code="403">If a user route is accessed with an authentication token assigned to another user ID.</response>
+    /// <response code="404">If a user with the specified ID could not be found.</response>
+    [HttpGet("me")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<ActionResult<UserDto>> GetCurrentUser() {
+        var currentUserId = User.Claims.First(claim => claim.Type == "uid");
+        var query = new GetUserQuery { User = int.Parse(currentUserId.Value) };
         var user = await _mediator.Send(query);
         return Ok(user);
     }

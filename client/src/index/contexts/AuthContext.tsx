@@ -7,8 +7,6 @@ export interface AuthProps {
   setAuthentication: (authenticated: boolean) => void;
 }
 
-const client = new UsersClient();
-
 const AuthContext = React.createContext<AuthProps>({
   isAuthenticated: false,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

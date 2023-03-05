@@ -22,6 +22,7 @@ const container = document.getElementById('app');
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const root = ReactDOM.createRoot(container!);
 
+// StrictMode causes a double render
 root.render(
   <React.StrictMode>
     <Mui.ThemeProvider theme={theme}>
