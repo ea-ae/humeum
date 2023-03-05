@@ -1,7 +1,9 @@
 var builder = WebApplication.CreateBuilder(args);
 
+// builder.Configuration.AddEnvironmentVariables();
+
 builder.Services.ConfigureApplicationServices();
-builder.Services.ConfigureInfrastructureServices(builder.Configuration);
+builder.Services.ConfigureInfrastructureServices(builder.Environment, builder.Configuration);
 builder.Services.ConfigureWebServices();
 
 // builder.Logging.AddConsole().AddFilter(level => level >= LogLevel.Trace);

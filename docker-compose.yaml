@@ -1,0 +1,9 @@
+services:
+  server:
+    build: server/
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - main
+    

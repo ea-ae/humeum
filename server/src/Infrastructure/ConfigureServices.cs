@@ -14,7 +14,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -23,14 +24,21 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// </summary>
 public static class ConfigureServices {
     public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services,
+                                                                     IWebHostEnvironment environment,
                                                                      IConfiguration config) {
         var dbSettingsSection = config.GetSection(nameof(DatabaseSettings));
         var dbSettings = dbSettingsSection.Get<DatabaseSettings>()!;
         services.Configure<DatabaseSettings>(dbSettingsSection);
 
-        var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var dbPath = Path.Combine(appDataPath, dbSettings.Name + ".sqlite");
-        services.AddDbContext<IAppDbContext, ApplicationDbContext>(options => options.UseSqlite($"Data Source={dbPath}"));
+        if (environment.IsDevelopment()) {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string dbPath = Path.Combine(appDataPath, "humeum", dbSettings.Name + ".sqlite");
+            string connectionString = $"Data Source={dbPath}";
+            services.AddDbContext<IAppDbContext, ApplicationDbContext>(options => options.UseSqlite());
+        } else {
+            string connectionString = $"Host=localhost; Database={dbSettings.Name}; Username={dbSettings.Username}; Password={dbSettings.Password}";
+            services.AddDbContext<IAppDbContext, ApplicationDbContext>(options => options.UseNpgsql(connectionString));
+        }
 
         var jwtSettingsSection = config.GetSection(nameof(JwtSettings));
         var jwtSettings = jwtSettingsSection.Get<JwtSettings>()!;
