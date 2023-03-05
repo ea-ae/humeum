@@ -33,13 +33,21 @@ Finally, the presentation layer, which is where ASP.NET is configured, depends o
 
 When a request is received, it first runs through authentication/authorization middleware and our controller filters. After model binding is successfully performed, the controller sends a request through MediatR that arrives at a command/query handler, where further validation and business logic is performed (through infrastructure services & domain methods). Finally, a result is returned (e.g. through an automapped DTO) that is passed back to the controller and finally the client.
 
-### Startup
+## Setup
 
-1. Clone repository
-2. Open VS (or use the `dotnet` CLI)
-3. Run backend tests with `cd server && dotnet test`
-4. Run the backend ASP.NET `Web` project with `cd server && dotnet run --project src/Web`
-5. Run the frontend React project with `cd client && npm install && npm run server` (a proxy to the backend REST API will be added at `localhost:port/api/`)
+### Dev setup
+
+1. Fully configure `appsettings.json`
+1. Apply migrations with `cd server/src && dotnet ef database update -s Web -p Infrastructure`
+1. Run backend tests with `cd server && dotnet test`
+1. Run the backend ASP.NET `Web` project with `cd server/src && dotnet run --project Web`
+1. Run the frontend React project with `cd client && npm install && npm run server` (a proxy to the backend REST API will be added at `localhost:port/api/`)
+
+### Prod setup
+
+1. Create a valid `.env` file based off the `.env.example` template
+1. Configure `appsettings.json` non-sensitive data (the rest is in `.env`)
+1. Run the `docker-compose up` command
 
 ### Databases
 

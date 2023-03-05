@@ -28,7 +28,7 @@ services:
   
 volumes:
   data:
-  
+
 networks:
   main:
     driver: bridge
