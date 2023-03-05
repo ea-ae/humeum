@@ -14,6 +14,7 @@ if (app.Environment.IsDevelopment()) {
     //app.UseSwagger();
     //app.UseSwaggerUI();
 } else {
+    app.MigrateDatabase();
     app.UseExceptionHandler("/Error");
     //app.UseHsts();
 }

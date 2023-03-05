@@ -16,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Builder;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -31,10 +32,14 @@ public static class ConfigureServices {
         services.Configure<DatabaseSettings>(dbSettingsSection);
 
         if (environment.IsDevelopment()) {
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string dbPath = Path.Combine(appDataPath, "humeum", dbSettings.Name + ".sqlite");
-            string connectionString = $"Data Source={dbPath}";
-            services.AddDbContext<IAppDbContext, ApplicationDbContext>(options => options.UseSqlite());
+            //string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            //string dbPath = Path.Combine(appDataPath, "humeum", dbSettings.Name + ".sqlite");
+            //string connectionString = $"Data Source={dbPath}";
+            //services.AddDbContext<IAppDbContext, ApplicationDbContext>(options => options.UseSqlite());
+            string connectionString =
+                $"Host=localhost; Pooling=true; Database=humeum; Port=5432;" +
+                $"Username=humeum; Password=humeum";
+            services.AddDbContext<IAppDbContext, ApplicationDbContext>(options => options.UseNpgsql(connectionString));
         } else {
             string connectionString = 
                 $"Host={dbSettings.Host}; Pooling=true; Database={dbSettings.Name}; Port=5432;" +
@@ -98,5 +103,19 @@ public static class ConfigureServices {
         services.AddScoped<IApplicationUserService, JwtApplicationUserService>();
 
         return services;
+    }
+
+    /// <summary>
+    /// Automatically apply any pending database migrations. Useful in production.
+    /// </summary>
+    public static IApplicationBuilder MigrateDatabase(this IApplicationBuilder app) {
+        using var scope = app.ApplicationServices.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
+        
+        if (context.Database.GetPendingMigrations().Any()) {
+            context.Database.Migrate();
+        }
+
+        return app;
     }
 }

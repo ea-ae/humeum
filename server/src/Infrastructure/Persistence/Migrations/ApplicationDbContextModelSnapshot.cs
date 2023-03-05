@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -15,41 +16,47 @@ namespace Infrastructure.Persistence.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.2");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "7.0.3")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Domain.AssetAggregate.Asset", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int?>("ProfileId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("ReturnRate")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.Property<decimal>("StandardDeviation")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.Property<int>("TypeId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -63,9 +70,9 @@ namespace Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(3746),
+                            CreatedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(2962),
                             Description = "Index funds track the performance of a particular market index; great diversification, low fees, and easy management.",
-                            ModifiedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(3747),
+                            ModifiedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(2963),
                             Name = "Index fund (default)",
                             ReturnRate = 8.1m,
                             StandardDeviation = 15.2m,
@@ -74,9 +81,9 @@ namespace Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(3758),
+                            CreatedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(2972),
                             Description = "Bond funds provide great diversification potential and are stereotypically less volatile than other securities.",
-                            ModifiedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(3758),
+                            ModifiedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(2972),
                             Name = "Bond fund (default)",
                             ReturnRate = 1.9m,
                             StandardDeviation = 3.0m,
@@ -88,29 +95,31 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("WithdrawalRate")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
@@ -121,26 +130,28 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<decimal>("TaxRate")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
@@ -150,36 +161,36 @@ namespace Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(3812),
+                            CreatedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(3024),
                             Description = "Regular flat income tax in Estonia, applicable to all income by default. First 654EUR/mo aka 7848EUR/yr are tax-free.",
-                            ModifiedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(3812),
+                            ModifiedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(3024),
                             Name = "Income tax",
                             TaxRate = 20m
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(3815),
+                            CreatedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(3027),
                             Description = "Asset income invested through III pillar, with an account opened in 2021 or later. Term pensions based on life expectancy, not included here, provide a 20% discount.",
-                            ModifiedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(3815),
+                            ModifiedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(3027),
                             Name = "III pillar, post-2021",
                             TaxRate = 20m
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(3816),
+                            CreatedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(3028),
                             Description = "Asset income invested through III pillar, with an account opened before 2021. Term pensions based on life expectancy, not included here, provide a 20% discount.",
-                            ModifiedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(3816),
+                            ModifiedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(3029),
                             Name = "III pillar, pre-2021",
                             TaxRate = 20m
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(3817),
+                            CreatedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(3030),
                             Description = "Income that due to special circumstances (e.g. charity) is not taxed whatsoever.",
-                            ModifiedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(3817),
+                            ModifiedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(3030),
                             Name = "Non-taxable income",
                             TaxRate = 0m
                         });
@@ -189,37 +200,39 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.Property<int?>("AssetId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("ProfileId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("TaxSchemeId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("TypeId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -238,15 +251,17 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -301,15 +316,17 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -349,15 +366,17 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -391,23 +410,25 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int?>("ProfileId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -419,117 +440,119 @@ namespace Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(2210),
-                            ModifiedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(2213),
+                            CreatedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(1702),
+                            ModifiedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(1707),
                             Name = "General"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(2216),
-                            ModifiedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(2216),
+                            CreatedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(1709),
+                            ModifiedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(1709),
                             Name = "Investing"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(2217),
-                            ModifiedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(2217),
+                            CreatedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(1710),
+                            ModifiedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(1710),
                             Name = "Work, Education, & Business"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(2218),
-                            ModifiedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(2219),
+                            CreatedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(1711),
+                            ModifiedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(1711),
                             Name = "Recreation & Lifestyle"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(2220),
-                            ModifiedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(2220),
+                            CreatedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(1713),
+                            ModifiedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(1713),
                             Name = "Food & Clothing"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(2221),
-                            ModifiedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(2221),
+                            CreatedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(1714),
+                            ModifiedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(1714),
                             Name = "Housing & Utilities"
                         },
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(2222),
-                            ModifiedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(2222),
+                            CreatedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(1715),
+                            ModifiedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(1715),
                             Name = "Transportation"
                         },
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(2234),
-                            ModifiedAt = new DateTime(2023, 2, 26, 1, 15, 48, 903, DateTimeKind.Utc).AddTicks(2235),
+                            CreatedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(1764),
+                            ModifiedAt = new DateTime(2023, 3, 5, 15, 58, 11, 440, DateTimeKind.Utc).AddTicks(1765),
                             Name = "Gifts & Donations"
                         });
                 });
 
-            modelBuilder.Entity("Infrastructure.Identity.ApplicationUser", b =>
+            modelBuilder.Entity("Infrastructure.Auth.ApplicationUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -547,19 +570,21 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -574,16 +599,18 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -596,16 +623,18 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -618,17 +647,17 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("ProviderKey")
                         .HasMaxLength(128)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -640,10 +669,10 @@ namespace Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -655,18 +684,18 @@ namespace Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("Name")
                         .HasMaxLength(128)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("Value")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
@@ -676,10 +705,10 @@ namespace Infrastructure.Persistence.Migrations
             modelBuilder.Entity("TransactionTransactionCategory", b =>
                 {
                     b.Property<int>("CategoriesId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("TransactionsId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("CategoriesId", "TransactionsId");
 
@@ -711,19 +740,19 @@ namespace Infrastructure.Persistence.Migrations
                     b.OwnsOne("Domain.TaxSchemeAggregate.ValueObjects.TaxIncentiveScheme", "IncentiveScheme", b1 =>
                         {
                             b1.Property<int>("TaxSchemeId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int?>("MaxApplicableIncome")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<decimal?>("MaxIncomePercentage")
-                                .HasColumnType("TEXT");
+                                .HasColumnType("numeric");
 
                             b1.Property<int?>("MinAge")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<decimal>("TaxRefundRate")
-                                .HasColumnType("TEXT");
+                                .HasColumnType("numeric");
 
                             b1.HasKey("TaxSchemeId");
 
@@ -787,7 +816,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.OwnsOne("Domain.TransactionAggregate.ValueObjects.Timeline", "PaymentTimeline", b1 =>
                         {
                             b1.Property<int>("TransactionId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("TransactionId");
 
@@ -799,16 +828,16 @@ namespace Infrastructure.Persistence.Migrations
                             b1.OwnsOne("Domain.TransactionAggregate.ValueObjects.Frequency", "Frequency", b2 =>
                                 {
                                     b2.Property<int>("TimelineTransactionId")
-                                        .HasColumnType("INTEGER");
+                                        .HasColumnType("integer");
 
                                     b2.Property<int>("TimeUnitId")
-                                        .HasColumnType("INTEGER");
+                                        .HasColumnType("integer");
 
                                     b2.Property<int>("TimesPerCycle")
-                                        .HasColumnType("INTEGER");
+                                        .HasColumnType("integer");
 
                                     b2.Property<int>("UnitsInCycle")
-                                        .HasColumnType("INTEGER");
+                                        .HasColumnType("integer");
 
                                     b2.HasKey("TimelineTransactionId");
 
@@ -831,13 +860,13 @@ namespace Infrastructure.Persistence.Migrations
                             b1.OwnsOne("Domain.TransactionAggregate.ValueObjects.TimePeriod", "Period", b2 =>
                                 {
                                     b2.Property<int>("TimelineTransactionId")
-                                        .HasColumnType("INTEGER");
+                                        .HasColumnType("integer");
 
                                     b2.Property<DateOnly?>("End")
-                                        .HasColumnType("TEXT");
+                                        .HasColumnType("date");
 
                                     b2.Property<DateOnly>("Start")
-                                        .HasColumnType("TEXT");
+                                        .HasColumnType("date");
 
                                     b2.HasKey("TimelineTransactionId");
 
@@ -885,7 +914,7 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
-                    b.HasOne("Infrastructure.Identity.ApplicationUser", null)
+                    b.HasOne("Infrastructure.Auth.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -894,7 +923,7 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
-                    b.HasOne("Infrastructure.Identity.ApplicationUser", null)
+                    b.HasOne("Infrastructure.Auth.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -909,7 +938,7 @@ namespace Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Infrastructure.Identity.ApplicationUser", null)
+                    b.HasOne("Infrastructure.Auth.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -918,7 +947,7 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.HasOne("Infrastructure.Identity.ApplicationUser", null)
+                    b.HasOne("Infrastructure.Auth.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
