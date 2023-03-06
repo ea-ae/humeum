@@ -13,6 +13,11 @@ services:
     volumes:
       - data:/var/lib/postgresql/data/
 
+  client:
+    build: client/
+    volumes:
+      - static:/app/dist
+
   server:
     build: server/
     depends_on:
@@ -28,6 +33,7 @@ services:
   
 volumes:
   data:
+  static:
 
 networks:
   main:
