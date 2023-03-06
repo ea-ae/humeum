@@ -31,6 +31,14 @@ module.exports = {
     quotes: ['warn', 'single'],
     semi: ['error', 'always'],
     'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      { 
+        'argsIgnorePattern': '^_',
+        'varsIgnorePattern': '^_',
+        'caughtErrorsIgnorePattern': '^_'
+      }
+    ],
     'import/extensions': [
       'warn',
       'ignorePackages',

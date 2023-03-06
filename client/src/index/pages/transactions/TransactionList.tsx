@@ -2,6 +2,8 @@ import * as Mui from '@mui/material';
 import { DataGrid, GridColDef, GridFooter, GridFooterContainer } from '@mui/x-data-grid';
 import * as React from 'react';
 
+import { TransactionDto } from '../../api/api';
+
 function CustomFooter() {
   return (
     <GridFooterContainer>
@@ -16,6 +18,7 @@ function CustomFooter() {
 const footer = () => <CustomFooter />; // defined outside of render
 
 function TransactionList() {
+  // const [transactions, setTransactions] = React.useState<TransactionDto[]>([]);
   const [pageSize, setPageSize] = React.useState<number>(10);
 
   const editTransaction = (id: number) => {
