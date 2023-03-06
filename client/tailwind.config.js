@@ -9,8 +9,9 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          50: '#F6FCF2', // #F2FAED
-          100: '#EAF2E6', // #DFEDD8
+          50: '#F6FCF2', // used for saturated card backgrounds
+          100: '#EAF2E6', // used for saturated neutral backgorunds
+          150: '#E0EBDA', // used for card skeletons
           200: '#24FFA4',
           300: '#20E693',
           400: '#1FD68A',
@@ -22,8 +23,8 @@ module.exports = {
         },
         secondary: {
           // 400: '#DB5756',
-          400: '#E6BD70',
-          500: '#CCA864',
+          400: '#E6BD70', // used for sidebar
+          500: '#CCA864', // used for selected sidebar item
         },
         tertiary: {
           // 500: '#078DA3',
@@ -34,7 +35,7 @@ module.exports = {
           // 600: '#7A4399',
           // blue
           200: '#5A31FF',
-          300: '#512CE6',
+          300: '#512CE6', // used for buttons
           400: '#4324BF',
           500: '#2D1880',
         },
