@@ -1,4 +1,5 @@
 ﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 
 namespace Application.Common.Extensions;
 
@@ -21,5 +22,16 @@ internal static class ServiceExtensions {
         }
 
         return allFieldsProvided;
+    }
+
+    /// <summary>
+    /// Converts an IQueryable to a paginated list. Be sure to order the results (e.g. by ascending id) first.
+    /// </summary>
+    /// <typeparam name="T">Type of items in paginated list.</typeparam>
+    /// <param name="query">IQueryable that contains all the ordered resluts.</param>
+    /// <param name="request">Request object that contains offset/limit information.</param>
+    /// <returns>Paginated list.</returns>
+    public static PaginatedList<T> ToPaginatedList<T>(this IQueryable<T> query, IPaginatedQuery<T> request) {
+        return new PaginatedList<T>(query, request);
     }
 }

@@ -41,7 +41,7 @@ public static class ConfigureServices {
                 $"Username={dbSettings.Username}; Password={dbSettings.Password}";
             services.AddDbContext<IAppDbContext, ApplicationDbContext>(options => options.UseNpgsql(connectionString));
         } else {
-            throw new InvalidOperationException($"Database configuration type '${dbSettings.Database} is invalid; use 'sqlite' or 'postgres'.");
+            throw new InvalidOperationException($"Database configuration type '${dbSettings.Database}' is invalid; use 'sqlite' or 'postgres'.");
         }
 
         var jwtSettingsSection = config.GetSection(nameof(JwtSettings));
