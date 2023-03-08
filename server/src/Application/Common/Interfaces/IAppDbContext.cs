@@ -6,6 +6,7 @@ using Domain.TransactionAggregate.ValueObjects;
 using Domain.TransactionCategoryAggregate;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Application.Common.Interfaces;
@@ -21,6 +22,8 @@ public interface IAppDbContext {
     DbSet<TaxScheme> TaxSchemes { get; set; }
 
     public DatabaseFacade Database { get; }
+    public EntityEntry Entry(object entity);
+    public EntityEntry Update(object entity);
 
     public int SaveChanges();
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

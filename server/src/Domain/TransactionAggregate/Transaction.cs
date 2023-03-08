@@ -81,6 +81,8 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
                        Asset? asset = null)
         : this(name, description, amount, type, paymentTimeline, profile.Id, taxScheme.Id, asset?.Id) {
         Profile = profile;
+        TaxScheme = taxScheme;
+        Asset = asset;
     }
 
     public Transaction(string? name,
@@ -93,9 +95,9 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
                        int? assetId = null) {
         Name = name;
         Description = description;
-        PaymentTimeline = paymentTimeline;
         TypeId = type.Id;
         Type = type;
+        PaymentTimeline = paymentTimeline;
         ProfileId = profileId;
         TaxSchemeId = taxSchemeId;
         AssetId = assetId;
@@ -104,13 +106,18 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
 
     private Transaction() { }
 
-    /// <summary>
-    /// Updates the transaction type for transaction.
-    /// </summary>
-    /// <param name="type">New transaction type.</param>
-    public void UpdateType(TransactionType type) {
+    public void Replace(string? name, string? description, decimal amount, TransactionType type, Timeline paymentTimeline, TaxScheme taxScheme, Asset? asset) {
+        Name = name;
+        Description = description;
+        Amount = amount;
         TypeId = type.Id;
+        PaymentTimeline = paymentTimeline;
         Type = type;
+        TypeId = type.Id;
+        TaxScheme = taxScheme;
+        TaxSchemeId = taxScheme.Id;
+        Asset = asset;
+        AssetId = asset?.Id;
     }
 
     /// <summary>
@@ -145,3 +152,35 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
 
     public decimal TotalTransactionAmount => Amount * TotalTransactionCount;
 }
+
+/*
+ * public int TypeId { get; private set; }
+    TransactionType _type = null!;
+    public TransactionType Type { 
+        get => _type; 
+        set {
+            TypeId = value.Id;
+            _type = value;
+        } 
+    }
+
+    public int TaxSchemeId { get; private set; }
+    TaxScheme _taxScheme = null!;
+    public TaxScheme TaxScheme {
+        get => _taxScheme;
+        private set {
+            TaxSchemeId = value.Id;
+            _taxScheme = value;
+        }
+    }
+
+    public int? AssetId { get; private set; }
+    Asset? _asset = null!;
+    public Asset? Asset {
+        get => _asset;
+        set {
+            AssetId = value?.Id;
+            _asset = value;
+        }
+    }
+*/
