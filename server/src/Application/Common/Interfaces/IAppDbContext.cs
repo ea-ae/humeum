@@ -22,8 +22,8 @@ public interface IAppDbContext {
     DbSet<TaxScheme> TaxSchemes { get; set; }
 
     public DatabaseFacade Database { get; }
-    public EntityEntry Entry(object entity);
-    public EntityEntry Update(object entity);
+    public EntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
+    public EntityEntry<TEntity> Update<TEntity>(TEntity entity) where TEntity : class;
 
     public int SaveChanges();
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

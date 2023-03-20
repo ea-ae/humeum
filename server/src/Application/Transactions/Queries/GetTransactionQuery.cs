@@ -27,9 +27,10 @@ public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, Tra
         _mapper = mapper;
     }
 
-    public async Task<TransactionDto> Handle(GetTransactionQuery request, CancellationToken _) {
+    public async Task<TransactionDto> Handle(GetTransactionQuery request, CancellationToken token) {
         var transaction = _context.Transactions.AsNoTracking()
                                                .Include(t => t.Categories)
+                                               .Include(t => t.PaymentTimeline.Frequency).ThenInclude(f => f!.TimeUnit) // in order to populate DTO
                                                .FirstOrDefault(t => t.Id == request.Transaction
                                                                     && t.ProfileId == request.Profile
                                                                     && t.DeletedAt == null);
