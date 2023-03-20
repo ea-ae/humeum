@@ -71,20 +71,20 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
 
         // handling
 
-        var transaction = _context.Transactions.AsNoTracking().FirstOrDefault(t => t.Id == request.Transaction
+        var transaction = _context.Transactions.FirstOrDefault(t => t.Id == request.Transaction
                                                                     && t.ProfileId == request.Profile
                                                                     && t.DeletedAt == null);
         if (transaction is null) {
             throw new NotFoundValidationException(typeof(Transaction));
         }
 
-        // ATTEMPT TO DETACH
-        //_context.Entry(transaction).State = EntityState.Detached;
-        //_context.Entry(transaction.PaymentTimeline).State = EntityState.Detached;
-        //_context.Entry(transaction.PaymentTimeline.Period).State = EntityState.Detached;
-        //if (transaction.PaymentTimeline.Frequency is not null) {
-        //    _context.Entry(transaction.PaymentTimeline.Frequency).State = EntityState.Detached;
-        //}
+        // detach
+        _context.Entry(transaction).State = EntityState.Detached;
+        _context.Entry(transaction.PaymentTimeline).State = EntityState.Detached;
+        _context.Entry(transaction.PaymentTimeline.Period).State = EntityState.Detached;
+        if (transaction.PaymentTimeline.Frequency is not null) {
+            _context.Entry(transaction.PaymentTimeline.Frequency).State = EntityState.Detached;
+        }
 
         var transactionType = _context.GetEnumerationEntityByCode<TransactionType>(request.Type);
 
@@ -111,6 +111,8 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
         // workaround for EF bug with immutable owned entities
 
         _context.Update(transaction);
+        _context.Update(transaction.PaymentTimeline);
+        //_context.Update(transaction.PaymentTimeline.Frequency);
         await _context.SaveChangesAsync(token);
 
         return Unit.Value;
