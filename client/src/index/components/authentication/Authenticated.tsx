@@ -7,10 +7,15 @@ interface Props {
   children: React.ReactElement;
 }
 
-function Authenticated({ children }: Props) {
+// todo we should rename the HOC to withAuthenticated?
+
+/**
+ * Component that conditionally renders either its children or redirects to the login page.
+ * @param props.children Children to render if authenticated.
+ * @returns Children or login redirect.
+ */
+export default function Authenticated({ children }: Props) {
   const authStatus = useAuth();
 
   return authStatus.isAuthenticated ? children : <Router.Navigate to="/login" replace />;
 }
-
-export default Authenticated;

@@ -3,7 +3,11 @@ import * as React from 'react';
 import { UsersClient } from '../../api/api';
 import AuthContext from '../../contexts/AuthContext';
 
-const checkInitialAuthentication = async (): Promise<boolean> => {
+/**
+ * Checks whether the user is already authenticated through an HttpOnly cookie.
+ * @returns Whether the user is authenticated.
+ */
+function isPreAuthenticated(): Promise<boolean> {
   const client = new UsersClient();
   const authenticated = client
     .getCurrentUser()
@@ -21,19 +25,24 @@ const checkInitialAuthentication = async (): Promise<boolean> => {
     });
 
   return authenticated;
-};
+}
+
+const { Provider } = AuthContext;
 
 interface Props {
   children: React.ReactNode;
 }
 
-const { Provider } = AuthContext;
-
-function ProvideAuth({ children }: Props) {
+/**
+ * Component that provides authentication information to the rest of the application.
+ * @param props.children Components that need authentication information.
+ * @returns Provider component.
+ */
+export default function ProvideAuth({ children }: Props) {
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    checkInitialAuthentication().then(setIsAuthenticated);
+    isPreAuthenticated().then(setIsAuthenticated);
   }, []);
 
   const setAuthentication = (authenticated: boolean) => {
@@ -42,5 +51,3 @@ function ProvideAuth({ children }: Props) {
 
   return <Provider value={{ isAuthenticated, setAuthentication }}>{children}</Provider>;
 }
-
-export default ProvideAuth;

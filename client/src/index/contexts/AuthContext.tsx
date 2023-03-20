@@ -1,15 +1,13 @@
 import * as React from 'react';
 
-import { UsersClient } from '../api/api';
-
-export interface AuthProps {
+interface AuthProps {
   isAuthenticated: boolean;
   setAuthentication: (authenticated: boolean) => void;
 }
 
+/** Context that stores authentication information and allows changing it. */
 const AuthContext = React.createContext<AuthProps>({
   isAuthenticated: false,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setAuthentication: (_authentication: boolean) => {
     // do nothing
   },
