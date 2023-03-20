@@ -26,6 +26,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<AssetType> AssetTypes { get; set; } = null!;
     public DbSet<TaxScheme> TaxSchemes { get; set; } = null!;
 
+    /// <summary>Boolean switch for enabling or disabling soft deletion in a given DbContext.</summary>
+    bool _softDeletionMode = true;
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
         SavingChanges += SetTimestampFields; // add event handler
     }
@@ -121,6 +124,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         );
     }
 
+    public async Task<int> SaveChangesWithHardDeletionAsync(CancellationToken cancellationToken = default) {
+        _softDeletionMode = false;
+        int result = await SaveChangesAsync(cancellationToken);
+        _softDeletionMode = true;
+        return result;
+    }
+
     public override int SaveChanges() {
         throw new NotSupportedException();
     }
@@ -129,7 +139,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     /// Source: https://stackoverflow.com/a/74052251/4362799.
     /// </summary>
     private void SetTimestampFields(object? sender, SavingChangesEventArgs eventArgs) {
-        var context = (DbContext)(sender ?? throw new InvalidOperationException());
+        var context = (ApplicationDbContext)(sender ?? throw new InvalidOperationException());
+
+        if (!context._softDeletionMode) {
+            return; // soft deletion is disabled
+        }
 
         var entities = context.ChangeTracker.Entries().Where(e => e.State is EntityState.Modified or EntityState.Deleted);
 

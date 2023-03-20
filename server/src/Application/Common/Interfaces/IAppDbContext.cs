@@ -27,5 +27,7 @@ public interface IAppDbContext {
 
     public int SaveChanges();
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+    /// <summary>Save changes without soft deletion.</summary>
+    public Task<int> SaveChangesWithHardDeletionAsync(CancellationToken cancellationToken = default);
     public DbSet<TEntity> Set<TEntity>() where TEntity : class;
 }
