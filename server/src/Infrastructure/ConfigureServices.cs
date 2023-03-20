@@ -34,12 +34,12 @@ public static class ConfigureServices {
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string dbPath = Path.Combine(appDataPath, "humeum", dbSettings.Name + ".sqlite");
             string connectionString = $"Data Source={dbPath}";
-            services.AddDbContext<IAppDbContext, ApplicationDbContext>(options => options.UseSqlite());
+            services.AddDbContext<IAppDbContext, AppDbContext>(options => options.UseSqlite());
         } else if (dbSettings.Database.ToLower() == "postgres") {
             string connectionString = 
                 $"Host={dbSettings.Host}; Pooling=true; Database={dbSettings.Name}; Port=5432;" +
                 $"Username={dbSettings.Username}; Password={dbSettings.Password}";
-            services.AddDbContext<IAppDbContext, ApplicationDbContext>(options => options.UseNpgsql(connectionString));
+            services.AddDbContext<IAppDbContext, AppDbContext>(options => options.UseNpgsql(connectionString));
         } else {
             throw new InvalidOperationException($"Database configuration type '${dbSettings.Database}' is invalid; use 'sqlite' or 'postgres'.");
         }
@@ -94,7 +94,7 @@ public static class ConfigureServices {
 
                 o.User.RequireUniqueEmail = true;
             })
-            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
         services.AddScoped<IApplicationUserService, JwtApplicationUserService>();

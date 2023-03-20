@@ -16,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>, IAppDbContext {
+public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>, IAppDbContext {
     public DbSet<Profile> Profiles { get; set; } = null!;
     public DbSet<Transaction> Transactions { get; set; } = null!;
     public DbSet<TransactionType> TransactionTypes { get; set; } = null!;
@@ -29,7 +29,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     /// <summary>Boolean switch for enabling or disabling soft deletion in a given DbContext.</summary>
     bool _softDeletionMode = true;
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {
         SavingChanges += SetTimestampFields; // add event handler
     }
 
@@ -139,7 +139,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     /// Source: https://stackoverflow.com/a/74052251/4362799.
     /// </summary>
     private void SetTimestampFields(object? sender, SavingChangesEventArgs eventArgs) {
-        var context = (ApplicationDbContext)(sender ?? throw new InvalidOperationException());
+        var context = (AppDbContext)(sender ?? throw new InvalidOperationException());
 
         if (!context._softDeletionMode) {
             return; // soft deletion is disabled

@@ -43,7 +43,7 @@ public abstract class ApplicationUserService : IApplicationUserService {
     }
 
     protected ApplicationUser GetApplicationUser(IAppDbContext context, int userId) {
-        if (_context is ApplicationDbContext identityContext) {
+        if (_context is AppDbContext identityContext) {
             var appUser = identityContext.Users.FirstOrDefault(au => au.Id == userId);
 
             if (appUser is null) {

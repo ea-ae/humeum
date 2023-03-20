@@ -20,8 +20,8 @@ public class InMemorySqliteDbContextFixture : IDisposable {
     /// </summary>
     /// <returns>New DbContext instance ready for use.</returns>
     public IAppDbContext CreateDbContext() {
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>().UseSqlite(_connection).Options;
-        IAppDbContext context = new ApplicationDbContext(options);
+        var options = new DbContextOptionsBuilder<AppDbContext>().UseSqlite(_connection).Options;
+        IAppDbContext context = new AppDbContext(options);
         // context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
         return context;
