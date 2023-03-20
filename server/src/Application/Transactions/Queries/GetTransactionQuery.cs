@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using Application.Common.Exceptions;
-using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using AutoMapper;
@@ -30,7 +29,8 @@ public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, Tra
     public async Task<TransactionDto> Handle(GetTransactionQuery request, CancellationToken token) {
         var transaction = _context.Transactions.AsNoTracking()
                                                .Include(t => t.Categories)
-                                               .Include(t => t.PaymentTimeline.Frequency).ThenInclude(f => f!.TimeUnit) // in order to populate DTO
+                                               .Include(t => t.Type)                                                    // in order to populate DTO
+                                               .Include(t => t.PaymentTimeline.Frequency).ThenInclude(f => f!.TimeUnit) // as well as here
                                                .FirstOrDefault(t => t.Id == request.Transaction
                                                                     && t.ProfileId == request.Profile
                                                                     && t.DeletedAt == null);

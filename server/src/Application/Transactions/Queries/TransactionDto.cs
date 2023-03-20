@@ -11,6 +11,9 @@ public record TransactionDto {
     public required string Description { get; init; }
     public required decimal Amount { get; init; }
 
+    public required string TypeName { get; init; }
+    public required string TypeCode { get; init; }
+
     public required int TaxSchemeId { get; init; }
     public required int? AssetId { get; init; }
     public required IEnumerable<BriefTransactionCategory> Categories { get; init; }

@@ -78,24 +78,7 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
             throw new NotFoundValidationException(typeof(Transaction));
         }
 
-        // detach
-        ////var timeline = _context.Entry(transaction).Reference(t => t.PaymentTimeline).CurrentValue;
-        //if (transaction.PaymentTimeline.Frequency is not null) {
-        //    //_context.Entry(transaction.PaymentTimeline).Reference(pt => pt.Frequency).CurrentValue = null;
-        //}
-        //_context.Entry(transaction).Property("PaymentTimeline_FrequencyId").CurrentValue = null;
-
-        //_context.Entry(transaction).State = EntityState.Detached;
-
-        // unneeded tbh
-        //_context.Entry(transaction.PaymentTimeline).State = EntityState.Detached;
-        //_context.Entry(transaction.PaymentTimeline.Period).State = EntityState.Detached;
-        //if (transaction.PaymentTimeline.Frequency is not null) {
-        //    _context.Entry(transaction.PaymentTimeline.Frequency).State = EntityState.Detached;
-        //}
-
         var transactionType = _context.GetEnumerationEntityByCode<TransactionType>(request.Type);
-
         Timeline paymentTimeline;
 
         // update fields
