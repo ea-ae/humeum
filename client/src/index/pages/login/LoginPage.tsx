@@ -7,7 +7,7 @@ import Card from '../../components/cards/Card';
 import Layout from '../../components/layouts/Layout';
 import useAuth from '../../hooks/useAuth';
 
-function LoginIndex() {
+export default function LoginPage() {
   const [user, setUser] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
 
@@ -69,5 +69,3 @@ function LoginIndex() {
     </Layout>
   );
 }
-
-export default LoginIndex;

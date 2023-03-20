@@ -1,6 +1,6 @@
 import Card from '../../components/cards/Card';
 
-function HomeIndex() {
+export default function HomePage() {
   return (
     <Card className="max-w-fit">
       <h1 className="mb-4 text-xl">
@@ -18,5 +18,3 @@ function HomeIndex() {
     </Card>
   );
 }
-
-export default HomeIndex;

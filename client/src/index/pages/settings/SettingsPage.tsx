@@ -4,7 +4,7 @@ import Card from '../../components/cards/Card';
 import CurrencyInput from '../../components/cards/CurrencyInput';
 import PercentageInput from '../../components/cards/PercentageInput';
 
-function SettingsIndex() {
+export default function SettingsPage() {
   return (
     <div className="">
       <Card className="inline-flex max-w-fit">
@@ -39,5 +39,3 @@ function SettingsIndex() {
     </div>
   );
 }
-
-export default SettingsIndex;

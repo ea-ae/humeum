@@ -1,7 +1,5 @@
 import TransactionList from './TransactionList';
 
-function TransactionsIndex() {
+export default function TransactionsIndex() {
   return <TransactionList />;
 }
-
-export default TransactionsIndex;

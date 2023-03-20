@@ -1,7 +1,5 @@
 import TaxSchemeList from './TaxSchemeList';
 
-function TaxesIndex() {
+export default function TaxesPage() {
   return <TaxSchemeList />;
 }
-
-export default TaxesIndex;

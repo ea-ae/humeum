@@ -1,7 +1,5 @@
 import AssetList from './AssetList';
 
-function AssetsIndex() {
+export default function AssetsPage() {
   return <AssetList />;
 }
-
-export default AssetsIndex;
