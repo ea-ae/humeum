@@ -94,22 +94,22 @@ public class TransactionsController : ControllerBase {
         return new ObjectResult(null) { StatusCode = StatusCodes.Status201Created };
     }
 
-    ///// <summary>
-    ///// Replaces a transaction's fields.
-    ///// </summary>
-    ///// <response code="204">If transaction was successfully replaced.</response>
-    ///// <response code="400">If fields didn't satisfy domain invariants or the optional ones were only partially specified.</response>
-    ///// <response code="401">If a user route is accessed without an authentication token.</response>
-    ///// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
-    ///// <response code="404">If a profile, tax scheme, or asset with a specified ID could not be found.</response>
-    //[HttpPut("{transaction}")]
-    //[ProducesResponseType(StatusCodes.Status204NoContent)]
-    //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-    //[ProducesResponseType(StatusCodes.Status404NotFound)]
-    //public async Task<IActionResult> ReplaceTransaction(ReplaceTransactionCommand command) {
-    //    await _mediator.Send(command);
-    //    return NoContent();
-    //}
+    /// <summary>
+    /// Replaces a transaction's fields.
+    /// </summary>
+    /// <response code="204">If transaction was successfully replaced.</response>
+    /// <response code="400">If fields didn't satisfy domain invariants or the optional ones were only partially specified.</response>
+    /// <response code="401">If a user route is accessed without an authentication token.</response>
+    /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
+    /// <response code="404">If a profile, tax scheme, or asset with a specified ID could not be found.</response>
+    [HttpPut("{transaction}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ReplaceTransaction(ReplaceTransactionCommand command) {
+        await _mediator.Send(command);
+        return NoContent();
+    }
 
     /// <summary>
     /// Deletes a transaction with given ID from a profile.
