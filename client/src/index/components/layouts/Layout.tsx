@@ -9,7 +9,7 @@ interface Props {
   centerFooter?: boolean;
 }
 
-function Layout({ children, sidebar, centerFooter }: Props) {
+export default function Layout({ children, sidebar, centerFooter }: Props) {
   const appLayout = sidebar !== undefined;
   const footerLayout = centerFooter ? 'text-center' : '';
 
@@ -36,5 +36,3 @@ Layout.defaultProps = {
   sidebar: undefined,
   centerFooter: false,
 };
-
-export default Layout;

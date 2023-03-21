@@ -14,9 +14,7 @@ interface Props {
   readOnly?: boolean;
 }
 
-function TaxSchemeCard(props: Props) {
-  const { name, description, taxRate, discount, discountAge, maxIncomePercent, maxIncome, readOnly } = props;
-
+export default function TaxSchemeCard({ name, description, taxRate, discount, discountAge, maxIncomePercent, maxIncome, readOnly }: Props) {
   return (
     <Card>
       <h1 className="font-semibold">{name}</h1>
@@ -55,14 +53,6 @@ function TaxSchemeCard(props: Props) {
           tooltip="Maximum annual income sum that is discountable. Set to 0 if there is no maximum sum."
           defaultValue={maxIncome.toString()}
         />
-        {/* <Mui.ButtonGroup className="self-center my-4" variant="text">
-          <Mui.Button disabled={readOnly} className="border-0">
-            Save
-          </Mui.Button>
-          <Mui.Button disabled={readOnly} className={`border-0 ${readOnly ? '' : 'text-red-700 hover:bg-red-50'}`}>
-            Delete
-          </Mui.Button>
-        </Mui.ButtonGroup> */}
       </div>
     </Card>
   );
@@ -71,5 +61,3 @@ function TaxSchemeCard(props: Props) {
 TaxSchemeCard.defaultProps = {
   readOnly: false,
 };
-
-export default TaxSchemeCard;

@@ -8,7 +8,7 @@ interface Props {
   activeLabel: string;
 }
 
-function SidebarTab({ label, icon, path, activeLabel }: Props) {
+export default function SidebarTab({ label, icon, path, activeLabel }: Props) {
   const extraClasses =
     activeLabel.toLowerCase() === label.toLowerCase() ? 'shadow-[inset_0_10px_15px_-15px] shadow-black bg-secondary-500' : '';
 
@@ -21,5 +21,3 @@ function SidebarTab({ label, icon, path, activeLabel }: Props) {
     </Router.Link>
   );
 }
-
-export default SidebarTab;

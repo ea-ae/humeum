@@ -10,7 +10,7 @@ interface Props {
   activeTabLabel: string;
 }
 
-function Sidebar({ activeTabLabel }: Props) {
+export default function Sidebar({ activeTabLabel }: Props) {
   return (
     <div className="min-w-fit shadow-inner bg-secondary-400">
       <SidebarTab label="Home" activeLabel={activeTabLabel} icon={<HomeWorkOutlinedIcon />} path="/" />
@@ -21,5 +21,3 @@ function Sidebar({ activeTabLabel }: Props) {
     </div>
   );
 }
-
-export default Sidebar;

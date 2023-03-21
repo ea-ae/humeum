@@ -11,7 +11,7 @@ interface Props {
   readOnly?: boolean;
 }
 
-function AssetCard({ name, description, returnRate, standardDeviation, readOnly }: Props) {
+export default function AssetCard({ name, description, returnRate, standardDeviation, readOnly }: Props) {
   return (
     <Card>
       <h1 className="font-semibold">{name}</h1>
@@ -46,5 +46,3 @@ function AssetCard({ name, description, returnRate, standardDeviation, readOnly 
 AssetCard.defaultProps = {
   readOnly: false,
 };
-
-export default AssetCard;

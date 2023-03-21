@@ -3,7 +3,7 @@ import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import SavingsOutlinedIcon from '@mui/icons-material/SavingsOutlined';
 import * as Mui from '@mui/material';
 
-function AddItemDial() {
+export default function AddItemDial() {
   return (
     <Mui.SpeedDial
       ariaLabel="Add Item"
@@ -17,5 +17,3 @@ function AddItemDial() {
     </Mui.SpeedDial>
   );
 }
-
-export default AddItemDial;

@@ -7,7 +7,7 @@ interface Props {
   disabled?: boolean;
 }
 
-function CurrencyInput({ label, tooltip, defaultValue, disabled }: Props) {
+export default function CurrencyInput({ label, tooltip, defaultValue, disabled }: Props) {
   const typePattern = /^[0-9]{0,10}$/;
   const validPattern = /^[0-9]{1,10}$/;
 
@@ -28,5 +28,3 @@ CurrencyInput.defaultProps = {
   tooltip: '',
   disabled: false,
 };
-
-export default CurrencyInput;

@@ -11,7 +11,7 @@ interface Props {
   symbol?: string | null;
 }
 
-function Input({ label, tooltip, defaultValue, disabled, typePattern, validPattern, symbol }: Props) {
+export default function Input({ label, tooltip, defaultValue, disabled, typePattern, validPattern, symbol }: Props) {
   const [value, setValue] = React.useState<string>(defaultValue);
   const [isValid, setIsValid] = React.useState<boolean>(validPattern.test(value));
   const [hasChanged, setHasChanged] = React.useState<boolean>(false);
@@ -47,5 +47,3 @@ Input.defaultProps = {
   disabled: false,
   symbol: null,
 };
-
-export default Input;
