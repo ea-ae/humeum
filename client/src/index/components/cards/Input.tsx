@@ -29,7 +29,7 @@ export default function Input({ label, tooltip, defaultValue, disabled, typePatt
     <Mui.Tooltip title={tooltip} placement="top">
       <Mui.TextField
         disabled={disabled}
-        className="flex-grow my-4 mr-8"
+        className="flex-grow my-2 mr-8"
         id="return"
         label={label}
         variant="standard"

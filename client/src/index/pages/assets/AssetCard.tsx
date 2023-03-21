@@ -15,7 +15,7 @@ export default function AssetCard({ name, description, returnRate, standardDevia
   return (
     <Card>
       <h1 className="font-semibold">{name}</h1>
-      <p className="flex-grow pt-2 text-sm break-words">{description}</p>
+      <p className="flex-grow mt-2 mb-4 text-stone-700 text-sm break-words">{description}</p>
       <div className="flex flex-row">
         <PercentageInput
           disabled={readOnly}
