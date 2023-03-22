@@ -10,8 +10,8 @@ function TaxSchemeList() {
 
   React.useEffect(() => {
     if (taxSchemes === null) {
-      const taxSchemeClient = new TaxSchemesClient();
-      taxSchemeClient.getTaxSchemes(null).then((res) => setTaxSchemes(res.result));
+      const client = new TaxSchemesClient();
+      client.getTaxSchemes(null).then((res) => setTaxSchemes(res.result));
     }
   }, []);
 
@@ -34,10 +34,9 @@ function TaxSchemeList() {
     elements = Array(4)
       .fill(undefined)
       .map((_, index) => (
-        <Mui.Skeleton variant="rectangular" animation="wave" className="bg-primary-150">
+        // eslint-disable-next-line react/no-array-index-key
+        <Mui.Skeleton key={index} variant="rectangular" animation="wave" className="card bg-primary-150">
           <TaxSchemeCard
-            // eslint-disable-next-line react/no-array-index-key
-            key={index}
             name="a"
             description={'a'.repeat(165)}
             taxRate={0}

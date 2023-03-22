@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 import Card from '../../components/cards/Card';
 import CurrencyInput from '../../components/cards/CurrencyInput';
 import Input from '../../components/cards/Input';

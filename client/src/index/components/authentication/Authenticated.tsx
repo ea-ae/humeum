@@ -15,7 +15,7 @@ interface Props {
  * @returns Children or login redirect.
  */
 export default function Authenticated({ children }: Props) {
-  const authStatus = useAuth();
+  const { isAuthenticated } = useAuth();
 
-  return authStatus.isAuthenticated ? children : <Router.Navigate to="/login" replace />;
+  return isAuthenticated() ? children : <Router.Navigate to="/login" replace />;
 }

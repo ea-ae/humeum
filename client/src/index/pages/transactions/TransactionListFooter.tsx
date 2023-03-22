@@ -1,5 +1,5 @@
 import * as Mui from '@mui/material';
-import { GridFooterContainer } from '@mui/x-data-grid';
+import { GridFooter, GridFooterContainer } from '@mui/x-data-grid';
 
 export default function TransactionListFooter() {
   return (
@@ -7,6 +7,7 @@ export default function TransactionListFooter() {
       <Mui.Button variant="outlined" className="mx-4 whitespace-nowrap">
         Create new
       </Mui.Button>
+      <GridFooter />
     </GridFooterContainer>
   );
 }

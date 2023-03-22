@@ -15,19 +15,21 @@ export default function LoginPage() {
   const navigate = Router.useNavigate();
 
   React.useEffect(() => {
-    if (authStatus.isAuthenticated) {
+    if (authStatus.isAuthenticated()) {
       navigate('/');
     }
   }, [authStatus]);
 
   const login = () => {
+    if (authStatus.isAuthenticated()) return; // already authenticated, skip API call
+
     const usersClient = new UsersClient();
     usersClient
       .signInUser(user, password, false)
       .then((res) => {
         // eslint-disable-next-line no-console
         console.log(res);
-        authStatus.setAuthentication(true); // log in
+        authStatus.setAuthentication(res.result); // log in
       })
       .catch((err) => {
         // eslint-disable-next-line no-console

@@ -1,27 +1,21 @@
 import * as React from 'react';
 
-import { UsersClient } from '../../api/api';
+import { UserDto, UsersClient } from '../../api/api';
 import AuthContext from '../../contexts/AuthContext';
 
 /**
  * Checks whether the user is already authenticated through an HttpOnly cookie.
  * @returns Whether the user is authenticated.
  */
-function isPreAuthenticated(): Promise<boolean> {
+function isPreAuthenticated(): Promise<UserDto | null> {
   const client = new UsersClient();
   const authenticated = client
     .getCurrentUser()
-    .then((res) => {
-      if (res.status === 200) {
-        // eslint-disable-next-line no-console
-        console.log('Logged in');
-      }
-      return true;
-    })
+    .then((res) => res.result)
     .catch((err) => {
       // eslint-disable-next-line no-console
       console.log(err);
-      return false;
+      return null;
     });
 
   return authenticated;
@@ -39,15 +33,17 @@ interface Props {
  * @returns Provider component.
  */
 export default function ProvideAuth({ children }: Props) {
-  const [isAuthenticated, setIsAuthenticated] = React.useState<boolean>(false);
+  const [user, setUser] = React.useState<UserDto | null>(null);
 
   React.useEffect(() => {
-    isPreAuthenticated().then(setIsAuthenticated);
+    isPreAuthenticated().then(setUser);
   }, []);
 
-  const setAuthentication = (authenticated: boolean) => {
-    setIsAuthenticated(authenticated);
+  const setAuthentication = (authentication: UserDto | null) => {
+    setUser(authentication);
   };
 
-  return <Provider value={{ isAuthenticated, setAuthentication }}>{children}</Provider>;
+  const isAuthenticated = () => user !== null;
+
+  return <Provider value={{ user, setAuthentication, isAuthenticated }}>{children}</Provider>;
 }

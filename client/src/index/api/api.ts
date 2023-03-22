@@ -1130,9 +1130,11 @@ export class TransactionsClient extends ApiClient {
      * Get transactions for a specified user with optional filtering conditions.
      * @param startBefore (optional) 
      * @param startAfter (optional) 
+     * @param offset (optional) 
+     * @param limit (optional) 
      * @return Returns the transactions.
      */
-    getTransactions(user: number, profile: number, startBefore: Date | null | undefined, startAfter: Date | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<TransactionDto[]>> {
+    getTransactions(user: number, profile: number, startBefore: Date | null | undefined, startAfter: Date | null | undefined, offset: number | undefined, limit: number | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<TransactionDto[]>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/transactions?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -1144,6 +1146,14 @@ export class TransactionsClient extends ApiClient {
             url_ += "StartBefore=" + encodeURIComponent(startBefore ? "" + startBefore.toISOString() : "") + "&";
         if (startAfter !== undefined && startAfter !== null)
             url_ += "StartAfter=" + encodeURIComponent(startAfter ? "" + startAfter.toISOString() : "") + "&";
+        if (offset === null)
+            throw new Error("The parameter 'offset' cannot be null.");
+        else if (offset !== undefined)
+            url_ += "Offset=" + encodeURIComponent("" + offset) + "&";
+        if (limit === null)
+            throw new Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "Limit=" + encodeURIComponent("" + limit) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
@@ -1425,6 +1435,128 @@ export class TransactionsClient extends ApiClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Promise.resolve<SwaggerResponse<TransactionDto>>(new SwaggerResponse(status, _headers, null as any));
+    }
+
+    /**
+     * Replaces a transaction's fields.
+     * @param name (optional) 
+     * @param description (optional) 
+     * @param amount (optional) 
+     * @param type (optional) 
+     * @param paymentStart (optional) 
+     * @param taxScheme (optional) 
+     * @param asset (optional) 
+     * @param paymentEnd (optional) 
+     * @param timeUnit (optional) 
+     * @param timesPerCycle (optional) 
+     * @param unitsInCycle (optional) 
+     * @return If transaction was successfully replaced.
+     */
+    replaceTransaction(profile: number, transaction: number, name: string | null | undefined, description: string | null | undefined, amount: number | null | undefined, type: string | undefined, paymentStart: Date | null | undefined, taxScheme: number | null | undefined, asset: number | null | undefined, paymentEnd: Date | null | undefined, timeUnit: string | null | undefined, timesPerCycle: number | null | undefined, unitsInCycle: number | null | undefined, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+        let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/transactions/{transaction}?";
+        if (profile === undefined || profile === null)
+            throw new Error("The parameter 'profile' must be defined.");
+        url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
+        if (transaction === undefined || transaction === null)
+            throw new Error("The parameter 'transaction' must be defined.");
+        url_ = url_.replace("{Transaction}", encodeURIComponent("" + transaction));
+        if (user === undefined || user === null)
+            throw new Error("The parameter 'user' must be defined.");
+        url_ = url_.replace("{user}", encodeURIComponent("" + user));
+        if (name !== undefined && name !== null)
+            url_ += "Name=" + encodeURIComponent("" + name) + "&";
+        if (description !== undefined && description !== null)
+            url_ += "Description=" + encodeURIComponent("" + description) + "&";
+        if (amount !== undefined && amount !== null)
+            url_ += "Amount=" + encodeURIComponent("" + amount) + "&";
+        if (type === null)
+            throw new Error("The parameter 'type' cannot be null.");
+        else if (type !== undefined)
+            url_ += "Type=" + encodeURIComponent("" + type) + "&";
+        if (paymentStart !== undefined && paymentStart !== null)
+            url_ += "PaymentStart=" + encodeURIComponent(paymentStart ? "" + paymentStart.toISOString() : "") + "&";
+        if (taxScheme !== undefined && taxScheme !== null)
+            url_ += "TaxScheme=" + encodeURIComponent("" + taxScheme) + "&";
+        if (asset !== undefined && asset !== null)
+            url_ += "Asset=" + encodeURIComponent("" + asset) + "&";
+        if (paymentEnd !== undefined && paymentEnd !== null)
+            url_ += "PaymentEnd=" + encodeURIComponent(paymentEnd ? "" + paymentEnd.toISOString() : "") + "&";
+        if (timeUnit !== undefined && timeUnit !== null)
+            url_ += "TimeUnit=" + encodeURIComponent("" + timeUnit) + "&";
+        if (timesPerCycle !== undefined && timesPerCycle !== null)
+            url_ += "TimesPerCycle=" + encodeURIComponent("" + timesPerCycle) + "&";
+        if (unitsInCycle !== undefined && unitsInCycle !== null)
+            url_ += "UnitsInCycle=" + encodeURIComponent("" + unitsInCycle) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "PUT",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processReplaceTransaction(_response);
+        });
+    }
+
+    protected processReplaceTransaction(response: AxiosResponse): Promise<SwaggerResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 401) {
+            const _responseText = response.data;
+            let result401: any = null;
+            let resultData401  = _responseText;
+            result401 = ProblemDetails.fromJS(resultData401);
+            return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            let result403: any = null;
+            let resultData403  = _responseText;
+            result403 = ProblemDetails.fromJS(resultData403);
+            return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
+
+        } else if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
+
+        } else if (status === 400) {
+            const _responseText = response.data;
+            let result400: any = null;
+            let resultData400  = _responseText;
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("If fields didn\'t satisfy domain invariants or the optional ones were only partially specified.", status, _responseText, _headers, result400);
+
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("If a profile, tax scheme, or asset with a specified ID could not be found.", status, _responseText, _headers, result404);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
@@ -2314,13 +2446,18 @@ export interface IGetTaxSchemesQuery {
 
 export class TransactionDto implements ITransactionDto {
     id!: number;
+    name!: string;
+    description!: string;
     amount!: number;
+    typeName!: string;
+    typeCode!: string;
     taxSchemeId!: number;
     assetId?: number | undefined;
     categories!: BriefTransactionCategory[];
-    paymentTimelineFrequencyUnitName?: string | undefined;
-    paymentTimelineFrequencyUnitCode?: string | undefined;
-    paymentTimelineFrequencyTimesPerUnit?: number | undefined;
+    paymentTimelineFrequencyTimeUnitName?: string | undefined;
+    paymentTimelineFrequencyTimeUnitCode?: string | undefined;
+    paymentTimelineFrequencyTimesPerCycle?: number | undefined;
+    paymentTimelineFrequencyUnitsInCycle?: number | undefined;
     paymentTimelinePeriodStart!: Date;
     paymentTimelinePeriodEnd?: Date | undefined;
 
@@ -2339,7 +2476,11 @@ export class TransactionDto implements ITransactionDto {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
             this.amount = _data["amount"];
+            this.typeName = _data["typeName"];
+            this.typeCode = _data["typeCode"];
             this.taxSchemeId = _data["taxSchemeId"];
             this.assetId = _data["assetId"];
             if (Array.isArray(_data["categories"])) {
@@ -2347,9 +2488,10 @@ export class TransactionDto implements ITransactionDto {
                 for (let item of _data["categories"])
                     this.categories!.push(BriefTransactionCategory.fromJS(item));
             }
-            this.paymentTimelineFrequencyUnitName = _data["paymentTimelineFrequencyUnitName"];
-            this.paymentTimelineFrequencyUnitCode = _data["paymentTimelineFrequencyUnitCode"];
-            this.paymentTimelineFrequencyTimesPerUnit = _data["paymentTimelineFrequencyTimesPerUnit"];
+            this.paymentTimelineFrequencyTimeUnitName = _data["paymentTimelineFrequencyTimeUnitName"];
+            this.paymentTimelineFrequencyTimeUnitCode = _data["paymentTimelineFrequencyTimeUnitCode"];
+            this.paymentTimelineFrequencyTimesPerCycle = _data["paymentTimelineFrequencyTimesPerCycle"];
+            this.paymentTimelineFrequencyUnitsInCycle = _data["paymentTimelineFrequencyUnitsInCycle"];
             this.paymentTimelinePeriodStart = _data["paymentTimelinePeriodStart"] ? new Date(_data["paymentTimelinePeriodStart"].toString()) : <any>undefined;
             this.paymentTimelinePeriodEnd = _data["paymentTimelinePeriodEnd"] ? new Date(_data["paymentTimelinePeriodEnd"].toString()) : <any>undefined;
         }
@@ -2365,7 +2507,11 @@ export class TransactionDto implements ITransactionDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
         data["amount"] = this.amount;
+        data["typeName"] = this.typeName;
+        data["typeCode"] = this.typeCode;
         data["taxSchemeId"] = this.taxSchemeId;
         data["assetId"] = this.assetId;
         if (Array.isArray(this.categories)) {
@@ -2373,9 +2519,10 @@ export class TransactionDto implements ITransactionDto {
             for (let item of this.categories)
                 data["categories"].push(item.toJSON());
         }
-        data["paymentTimelineFrequencyUnitName"] = this.paymentTimelineFrequencyUnitName;
-        data["paymentTimelineFrequencyUnitCode"] = this.paymentTimelineFrequencyUnitCode;
-        data["paymentTimelineFrequencyTimesPerUnit"] = this.paymentTimelineFrequencyTimesPerUnit;
+        data["paymentTimelineFrequencyTimeUnitName"] = this.paymentTimelineFrequencyTimeUnitName;
+        data["paymentTimelineFrequencyTimeUnitCode"] = this.paymentTimelineFrequencyTimeUnitCode;
+        data["paymentTimelineFrequencyTimesPerCycle"] = this.paymentTimelineFrequencyTimesPerCycle;
+        data["paymentTimelineFrequencyUnitsInCycle"] = this.paymentTimelineFrequencyUnitsInCycle;
         data["paymentTimelinePeriodStart"] = this.paymentTimelinePeriodStart ? formatDate(this.paymentTimelinePeriodStart) : <any>undefined;
         data["paymentTimelinePeriodEnd"] = this.paymentTimelinePeriodEnd ? formatDate(this.paymentTimelinePeriodEnd) : <any>undefined;
         return data;
@@ -2384,13 +2531,18 @@ export class TransactionDto implements ITransactionDto {
 
 export interface ITransactionDto {
     id: number;
+    name: string;
+    description: string;
     amount: number;
+    typeName: string;
+    typeCode: string;
     taxSchemeId: number;
     assetId?: number | undefined;
     categories: BriefTransactionCategory[];
-    paymentTimelineFrequencyUnitName?: string | undefined;
-    paymentTimelineFrequencyUnitCode?: string | undefined;
-    paymentTimelineFrequencyTimesPerUnit?: number | undefined;
+    paymentTimelineFrequencyTimeUnitName?: string | undefined;
+    paymentTimelineFrequencyTimeUnitCode?: string | undefined;
+    paymentTimelineFrequencyTimesPerCycle?: number | undefined;
+    paymentTimelineFrequencyUnitsInCycle?: number | undefined;
     paymentTimelinePeriodStart: Date;
     paymentTimelinePeriodEnd?: Date | undefined;
 }
