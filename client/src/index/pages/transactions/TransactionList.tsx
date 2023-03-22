@@ -15,7 +15,7 @@ function TransactionList() {
   React.useEffect(() => {
     if (user !== null && transactions === null) {
       const client = new TransactionsClient();
-      client.getTransactions(user.id, user.profiles[0].id, null, null, undefined, undefined, undefined).then((res) => {
+      client.getTransactions(user.id, user.profiles[0].id).then((res) => {
         setTransactions(res.result);
       });
     }
