@@ -12,7 +12,7 @@ using Web.Filters;
 namespace Web.Controllers;
 
 /// <inheritdoc cref="Domain.ProfileAggregate.Profile"/>
-[Route("api/v1/users/{user}/[controller]")]
+[Route("api/v1/users/{User}/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleUserData")]
 [ApplicationExceptionFilter]
 [CsrfXHeaderFilter]
@@ -46,7 +46,7 @@ public class ProfilesController : ControllerBase {
     /// <response code="401">If a user route is accessed without an authentication token.</response>
     /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     /// <response code="404">Profile with given ID was not found for user.</response>
-    [HttpGet("{profile}")]
+    [HttpGet("{Profile}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ProfileDto>> GetProfile(GetProfileQuery query) {
@@ -77,7 +77,7 @@ public class ProfilesController : ControllerBase {
     /// <response code="401">If a user route is accessed without an authentication token.</response>
     /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     /// <response code="404">If a profile with the given ID was not found.</response>
-    [HttpDelete("{profile}")]
+    [HttpDelete("{Profile}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteProfile(DeleteProfileCommand command) {

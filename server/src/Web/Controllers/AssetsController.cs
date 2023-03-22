@@ -48,7 +48,7 @@ public class AssetsController : ControllerBase {
     /// <response code="404">If asset or profile was not found.</response>
     /// <response code="401">If a user route is accessed without an authentication token.</response>
     /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
-    [HttpGet("{asset}")]
+    [HttpGet("{Asset}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<AssetDto>> GetAsset(GetAssetQuery query) {
@@ -80,7 +80,7 @@ public class AssetsController : ControllerBase {
     /// <response code="401">If a user route is accessed without an authentication token.</response>
     /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     /// <response code="404">If asset or profile was not found.</response>
-    [HttpDelete("{asset}")]
+    [HttpDelete("{Asset}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteTransaction(DeleteAssetCommand command) {

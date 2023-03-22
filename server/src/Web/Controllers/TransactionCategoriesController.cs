@@ -39,7 +39,7 @@ public class TransactionCategoriesController : ControllerBase {
     /// <summary>
     /// Get details of a category with given ID.
     /// </summary>
-    [HttpGet("{category}")]
+    [HttpGet("{Category}")]
     public async Task<ActionResult<CategoryDto>> GetCategory(GetCategoryQuery query) {
         var category = await _mediator.Send(query);
         return Ok(category);
@@ -69,7 +69,7 @@ public class TransactionCategoriesController : ControllerBase {
     /// <response code="401">If a user route is accessed without an authentication token.</response>
     /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     /// <response code="404">If a profile or profile-owned category with the specified ID could not be found.</response>
-    [HttpDelete("{category}")]
+    [HttpDelete("{Category}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteCategory(DeleteCategoryCommand command) {
