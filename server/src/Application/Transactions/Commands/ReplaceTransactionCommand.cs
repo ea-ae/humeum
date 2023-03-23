@@ -43,7 +43,7 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
         _context = context;
     }
 
-    public async Task<Unit> Handle(ReplaceTransactionCommand request, CancellationToken token) {
+    public async Task<Unit> Handle(ReplaceTransactionCommand request, CancellationToken token = default) {
         // validation
 
         List<object?> recurringTransactionFields = new() { // fields required for recurrent transactions
@@ -103,7 +103,6 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
 
         _context.Update(transaction);
         _context.Update(transaction.PaymentTimeline);
-        //_context.Update(transaction.PaymentTimeline.Frequency);
         await _context.SaveChangesWithHardDeletionAsync(token);
 
         return Unit.Value;

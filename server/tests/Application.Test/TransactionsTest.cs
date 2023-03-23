@@ -6,6 +6,7 @@ using Application.Transactions.Queries;
 
 using AutoMapper;
 
+using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 
@@ -172,5 +173,52 @@ public class TransactionsTest {
         Assert.Equal(command.TimesPerCycle, transaction.PaymentTimeline.Frequency?.TimesPerCycle);
         Assert.Equal(command.UnitsInCycle, transaction.PaymentTimeline.Frequency?.UnitsInCycle);
         Assert.Null(transaction.DeletedAt);
+    }
+
+    [Fact]
+    public async Task ReplaceTransactionCommand_OneTimeTransaction_ReplacesWithRecurringTransaction() {
+        var context = _dbContextFixture.CreateDbContext();
+        var handler = new ReplaceTransactionCommandHandler(context);
+
+        var profile = new Domain.ProfileAggregate.Profile(1, "Default");
+        context.Profiles.Add(profile);
+        await context.SaveChangesAsync();
+
+        // create data
+
+        var transactionType = TransactionType.Always;
+        context.TransactionTypes.Attach(transactionType);
+        var taxScheme = context.TaxSchemes.First(t => t.Id == 1);
+        var transaction = new Transaction("Hello", null, 10, transactionType, new Timeline(new TimePeriod(new DateOnly(2022, 1, 1))), profile, taxScheme);
+        context.Transactions.Add(transaction);
+        await context.SaveChangesAsync();
+
+        // replace data
+
+        ReplaceTransactionCommand command = new() {
+            Transaction = transaction.Id,
+            Profile = profile.Id,
+            Amount = -10,
+            Name = null,
+            Description = null,
+            Type = "RETIREMENTONLY",
+            PaymentStart = new DateOnly(2016, 1, 1),
+            PaymentEnd = new DateOnly(2021, 1, 1),
+            TimeUnit = "WEEKS",
+            TimesPerCycle = 1,
+            UnitsInCycle = 1,
+            TaxScheme = 2,
+        };
+
+        var result = await handler.Handle(command);
+        await context.SaveChangesAsync();
+        await context.Entry(transaction).ReloadAsync(); // reload data
+
+        // assert that changed fields match
+
+        Assert.Equal(command.Amount, transaction.Amount);
+        Assert.Equal(command.Name, transaction.Name);
+        Assert.Equal(TransactionType.RetirementOnly.Id, transaction.TypeId);
+        Assert.Equal(command.TaxScheme, transaction.TaxSchemeId);
     }
 }
