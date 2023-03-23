@@ -99,10 +99,6 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
                                 paymentTimeline, taxScheme, asset);
         }
 
-        // workaround for EF bug with immutable owned entities
-
-        _context.Update(transaction);
-        _context.Update(transaction.PaymentTimeline);
         await _context.SaveChangesWithHardDeletionAsync(token);
 
         return Unit.Value;

@@ -208,6 +208,7 @@ public class TransactionsTest {
             TimesPerCycle = 1,
             UnitsInCycle = 1,
             TaxScheme = 2,
+            Asset = 1
         };
 
         var result = await handler.Handle(command);
@@ -219,6 +220,12 @@ public class TransactionsTest {
         Assert.Equal(command.Amount, transaction.Amount);
         Assert.Equal(command.Name, transaction.Name);
         Assert.Equal(TransactionType.RetirementOnly.Id, transaction.TypeId);
+        Assert.Equal(command.PaymentStart, transaction.PaymentTimeline.Period.Start);
+        Assert.Equal(command.PaymentEnd, transaction.PaymentTimeline.Period.End);
+        Assert.Equal(TimeUnit.Weeks.Id, transaction.PaymentTimeline.Frequency?.TimeUnitId);
+        Assert.Equal(command.TimesPerCycle, transaction.PaymentTimeline.Frequency?.TimesPerCycle);
+        Assert.Equal(command.UnitsInCycle, transaction.PaymentTimeline.Frequency?.UnitsInCycle);
         Assert.Equal(command.TaxScheme, transaction.TaxSchemeId);
+        Assert.Equal(command.Asset, transaction.AssetId);
     }
 }
