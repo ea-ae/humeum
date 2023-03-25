@@ -1,7 +1,7 @@
 ﻿namespace Application.Transactions.Queries;
 
 public record TransactionDto {
-    public record BriefTransactionCategory {
+    public record BriefRelatedResourceDto {
         public required int Id { get; init; }
         public required string Name { get; init; }
     }
@@ -14,9 +14,11 @@ public record TransactionDto {
     public required string TypeName { get; init; }
     public required string TypeCode { get; init; }
 
-    public required int TaxSchemeId { get; init; }
-    public required int? AssetId { get; init; }
-    public required IEnumerable<BriefTransactionCategory> Categories { get; init; }
+    public required BriefRelatedResourceDto TaxScheme { get; init; }
+    
+    public required BriefRelatedResourceDto? Asset { get; init; }
+
+    public required IEnumerable<BriefRelatedResourceDto> Categories { get; init; }
 
     public required string? PaymentTimelineFrequencyTimeUnitName { get; init; }
     public required string? PaymentTimelineFrequencyTimeUnitCode { get; init; }

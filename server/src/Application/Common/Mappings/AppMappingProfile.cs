@@ -19,13 +19,18 @@ namespace Application.Common.Mappings;
 
 public class AppMappingProfile : Profile {
     public AppMappingProfile() {
-        CreateMap<TransactionCategory, CategoryDto>()
-            .ForMember(dest => dest.Default, 
-                       o => o.MapFrom(src => src.ProfileId == null));
         CreateMap<Transaction, TransactionDto>()
+            .ForMember(dest => dest.TaxScheme,
+                       o => o.MapFrom(src => new TransactionDto.BriefRelatedResourceDto { Id = src.TaxScheme.Id, Name = src.TaxScheme.Name}))
+            .ForMember(dest => dest.Asset,
+                       o => o.MapFrom(src => src.Asset == null ? null : new TransactionDto.BriefRelatedResourceDto { Id = src.Asset.Id, Name = src.Asset.Name }))
             .ForMember(dest => dest.Categories,
                        o => o.MapFrom(src => src.Categories.Select(
-                           c => new TransactionDto.BriefTransactionCategory { Id = c.Id, Name = c.Name})));
+                           c => new TransactionDto.BriefRelatedResourceDto { Id = c.Id, Name = c.Name})));
+
+        CreateMap<TransactionCategory, CategoryDto>()
+            .ForMember(dest => dest.Default,
+                       o => o.MapFrom(src => src.ProfileId == null));
 
         CreateMap<AssetType, AssetTypeDto>();
         CreateMap<Asset, AssetDto>()
