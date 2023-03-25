@@ -1,4 +1,5 @@
 import * as Mui from '@mui/material';
+import axios from 'axios';
 import * as React from 'react';
 
 import { TaxSchemeDto, TaxSchemesClient } from '../../api/api';
@@ -9,10 +10,14 @@ function TaxSchemeList() {
   const [taxSchemes, setTaxSchemes] = useCache<TaxSchemeDto[] | null>('taxSchemes', null);
 
   React.useEffect(() => {
+    const cancelSource = axios.CancelToken.source();
+
     if (taxSchemes === null) {
       const client = new TaxSchemesClient();
-      client.getTaxSchemes(null).then((res) => setTaxSchemes(res.result));
+      client.getTaxSchemes(null, cancelSource.token).then((res) => setTaxSchemes(res.result));
     }
+
+    return () => cancelSource.cancel();
   }, []);
 
   let elements: React.ReactElement[];

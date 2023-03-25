@@ -1,5 +1,6 @@
 import * as Mui from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import axios from 'axios';
 import * as React from 'react';
 
 import { TransactionDto, TransactionsClient } from '../../api/api';
@@ -13,12 +14,16 @@ function TransactionList() {
   const { user } = useAuth();
 
   React.useEffect(() => {
+    const cancelSource = axios.CancelToken.source();
+
     if (user !== null && transactions === null) {
       const client = new TransactionsClient();
-      client.getTransactions(user.id, user.profiles[0].id).then((res) => {
+      client.getTransactions(user.id, user.profiles[0].id, undefined, undefined, undefined, undefined, cancelSource.token).then((res) => {
         setTransactions(res.result);
       });
     }
+
+    return () => cancelSource.cancel();
   }, []);
 
   const transactionRows = React.useMemo(() => {
