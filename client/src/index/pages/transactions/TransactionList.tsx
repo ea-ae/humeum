@@ -18,9 +18,11 @@ function TransactionList() {
 
     if (user !== null && transactions === null) {
       const client = new TransactionsClient();
-      client.getTransactions(user.id, user.profiles[0].id, undefined, undefined, undefined, undefined, cancelSource.token).then((res) => {
-        setTransactions(res.result);
-      });
+      client
+        .getTransactions(user.profiles[0].id, user.id.toString(), undefined, undefined, undefined, undefined, cancelSource.token)
+        .then((res) => {
+          setTransactions(res.result);
+        });
     }
 
     return () => cancelSource.cancel();
@@ -28,13 +30,20 @@ function TransactionList() {
 
   const transactionRows = React.useMemo(() => {
     if (transactions !== null) {
-      const rows = transactions.map((transaction) => ({
-        id: transaction.id,
-        name: transaction.name,
-        amount: transaction.amount,
-        date: '',
-        category: '',
-      }));
+      const rows = transactions.map((transaction) => {
+        const start = transaction.paymentTimelinePeriodStart.toLocaleDateString();
+        const end = transaction.paymentTimelinePeriodEnd?.toLocaleDateString();
+        const date = end ? `${start} — ${end}` : start;
+
+        return {
+          id: transaction.id,
+          name: transaction.name ?? 'Unnamed transaction',
+          amount: transaction.amount,
+          date,
+          taxScheme: transaction.taxScheme.name,
+          asset: transaction.asset?.name ?? '',
+        };
+      });
       return rows;
     }
     return [];
@@ -58,15 +67,6 @@ function TransactionList() {
       cellClassName: (params) => (params.value > 0 ? 'text-green-700' : 'text-red-700'),
     },
     { field: 'date', headerName: 'Date', type: 'date', flex: 1, minWidth: 100, editable: true },
-    {
-      field: 'category',
-      headerName: 'Category',
-      type: 'multiSelect',
-      flex: 1,
-      minWidth: 100,
-      editable: true,
-      valueOptions: ['Essentials', 'Luxuries', 'Salary', 'Investing'],
-    },
     {
       field: 'taxScheme',
       headerName: 'Tax Scheme',
