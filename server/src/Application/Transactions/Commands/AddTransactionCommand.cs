@@ -11,7 +11,6 @@ using Domain.TransactionAggregate.ValueObjects;
 namespace Application.Transactions.Commands;
 
 public record AddTransactionCommand : ICommand<int> {
-    [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }
 
     public string? Name { get; init; }

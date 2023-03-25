@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Assets.Queries;
 
 public record GetAssetsQuery: IQuery<List<AssetDto>> {
-    [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }
 }
 

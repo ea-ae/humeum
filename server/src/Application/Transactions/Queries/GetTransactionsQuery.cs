@@ -12,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Transactions.Queries;
 
 public record GetTransactionsQuery : IPaginatedQuery<TransactionDto> {
-    [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }
 
     public DateOnly? StartBefore { get; init; }

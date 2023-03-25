@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.TransactionCategories.Commands;
 
 public record DeleteCategoryCommand : ICommand {
-    [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }
     [Required] public required int Category { get; init; }
 }

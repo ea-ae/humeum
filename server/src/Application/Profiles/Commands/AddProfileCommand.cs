@@ -7,8 +7,7 @@ using Domain.ProfileAggregate;
 namespace Application.Profiles.Commands;
 
 public record AddProfileCommand : ICommand<int> {
-    [Required] public required int User { get; init; }
-
+    public required int User { get; init; }
     [Required] public required string Name { get; init; }
     public string? Description { get; init; }
     public decimal? WithdrawalRate { get; init; }

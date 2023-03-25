@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Assets.Commands;
 
 public record DeleteAssetCommand : ICommand {
-    [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }
     [Required] public required int Asset { get; init; }
 }

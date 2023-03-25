@@ -57,9 +57,9 @@ public class TransactionCategoriesController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> AddCategory(AddCategoryCommand command) {
+    public async Task<IActionResult> AddCategory(int user, AddCategoryCommand command) {
         int id = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetCategory), new { command.User, command.Profile, Category = id }, null);
+        return CreatedAtAction(nameof(GetCategory), new { user, command.Profile, Category = id }, null);
     }
 
     /// <summary>

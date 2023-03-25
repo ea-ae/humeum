@@ -8,7 +8,6 @@ using Domain.TransactionCategoryAggregate;
 namespace Application.TransactionCategories.Commands;
 
 public record AddCategoryCommand : ICommand<int> {
-    [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }
 
     [Required] public required string Name { get; init; }

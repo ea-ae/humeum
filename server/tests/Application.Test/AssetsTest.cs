@@ -36,7 +36,6 @@ public class AssetsTest {
         // create asset
 
         AddAssetCommand command = new() {
-            User = 1,
             Profile = profile.Id,
             Name = "Custom asset",
             Description = "My asset description",
@@ -75,7 +74,6 @@ public class AssetsTest {
         // get asset DTO
 
         GetAssetQuery query = new() {
-            User = 1,
             Profile = profile.Id,
             Asset = asset.Id
         };

@@ -72,9 +72,9 @@ public class TransactionsController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> AddTransaction(AddTransactionCommand command) {
+    public async Task<IActionResult> AddTransaction(int user, AddTransactionCommand command) {
         int id = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetTransaction), new { command.User, command.Profile, Transaction = id }, null);
+        return CreatedAtAction(nameof(GetTransaction), new { user, command.Profile, Transaction = id }, null);
     }
 
     /// <summary>

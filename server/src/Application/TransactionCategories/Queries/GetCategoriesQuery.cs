@@ -16,7 +16,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Transactions.Queries;
 
 public record GetCategoriesQuery : IQuery<List<CategoryDto>> {
-    [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }
 }
 

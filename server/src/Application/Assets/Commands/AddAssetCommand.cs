@@ -9,7 +9,6 @@ using Domain.TransactionAggregate.ValueObjects;
 namespace Application.Assets.Commands;
 
 public record AddAssetCommand : ICommand<int> {
-    [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }
     
     [Required] public required string Name { get; init; }
