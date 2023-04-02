@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
@@ -9,6 +10,8 @@ using Domain.Common.Models;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Web.Filters;
 
@@ -28,13 +31,28 @@ public class ApplicationResultFilterAttribute : ResultFilterAttribute {
                 if (result.Success) {
                     actionResult.Value = result.Value;
                 } else {
-                    var error = result.Errors.First();
-                    var problemDetails = new ProblemDetails {
-                        Title = error.Title,
-                        Detail = error.Message,
-                        Status = error.StatusCode
-                    };
-                    context.Result = new ObjectResult(problemDetails) { StatusCode = error.StatusCode };
+                    ProblemDetails details;
+                    int statusCode;
+
+                    if (result.Errors.Count == 1) {
+                        var error = result.Errors.First();
+                        statusCode = error.StatusCode;
+
+                        details = new ProblemDetails {
+                            Title = error.Title,
+                            Detail = error.Message,
+                            Status = statusCode
+                        };
+                    } else {
+                        var errors = result.Errors.ToDictionary(e => e.Title, e => new[] { e.Message });
+                        statusCode = StatusCodes.Status400BadRequest;
+
+                        details = new ValidationProblemDetails(errors) {
+                            Title = "Error",
+                            Status = statusCode
+                        };
+                    }
+                    context.Result = new ObjectResult(details) { StatusCode = statusCode };
                 }
             }
         }
