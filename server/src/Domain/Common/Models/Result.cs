@@ -27,9 +27,7 @@ public class Result<T, E> : IResult<T, E> where E : Exception {
     public void TryUnwrap(ref T value, Action<IReadOnlyCollection<E>>? handleErrors) {
         if (Success) {
             value = _value!;
-        } else if (handleErrors is not null) {
-            handleErrors.Invoke(Errors);
-        }
+        } else handleErrors?.Invoke(Errors);
     }
 
     public T UnwrapOr(Func<IReadOnlyCollection<E>, T> fallback) => Success ? Value : fallback.Invoke(Errors);

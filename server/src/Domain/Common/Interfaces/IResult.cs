@@ -5,7 +5,7 @@
 /// </summary>
 /// <typeparam name="T">Type of result in case of success.</typeparam>
 /// <typeparam name="E">List of exceptions in case of failure.</typeparam>
-public interface IResult<T, E> where E : Exception {
+public interface IResult<T, out E> where E : Exception {
     /// <summary>Whether the result is a success.</summary>
     bool Success { get; }
     /// <summary>Result value.</summary>

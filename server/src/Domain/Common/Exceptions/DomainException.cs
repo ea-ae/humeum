@@ -3,10 +3,8 @@
 /// <summary>
 /// Domain exceptions are the validation exceptions of the domain layer, and signify violation of invariants.
 /// </summary>
-public class DomainException : Exception {
-    public DomainException(Exception inner) : base($"{inner.GetType().Name}: {inner.Message}", inner) { }
-
+public class DomainException : ValidationException {
     public DomainException(string message) : base(message) { }
 
-    public DomainException(string message, Exception inner) : base(message, inner) { }
+    public DomainException(Exception inner) : base(inner) { }
 }
