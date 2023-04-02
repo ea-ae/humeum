@@ -52,7 +52,7 @@ public class AssetsController : ControllerBase {
     /// <response code="401">If a user route is accessed without an authentication token.</response>
     /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     [HttpGet("{Asset}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AssetDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IResult<AssetDto>>> GetAsset(GetAssetQuery query) {
         var asset = await _mediator.Send(query);
