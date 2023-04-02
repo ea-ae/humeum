@@ -1,5 +1,5 @@
-﻿using Domain.Common;
-using Domain.Common.Exceptions;
+﻿using Domain.Common.Exceptions;
+using Domain.Common.Models;
 using Domain.TaxSchemeAggregate.ValueObjects;
 using Domain.TransactionAggregate;
 

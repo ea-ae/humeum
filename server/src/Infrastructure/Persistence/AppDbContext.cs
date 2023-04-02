@@ -1,7 +1,7 @@
 ﻿using Application.Common.Interfaces;
 
 using Domain.AssetAggregate;
-using Domain.Common;
+using Domain.Common.Models;
 using Domain.ProfileAggregate;
 using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate;

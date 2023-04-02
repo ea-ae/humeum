@@ -10,7 +10,7 @@ namespace Application.Assets.Commands;
 
 public record AddAssetCommand : ICommand<int> {
     [Required] public required int Profile { get; init; }
-    
+
     [Required] public required string Name { get; init; }
     public required string? Description { get; init; }
     [Required] public required decimal? ReturnRate { get; init; }

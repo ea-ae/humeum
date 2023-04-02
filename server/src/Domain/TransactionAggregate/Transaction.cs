@@ -1,7 +1,7 @@
 ﻿using Domain.AssetAggregate;
-using Domain.Common;
 using Domain.Common.Exceptions;
 using Domain.Common.Interfaces;
+using Domain.Common.Models;
 using Domain.ProfileAggregate;
 using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate.ValueObjects;
@@ -21,8 +21,10 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
     public string? Name {
         get => _name;
         set {
-            if (value == "") {
+            if (value is null || value == "") {
                 _name = null;
+            } else if (value.Length > 50) {
+                throw new DomainException("Name cannot exceed 50 characters.");
             } else {
                 _name = value;
             }
@@ -33,8 +35,10 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
     public string? Description {
         get => _description;
         set {
-            if (value == "") {
+            if (value is null || value == "") {
                 _description = null;
+            } else if (value.Length > 400) {
+                throw new DomainException("Description cannot exceed 400 characters.");
             } else {
                 _description = value;
             }

@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using AutoMapper;
@@ -10,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Assets.Queries;
 
-public record GetAssetsQuery: IQuery<List<AssetDto>> {
+public record GetAssetsQuery : IQuery<List<AssetDto>> {
     [Required] public required int Profile { get; init; }
 }
 

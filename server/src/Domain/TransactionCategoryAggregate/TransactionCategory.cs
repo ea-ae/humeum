@@ -1,6 +1,6 @@
-﻿using Domain.Common;
-using Domain.Common.Exceptions;
+﻿using Domain.Common.Exceptions;
 using Domain.Common.Interfaces;
+using Domain.Common.Models;
 using Domain.ProfileAggregate;
 using Domain.TransactionAggregate;
 

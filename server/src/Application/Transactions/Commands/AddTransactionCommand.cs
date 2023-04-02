@@ -47,7 +47,7 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
         if (!taxSchemeExists) {
             throw new NotFoundValidationException(typeof(TaxScheme));
         }
-        
+
         if (request.Asset is not null) {
             var assetExists = _context.Assets.Any(a => (a.ProfileId == request.Profile || a.ProfileId == null)
                                                        && a.Id == request.Asset

@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Domain.Common;
+namespace Domain.Common.Models;
 
 public abstract class Enumeration : ValueObject, IComparable {
     public int Id { get; protected set; } // EF core implementation detail (acceptable leak)

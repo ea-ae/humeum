@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-
-using Application.Common;
 using Application.Common.Extensions;
 using Application.Common.Interfaces;
-
+using Application.Common.Models;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 

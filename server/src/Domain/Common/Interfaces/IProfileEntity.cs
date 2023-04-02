@@ -1,6 +1,4 @@
-﻿using Domain.ProfileAggregate;
-
-namespace Domain.Common.Interfaces;
+﻿namespace Domain.Common.Interfaces;
 
 /// <summary>
 /// Entities that are or can be related to profiles, aka created and owned by them.

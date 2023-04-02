@@ -1,7 +1,7 @@
 ﻿using System.Net.Mail;
 
-using Domain.Common;
 using Domain.Common.Exceptions;
+using Domain.Common.Models;
 using Domain.ProfileAggregate;
 using Domain.UserAggregate.ValueObjects;
 

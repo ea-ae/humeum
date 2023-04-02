@@ -3,9 +3,6 @@
 using Application.Common.Exceptions;
 using Application.Common.Extensions;
 using Application.Common.Interfaces;
-using Application.Transactions.Queries;
-
-using AutoMapper;
 
 using Domain.AssetAggregate;
 using Domain.TaxSchemeAggregate;
@@ -13,8 +10,6 @@ using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 
 using MediatR;
-
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Transactions.Commands;
 

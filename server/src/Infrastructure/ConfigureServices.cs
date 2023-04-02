@@ -3,20 +3,18 @@ using System.Text;
 
 using Application.Common.Interfaces;
 
-using Infrastructure.Common.Settings;
 using Infrastructure.Auth;
+using Infrastructure.Common.Settings;
 using Infrastructure.Persistence;
 using Infrastructure.Services;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Builder;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -36,7 +34,7 @@ public static class ConfigureServices {
             string connectionString = $"Data Source={dbPath}";
             services.AddDbContext<IAppDbContext, AppDbContext>(options => options.UseSqlite());
         } else if (dbSettings.Database.ToLower() == "postgres") {
-            string connectionString = 
+            string connectionString =
                 $"Host={dbSettings.Host}; Pooling=true; Database={dbSettings.Name}; Port=5432;" +
                 $"Username={dbSettings.Username}; Password={dbSettings.Password}";
             services.AddDbContext<IAppDbContext, AppDbContext>(options => options.UseNpgsql(connectionString));
@@ -108,7 +106,7 @@ public static class ConfigureServices {
     public static IApplicationBuilder MigrateDatabase(this IApplicationBuilder app) {
         using var scope = app.ApplicationServices.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
-        
+
         if (context.Database.GetPendingMigrations().Any()) {
             context.Database.Migrate();
         }

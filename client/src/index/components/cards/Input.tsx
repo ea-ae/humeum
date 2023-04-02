@@ -1,17 +1,19 @@
 import * as Mui from '@mui/material';
 import * as React from 'react';
 
-interface Props {
-  label: string;
+type Props = Mui.TextFieldProps & {
   tooltip?: string;
   defaultValue: string;
-  disabled?: boolean;
   typePattern: RegExp;
   validPattern: RegExp;
   symbol?: string | null;
-}
+};
 
-export default function Input({ label, tooltip, defaultValue, disabled, typePattern, validPattern, symbol }: Props) {
+export default function Input(props: Props) {
+  const { tooltip, defaultValue, typePattern, validPattern, symbol } = props; // Input props
+  const { id, label, variant, disabled, fullWidth } = props; // TextField props
+  const textFieldStyle = `block flex-grow my-2 mr-8 ${props.className}` ?? '';
+
   const [value, setValue] = React.useState<string>(defaultValue);
   const [isValid, setIsValid] = React.useState<boolean>(validPattern.test(value));
   const [hasChanged, setHasChanged] = React.useState<boolean>(false);
@@ -28,12 +30,13 @@ export default function Input({ label, tooltip, defaultValue, disabled, typePatt
   return (
     <Mui.Tooltip title={tooltip} placement="top">
       <Mui.TextField
-        disabled={disabled}
-        className="flex-grow my-2 mr-8"
-        id="return"
-        label={label}
-        variant="standard"
         value={value}
+        id={id}
+        label={label}
+        variant={variant ?? 'standard'}
+        disabled={disabled}
+        fullWidth
+        className={textFieldStyle}
         onChange={(e) => validate(e)}
         InputLabelProps={{ className: isValid || !hasChanged ? '' : 'text-red-600 border-red-500' }}
         InputProps={symbol === null ? {} : { endAdornment: <Mui.InputAdornment position="end">{symbol}</Mui.InputAdornment> }}
@@ -44,6 +47,5 @@ export default function Input({ label, tooltip, defaultValue, disabled, typePatt
 
 Input.defaultProps = {
   tooltip: '',
-  disabled: false,
   symbol: null,
 };

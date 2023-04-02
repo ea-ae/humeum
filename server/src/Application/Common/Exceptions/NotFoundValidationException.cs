@@ -11,7 +11,7 @@ public class NotFoundValidationException : ApplicationValidationException {
     public NotFoundValidationException(string message) : base(message) { }
 
     //public NotFoundValidationException(Type missingValueType) : base($"Requested {missingValueType.Name.ToLower()} does not exist.") { }
-    public NotFoundValidationException(Type missingValueType) 
+    public NotFoundValidationException(Type missingValueType)
         : base($"Requested {Regex.Replace(missingValueType.Name, "([A-Z][a-z]+)([A-Z][a-z]+)", "$1 $2").ToLower()} does not exist.") { }
 
     public NotFoundValidationException(string message, Type missingValueType) : base($"{message}: {missingValueType.Name}.") { }

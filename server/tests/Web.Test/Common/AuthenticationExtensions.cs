@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Xml.Linq;
 
 namespace Web.Test.Common;
 
@@ -68,7 +67,7 @@ public static class AuthenticationExtensions {
         } else if (response.StatusCode != HttpStatusCode.OK) {
             throw new InvalidOperationException("User could not be signed in.");
         }
-        
+
         return response.GetJwtToken();
     }
 

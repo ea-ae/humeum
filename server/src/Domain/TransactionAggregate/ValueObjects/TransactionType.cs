@@ -1,4 +1,4 @@
-﻿using Domain.Common;
+﻿using Domain.Common.Models;
 
 namespace Domain.TransactionAggregate.ValueObjects;
 

@@ -16,10 +16,10 @@ export default function PercentageInput({ label, tooltip, defaultValue, disabled
       label={label}
       tooltip={tooltip}
       defaultValue={defaultValue}
-      disabled={disabled}
+      symbol="%"
       typePattern={typePattern}
       validPattern={validPattern}
-      symbol="%"
+      disabled={disabled}
     />
   );
 }

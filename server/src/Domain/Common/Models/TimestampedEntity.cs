@@ -1,6 +1,6 @@
 ﻿using Domain.Common.Exceptions;
 
-namespace Domain.Common;
+namespace Domain.Common.Models;
 
 public abstract class TimestampedEntity : Entity {
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;

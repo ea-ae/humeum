@@ -15,7 +15,7 @@ public record TransactionDto {
     public required string TypeCode { get; init; }
 
     public required BriefRelatedResourceDto TaxScheme { get; init; }
-    
+
     public required BriefRelatedResourceDto? Asset { get; init; }
 
     public required IEnumerable<BriefRelatedResourceDto> Categories { get; init; }

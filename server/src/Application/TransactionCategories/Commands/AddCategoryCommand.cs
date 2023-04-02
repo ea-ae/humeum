@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using Domain.TransactionCategoryAggregate;

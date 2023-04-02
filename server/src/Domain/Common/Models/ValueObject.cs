@@ -1,4 +1,4 @@
-﻿namespace Domain.Common;
+﻿namespace Domain.Common.Models;
 
 public abstract class ValueObject {
     protected static bool EqualOperator(ValueObject left, ValueObject right) {
@@ -9,7 +9,7 @@ public abstract class ValueObject {
     }
 
     protected static bool NotEqualOperator(ValueObject left, ValueObject right) {
-        return !(EqualOperator(left, right));
+        return !EqualOperator(left, right);
     }
 
     protected abstract IEnumerable<object?> GetEqualityComponents();

@@ -6,7 +6,6 @@ using Application.Transactions.Queries;
 
 using AutoMapper;
 
-using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 

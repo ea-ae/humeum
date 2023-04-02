@@ -9,7 +9,6 @@ using AutoMapper;
 
 using Domain.AssetAggregate;
 using Domain.TaxSchemeAggregate;
-using Domain.TaxSchemeAggregate.ValueObjects;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 using Domain.TransactionCategoryAggregate;
@@ -21,12 +20,12 @@ public class AppMappingProfile : Profile {
     public AppMappingProfile() {
         CreateMap<Transaction, TransactionDto>()
             .ForMember(dest => dest.TaxScheme,
-                       o => o.MapFrom(src => new TransactionDto.BriefRelatedResourceDto { Id = src.TaxScheme.Id, Name = src.TaxScheme.Name}))
+                       o => o.MapFrom(src => new TransactionDto.BriefRelatedResourceDto { Id = src.TaxScheme.Id, Name = src.TaxScheme.Name }))
             .ForMember(dest => dest.Asset,
                        o => o.MapFrom(src => src.Asset == null ? null : new TransactionDto.BriefRelatedResourceDto { Id = src.Asset.Id, Name = src.Asset.Name }))
             .ForMember(dest => dest.Categories,
                        o => o.MapFrom(src => src.Categories.Select(
-                           c => new TransactionDto.BriefRelatedResourceDto { Id = c.Id, Name = c.Name})));
+                           c => new TransactionDto.BriefRelatedResourceDto { Id = c.Id, Name = c.Name })));
 
         CreateMap<TransactionCategory, CategoryDto>()
             .ForMember(dest => dest.Default,
@@ -42,7 +41,7 @@ public class AppMappingProfile : Profile {
         CreateMap<Domain.ProfileAggregate.Profile, ProfileDto>();
 
         CreateMap<User, UserDto>()
-            .ForMember(dest => dest.Profiles, 
+            .ForMember(dest => dest.Profiles,
                        o => o.MapFrom(src => src.Profiles.Select(
                            p => new UserDto.BriefProfile { Id = p.Id, Name = p.Name })));
     }

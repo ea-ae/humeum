@@ -1,18 +1,19 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 
 using Application.Common.Interfaces;
 
-namespace Application.Common;
+namespace Application.Common.Models;
 
 /// <summary>
 /// An offset-limit paginated list.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class PaginatedList<T> : IReadOnlyList<T> {
+public class PaginatedList<T> : IReadOnlyList<T>
+{
     IReadOnlyList<T> _list;
 
-    public PaginatedList(IQueryable<T> query, IPaginatedQuery<T> request) {
+    public PaginatedList(IQueryable<T> query, IPaginatedQuery<T> request)
+    {
         _list = query.Skip(request.Offset).Take(request.Limit).ToList();
     }
 

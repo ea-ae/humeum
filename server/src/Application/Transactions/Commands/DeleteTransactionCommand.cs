@@ -1,14 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using Application.Common.Exceptions;
-using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using Domain.TransactionAggregate;
 
 using MediatR;
-
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Transactions.Commands;
 

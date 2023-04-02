@@ -1,5 +1,5 @@
 ﻿using Domain.AssetAggregate;
-using Domain.Common;
+using Domain.Common.Models;
 using Domain.TransactionAggregate;
 using Domain.TransactionCategoryAggregate;
 
