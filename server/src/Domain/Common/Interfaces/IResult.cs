@@ -26,4 +26,4 @@ public interface IResult<out T, out E> where E : IBaseException {
 }
 
 /// <inheritdoc />
-public interface IResult<T> : IResult<T, IBaseException> { }
+public interface IResult<out T> : IResult<T, IBaseException> { }

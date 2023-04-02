@@ -5,6 +5,7 @@ using Application.Common.Interfaces;
 
 using Domain.Common.Exceptions;
 using Domain.Common.Interfaces;
+using Domain.Common.Models;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

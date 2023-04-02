@@ -1,6 +1,8 @@
 ﻿using Application.Assets.Commands;
 using Application.Assets.Queries;
 
+using Domain.Common.Interfaces;
+
 using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -52,7 +54,7 @@ public class AssetsController : ControllerBase {
     [HttpGet("{Asset}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<AssetDto>> GetAsset(GetAssetQuery query) {
+    public async Task<ActionResult<IResult<AssetDto>>> GetAsset(GetAssetQuery query) {
         var asset = await _mediator.Send(query);
         return Ok(asset);
     }
