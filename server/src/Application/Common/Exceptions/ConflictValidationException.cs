@@ -6,4 +6,6 @@
 /// </summary>
 public class ConflictValidationException : ApplicationValidationException {
     public ConflictValidationException(string message) : base(message) { }
+
+    public override int StatusCode => 409;
 }

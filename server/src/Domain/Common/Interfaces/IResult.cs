@@ -5,7 +5,7 @@
 /// </summary>
 /// <typeparam name="T">Type of result in case of success.</typeparam>
 /// <typeparam name="E">List of exceptions in case of failure.</typeparam>
-public interface IResult<T, out E> where E : Exception {
+public interface IResult<out T, out E> where E : IBaseException {
     /// <summary>Whether the result is a success.</summary>
     bool Success { get; }
     /// <summary>Result value.</summary>
@@ -18,12 +18,12 @@ public interface IResult<T, out E> where E : Exception {
     /// <summary>Try to unwrap the result value.</summary>
     /// <param name="value">Variable to store value in.</param>
     /// <param name="handleErrors">Action to handle a failure scenario.</param>
-    void TryUnwrap(ref T value, Action<IReadOnlyCollection<E>>? handleErrors);
+    //void TryUnwrap(ref T value, Action<IReadOnlyCollection<E>>? handleErrors);
     /// <summary>Unwrap result value or provide a fallback.</summary>
     /// <param name="fallback">Function that provides a fallback.</param>
     /// <returns>Unwrapped value.</returns>
-    T UnwrapOr(Func<IReadOnlyCollection<E>, T> fallback);
+    //T UnwrapOr(Func<IReadOnlyCollection<E>, T> fallback);
 }
 
 /// <inheritdoc />
-public interface IResult<T> : IResult<T, Exception> { }
+public interface IResult<T> : IResult<T, IBaseException> { }

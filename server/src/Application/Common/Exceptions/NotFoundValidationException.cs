@@ -15,4 +15,8 @@ public class NotFoundValidationException : ApplicationValidationException {
         : base($"Requested {Regex.Replace(missingValueType.Name, "([A-Z][a-z]+)([A-Z][a-z]+)", "$1 $2").ToLower()} does not exist.") { }
 
     public NotFoundValidationException(string message, Type missingValueType) : base($"{message}: {missingValueType.Name}.") { }
+
+    public override string Title => "Not Found";
+
+    public override int StatusCode => 404;
 }

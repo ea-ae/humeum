@@ -3,7 +3,7 @@
 namespace Domain.Common.Models;
 
 /// <inheritdoc />
-public class Result<T, E> : IResult<T, E> where E : Exception {
+public class Result<T, E> : IResult<T, E> where E : IBaseException {
     public bool Success { get; private init; }
 
     readonly T? _value;

@@ -1,5 +1,5 @@
-﻿namespace Application.Common.Interfaces;
+﻿using Domain.Common.Interfaces;
 
-public interface IAuthenticationException {
-    public string Message { get; }
-}
+namespace Application.Common.Interfaces;
+
+public interface IAuthenticationException : IBaseException { }
