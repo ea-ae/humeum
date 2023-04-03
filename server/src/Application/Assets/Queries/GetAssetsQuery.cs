@@ -31,7 +31,7 @@ public class GetAssetsQueryHandler : IQueryHandler<GetAssetsQuery, IResult<List<
             .Where(a => (a.ProfileId == request.Profile || a.ProfileId == null) && a.DeletedAt == null)
             .OrderBy(a => a.Id);
 
-        var result = assets.ProjectToResult<AssetDto>(_mapper.ConfigurationProvider);
+        var result = assets.ProjectToResult<AssetDto>(_mapper);
         return Task.FromResult(result);
     }
 }

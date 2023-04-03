@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+
 using Application.Common.Extensions;
 using Application.Common.Interfaces;
 using Application.Common.Models;
-using AutoMapper;
 
-using Domain.TransactionAggregate;
+using AutoMapper;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -30,10 +30,6 @@ public class GetTransactionsQueryHandler : IPaginatedQueryHandler<GetTransaction
     }
 
     public Task<PaginatedList<TransactionDto>> Handle(GetTransactionsQuery request, CancellationToken token = default) {
-        if (request.Limit > 100) {
-            throw new ValidationException("Limit cannot be higher than 100.");
-        }
-
         var transactions = _context.Transactions.AsNoTracking()
                                                 .Include(t => t.Categories)
                                                 .Where(t => t.ProfileId == request.Profile

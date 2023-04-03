@@ -44,7 +44,7 @@ public class AssetsTest {
             AssetType = AssetType.RealEstate.Code
         };
         var assetId = await handler.Handle(command);
-        var asset = context.Assets.First(a => a.Id == assetId);
+        var asset = context.Assets.First(a => a.Id == assetId.Value);
 
         // confirm details
 
@@ -77,7 +77,7 @@ public class AssetsTest {
             Profile = profile.Id,
             Asset = asset.Id
         };
-        AssetDto assetDto = await handler.Handle(query);
+        AssetDto assetDto = (await handler.Handle(query)).Value;
 
         // confirm details
 
