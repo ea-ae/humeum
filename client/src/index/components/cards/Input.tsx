@@ -11,8 +11,8 @@ type Props = Mui.TextFieldProps & {
 
 export default function Input(props: Props) {
   const { tooltip, defaultValue, typePattern, validPattern, symbol } = props; // Input props
-  const { id, label, variant, disabled, fullWidth } = props; // TextField props
-  const textFieldStyle = `block flex-grow my-2 mr-8 ${props.className}` ?? '';
+  const { id, label, variant, disabled, fullWidth } = props; // TextField props (todo: do not use Mui.TextFieldProps bc it has too many)
+  const textFieldStyle = `flex-grow my-2 mr-8 ${props.className}` ?? '';
 
   const [value, setValue] = React.useState<string>(defaultValue);
   const [isValid, setIsValid] = React.useState<boolean>(validPattern.test(value));
@@ -35,7 +35,7 @@ export default function Input(props: Props) {
         label={label}
         variant={variant ?? 'standard'}
         disabled={disabled}
-        fullWidth
+        fullWidth={fullWidth}
         className={textFieldStyle}
         onChange={(e) => validate(e)}
         InputLabelProps={{ className: isValid || !hasChanged ? '' : 'text-red-600 border-red-500' }}

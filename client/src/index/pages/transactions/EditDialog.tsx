@@ -31,8 +31,7 @@ export default function EditDialog({ transaction, isOpen, onClose }: Props) {
           typePattern={namePattern}
           validPattern={namePattern}
           variant="outlined"
-          fullWidth
-          classes="my-4"
+          className="my-4"
         />
         <Input
           label="Description"
@@ -40,8 +39,7 @@ export default function EditDialog({ transaction, isOpen, onClose }: Props) {
           typePattern={descriptionPattern}
           validPattern={descriptionPattern}
           variant="outlined"
-          fullWidth
-          classes="my-4"
+          className="my-4"
         />
       </Mui.DialogContent>
       <Mui.DialogActions>
