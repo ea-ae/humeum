@@ -24,14 +24,6 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
         return new Result<T, E>(errors);
     }
 
-    //public void TryUnwrap(ref T value, Action<IReadOnlyCollection<E>>? handleErrors) {
-    //    if (Success) {
-    //        value = _value!;
-    //    } else handleErrors?.Invoke(Errors);
-    //}
-
-    //public T UnwrapOr(Func<IReadOnlyCollection<E>, T> fallback) => Success ? Value : fallback.Invoke(Errors);
-
     protected Result(T value) {
         Success = true;
         _value = value;
@@ -54,5 +46,9 @@ public class Result<T> : Result<T, IBaseException>, IResult<T> {
 
     public static new Result<T> Fail(IBaseException error) {
         return new Result<T>(new List<IBaseException> { error });
+    }
+
+    public static new Result<T> Fail(IReadOnlyCollection<IBaseException> errors) {
+        return new Result<T>(errors);
     }
 }

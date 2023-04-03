@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using Application.Common.Exceptions;
+using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using AutoMapper;
@@ -35,13 +36,11 @@ public class GetAssetQueryHandler : IQueryHandler<GetAssetQuery, IResult<AssetDt
                                                         && a.DeletedAt == null);
 
         if (asset is null) {
-            //throw new NotFoundValidationException(typeof(Asset));
             IResult<AssetDto> failResult = Result<AssetDto>.Fail(new NotFoundValidationException(typeof(Asset)));
             return Task.FromResult(failResult);
         }
 
-        AssetDto dto = _mapper.Map<AssetDto>(asset);
-        IResult<AssetDto> result = Result<AssetDto>.Ok(dto);
+        var result = _mapper.MapToResult<AssetDto>(asset);
         return Task.FromResult(result);
     }
 }

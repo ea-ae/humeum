@@ -1,17 +1,7 @@
-﻿using System.Collections.Immutable;
-using System.Runtime.CompilerServices;
-
-using Application.Common.Exceptions;
-using Application.Common.Interfaces;
-
-using Domain.Common.Exceptions;
-using Domain.Common.Interfaces;
-using Domain.Common.Models;
+﻿using Domain.Common.Interfaces;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Web.Filters;
 

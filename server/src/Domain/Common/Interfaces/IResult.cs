@@ -14,15 +14,6 @@ public interface IResult<out T, out E> where E : IBaseException {
     /// <summary>List of errors.</summary>
     /// <exception cref="InvalidOperationException">In case of a success.</exception>
     IReadOnlyCollection<E> Errors { get; }
-
-    /// <summary>Try to unwrap the result value.</summary>
-    /// <param name="value">Variable to store value in.</param>
-    /// <param name="handleErrors">Action to handle a failure scenario.</param>
-    //void TryUnwrap(ref T value, Action<IReadOnlyCollection<E>>? handleErrors);
-    /// <summary>Unwrap result value or provide a fallback.</summary>
-    /// <param name="fallback">Function that provides a fallback.</param>
-    /// <returns>Unwrapped value.</returns>
-    //T UnwrapOr(Func<IReadOnlyCollection<E>, T> fallback);
 }
 
 /// <inheritdoc />

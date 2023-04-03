@@ -37,7 +37,7 @@ public class AssetsController : ControllerBase {
     /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     /// <response code="404">If a profile with given ID wasn't found for the user.</response>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<AssetDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<AssetDto>>> GetAssets(GetAssetsQuery query) {
         var assets = await _mediator.Send(query);
@@ -68,7 +68,7 @@ public class AssetsController : ControllerBase {
     /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     /// <response code="404">If a profile or asset type with the specified ID could not be found for the user.</response>
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddAsset(int user, AddAssetCommand command) {
@@ -86,7 +86,7 @@ public class AssetsController : ControllerBase {
     [HttpDelete("{Asset}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteTransaction(DeleteAssetCommand command) {
+    public async Task<IActionResult> DeleteAsset(DeleteAssetCommand command) {
         await _mediator.Send(command);
         return NoContent();
     }

@@ -1,19 +1,23 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 
+using Domain.Common.Interfaces;
+using Domain.Common.Models;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Assets.Queries;
 
-public record GetAssetsQuery : IQuery<List<AssetDto>> {
+public record GetAssetsQuery : IQuery<IResult<List<AssetDto>>> {
     [Required] public required int Profile { get; init; }
 }
 
-public class GetAssetsQueryHandler : IQueryHandler<GetAssetsQuery, List<AssetDto>> {
+public class GetAssetsQueryHandler : IQueryHandler<GetAssetsQuery, IResult<List<AssetDto>>> {
     private readonly IAppDbContext _context;
     private readonly IMapper _mapper;
 
@@ -22,13 +26,12 @@ public class GetAssetsQueryHandler : IQueryHandler<GetAssetsQuery, List<AssetDto
         _mapper = mapper;
     }
 
-    public Task<List<AssetDto>> Handle(GetAssetsQuery request, CancellationToken token = default) {
+    public Task<IResult<List<AssetDto>>> Handle(GetAssetsQuery request, CancellationToken token = default) {
         var assets = _context.Assets.AsNoTracking().Include(a => a.Type)
             .Where(a => (a.ProfileId == request.Profile || a.ProfileId == null) && a.DeletedAt == null)
             .OrderBy(a => a.Id);
 
-        var assetDtos = assets.ProjectTo<AssetDto>(_mapper.ConfigurationProvider).ToList();
-
-        return Task.Run(() => assetDtos);
+        var result = assets.ProjectToResult<AssetDto>(_mapper.ConfigurationProvider);
+        return Task.FromResult(result);
     }
 }

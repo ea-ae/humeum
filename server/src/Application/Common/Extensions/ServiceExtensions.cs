@@ -2,6 +2,12 @@
 using Application.Common.Interfaces;
 using Application.Common.Models;
 
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+
+using Domain.Common.Interfaces;
+using Domain.Common.Models;
+
 namespace Application.Common.Extensions;
 
 /// <summary>
@@ -29,10 +35,34 @@ internal static class ServiceExtensions {
     /// Converts an IQueryable to a paginated list. Be sure to order the results (e.g. by ascending id) first.
     /// </summary>
     /// <typeparam name="T">Type of items in paginated list.</typeparam>
-    /// <param name="query">IQueryable that contains all the ordered resluts.</param>
+    /// <param name="query">IQueryable that contains all the ordered results.</param>
     /// <param name="request">Request object that contains offset/limit information.</param>
     /// <returns>Paginated list.</returns>
     public static PaginatedList<T> ToPaginatedList<T>(this IQueryable<T> query, IPaginatedQuery<T> request) {
-        return new PaginatedList<T>(query, request);
+        return new PaginatedList<T>(query, request); // TODO: accept only IOrderedQueryable and get rid of all the nonsense, use Take()/Skip() before ProjectTo
+    }
+
+    /// <summary>
+    /// Maps an entity to a successful result containing a DTO.
+    /// </summary>
+    /// <typeparam name="T">Type to map entity to.</typeparam>
+    /// <param name="mapper">Automapper.</param>
+    /// <param name="entity">Source entity.</param>
+    /// <returns>Mapped entity contained within a successful result.</returns>
+    public static IResult<T> MapToResult<T>(this IMapper mapper, object entity) {
+        T value = mapper.Map<T>(entity);
+        return Result<T>.Ok(value);
+    }
+
+    /// <summary>
+    /// Maps entities to a successful result containing a list of DTOs.
+    /// </summary>
+    /// <typeparam name="T">Type to map entities to.</typeparam>
+    /// <param name="query">IQueryable that contains all the source entities.</param>
+    /// <param name="mapper">Automapper.</param>
+    /// <returns>Projected entities contained within a successful result.</returns>
+    public static IResult<List<T>> ProjectToResult<T>(this IQueryable query, IMapper mapper) {
+        var dto = query.ProjectTo<T>(mapper.ConfigurationProvider).ToList();
+        return Result<List<T>>.Ok(dto);
     }
 }
