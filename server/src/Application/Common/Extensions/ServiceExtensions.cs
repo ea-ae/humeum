@@ -32,14 +32,15 @@ internal static class ServiceExtensions {
     }
 
     /// <summary>
-    /// Converts an IQueryable to a paginated list. Be sure to order the results (e.g. by ascending id) first.
+    /// Converts an ordered queryable of source entities to a paginated list of DTOs.
     /// </summary>
     /// <typeparam name="T">Type of items in paginated list.</typeparam>
-    /// <param name="query">IQueryable that contains all the ordered results.</param>
+    /// <param name="query">Queryable that contains all the ordered results.</param>
     /// <param name="request">Request object that contains offset/limit information.</param>
+    /// <param name="mapper">Automapper that projects the source entities.</param>
     /// <returns>Paginated list.</returns>
-    public static PaginatedList<T> ToPaginatedList<T>(this IQueryable<T> query, IPaginatedQuery<T> request) {
-        return new PaginatedList<T>(query, request); // TODO: accept only IOrderedQueryable and get rid of all the nonsense, use Take()/Skip() before ProjectTo
+    public static PaginatedList<TDestination> ToPaginatedList<TSource, TDestination>(this IOrderedQueryable<TSource> query, IPaginatedQuery<TDestination> request, IMapper mapper) {
+        return PaginatedList<TDestination>.ProjectAndCreateFromQuery(query, request, mapper);
     }
 
     /// <summary>
@@ -58,7 +59,7 @@ internal static class ServiceExtensions {
     /// Maps entities to a successful result containing a list of DTOs.
     /// </summary>
     /// <typeparam name="T">Type to map entities to.</typeparam>
-    /// <param name="query">IQueryable that contains all the source entities.</param>
+    /// <param name="query">Queryable that contains all the source entities.</param>
     /// <param name="mapper">Automapper.</param>
     /// <returns>Projected entities contained within a successful result.</returns>
     public static IResult<List<T>> ProjectToResult<T>(this IQueryable query, IMapper mapper) {

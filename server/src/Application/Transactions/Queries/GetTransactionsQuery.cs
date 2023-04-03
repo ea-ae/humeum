@@ -3,7 +3,8 @@ using Application.Common.Extensions;
 using Application.Common.Interfaces;
 using Application.Common.Models;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
+
+using Domain.TransactionAggregate;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +46,6 @@ public class GetTransactionsQueryHandler : IPaginatedQueryHandler<GetTransaction
             transactions = transactions.Where(t => t.PaymentTimeline.Period.Start >= request.StartAfter);
         }
 
-        return Task.Run(() => transactions.OrderBy(t => t.Id).ProjectTo<TransactionDto>(_mapper.ConfigurationProvider).ToPaginatedList(request));
+        return Task.Run(() => transactions.OrderBy(t => t.Id).ToPaginatedList(request, _mapper));
     }
 }
