@@ -19,7 +19,7 @@ public class ApplicationResultFilterAttribute : ResultFilterAttribute {
         if (context.Result is ObjectResult actionResult) {
             if (actionResult.Value is IResult<object> result) {
                 if (result.Success) {
-                    actionResult.Value = result.Value;
+                    actionResult.Value = result.Unwrap();
                 } else {
                     ProblemDetails details;
                     int statusCode;

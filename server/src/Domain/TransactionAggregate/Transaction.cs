@@ -156,35 +156,3 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
 
     public decimal TotalTransactionAmount => Amount * TotalTransactionCount;
 }
-
-/*
- * public int TypeId { get; private set; }
-    TransactionType _type = null!;
-    public TransactionType Type { 
-        get => _type; 
-        set {
-            TypeId = value.Id;
-            _type = value;
-        } 
-    }
-
-    public int TaxSchemeId { get; private set; }
-    TaxScheme _taxScheme = null!;
-    public TaxScheme TaxScheme {
-        get => _taxScheme;
-        private set {
-            TaxSchemeId = value.Id;
-            _taxScheme = value;
-        }
-    }
-
-    public int? AssetId { get; private set; }
-    Asset? _asset = null!;
-    public Asset? Asset {
-        get => _asset;
-        set {
-            AssetId = value?.Id;
-            _asset = value;
-        }
-    }
-*/

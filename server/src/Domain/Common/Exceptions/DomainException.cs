@@ -6,7 +6,7 @@
 public class DomainException : BaseException {
     public DomainException(string message) : base(message) { }
 
-    public DomainException(Exception inner) : base(inner) { }
+    public DomainException(Exception inner) : base(inner) { } // todo remove this one!
 
     public override string Title => "Validation Error";
 

@@ -21,27 +21,9 @@ public class Asset : TimestampedEntity, IOptionalProfileEntity {
 
     public string? Description { get; private set; }
 
-    decimal _returnRate;
-    public decimal ReturnRate {
-        get => _returnRate;
-        set {
-            if (value < 0) {
-                throw new DomainException(new ArgumentException("Return rate cannot be negative."));
-            }
-            _returnRate = value;
-        }
-    }
+    public decimal ReturnRate { get; private set; }
 
-    decimal _standardDeviation;
-    public decimal StandardDeviation {
-        get => _standardDeviation;
-        set {
-            if (value < 0) {
-                throw new DomainException(new ArgumentException("Standard deviation cannot be negative."));
-            }
-            _standardDeviation = value;
-        }
-    }
+    public decimal StandardDeviation { get; private set; }
 
     public int TypeId { get; private set; }
     public AssetType Type { get; private set; } = null!;
@@ -52,31 +34,92 @@ public class Asset : TimestampedEntity, IOptionalProfileEntity {
     public int? ProfileId { get; private set; }
     public Profile? Profile { get; private set; }
 
-    public Asset(string name, string? description, decimal returnRate, decimal standardDeviation, AssetType type, Profile profile)
-        : this(name, description, returnRate, standardDeviation, type.Id, profile.Id) {
-        Type = type;
-        Profile = profile;
+    Asset() { }
+
+    public static IResult<Asset, DomainException> Create(string name,
+                                                         string? description,
+                                                         decimal returnRate,
+                                                         decimal standardDeviation,
+                                                         AssetType type,
+                                                         Profile profile) {
+        var asset = new Asset() { Type = type, TypeId = type.Id, Profile = profile, ProfileId = profile.Id };
+        var builder = new Result<Asset, DomainException>.Builder().AddValue(asset);
+
+        return SetAssetFields(builder, name, description, returnRate, standardDeviation).Build();
     }
 
-    public Asset(string name, string? description, decimal returnRate, decimal standardDeviation, int typeId, int profileId)
-        : this(name, description, returnRate, standardDeviation, typeId) {
-        ProfileId = profileId;
+    public static IResult<Asset, DomainException> Create(string name,
+                                                         string? description,
+                                                         decimal returnRate,
+                                                         decimal standardDeviation,
+                                                         int typeId,
+                                                         int profileId) {
+        var asset = new Asset() { TypeId = typeId, ProfileId = profileId };
+        var builder = new Result<Asset, DomainException>.Builder().AddValue(asset);
+
+        return SetAssetFields(builder, name, description, returnRate, standardDeviation).Build();
     }
 
-    public Asset(int assetId, string name, string? description, decimal returnRate, decimal standardDeviation, int typeId)
-        : this(name, description, returnRate, standardDeviation, typeId) {
-        Id = assetId;
+    public static IResult<Asset, DomainException> Create(int assetId,
+                                                         string name,
+                                                         string? description,
+                                                         decimal returnRate,
+                                                         decimal standardDeviation,
+                                                         int typeId) {
+        var asset = new Asset() { Id = assetId, TypeId = typeId };
+        var builder = new Result<Asset, DomainException>.Builder().AddValue(asset);
+
+        return SetAssetFields(builder, name, description, returnRate, standardDeviation).Build();
     }
 
-    public Asset(string name, string? description, decimal returnRate, decimal standardDeviation, int typeId) {
-        Name = name;
-        Description = description;
-        ReturnRate = returnRate;
-        StandardDeviation = standardDeviation;
-        TypeId = typeId;
+    static Result<Asset, DomainException>.Builder SetAssetFields(Result<Asset, DomainException>.Builder builder,
+                                                                 string name,
+                                                                 string? description,
+                                                                 decimal returnRate,
+                                                                 decimal standardDeviation) {
+        return builder.Transform(asset => asset.SetName(name))
+                      .Transform(asset => asset.SetDescription(description))
+                      .Transform(asset => asset.SetReturnRate(returnRate))
+                      .Transform(asset => asset.SetStandardDeviation(standardDeviation));
     }
-
-    private Asset() { }
 
     public bool IsDefaultAsset => ProfileId is not null || Profile is not null;
+
+    IResult<None, DomainException> SetName(string name) {
+        if (name.Length > 50) {
+            return Result<None, DomainException>.Fail(new DomainException("Name cannot exceed 50 characters."));
+        }
+
+        Name = name;
+        return Result<None, DomainException>.Ok(None.Value);
+    }
+
+    IResult<None, DomainException> SetDescription(string? description) {
+        if (description is not null && description.Length > 400) {
+            return Result<None, DomainException>.Fail(new DomainException("Description cannot exceed 400 characters."));
+        } else if (description?.Length == 0) {
+            description = null;
+        }
+        
+        Description = description;
+        return Result<None, DomainException>.Ok(None.Value);
+    }
+
+    IResult<None, DomainException> SetReturnRate(decimal returnRate) {
+        if (returnRate < 0) {
+            return Result<None, DomainException>.Fail(new DomainException("Return rate cannot be negative."));
+        }
+
+        ReturnRate = returnRate;
+        return Result<None, DomainException>.Ok(None.Value);
+    }
+
+    IResult<None, DomainException> SetStandardDeviation(decimal standardDeviation) {
+        if (standardDeviation < 0) {
+            return Result<None, DomainException>.Fail(new DomainException("Standard deviation cannot be negative."));
+        }
+
+        StandardDeviation = standardDeviation;
+        return Result<None, DomainException>.Ok(None.Value);
+    }
 }

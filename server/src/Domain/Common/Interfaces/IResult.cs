@@ -1,4 +1,7 @@
-﻿namespace Domain.Common.Interfaces;
+﻿using Domain.Common.Models;
+
+namespace Domain.Common.Interfaces;
+
 
 /// <summary>
 /// Result object that contains either a result value or a collection of exceptions.
@@ -8,12 +11,14 @@
 public interface IResult<out T, out E> where E : IBaseException {
     /// <summary>Whether the result is a success.</summary>
     bool Success { get; }
-    /// <summary>Result value.</summary>
-    /// <exception cref="InvalidOperationException">In case of a failure.</exception>
-    T Value { get; }
+    /// <summary>Whether the result is a failure.</summary>
+    bool Failure { get; }
     /// <summary>List of errors.</summary>
-    /// <exception cref="InvalidOperationException">In case of a success.</exception>
+    /// <exception cref="InvalidOperationException">If the result was a success.</exception>
     IReadOnlyCollection<E> Errors { get; }
+    /// <summary>Unwraps the value.</summary>
+    /// <exception cref="InvalidOperationException">If the result was a failure.</exception>
+    T Unwrap();
 }
 
 /// <inheritdoc />

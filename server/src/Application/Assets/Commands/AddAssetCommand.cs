@@ -27,16 +27,20 @@ public class AddAssetCommandHandler : ICommandHandler<AddAssetCommand, IResult<i
 
     public async Task<IResult<int>> Handle(AddAssetCommand request, CancellationToken token = default) {
         var assetType = _context.GetEnumerationEntityByCode<AssetType>(request.AssetType);
-        var asset = new Asset(request.Name,
-                              request.Description,
-                              (decimal)request.ReturnRate!,
-                              (decimal)request.StandardDeviation!,
-                              assetType.Id,
-                              request.Profile);
+        var asset = Asset.Create(request.Name,
+                                 request.Description,
+                                 (decimal)request.ReturnRate!,
+                                 (decimal)request.StandardDeviation!,
+                                 assetType.Id,
+                                 request.Profile);
 
-        _context.Assets.Add(asset);
+        if (asset.Failure) {
+            return Result<int>.Fail(asset.Errors);
+        }
+
+        _context.Assets.Add(asset.Unwrap());
         await _context.SaveChangesAsync(token);
 
-        return Result<int>.Ok(asset.Id);
+        return Result<int>.Ok(asset.Unwrap().Id);
     }
 }

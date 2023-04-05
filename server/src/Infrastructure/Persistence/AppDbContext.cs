@@ -75,18 +75,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
         builder.Entity<Asset>().HasOne(a => a.Type);
         builder.Entity<Asset>().HasOne(a => a.Profile).WithMany(p => p.Assets).OnDelete(DeleteBehavior.Cascade);
         builder.Entity<Asset>().HasData(
-            new Asset(1,
-                "Index fund (default)",
-                "Index funds track the performance of a particular market index; great diversification, low fees, and easy management.",
-                returnRate: 8.1m,
-                standardDeviation: 15.2m,
-                typeId: AssetType.Index.Id),
-            new Asset(2,
-                "Bond fund (default)",
-                "Bond funds provide great diversification potential and are stereotypically less volatile than other securities.",
-                returnRate: 1.9m,
-                standardDeviation: 3.0m,
-                typeId: AssetType.Bond.Id)
+            Asset.Create(1, "Index fund (default)",
+                         "Index funds track the performance of a particular market index; great diversification, low fees, and easy management.",
+                         returnRate: 8.1m, standardDeviation: 15.2m, typeId: AssetType.Index.Id).Unwrap(),
+            Asset.Create(2, "Bond fund (default)",
+                         "Bond funds provide great diversification potential and are stereotypically less volatile than other securities.",
+                         returnRate: 1.9m, standardDeviation: 3.0m, typeId: AssetType.Bond.Id).Unwrap()
         );
 
         builder.Entity<AssetType>().HasData(AssetType.Liquid,

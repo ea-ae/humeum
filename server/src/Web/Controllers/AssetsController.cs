@@ -73,7 +73,7 @@ public class AssetsController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddAsset(int user, AddAssetCommand command) {
         var result = await _mediator.Send(command);
-        int id = result.Value; // TODO: this is only temporary, we need a better unwrapping system!
+        int id = result.Unwrap(); // TODO: this is only temporary, we need a better unwrapping system!
         return CreatedAtAction(nameof(GetAsset), new { user, command.Profile, Asset = id }, null);
     }
 

@@ -70,7 +70,7 @@ public class ProfilesTests {
                                           profile.Id,
                                           taxSchemeId);
         context.AssetTypes.Attach(AssetType.RealEstate);
-        var asset = new Asset("My Asset", "About to delete", 7.9m, 11, AssetType.RealEstate, profile);
+        var asset = Asset.Create("My Asset", "About to delete", 7.9m, 11, AssetType.RealEstate, profile).Unwrap();
 
         context.Transactions.Add(transaction);
         context.Assets.Add(asset);

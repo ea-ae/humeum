@@ -44,7 +44,7 @@ public class AssetsTest {
             AssetType = AssetType.RealEstate.Code
         };
         var assetId = await handler.Handle(command);
-        var asset = context.Assets.First(a => a.Id == assetId.Value);
+        var asset = context.Assets.First(a => a.Id == assetId.Unwrap());
 
         // confirm details
 
@@ -66,7 +66,7 @@ public class AssetsTest {
 
         var profile = new Domain.ProfileAggregate.Profile(1, "Default");
         var assetType = context.GetEnumerationEntityByCode<AssetType>(AssetType.Bond.Code);
-        var asset = new Asset("My asset", null, 5m, 5m, assetType, profile);
+        var asset = Asset.Create("My asset", null, 5m, 5m, assetType, profile).Unwrap();
         context.Profiles.Add(profile);
         context.Assets.Add(asset);
         await context.SaveChangesAsync();
@@ -77,7 +77,7 @@ public class AssetsTest {
             Profile = profile.Id,
             Asset = asset.Id
         };
-        AssetDto assetDto = (await handler.Handle(query)).Value;
+        AssetDto assetDto = (await handler.Handle(query)).Unwrap();
 
         // confirm details
 
