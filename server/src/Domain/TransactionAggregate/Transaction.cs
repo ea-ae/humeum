@@ -110,6 +110,7 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
 
     private Transaction() { }
 
+    /// <summary>Replace the transaction fields in-place.</summary>
     public void Replace(string? name, string? description, decimal amount, TransactionType type, Timeline paymentTimeline, TaxScheme taxScheme, Asset? asset) {
         Name = name;
         Description = description;
@@ -142,6 +143,9 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
         return _categories.Remove(category);
     }
 
+    /// <summary>
+    /// Total count of payments made in a recurring transaction.
+    /// </summary>
     public int TotalTransactionCount {
         get {
             if (!PaymentTimeline.Period.IsRecurring || PaymentTimeline.Frequency is null) {
@@ -154,5 +158,8 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
         }
     }
 
+    /// <summary>
+    /// Total amount of payments made throughout a recurring transaction.
+    /// </summary>
     public decimal TotalTransactionAmount => Amount * TotalTransactionCount;
 }
