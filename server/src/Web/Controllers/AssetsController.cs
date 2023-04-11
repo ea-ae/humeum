@@ -76,9 +76,6 @@ public class AssetsController : ControllerBase {
         var result = await _mediator.Send(command);
 
         return result.Then(CreatedAtAction(nameof(GetAsset), new { user, command.Profile, Asset = result.Unwrap() }, null));
-        //return Result<IActionResult>.OkUnless(
-        //    CreatedAtAction(nameof(GetAsset), new { user, command.Profile, Asset = result.Unwrap() }, null), 
-        //    result);
     }
 
     /// <summary>
@@ -95,6 +92,5 @@ public class AssetsController : ControllerBase {
         var result = await _mediator.Send(command);
 
         return result.Then(NoContent());
-        //return Result<IActionResult>.OkUnless(NoContent(), result);
     }
 }

@@ -10,7 +10,6 @@ using AutoMapper;
 using Domain.AssetAggregate;
 using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate;
-using Domain.TransactionAggregate.ValueObjects;
 using Domain.TransactionCategoryAggregate;
 using Domain.UserAggregate;
 
@@ -31,8 +30,9 @@ public class AppMappingProfile : Profile {
             .ForMember(dest => dest.Default,
                        o => o.MapFrom(src => src.ProfileId == null));
 
-        CreateMap<AssetType, AssetTypeDto>();
         CreateMap<Asset, AssetDto>()
+            .ForMember(dest => dest.Type,
+                       o => o.MapFrom(src => new AssetDto.AssetTypeDto { Id = src.TypeId, Name = src.Type.Name }))
             .ForMember(dest => dest.Default,
                        o => o.MapFrom(src => src.ProfileId == null));
 
