@@ -25,7 +25,7 @@ public class ApplicationResultFilterAttribute : ResultFilterAttribute {
             }
         } else if (context.Result is IResult<IActionResult, IBaseException> contextResult) {
             context.Result = contextResult.Success ? contextResult.Unwrap() : CreateErrorObject(contextResult);
-        } else if (context.Result is IResult<object?, IBaseException> or IResult<object?>) {
+        } else if (context.Result is IResult<object?, IBaseException>) {
             throw new ArgumentException("Unexpected Result object with a non-IActionResult value returned from controller.");
         }
     }
