@@ -15,7 +15,7 @@ public class ApplicationResultFilterAttribute : ResultFilterAttribute {
     /// </summary>
     /// <param name="context">Filter context.</param>
     public override void OnResultExecuting(ResultExecutingContext context) {
-        if (context.Result is ObjectResult objectResult && objectResult.Value is IResult<object> actionResult) {
+        if (context.Result is ObjectResult objectResult && objectResult.Value is IResult<object?> actionResult) {
             if (actionResult.Success) {
                 objectResult.Value = actionResult.Unwrap();
             } else {
@@ -26,7 +26,7 @@ public class ApplicationResultFilterAttribute : ResultFilterAttribute {
         }
     }
 
-    ObjectResult CreateErrorObject(IResult<object> result) {
+    static ObjectResult CreateErrorObject(IResult<object?> result) {
         ProblemDetails details;
         int statusCode;
 

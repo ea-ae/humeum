@@ -110,6 +110,10 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
         return new Result<T, E>(errors);
     }
 
+    public IResult<TNew, E> Then<TNew>(TNew value) {
+        return Success ? Result<TNew, E>.Ok(value) : Result<TNew, E>.Fail(Errors);
+    }
+
     public T Unwrap() {
         return Success ? _value : throw new InvalidOperationException("Result did not succeed, cannot access value.");
     }

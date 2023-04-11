@@ -72,14 +72,13 @@ public class AssetsController : ControllerBase {
     [ProducesResponseType(typeof(IActionResult), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult<IActionResult>> AddAsset(int user, AddAssetCommand command) {
+    public async Task<IResult<IActionResult, IBaseException>> AddAsset(int user, AddAssetCommand command) {
         var result = await _mediator.Send(command);
 
-        if (result.Failure) {
-            return Result<IActionResult>.Fail(result.Errors);
-        }
-
-        return Result<IActionResult>.Ok(CreatedAtAction(nameof(GetAsset), new { user, command.Profile, Asset = result.Unwrap() }, null));
+        return result.Then(CreatedAtAction(nameof(GetAsset), new { user, command.Profile, Asset = result.Unwrap() }, null));
+        //return Result<IActionResult>.OkUnless(
+        //    CreatedAtAction(nameof(GetAsset), new { user, command.Profile, Asset = result.Unwrap() }, null), 
+        //    result);
     }
 
     /// <summary>
@@ -92,8 +91,10 @@ public class AssetsController : ControllerBase {
     [HttpDelete("{Asset}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteAsset(DeleteAssetCommand command) {
-        await _mediator.Send(command);
-        return NoContent();
+    public async Task<IResult<IActionResult, IBaseException>> DeleteAsset(DeleteAssetCommand command) {
+        var result = await _mediator.Send(command);
+
+        return result.Then(NoContent());
+        //return Result<IActionResult>.OkUnless(NoContent(), result);
     }
 }

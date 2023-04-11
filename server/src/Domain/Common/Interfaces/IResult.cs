@@ -16,6 +16,11 @@ public interface IResult<out T, out E> where E : IBaseException {
     /// <summary>List of errors.</summary>
     /// <exception cref="InvalidOperationException">If the result was a success.</exception>
     IReadOnlyCollection<E> Errors { get; }
+    /// <summary>Creates a result with the new value or the errors of the previous result.</summary>
+    /// <typeparam name="TNew">Type of new result.</typeparam>
+    /// <param name="value">Value of new result in case of success.</param>
+    /// <returns>New result with value or the errors of the previous result.</returns>
+    public IResult<TNew, E> Then<TNew>(TNew value);
     /// <summary>Unwraps the value.</summary>
     /// <exception cref="InvalidOperationException">If the result was a failure.</exception>
     T Unwrap();
