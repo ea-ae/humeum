@@ -10,7 +10,7 @@ using Domain.TransactionAggregate.ValueObjects;
 
 namespace Application.Assets.Commands;
 
-public record AddAssetCommand : ICommand<IResult<int>> {
+public record AddAssetCommand : ICommand<IResult<int, IBaseException>> {
     [Required] public required int Profile { get; init; }
 
     [Required] public required string Name { get; init; }
@@ -20,12 +20,12 @@ public record AddAssetCommand : ICommand<IResult<int>> {
     [Required] public required string AssetType { get; init; }
 }
 
-public class AddAssetCommandHandler : ICommandHandler<AddAssetCommand, IResult<int>> {
+public class AddAssetCommandHandler : ICommandHandler<AddAssetCommand, IResult<int, IBaseException>> {
     readonly IAppDbContext _context;
 
     public AddAssetCommandHandler(IAppDbContext context) => _context = context;
 
-    public async Task<IResult<int>> Handle(AddAssetCommand request, CancellationToken token = default) {
+    public async Task<IResult<int, IBaseException>> Handle(AddAssetCommand request, CancellationToken token = default) {
         var assetType = _context.GetEnumerationEntityByCode<AssetType>(request.AssetType);
         var asset = Asset.Create(request.Name,
                                  request.Description,
@@ -34,13 +34,20 @@ public class AddAssetCommandHandler : ICommandHandler<AddAssetCommand, IResult<i
                                  assetType.Id,
                                  request.Profile);
 
-        if (asset.Failure) {
-            return Result<int>.Fail(asset.Errors);
-        }
+        // todo consider creating a version for IResult<T> as well
+        return await asset.ThenAsync<int, IBaseException>(async value => {
+            _context.Assets.Add(asset.Unwrap());
+            await _context.SaveChangesAsync(token);
+            return Result<int>.Ok(value.Id);
+        });
 
-        _context.Assets.Add(asset.Unwrap());
-        await _context.SaveChangesAsync(token);
+        //if (asset.Failure) {
+        //    return Result<int>.Fail(asset.GetErrors());
+        //}
 
-        return Result<int>.Ok(asset.Unwrap().Id);
+        //_context.Assets.Add(asset.Unwrap());
+        //await _context.SaveChangesAsync(token);
+
+        //return Result<int>.Ok(asset.Unwrap().Id);
     }
 }

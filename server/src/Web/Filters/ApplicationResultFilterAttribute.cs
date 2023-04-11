@@ -15,23 +15,28 @@ public class ApplicationResultFilterAttribute : ResultFilterAttribute {
     /// </summary>
     /// <param name="context">Filter context.</param>
     public override void OnResultExecuting(ResultExecutingContext context) {
-        if (context.Result is ObjectResult objectResult && objectResult.Value is IResult<object?> actionResult) {
-            if (actionResult.Success) {
-                objectResult.Value = actionResult.Unwrap();
+        if (context.Result is ObjectResult objectResult && objectResult.Value is IResult<object?, IBaseException> objectValueResult) {
+            if (objectValueResult.Success && objectResult.Value is IResult<IActionResult, IBaseException> actionResult) {
+                context.Result = actionResult.Unwrap();
+            } else if (objectValueResult.Success) {
+                objectResult.Value = objectValueResult.Unwrap();
             } else {
-                context.Result = CreateErrorObject(actionResult);
+                context.Result = CreateErrorObject(objectValueResult);
             }
-        } else if (context.Result is IResult<IActionResult> contextResult) {
+        } else if (context.Result is IResult<IActionResult, IBaseException> contextResult) {
             context.Result = contextResult.Success ? contextResult.Unwrap() : CreateErrorObject(contextResult);
+        } else if (context.Result is IResult<object?, IBaseException> or IResult<object?>) {
+            throw new ArgumentException("Unexpected Result object with a non-IActionResult value returned from controller.");
         }
     }
 
-    static ObjectResult CreateErrorObject(IResult<object?> result) {
+    static ObjectResult CreateErrorObject(IResult<object?, IBaseException> result) {
         ProblemDetails details;
         int statusCode;
 
-        if (result.Errors.Count == 1) {
-            var error = result.Errors.First();
+        var errors = result.GetErrors();
+        if (errors.Count == 1) {
+            var error = errors.First();
             statusCode = error.StatusCode;
 
             details = new ProblemDetails {
@@ -40,10 +45,10 @@ public class ApplicationResultFilterAttribute : ResultFilterAttribute {
                 Status = statusCode
             };
         } else {
-            var errors = result.Errors.ToDictionary(e => e.Title, e => new[] { e.Message });
+            var errorsDictionary = errors.ToDictionary(e => e.Title, e => new[] { e.Message });
             statusCode = StatusCodes.Status400BadRequest;
 
-            details = new ValidationProblemDetails(errors) {
+            details = new ValidationProblemDetails(errorsDictionary) {
                 Title = "Error",
                 Status = statusCode
             };

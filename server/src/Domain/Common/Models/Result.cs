@@ -37,7 +37,7 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
             if (result.Success) {
                 _value = result.Unwrap();
             } else {
-                _errors.AddRange(result.Errors);
+                _errors.AddRange(result.GetErrors());
             }
 
             return this;
@@ -55,7 +55,7 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
 
             var result = transformValue.Invoke(_value);
             if (!result.Success) {
-                _errors.AddRange(result.Errors);
+                _errors.AddRange(result.GetErrors());
             }
 
             return this;
@@ -90,13 +90,11 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
     }
 
     readonly T _value = default!;
+    readonly IReadOnlyCollection<E>? _errors;
 
     public bool Success { get; private init; }
 
     public bool Failure => !Success;
-
-    readonly IReadOnlyCollection<E>? _errors;
-    public IReadOnlyCollection<E> Errors => _errors ?? throw new InvalidOperationException("Result succeeded, cannot access errors.");
 
     public static Result<T, E> Ok(T value) {
         return new Result<T, E>(value);
@@ -111,12 +109,26 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
     }
 
     public IResult<TNew, E> Then<TNew>(TNew value) {
-        return Success ? Result<TNew, E>.Ok(value) : Result<TNew, E>.Fail(Errors);
+        return Success ? Result<TNew, E>.Ok(value) : Result<TNew, E>.Fail(GetErrors());
+    }
+
+    public IResult<TNew, ENew> Then<TNew, ENew>(Func<T, IResult<TNew, ENew>> then) where ENew : IBaseException {
+        return Success ? then.Invoke(_value) : Result<TNew, ENew>.Fail((IReadOnlyCollection<ENew>)GetErrors());
+    }
+
+    public Task<IResult<TNew, ENew>> ThenAsync<TNew, ENew>(Func<T, Task<IResult<TNew, ENew>>> then) where ENew : IBaseException {
+        if (Success) {
+            return then.Invoke(_value);
+        }
+        IResult<TNew, ENew> result = Result<TNew, ENew>.Fail((IReadOnlyCollection<ENew>)GetErrors());
+        return Task.FromResult(result);
     }
 
     public T Unwrap() {
         return Success ? _value : throw new InvalidOperationException("Result did not succeed, cannot access value.");
     }
+
+    public IReadOnlyCollection<E> GetErrors() => _errors ?? throw new InvalidOperationException("Result wasn't a failure, cannot access errors.");
 
     protected Result(T value) {
         Success = true;
