@@ -116,11 +116,21 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
         return Success ? then.Invoke(_value) : Result<TNew, ENew>.Fail((IReadOnlyCollection<ENew>)GetErrors());
     }
 
+    public IResult<TNew> Then<TNew>(Func<T, IResult<TNew>> then) => (IResult<TNew>)Then<TNew, IBaseException>(then);
+
     public Task<IResult<TNew, ENew>> ThenAsync<TNew, ENew>(Func<T, Task<IResult<TNew, ENew>>> then) where ENew : IBaseException {
         if (Success) {
             return then.Invoke(_value);
         }
         IResult<TNew, ENew> result = Result<TNew, ENew>.Fail((IReadOnlyCollection<ENew>)GetErrors());
+        return Task.FromResult(result);
+    }
+
+    public Task<IResult<TNew>> ThenAsync<TNew>(Func<T, Task<IResult<TNew>>> then) {
+        if (Success) {
+            return then.Invoke(_value);
+        }
+        IResult<TNew> result = Result<TNew>.Fail((IReadOnlyCollection<IBaseException>)GetErrors());
         return Task.FromResult(result);
     }
 
@@ -158,4 +168,6 @@ public class Result<T> : Result<T, IBaseException>, IResult<T> {
     public static new Result<T> Fail(IReadOnlyCollection<IBaseException> errors) {
         return new Result<T>(errors);
     }
+
+    IResult<TNew> IResult<T>.Then<TNew>(TNew value) => (IResult<TNew>)Then(value);
 }

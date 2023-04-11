@@ -72,9 +72,8 @@ public class AssetsController : ControllerBase {
     [ProducesResponseType(typeof(IActionResult), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult<IActionResult, IBaseException>> AddAsset(int user, AddAssetCommand command) {
+    public async Task<IResult<IActionResult>> AddAsset(int user, AddAssetCommand command) {
         var result = await _mediator.Send(command);
-
         return result.Then(CreatedAtAction(nameof(GetAsset), new { user, command.Profile, Asset = result.Unwrap() }, null));
     }
 
