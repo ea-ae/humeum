@@ -45,7 +45,7 @@ public class Asset : TimestampedEntity, IOptionalProfileEntity {
         var asset = new Asset() { Type = type, TypeId = type.Id, Profile = profile, ProfileId = profile.Id };
         var builder = new Result<Asset, DomainException>.Builder().AddValue(asset);
 
-        return SetAssetFields(builder, name, description, returnRate, standardDeviation).Build();
+        return SetFields(builder, name, description, returnRate, standardDeviation).Build();
     }
 
     public static IResult<Asset, DomainException> Create(string name,
@@ -57,7 +57,7 @@ public class Asset : TimestampedEntity, IOptionalProfileEntity {
         var asset = new Asset() { TypeId = typeId, ProfileId = profileId };
         var builder = new Result<Asset, DomainException>.Builder().AddValue(asset);
 
-        return SetAssetFields(builder, name, description, returnRate, standardDeviation).Build();
+        return SetFields(builder, name, description, returnRate, standardDeviation).Build();
     }
 
     public static IResult<Asset, DomainException> Create(int assetId,
@@ -69,14 +69,14 @@ public class Asset : TimestampedEntity, IOptionalProfileEntity {
         var asset = new Asset() { Id = assetId, TypeId = typeId };
         var builder = new Result<Asset, DomainException>.Builder().AddValue(asset);
 
-        return SetAssetFields(builder, name, description, returnRate, standardDeviation).Build();
+        return SetFields(builder, name, description, returnRate, standardDeviation).Build();
     }
 
-    static Result<Asset, DomainException>.Builder SetAssetFields(Result<Asset, DomainException>.Builder builder,
-                                                                 string name,
-                                                                 string? description,
-                                                                 decimal returnRate,
-                                                                 decimal standardDeviation) {
+    static Result<Asset, DomainException>.Builder SetFields(Result<Asset, DomainException>.Builder builder,
+                                                            string name,
+                                                            string? description,
+                                                            decimal returnRate,
+                                                            decimal standardDeviation) {
         return builder.Transform(asset => asset.SetName(name))
                       .Transform(asset => asset.SetDescription(description))
                       .Transform(asset => asset.SetReturnRate(returnRate))

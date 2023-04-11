@@ -1,4 +1,6 @@
-﻿using Domain.AssetAggregate;
+﻿using System.Xml.Linq;
+
+using Domain.AssetAggregate;
 using Domain.Common.Exceptions;
 using Domain.Common.Interfaces;
 using Domain.Common.Models;
@@ -17,48 +19,13 @@ namespace Domain.TransactionAggregate;
 /// the transaction type.
 /// </summary>
 public class Transaction : TimestampedEntity, IRequiredProfileEntity {
-    string? _name;
-    public string? Name {
-        get => _name;
-        set {
-            if (value is null || value == "") {
-                _name = null;
-            } else if (value.Length > 50) {
-                throw new DomainException("Name cannot exceed 50 characters.");
-            } else {
-                _name = value;
-            }
-        }
-    }
+    public string? Name { get; private set; }
 
-    string? _description;
-    public string? Description {
-        get => _description;
-        set {
-            if (value is null || value == "") {
-                _description = null;
-            } else if (value.Length > 400) {
-                throw new DomainException("Description cannot exceed 400 characters.");
-            } else {
-                _description = value;
-            }
-        }
-    }
+    public string? Description { get; private set; }
 
-    decimal _amount;
-    public decimal Amount {
-        get => _amount;
-        set {
-            if (value == 0) {
-                throw new DomainException(new ArgumentOutOfRangeException(nameof(Amount), "Transaction amount cannot be zero."));
-            } else if (Asset is not null && value >= 0) {
-                throw new DomainException(new InvalidOperationException("Asset transactions can only be expenses (negative amount)."));
-            }
-            _amount = value;
-        }
-    }
+    public decimal Amount { get; private set; }
 
-    public Timeline PaymentTimeline { get; set; } = null!;
+    public Timeline PaymentTimeline { get; private set; } = null!;
 
     public int TypeId { get; private set; }
     public TransactionType Type { get; private set; } = null!;
@@ -75,54 +42,97 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
     HashSet<TransactionCategory> _categories = null!;
     public IReadOnlyCollection<TransactionCategory> Categories => _categories;
 
-    public Transaction(string? name,
-                       string? description,
-                       decimal amount,
-                       TransactionType type,
-                       Timeline paymentTimeline,
-                       Profile profile,
-                       TaxScheme taxScheme,
-                       Asset? asset = null)
-        : this(name, description, amount, type, paymentTimeline, profile.Id, taxScheme.Id, asset?.Id) {
-        Profile = profile;
-        TaxScheme = taxScheme;
-        Asset = asset;
+    //public Transaction(string? name,
+    //                   string? description,
+    //                   decimal amount,
+    //                   TransactionType type,
+    //                   Timeline paymentTimeline,
+    //                   Profile profile,
+    //                   TaxScheme taxScheme,
+    //                   Asset? asset = null)
+    //    : this(name, description, amount, type, paymentTimeline, profile.Id, taxScheme.Id, asset?.Id) {
+    //    Profile = profile;
+    //    TaxScheme = taxScheme;
+    //    Asset = asset;
+    //}
+
+    //public Transaction(string? name,
+    //                   string? description,
+    //                   decimal amount,
+    //                   TransactionType type,
+    //                   Timeline paymentTimeline,
+    //                   int profileId,
+    //                   int taxSchemeId,
+    //                   int? assetId = null) {
+    //    Name = name;
+    //    Description = description;
+    //    TypeId = type.Id;
+    //    Type = type;
+    //    PaymentTimeline = paymentTimeline;
+    //    ProfileId = profileId;
+    //    TaxSchemeId = taxSchemeId;
+    //    AssetId = assetId;
+    //    Amount = amount;
+    //}
+
+    Transaction() { }
+
+    public static IResult<Transaction, DomainException> Create(string? name,
+                                                               string? description,
+                                                               decimal amount,
+                                                               TransactionType type,
+                                                               Timeline paymentTimeline,
+                                                               Profile profile,
+                                                               TaxScheme taxScheme,
+                                                               Asset? asset = null) {
+        var transaction = new Transaction() {
+            Profile = profile, ProfileId = profile.Id, TaxScheme = taxScheme, TaxSchemeId = taxScheme.Id, Asset = asset, AssetId = asset?.Id
+        };
+        var builder = new Result<Transaction, DomainException>.Builder().AddValue(transaction);
+
+        return SetFields(builder, name, description, amount, type, paymentTimeline).Build();
     }
 
-    public Transaction(string? name,
-                       string? description,
-                       decimal amount,
-                       TransactionType type,
-                       Timeline paymentTimeline,
-                       int profileId,
-                       int taxSchemeId,
-                       int? assetId = null) {
-        Name = name;
-        Description = description;
-        TypeId = type.Id;
-        Type = type;
-        PaymentTimeline = paymentTimeline;
-        ProfileId = profileId;
-        TaxSchemeId = taxSchemeId;
-        AssetId = assetId;
-        Amount = amount;
+    public static IResult<Transaction, DomainException> Create(string? name,
+                                                               string? description,
+                                                               decimal amount,
+                                                               TransactionType type,
+                                                               Timeline paymentTimeline,
+                                                               int profileId,
+                                                               int taxSchemeId,
+                                                               int? assetId = null) {
+        var transaction = new Transaction() { ProfileId = profileId, TaxSchemeId = taxSchemeId, AssetId = assetId };
+        var builder = new Result<Transaction, DomainException>.Builder().AddValue(transaction);
+
+        return SetFields(builder, name, description, amount, type, paymentTimeline).Build();
     }
 
-    private Transaction() { }
+    static Result<Transaction, DomainException>.Builder SetFields(Result<Transaction, DomainException>.Builder builder,
+                                                                  string? name,
+                                                                  string? description,
+                                                                  decimal amount,
+                                                                  TransactionType type,
+                                                                  Timeline paymentTimeline) {
+        return builder.Transform(transaction => transaction.SetName(name))
+                      .Transform(transaction => transaction.SetDescription(description))
+                      .Transform(transaction => transaction.SetAmount(amount))
+                      .Transform(transaction => transaction.SetPaymentTimeline(paymentTimeline));
+    }
+
+
 
     /// <summary>Replace the transaction fields in-place.</summary>
     public void Replace(string? name, string? description, decimal amount, TransactionType type, Timeline paymentTimeline, TaxScheme taxScheme, Asset? asset) {
-        Name = name;
-        Description = description;
-        Amount = amount;
-        TypeId = type.Id;
-        PaymentTimeline = paymentTimeline;
         Type = type;
         TypeId = type.Id;
         TaxScheme = taxScheme;
         TaxSchemeId = taxScheme.Id;
         Asset = asset;
         AssetId = asset?.Id;
+        SetName(name);
+        SetDescription(description);
+        SetAmount(amount);
+        SetPaymentTimeline(paymentTimeline);
     }
 
     /// <summary>
@@ -162,4 +172,44 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
     /// Total amount of payments made throughout a recurring transaction.
     /// </summary>
     public decimal TotalTransactionAmount => Amount * TotalTransactionCount;
+
+    IResult<None, DomainException> SetName(string? name) {
+        if (name is null || name == "") {
+            Name = null;
+        } else if (name.Length > 50) {
+            return Result<None, DomainException>.Fail(new DomainException("Name cannot exceed 50 characters."));
+        } else {
+            Name = name;
+        }
+
+        return Result<None, DomainException>.Ok(None.Value);
+    }
+
+    IResult<None, DomainException> SetDescription(string? description) {
+        if (description is null || description == "") {
+            Description = null;
+        } else if (description.Length > 400) {
+            return Result<None, DomainException>.Fail(new DomainException("Description cannot exceed 400 characters."));
+        } else {
+            Description = description;
+        }
+
+        return Result<None, DomainException>.Ok(None.Value);
+    }
+
+    IResult<None, DomainException> SetAmount(decimal amount) {
+        if (amount == 0) {
+            return Result<None, DomainException>.Fail(new DomainException("Transaction amount cannot be zero."));
+        } else if (Asset is not null && amount >= 0) {
+            return Result<None, DomainException>.Fail(new DomainException("Asset transactions can only be expenses (a negative amount)."));
+        }
+
+        Amount = amount;
+        return Result<None, DomainException>.Ok(None.Value);
+    }
+
+    IResult<None, DomainException> SetPaymentTimeline(Timeline paymentTimeline) {
+        PaymentTimeline = paymentTimeline;
+        return Result<None, DomainException>.Ok(None.Value);
+    }
 }
