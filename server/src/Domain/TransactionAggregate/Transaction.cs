@@ -19,13 +19,17 @@ namespace Domain.TransactionAggregate;
 /// the transaction type.
 /// </summary>
 public class Transaction : TimestampedEntity, IRequiredProfileEntity {
-    public string? Name { get; private set; }
+    string? _name;
+    public string? Name => _name;
 
-    public string? Description { get; private set; }
+    string? _description;
+    public string? Description => _description;
 
-    public decimal Amount { get; private set; }
+    decimal _amount;
+    public decimal Amount => _amount;
 
-    public Timeline PaymentTimeline { get; private set; } = null!;
+    Timeline _paymentTimeline = null!;
+    public Timeline PaymentTimeline => _paymentTimeline;
 
     public int TypeId { get; private set; }
     public TransactionType Type { get; private set; } = null!;
@@ -175,11 +179,11 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
 
     IResult<None, DomainException> SetName(string? name) {
         if (name is null || name == "") {
-            Name = null;
+            _name = null;
         } else if (name.Length > 50) {
             return Result<None, DomainException>.Fail(new DomainException("Name cannot exceed 50 characters."));
         } else {
-            Name = name;
+            _name = name;
         }
 
         return Result<None, DomainException>.Ok(None.Value);
@@ -187,11 +191,11 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
 
     IResult<None, DomainException> SetDescription(string? description) {
         if (description is null || description == "") {
-            Description = null;
+            _description = null;
         } else if (description.Length > 400) {
             return Result<None, DomainException>.Fail(new DomainException("Description cannot exceed 400 characters."));
         } else {
-            Description = description;
+            _description = description;
         }
 
         return Result<None, DomainException>.Ok(None.Value);
@@ -204,12 +208,12 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
             return Result<None, DomainException>.Fail(new DomainException("Asset transactions can only be expenses (a negative amount)."));
         }
 
-        Amount = amount;
+        _amount = amount;
         return Result<None, DomainException>.Ok(None.Value);
     }
 
     IResult<None, DomainException> SetPaymentTimeline(Timeline paymentTimeline) {
-        PaymentTimeline = paymentTimeline;
+        _paymentTimeline = paymentTimeline;
         return Result<None, DomainException>.Ok(None.Value);
     }
 }

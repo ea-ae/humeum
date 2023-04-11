@@ -17,13 +17,17 @@ namespace Domain.AssetAggregate;
 /// referencing historical market rate return distributions. Assets are withdrawn in order of returns.
 /// </summary>
 public class Asset : TimestampedEntity, IOptionalProfileEntity {
-    public string Name { get; private set; } = null!;
+    string _name = null!;
+    public string Name => _name;
 
-    public string? Description { get; private set; }
+    string? _description;
+    public string? Description => _description;
 
-    public decimal ReturnRate { get; private set; }
+    decimal _returnRate;
+    public decimal ReturnRate => _returnRate;
 
-    public decimal StandardDeviation { get; private set; }
+    decimal _standardDeviation;
+    public decimal StandardDeviation => _standardDeviation;
 
     public int TypeId { get; private set; }
     public AssetType Type { get; private set; } = null!;
@@ -90,7 +94,7 @@ public class Asset : TimestampedEntity, IOptionalProfileEntity {
             return Result<None, DomainException>.Fail(new DomainException("Name cannot exceed 50 characters."));
         }
 
-        Name = name;
+        _name = name;
         return Result<None, DomainException>.Ok(None.Value);
     }
 
@@ -101,7 +105,7 @@ public class Asset : TimestampedEntity, IOptionalProfileEntity {
             description = null;
         }
         
-        Description = description;
+        _description = description;
         return Result<None, DomainException>.Ok(None.Value);
     }
 
@@ -110,7 +114,7 @@ public class Asset : TimestampedEntity, IOptionalProfileEntity {
             return Result<None, DomainException>.Fail(new DomainException("Return rate cannot be negative."));
         }
 
-        ReturnRate = returnRate;
+        _returnRate = returnRate;
         return Result<None, DomainException>.Ok(None.Value);
     }
 
@@ -119,7 +123,7 @@ public class Asset : TimestampedEntity, IOptionalProfileEntity {
             return Result<None, DomainException>.Fail(new DomainException("Standard deviation cannot be negative."));
         }
 
-        StandardDeviation = standardDeviation;
+        _standardDeviation = standardDeviation;
         return Result<None, DomainException>.Ok(None.Value);
     }
 }
