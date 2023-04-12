@@ -21,7 +21,7 @@ internal class ApplicationUserServiceStub : IApplicationUserService {
         return Task.CompletedTask;
     }
 
-    public Task<int> RefreshUserAsync(int userId, string refreshToken) {
+    public Task<int> RefreshUserAsync(int userId) {
         return Task.FromResult(1);
     }
 }
