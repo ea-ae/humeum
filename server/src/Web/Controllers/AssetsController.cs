@@ -74,7 +74,8 @@ public class AssetsController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult<IActionResult>> AddAsset(int user, AddAssetCommand command) {
         var result = await _mediator.Send(command);
-        return result.Then(CreatedAtAction(nameof(GetAsset), new { user, command.Profile, Asset = result.Unwrap() }, null));
+        return result.Then(asset => Result<IActionResult>.Ok(
+            CreatedAtAction(nameof(GetAsset), new { user, command.Profile, asset }, null)));
     }
 
     /// <summary>
@@ -89,7 +90,6 @@ public class AssetsController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult<IActionResult, IBaseException>> DeleteAsset(DeleteAssetCommand command) {
         var result = await _mediator.Send(command);
-
         return result.Then(NoContent());
     }
 }

@@ -1,22 +1,25 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using Application.Common.Exceptions;
+using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using AutoMapper;
 
+using Domain.Common.Interfaces;
+using Domain.Common.Models;
 using Domain.TransactionAggregate;
 
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Transactions.Queries;
 
-public record GetTransactionQuery : IQuery<TransactionDto> {
+public record GetTransactionQuery : IQuery<IResult<TransactionDto>> {
     [Required] public required int Profile { get; init; }
     [Required] public required int Transaction { get; init; }
 }
 
-public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, TransactionDto> {
+public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, IResult<TransactionDto>> {
     private readonly IAppDbContext _context;
     private readonly IMapper _mapper;
 
@@ -25,7 +28,7 @@ public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, Tra
         _mapper = mapper;
     }
 
-    public async Task<TransactionDto> Handle(GetTransactionQuery request, CancellationToken token) {
+    public Task<IResult<TransactionDto>> Handle(GetTransactionQuery request, CancellationToken token) {
         var transaction = _context.Transactions.AsNoTracking()
                                                .Include(t => t.Categories)
                                                .Include(t => t.Type)
@@ -37,9 +40,12 @@ public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, Tra
                                                                     && t.DeletedAt == null);
 
         if (transaction is null) {
-            throw new NotFoundValidationException(typeof(Transaction));
+            IResult<TransactionDto> failResult = Result<TransactionDto>.Fail(new NotFoundValidationException(typeof(Transaction)));
+            return Task.FromResult(failResult);
         }
 
-        return await Task.Run(() => _mapper.Map<TransactionDto>(transaction));
+
+        var result = _mapper.MapToResult<TransactionDto>(transaction);
+        return Task.FromResult(result);
     }
 }

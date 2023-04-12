@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-using Domain.AssetAggregate;
+﻿using Domain.AssetAggregate;
 using Domain.Common.Exceptions;
 using Domain.Common.Interfaces;
 using Domain.Common.Models;

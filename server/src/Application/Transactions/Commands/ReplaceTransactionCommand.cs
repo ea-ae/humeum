@@ -5,6 +5,8 @@ using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using Domain.AssetAggregate;
+using Domain.Common.Interfaces;
+using Domain.Common.Models;
 using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
@@ -13,7 +15,7 @@ using MediatR;
 
 namespace Application.Transactions.Commands;
 
-public record ReplaceTransactionCommand : ICommand {
+public record ReplaceTransactionCommand : ICommand<IResult<None>> {
     [Required] public required int Profile { get; init; }
     [Required] public required int Transaction { get; init; }
 
@@ -31,14 +33,14 @@ public record ReplaceTransactionCommand : ICommand {
     public int? UnitsInCycle { get; init; }
 }
 
-public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransactionCommand> {
+public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransactionCommand, IResult<None>> {
     readonly IAppDbContext _context;
 
     public ReplaceTransactionCommandHandler(IAppDbContext context) {
         _context = context;
     }
 
-    public async Task<Unit> Handle(ReplaceTransactionCommand request, CancellationToken token = default) {
+    public async Task<IResult<None>> Handle(ReplaceTransactionCommand request, CancellationToken token = default) {
         // validation
 
         List<object?> recurringTransactionFields = new() { // fields required for recurrent transactions
@@ -51,7 +53,7 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
 
         var taxScheme = _context.TaxSchemes.FirstOrDefault(ts => ts.Id == request.TaxScheme && ts.DeletedAt == null);
         if (taxScheme is null) {
-            throw new NotFoundValidationException(typeof(TaxScheme));
+            return Result<None>.Fail(new NotFoundValidationException(typeof(TaxScheme)));
         }
 
         Asset? asset = null;
@@ -60,7 +62,7 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
                                                         && a.Id == request.Asset
                                                         && a.DeletedAt == null);
             if (asset is null) {
-                throw new NotFoundValidationException(typeof(Asset));
+                return Result<None>.Fail(new NotFoundValidationException(typeof(Asset)));
             }
         }
 
@@ -70,7 +72,7 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
                                                                     && t.ProfileId == request.Profile
                                                                     && t.DeletedAt == null);
         if (transaction is null) {
-            throw new NotFoundValidationException(typeof(Transaction));
+            return Result<None>.Fail(new NotFoundValidationException(typeof(Transaction)));
         }
 
         var transactionType = _context.GetEnumerationEntityByCode<TransactionType>(request.Type);
@@ -96,6 +98,6 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
 
         await _context.SaveChangesWithHardDeletionAsync(token);
 
-        return Unit.Value;
+        return Result<None>.Ok(None.Value);
     }
 }

@@ -1,6 +1,9 @@
 ﻿using Application.Transactions.Commands;
 using Application.Transactions.Queries;
 
+using Domain.Common.Interfaces;
+using Domain.Common.Models;
+
 using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -72,9 +75,10 @@ public class TransactionsController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> AddTransaction(int user, AddTransactionCommand command) {
-        int id = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetTransaction), new { user, command.Profile, Transaction = id }, null);
+    public async Task<IResult<IActionResult>> AddTransaction(int user, AddTransactionCommand command) {
+        var result = await _mediator.Send(command);
+        return result.Then(transaction => Result<IActionResult>.Ok(
+            CreatedAtAction(nameof(GetTransaction), new { user, command.Profile, transaction }, null)));
     }
 
     /// <summary>
@@ -106,9 +110,9 @@ public class TransactionsController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> ReplaceTransaction(ReplaceTransactionCommand command) {
-        await _mediator.Send(command);
-        return NoContent();
+    public async Task<IResult<IActionResult>> ReplaceTransaction(ReplaceTransactionCommand command) {
+        var result = await _mediator.Send(command);
+        return result.Then(NoContent());
     }
 
     /// <summary>
@@ -121,9 +125,9 @@ public class TransactionsController : ControllerBase {
     [HttpDelete("{Transaction}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteTransaction(DeleteTransactionCommand command) {
-        await _mediator.Send(command);
-        return NoContent();
+    public async Task<IResult<IActionResult>> DeleteTransaction(DeleteTransactionCommand command) {
+        var result = await _mediator.Send(command);
+        return result.Then(NoContent());
     }
 
     /// <summary>
