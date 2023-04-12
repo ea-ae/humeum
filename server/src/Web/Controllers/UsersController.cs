@@ -89,4 +89,16 @@ public class UsersController : ControllerBase {
         var user = await _mediator.Send(new GetUserQuery { User = userId });
         return Ok(user);
     }
+
+    /// <summary>
+    /// Refreshes user authentication through a refresh token.
+    /// </summary>
+    /// <response code="200">Details of signed in user.</response>
+    /// <response code="401">If the authentication attempt fails, e.g. invalid refresh token.</response>
+    [HttpPost("{User:int}/refresh")]
+    public async Task<ActionResult<UserDto>> RefreshUser(RefreshUserCommand command) {
+        int userId = await _mediator.Send(command);
+        var user = await _mediator.Send(new GetUserQuery { User = userId });
+        return Ok(user);
+    }
 }

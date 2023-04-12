@@ -18,9 +18,7 @@ public record RegisterUserCommand : ICommand<int> {
 public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, int> {
     private readonly IApplicationUserService _userService;
 
-    public RegisterUserCommandHandler(IApplicationUserService userService) {
-        _userService = userService;
-    }
+    public RegisterUserCommandHandler(IApplicationUserService userService) => _userService = userService;
 
     public async Task<int> Handle(RegisterUserCommand request, CancellationToken token) {
         // validation

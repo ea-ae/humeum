@@ -12,10 +12,11 @@ public abstract class ApplicationUserService : IApplicationUserService {
     protected readonly AppDbContext _context;
 
     public ApplicationUserService(IAppDbContext context) {
-        if (_context is AppDbContext identityContext) {
+        if (context is AppDbContext identityContext) {
             _context = identityContext;
+        } else {
+            throw new NotSupportedException("Unsupported DbContext service provided.");
         }
-        throw new NotSupportedException("Unsupported DbContext service provided.");
     }
 
     public abstract Task<int> CreateUserAsync(User user, string password, bool rememberMe);

@@ -6,7 +6,7 @@ namespace Application.Test.Common.Stubs;
 
 internal class ApplicationUserServiceStub : IApplicationUserService {
     public Task<int> CreateUserAsync(User user, string password, bool rememberMe) {
-        return Task.Run(() => 1);
+        return Task.FromResult(1);
     }
 
     public User GetUserById(int id) {
@@ -14,10 +14,14 @@ internal class ApplicationUserServiceStub : IApplicationUserService {
     }
 
     public Task<int> SignInUserAsync(string username, string password, bool rememberMe) {
-        return Task.Run(() => 1);
+        return Task.FromResult(1);
     }
 
     public Task UpdateClientToken(int userId) {
         return Task.CompletedTask;
+    }
+
+    public Task<int> RefreshUserAsync(int userId, string refreshToken) {
+        return Task.FromResult(1);
     }
 }
