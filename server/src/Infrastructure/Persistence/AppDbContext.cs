@@ -41,7 +41,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
         builder.Entity<Transaction>().Property(t => t.Name).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
         builder.Entity<Transaction>().Property(t => t.Description).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
         builder.Entity<Transaction>().Property(t => t.Amount).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
-        //builder.Entity<Transaction>().Property(t => t.PaymentTimeline).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
+        //builder.Entity<Transaction>().Property(t => t.PaymentTimeline).UsePropertyAccessMode(PropertyAccessMode.Field);
         builder.Entity<Transaction>().HasOne(t => t.Type);
         builder.Entity<Transaction>().HasOne(t => t.Profile).WithMany(p => p.Transactions);
         builder.Entity<Transaction>().HasOne(t => t.TaxScheme).WithMany(ts => ts.Transactions);

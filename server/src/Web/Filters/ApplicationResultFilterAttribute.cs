@@ -17,6 +17,8 @@ public class ApplicationResultFilterAttribute : ResultFilterAttribute {
     public override void OnResultExecuting(ResultExecutingContext context) {
         if (context.Result is ObjectResult objectResult && objectResult.Value is IResult<object?, IBaseException> objectValueResult) {
             //if (objectValueResult.Success && objectResult.Value is IResult<IActionResult, IBaseException> actionResult) {
+            //    Console.WriteLine("???");
+            //}
             // we are dealing with a result such as an Ok(Result<T>)
             if (objectValueResult.Success) {
                 objectResult.Value = objectValueResult.Unwrap();
