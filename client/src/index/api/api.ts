@@ -124,7 +124,7 @@ export class AssetsClient extends ApiClient {
      * @param assetType (optional) 
      * @return Returns a location header to the newly created item.
      */
-    addAsset(user: number, profile: number, name?: string | null | undefined, description?: string | null | undefined, returnRate?: number | null | undefined, standardDeviation?: number | null | undefined, assetType?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+    addAsset(user: number, profile: number, name?: string | null | undefined, description?: string | null | undefined, returnRate?: number | null | undefined, standardDeviation?: number | null | undefined, assetType?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<FileResponse>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/assets?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -145,9 +145,11 @@ export class AssetsClient extends ApiClient {
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
+            responseType: "blob",
             method: "POST",
             url: url_,
             headers: {
+                "Accept": "application/json"
             },
             cancelToken
         };
@@ -165,7 +167,7 @@ export class AssetsClient extends ApiClient {
         });
     }
 
-    protected processAddAsset(response: AxiosResponse): Promise<SwaggerResponse<void>> {
+    protected processAddAsset(response: AxiosResponse): Promise<SwaggerResponse<FileResponse>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -190,9 +192,16 @@ export class AssetsClient extends ApiClient {
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
 
         } else if (status === 201) {
-            const _responseText = response.data;
-            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
-
+            const contentDisposition = response.headers ? response.headers["content-disposition"] : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return Promise.resolve<SwaggerResponse<FileResponse>>(new SwaggerResponse(status, _headers, { fileName: fileName, status: status, data: new Blob([response.data], { type: response.headers["content-type"] }), headers: _headers }));
         } else if (status === 400) {
             const _responseText = response.data;
             let result400: any = null;
@@ -211,7 +220,7 @@ export class AssetsClient extends ApiClient {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
+        return Promise.resolve<SwaggerResponse<FileResponse>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
@@ -302,7 +311,7 @@ export class AssetsClient extends ApiClient {
      * Deletes a custom asset with given ID from a profile.
      * @return If asset was deleted.
      */
-    deleteTransaction(profile: number, asset: number, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+    deleteAsset(profile: number, asset: number, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
         let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/assets/{Asset}";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
@@ -332,11 +341,11 @@ export class AssetsClient extends ApiClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processDeleteTransaction(_response);
+            return this.processDeleteAsset(_response);
         });
     }
 
-    protected processDeleteTransaction(response: AxiosResponse): Promise<SwaggerResponse<void>> {
+    protected processDeleteAsset(response: AxiosResponse): Promise<SwaggerResponse<void>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1249,7 +1258,7 @@ export class TransactionsClient extends ApiClient {
      * @param unitsInCycle (optional) 
      * @return Returns a location header to the newly created item.
      */
-    addTransaction(user: number, profile: number, name?: string | null | undefined, description?: string | null | undefined, amount?: number | null | undefined, type?: string | undefined, paymentStart?: Date | null | undefined, taxScheme?: number | null | undefined, asset?: number | null | undefined, paymentEnd?: Date | null | undefined, timeUnit?: string | null | undefined, timesPerCycle?: number | null | undefined, unitsInCycle?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+    addTransaction(user: number, profile: number, name?: string | null | undefined, description?: string | null | undefined, amount?: number | null | undefined, type?: string | undefined, paymentStart?: Date | null | undefined, taxScheme?: number | null | undefined, asset?: number | null | undefined, paymentEnd?: Date | null | undefined, timeUnit?: string | null | undefined, timesPerCycle?: number | null | undefined, unitsInCycle?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<FileResponse>> {
         let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/transactions?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -1284,9 +1293,11 @@ export class TransactionsClient extends ApiClient {
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
+            responseType: "blob",
             method: "POST",
             url: url_,
             headers: {
+                "Accept": "application/json"
             },
             cancelToken
         };
@@ -1304,7 +1315,7 @@ export class TransactionsClient extends ApiClient {
         });
     }
 
-    protected processAddTransaction(response: AxiosResponse): Promise<SwaggerResponse<void>> {
+    protected processAddTransaction(response: AxiosResponse): Promise<SwaggerResponse<FileResponse>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1329,9 +1340,16 @@ export class TransactionsClient extends ApiClient {
             return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
 
         } else if (status === 201) {
-            const _responseText = response.data;
-            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
-
+            const contentDisposition = response.headers ? response.headers["content-disposition"] : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return Promise.resolve<SwaggerResponse<FileResponse>>(new SwaggerResponse(status, _headers, { fileName: fileName, status: status, data: new Blob([response.data], { type: response.headers["content-type"] }), headers: _headers }));
         } else if (status === 400) {
             const _responseText = response.data;
             let result400: any = null;
@@ -1350,7 +1368,7 @@ export class TransactionsClient extends ApiClient {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
+        return Promise.resolve<SwaggerResponse<FileResponse>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
@@ -2133,6 +2151,63 @@ export class UsersClient extends ApiClient {
         }
         return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse(status, _headers, null as any));
     }
+
+    /**
+     * Refreshes user authentication through a refresh token.
+     * @return Details of signed in user.
+     */
+    refreshUser(user: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<UserDto>> {
+        let url_ = this.baseUrl + "/api/v1/users/{User}/refresh";
+        if (user === undefined || user === null)
+            throw new Error("The parameter 'user' must be defined.");
+        url_ = url_.replace("{User}", encodeURIComponent("" + user));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "POST",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processRefreshUser(_response);
+        });
+    }
+
+    protected processRefreshUser(response: AxiosResponse): Promise<SwaggerResponse<UserDto>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = UserDto.fromJS(resultData200);
+            return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse<UserDto>(status, _headers, result200));
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse(status, _headers, null as any));
+    }
 }
 
 export class ProblemDetails implements IProblemDetails {
@@ -2706,6 +2781,13 @@ export class SwaggerResponse<TResult> {
     }
 }
 
+export interface FileResponse {
+    data: Blob;
+    status: number;
+    fileName?: string;
+    headers?: { [name: string]: any };
+}
+
 export class ApiException extends Error {
     override message: string;
     status: number;
@@ -2731,10 +2813,7 @@ export class ApiException extends Error {
 }
 
 function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): any {
-    if (result !== null && result !== undefined)
-        throw result;
-    else
-        throw new ApiException(message, status, response, headers, null);
+    throw new ApiException(message, status, response, headers, result);
 }
 
 function isAxiosError(obj: any | undefined): obj is AxiosError {

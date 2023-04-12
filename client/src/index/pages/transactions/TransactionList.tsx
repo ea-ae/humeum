@@ -21,11 +21,16 @@ function TransactionList() {
 
     if (user !== null && transactions === null) {
       const client = new TransactionsClient();
-      client
-        .getTransactions(user.profiles[0].id, user.id.toString(), undefined, undefined, undefined, undefined, cancelSource.token)
-        .then((res) => {
-          setTransactions(res.result);
-        });
+
+      const get = () =>
+        client.getTransactions(user.profiles[0].id, user.id.toString(), undefined, undefined, undefined, undefined, cancelSource.token);
+
+      const set = (value: TransactionDto[]) => setTransactions(value);
+
+      get().then(
+        (res) => set(res.result),
+        (err) => TransactionsClient.handleError(err, get, set)
+      );
     }
 
     return () => cancelSource.cancel();
