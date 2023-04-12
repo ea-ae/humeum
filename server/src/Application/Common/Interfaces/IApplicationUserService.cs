@@ -7,6 +7,8 @@ public interface IApplicationUserService {
 
     public Task<int> SignInUserAsync(string username, string password, bool rememberMe);
 
+    public Task<int> RefreshUserAsync(int userId, string refreshToken);
+
     public Task UpdateClientToken(int userId);
 
     public User GetUserById(int id);

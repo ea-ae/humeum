@@ -46,9 +46,7 @@ public class JwtApplicationUserService : ApplicationUserService {
         if (result.Succeeded) {
             await _signInManager.SignInAsync(appUser, isPersistent: rememberMe);
             appUser = await _userManager.FindByNameAsync(user.Username) ?? throw new InvalidOperationException();
-            var token = await CreateToken(appUser);
-            AddTokenAsCookie(token);
-
+            await SetupUserTokens(appUser);
             return appUser.Id;
         }
 
@@ -62,9 +60,7 @@ public class JwtApplicationUserService : ApplicationUserService {
 
         if (result.Succeeded) {
             var user = await _userManager.FindByNameAsync(username) ?? throw new InvalidOperationException();
-            var token = await CreateToken(user);
-            AddTokenAsCookie(token);
-
+            await SetupUserTokens(user);
             return user.Id;
         }
 
@@ -75,13 +71,30 @@ public class JwtApplicationUserService : ApplicationUserService {
         throw new AuthenticationException("Sign-in attempt failed.");
     }
 
+    public override async Task<int> RefreshUserAsync(int userId, string refreshToken) {
+        var user = GetApplicationUser(userId);
+
+        if (user.RefreshToken != refreshToken) {
+            throw new AuthenticationException("Provided refresh token is invalid or does not match.");
+        }
+
+        if (user.RefreshTokenExpiry < DateTime.UtcNow) {
+            throw new AuthenticationException("Provided refresh token has expired.");
+        }
+
+        await _signInManager.SignInAsync(user, isPersistent: true); // todo: sure about this?
+        await SetupUserTokens(user);
+
+        return user.Id;
+    }
+
     protected override async Task<string> CreateToken(ApplicationUser user) {
         var key = Encoding.UTF8.GetBytes(_jwtSettings.Key);
         var secret = new SymmetricSecurityKey(key);
         var credentials = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
 
         var claims = await GetUserClaims(user);
-        var expires = DateTime.UtcNow.AddDays(_jwtSettings.ExpireDays);
+        var expires = DateTime.UtcNow.AddDays(_jwtSettings.CookieExpireMinutes);
 
         var token = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,
@@ -94,6 +107,43 @@ public class JwtApplicationUserService : ApplicationUserService {
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
+    protected override string CreateRefreshToken() => Guid.NewGuid().ToString();
+
+    protected override void AddTokenAsCookie(string token) {
+        var cookieOptions = new CookieOptions() {
+            HttpOnly = true,
+            Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.CookieExpireMinutes)
+        };
+
+        HttpContext httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException();
+        httpContext.Response.Cookies.Append(_jwtSettings.Cookie, token, cookieOptions);
+    }
+
+    protected void AddRefreshTokenAsCookie(string refreshToken) {
+        var cookieOptions = new CookieOptions() {
+            HttpOnly = true,
+            Expires = DateTime.UtcNow.AddDays(_jwtSettings.RefreshCookieExpireDays)
+        };
+
+        HttpContext httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException();
+        httpContext.Response.Cookies.Append(_jwtSettings.RefreshCookie, refreshToken, cookieOptions);
+    }
+
+    async Task SetupUserTokens(ApplicationUser user) {
+        string token = await CreateToken(user);
+        AddTokenAsCookie(token);
+
+        string refreshToken = CreateRefreshToken();
+        AddRefreshTokenAsCookie(refreshToken);
+
+        // persist tokens in DB
+
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(_jwtSettings.RefreshCookieExpireDays);
+        _context.Users.Update(user); // in case unattached
+        await _context.SaveChangesAsync();
+    }
+
     async Task<IEnumerable<Claim>> GetUserClaims(ApplicationUser user) {
         var claims = await _userManager.GetClaimsAsync(user);
         var profiles = _context.Profiles.Where(p => p.UserId == user.Id && p.DeletedAt == null).ToList();
@@ -103,16 +153,5 @@ public class JwtApplicationUserService : ApplicationUserService {
         claims.Add(new Claim("profiles", string.Join(",", profiles.Select(p => p.Id))));
 
         return claims;
-    }
-
-    protected override void AddTokenAsCookie(string token) {
-        var cookieName = _jwtSettings.Cookie;
-        var cookieOptions = new CookieOptions() {
-            HttpOnly = true,
-            Expires = DateTime.UtcNow.AddDays(_jwtSettings.ExpireDays)
-        };
-
-        HttpContext httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException();
-        httpContext.Response.Cookies.Append(cookieName, token, cookieOptions);
     }
 }
