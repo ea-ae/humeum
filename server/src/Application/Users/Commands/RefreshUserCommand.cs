@@ -6,7 +6,6 @@ namespace Application.Users.Commands;
 
 public record RefreshUserCommand : ICommand<int> {
     [Required] public required int User { get; init; }
-    [Required] public required string RefreshToken { get; init; }
 }
 
 public class RefreshUserCommandHandler : ICommandHandler<RefreshUserCommand, int> {
@@ -15,6 +14,6 @@ public class RefreshUserCommandHandler : ICommandHandler<RefreshUserCommand, int
     public RefreshUserCommandHandler(IApplicationUserService userService) => _userService = userService;
 
     public async Task<int> Handle(RefreshUserCommand request, CancellationToken token) {
-        return await _userService.RefreshUserAsync(request.User, request.RefreshToken);
+        return await _userService.RefreshUserAsync(request.User);
     }
 }

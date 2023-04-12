@@ -23,7 +23,7 @@ public abstract class ApplicationUserService : IApplicationUserService {
 
     public abstract Task<int> SignInUserAsync(string username, string password, bool rememberMe);
 
-    public abstract Task<int> RefreshUserAsync(int userId, string refreshToken);
+    public abstract Task<int> RefreshUserAsync(int userId);
 
     protected abstract Task<string> CreateToken(ApplicationUser user);
 

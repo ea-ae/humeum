@@ -71,8 +71,10 @@ public class JwtApplicationUserService : ApplicationUserService {
         throw new AuthenticationException("Sign-in attempt failed.");
     }
 
-    public override async Task<int> RefreshUserAsync(int userId, string refreshToken) {
+    public override async Task<int> RefreshUserAsync(int userId) {
         var user = GetApplicationUser(userId);
+        string refreshToken = GetRefreshTokenFromCookie();
+        
 
         if (user.RefreshToken != refreshToken) {
             throw new AuthenticationException("Provided refresh token is invalid or does not match.");
@@ -128,6 +130,16 @@ public class JwtApplicationUserService : ApplicationUserService {
 
         HttpContext httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException();
         httpContext.Response.Cookies.Append(_jwtSettings.RefreshCookie, refreshToken, cookieOptions);
+    }
+
+    string GetRefreshTokenFromCookie() {
+        HttpContext httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException();
+        bool found = httpContext.Request.Cookies.TryGetValue(_jwtSettings.RefreshCookie, out string? refreshToken);
+
+        if (found) {
+            return refreshToken!;
+        }
+        throw new AuthenticationException("Refresh token cookie could not be found.");
     }
 
     async Task SetupUserTokens(ApplicationUser user) {
