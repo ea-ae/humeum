@@ -143,6 +143,10 @@ public class JwtApplicationUserService : ApplicationUserService {
     }
 
     async Task SetupUserTokens(ApplicationUser user) {
+        if (!user.Enabled) {
+            throw new AuthenticationException("User account has been disabled.");
+        }
+
         string token = await CreateToken(user);
         AddTokenAsCookie(token);
 
