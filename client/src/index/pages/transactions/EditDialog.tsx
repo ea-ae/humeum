@@ -4,6 +4,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import * as React from 'react';
 
 import { TransactionDto } from '../../api/api';
+import CurrencyInput from '../../components/cards/CurrencyInput';
 import Input from '../../components/cards/Input';
 
 interface Props {
@@ -32,15 +33,17 @@ export default function EditDialog({ transaction, isOpen, onClose }: Props) {
           validPattern={namePattern}
           variant="outlined"
           className="my-4"
+          isOutlined
         />
         <Input
           label="Description"
           defaultValue={transaction.description}
           typePattern={descriptionPattern}
           validPattern={descriptionPattern}
-          variant="outlined"
           className="my-4"
+          isOutlined
         />
+        <CurrencyInput label="Amount" defaultValue={transaction.amount.toString()} className="my-4" isOutlined />
       </Mui.DialogContent>
       <Mui.DialogActions>
         <Mui.Button onClick={onClose}>Cancel</Mui.Button>

@@ -3,13 +3,15 @@ import Input from './Input';
 interface Props {
   label: string;
   tooltip?: string;
-  defaultValue: string;
+  defaultValue: string; // todo make number
   disabled?: boolean;
+  className?: string;
+  isOutlined?: boolean;
 }
 
-export default function CurrencyInput({ label, tooltip, defaultValue, disabled }: Props) {
-  const typePattern = /^[0-9]{0,10}$/;
-  const validPattern = /^[0-9]{1,10}$/;
+export default function CurrencyInput({ label, tooltip, defaultValue, disabled, className, isOutlined }: Props) {
+  const typePattern = /^-?[0-9]{0,8}$/;
+  const validPattern = /^-?[0-9]{1,8}$/;
 
   return (
     <Input
@@ -20,6 +22,9 @@ export default function CurrencyInput({ label, tooltip, defaultValue, disabled }
       typePattern={typePattern}
       validPattern={validPattern}
       disabled={disabled}
+      className={className}
+      isOutlined={isOutlined}
+      fullWidth
     />
   );
 }
@@ -27,4 +32,6 @@ export default function CurrencyInput({ label, tooltip, defaultValue, disabled }
 CurrencyInput.defaultProps = {
   tooltip: '',
   disabled: false,
+  className: '',
+  isOutlined: false,
 };

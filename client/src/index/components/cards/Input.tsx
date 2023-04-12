@@ -7,11 +7,12 @@ type Props = Mui.TextFieldProps & {
   typePattern: RegExp;
   validPattern: RegExp;
   symbol?: string | null;
+  isOutlined?: boolean;
 };
 
 export default function Input(props: Props) {
-  const { tooltip, defaultValue, typePattern, validPattern, symbol } = props; // Input props
-  const { id, label, variant, disabled, fullWidth } = props; // TextField props (todo: do not use Mui.TextFieldProps bc it has too many)
+  const { tooltip, defaultValue, typePattern, validPattern, symbol, isOutlined } = props; // Input props
+  const { id, label, disabled, fullWidth } = props; // TextField props (todo: do not use Mui.TextFieldProps bc it has too many)
   const textFieldStyle = `flex-grow my-2 mr-8 ${props.className}` ?? '';
 
   const [value, setValue] = React.useState<string>(defaultValue);
@@ -33,7 +34,7 @@ export default function Input(props: Props) {
         value={value}
         id={id}
         label={label}
-        variant={variant ?? 'standard'}
+        variant={isOutlined ? 'outlined' : 'standard'}
         disabled={disabled}
         fullWidth={fullWidth}
         className={textFieldStyle}
@@ -48,4 +49,5 @@ export default function Input(props: Props) {
 Input.defaultProps = {
   tooltip: '',
   symbol: null,
+  isOutlined: false,
 };
