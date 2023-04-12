@@ -38,6 +38,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
     protected override void OnModelCreating(ModelBuilder builder) {
         base.OnModelCreating(builder); // configure Identity schema
 
+        builder.Entity<Transaction>().Property(t => t.Name).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
+        builder.Entity<Transaction>().Property(t => t.Description).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
+        builder.Entity<Transaction>().Property(t => t.Amount).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
+        builder.Entity<Transaction>().Property(t => t.PaymentTimeline).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
         builder.Entity<Transaction>().HasOne(t => t.Type);
         builder.Entity<Transaction>().HasOne(t => t.Profile).WithMany(p => p.Transactions);
         builder.Entity<Transaction>().HasOne(t => t.TaxScheme).WithMany(ts => ts.Transactions);
@@ -72,6 +76,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
             new TransactionCategory(8, "Gifts & Donations")
         );
 
+        builder.Entity<Asset>().Property(a => a.Name).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
+        builder.Entity<Asset>().Property(a => a.Description).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
+        builder.Entity<Asset>().Property(a => a.ReturnRate).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
+        builder.Entity<Asset>().Property(a => a.StandardDeviation).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
         builder.Entity<Asset>().HasOne(a => a.Type);
         builder.Entity<Asset>().HasOne(a => a.Profile).WithMany(p => p.Assets).OnDelete(DeleteBehavior.Cascade);
         builder.Entity<Asset>().HasData(
