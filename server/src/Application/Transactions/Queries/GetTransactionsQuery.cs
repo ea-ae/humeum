@@ -6,6 +6,9 @@ using Application.Common.Models;
 
 using AutoMapper;
 
+using Domain.Common.Interfaces;
+using Domain.Common.Models;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Transactions.Queries;
@@ -29,7 +32,7 @@ public class GetTransactionsQueryHandler : IPaginatedQueryHandler<GetTransaction
         _mapper = mapper;
     }
 
-    public Task<PaginatedList<TransactionDto>> Handle(GetTransactionsQuery request, CancellationToken token = default) {
+    public Task<IResult<PaginatedList<TransactionDto>>> Handle(GetTransactionsQuery request, CancellationToken token = default) {
         var transactions = _context.Transactions.AsNoTracking()
                                                 .Include(t => t.Categories)
                                                 .Where(t => t.ProfileId == request.Profile
@@ -42,6 +45,8 @@ public class GetTransactionsQueryHandler : IPaginatedQueryHandler<GetTransaction
             transactions = transactions.Where(t => t.PaymentTimeline.Period.Start >= request.StartAfter);
         }
 
-        return Task.Run(() => transactions.OrderBy(t => t.Id).ToPaginatedList(request, _mapper));
+        var list = transactions.OrderBy(t => t.Id).ToPaginatedList(request, _mapper);
+        IResult<PaginatedList<TransactionDto>> result = Result<PaginatedList<TransactionDto>>.Ok(list);
+        return Task.FromResult(result);
     }
 }

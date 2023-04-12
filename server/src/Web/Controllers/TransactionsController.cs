@@ -39,7 +39,7 @@ public class TransactionsController : ControllerBase {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<TransactionDto>>> GetTransactions(GetTransactionsQuery query) {
+    public async Task<ActionResult<IResult<IEnumerable<TransactionDto>>>> GetTransactions(GetTransactionsQuery query) {
         var transactions = await _mediator.Send(query);
         return Ok(transactions);
     }
@@ -52,9 +52,9 @@ public class TransactionsController : ControllerBase {
     /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     /// <response code="404">If transaction or profile was not found.</response>
     [HttpGet("{Transaction}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TransactionDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TransactionDto>> GetTransaction(GetTransactionQuery query) {
+    public async Task<ActionResult<IResult<TransactionDto>>> GetTransaction(GetTransactionQuery query) {
         var transaction = await _mediator.Send(query);
         return Ok(transaction);
     }
@@ -72,7 +72,7 @@ public class TransactionsController : ControllerBase {
     /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     /// <response code="404">If a profile, tax scheme, or asset with a specified ID could not be found.</response>
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult<IActionResult>> AddTransaction(int user, AddTransactionCommand command) {

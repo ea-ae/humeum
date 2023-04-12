@@ -1,10 +1,12 @@
-﻿using Application.Common.Exceptions;
+﻿using Application.Assets.Queries;
+using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using Application.Common.Models;
 
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 
+using Domain.AssetAggregate;
 using Domain.Common.Interfaces;
 using Domain.Common.Models;
 
@@ -41,6 +43,23 @@ internal static class ServiceExtensions {
     /// <returns>Paginated list.</returns>
     public static PaginatedList<TDestination> ToPaginatedList<TSource, TDestination>(this IOrderedQueryable<TSource> query, IPaginatedQuery<TDestination> request, IMapper mapper) {
         return PaginatedList<TDestination>.ProjectAndCreateFromQuery(query, request, mapper);
+    }
+
+    /// <summary>
+    /// If the entity is null, returns a failed <see cref="NotFoundValidationException"/> result. 
+    /// Otherwise, maps the entity to a DTO and returns a successful result.
+    /// </summary>
+    /// <typeparam name="TSource">Type of the source entity.</typeparam>
+    /// <typeparam name="TDestination">Type of the destination mapped DTO.</typeparam>
+    /// <param name="mapper">Automapper.</param>
+    /// <param name="entity">Source entity.</param>
+    /// <returns>A result that contains either the mapped DTO or a not found error.</returns>
+    public static IResult<TDestination> ToMappedResultOrNotFound<TSource, TDestination>(this IMapper mapper, TSource? entity) {
+        if (entity is null) {
+            return Result<TDestination>.Fail(new NotFoundValidationException(typeof(TSource)));
+        }
+
+        return mapper.MapToResult<TDestination>(entity);
     }
 
     /// <summary>

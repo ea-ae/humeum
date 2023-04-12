@@ -39,13 +39,7 @@ public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, IRe
                                                                     && t.ProfileId == request.Profile
                                                                     && t.DeletedAt == null);
 
-        if (transaction is null) {
-            IResult<TransactionDto> failResult = Result<TransactionDto>.Fail(new NotFoundValidationException(typeof(Transaction)));
-            return Task.FromResult(failResult);
-        }
-
-
-        var result = _mapper.MapToResult<TransactionDto>(transaction);
+        var result = _mapper.ToMappedResultOrNotFound<Transaction, TransactionDto>(transaction);
         return Task.FromResult(result);
     }
 }

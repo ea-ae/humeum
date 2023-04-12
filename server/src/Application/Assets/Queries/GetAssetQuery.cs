@@ -35,12 +35,8 @@ public class GetAssetQueryHandler : IQueryHandler<GetAssetQuery, IResult<AssetDt
                                                         && (a.ProfileId == request.Profile || a.ProfileId == null)
                                                         && a.DeletedAt == null);
 
-        if (asset is null) {
-            IResult<AssetDto> failResult = Result<AssetDto>.Fail(new NotFoundValidationException(typeof(Asset)));
-            return Task.FromResult(failResult);
-        }
 
-        var result = _mapper.MapToResult<AssetDto>(asset);
+        var result = _mapper.ToMappedResultOrNotFound<Asset, AssetDto>(asset);
         return Task.FromResult(result);
     }
 }
