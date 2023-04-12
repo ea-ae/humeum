@@ -2,6 +2,7 @@ import * as Mui from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import axios from 'axios';
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { TransactionDto, TransactionsClient } from '../../api/api';
 import useAuth from '../../hooks/useAuth';
@@ -14,7 +15,8 @@ function TransactionList() {
   const [transactions, setTransactions] = useCache<TransactionDto[] | null>('transactions', null);
   const [isEditDialogOpen, setIsEditDialogOpen] = React.useState<boolean>(false);
   const [selectedTransaction, setSelectedTransaction] = React.useState<TransactionDto | null>(null);
-  const { user } = useAuth();
+  const { user, setAuthentication } = useAuth();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     const cancelSource = axios.CancelToken.source();
@@ -27,9 +29,15 @@ function TransactionList() {
 
       const set = (value: TransactionDto[]) => setTransactions(value);
 
+      // eslint-disable-next-line no-console
+      const fail = () => {
+        setAuthentication(null);
+        navigate('/login');
+      };
+
       get().then(
         (res) => set(res.result),
-        (err) => TransactionsClient.handleError(err, get, set)
+        (err) => TransactionsClient.handleError(err, user.id, get, set, fail, cancelSource.token)
       );
     }
 

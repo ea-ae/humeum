@@ -1,6 +1,6 @@
-import type { AxiosRequestConfig } from 'axios';
+import type { AxiosError, AxiosRequestConfig, AxiosResponseTransformer, CanceledError, CancelToken } from 'axios';
 
-import { ApiException, SwaggerResponse } from './api';
+import { ApiException, SwaggerResponse, UsersClient } from './api';
 
 interface ApiOptions extends AxiosRequestConfig<unknown> {
   headers: { [key: string]: string };
@@ -23,16 +23,46 @@ export default class ApiClient {
   /**
    * In case of an authentication error, attempts to refresh the JWT token and retry the initial request.
    * If the refresh fails, an action such as a redirect to the login page is performed.
-   * @param error Response error to handle.
+   * @param error Error to handle.
+   * @param get Code to run if the request should be retried.
+   * @param set Code to run if the retried request succeeds.
+   * @param fail Code to run if the retried request fails or a retry is not possible.
    */
-  public static handleError<T>(error: ApiException, get: () => Promise<SwaggerResponse<T>>, set: (value: T) => void) {
+  public static handleError<T>(
+    error: Error | AxiosError, // ApiException?
+    userId: number,
+    get: () => Promise<SwaggerResponse<T>>,
+    set: (value: T) => void,
+    fail: () => void,
+    token: CancelToken
+  ) {
     // eslint-disable-next-line no-console
-    console.log('uhhh');
-    // eslint-disable-next-line no-console
-    console.log(error.status);
+    console.log('error:');
+    console.log(error.name);
 
-    // retry?
-    get().then((res) => set(res.result));
+    // if the error is not an authentication error, we can't attempt to refresh the token
+    if (error.name !== 'Error') {
+      // in case of a cancelled request from page change, do not redirect etc
+      if (error.name !== 'CanceledError') {
+        fail();
+      }
+      return;
+    }
+
+    // attempt a token refresh
+    const client = new UsersClient();
+    client.refreshUser(userId, token).then(
+      () => {
+        get().then(
+          (res) => set(res.result),
+          () => fail()
+        );
+      },
+      (err) => {
+        console.log(err);
+        fail();
+      }
+    );
   }
 
   private static isApiOptions(options: AxiosRequestConfig<unknown>): options is ApiOptions {
