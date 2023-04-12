@@ -11,7 +11,7 @@ public class TransactionTest {
         // arrange
 
         var timePeriod = new Timeline(new TimePeriod(new DateOnly(2022, 1, 1)));
-        var transaction = new Transaction(null, null, -1, TransactionType.RetirementOnly, timePeriod, profileId: 1, taxSchemeId: 1);
+        var transaction = Transaction.Create(null, null, -1, TransactionType.RetirementOnly, timePeriod, profileId: 1, taxSchemeId: 1).Unwrap();
         int expected = 1;
 
         // act
@@ -215,6 +215,6 @@ public class TransactionTest {
     /// <returns>Partially instantiated transaction.</returns>
     static Transaction BuildTransaction(TimeUnit timeUnit, DateOnly paymentStart, DateOnly paymentEnd) {
         var timeline = new Timeline(new TimePeriod(paymentStart, paymentEnd), new Frequency(timeUnit, 1, 1));
-        return new Transaction(null, null, 1, TransactionType.Always, timeline, profileId: 1, taxSchemeId: 1);
+        return Transaction.Create(null, null, 1, TransactionType.Always, timeline, profileId: 1, taxSchemeId: 1).Unwrap();
     }
 }

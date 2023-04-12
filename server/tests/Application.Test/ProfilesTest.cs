@@ -62,13 +62,13 @@ public class ProfilesTests {
 
         // add profile entities that will be cascade-soft-deleted alongside the profile
 
-        var transaction = new Transaction("My Transaction",
-                                          null,
-                                          1,
-                                          context.GetEnumerationEntityByCode<TransactionType>("ALWAYS"),
-                                          new Timeline(new TimePeriod(new DateOnly(2021, 1, 1))),
-                                          profile.Id,
-                                          taxSchemeId);
+        var transaction = Transaction.Create("My Transaction",
+                                             null,
+                                             1,
+                                             context.GetEnumerationEntityByCode<TransactionType>("ALWAYS"),
+                                             new Timeline(new TimePeriod(new DateOnly(2021, 1, 1))),
+                                             profile.Id,
+                                             taxSchemeId).Unwrap();
         context.AssetTypes.Attach(AssetType.RealEstate);
         var asset = Asset.Create("My Asset", "About to delete", 7.9m, 11, AssetType.RealEstate, profile).Unwrap();
 

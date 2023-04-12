@@ -41,18 +41,18 @@ public class TransactionsTest {
         context.TransactionTypes.Attach(transactionType);
 
         var timeline = new Timeline(new TimePeriod(new DateOnly(2023, 2, 3)));
-        var transaction = new Transaction("Test", null, 42, transactionType, timeline, profile.Id, taxSchemeId);
+        var transaction = Transaction.Create("Test", null, 42, transactionType, timeline, profile.Id, taxSchemeId).Unwrap();
         context.Transactions.Add(transaction);
 
         var timeUnit = TimeUnit.Years;
         context.TransactionTimeUnits.Attach(timeUnit);
         timeline = new Timeline(new TimePeriod(new DateOnly(2022, 6, 6), new DateOnly(2024, 1, 1)), new Frequency(timeUnit, 2, 3));
 
-        transaction = new Transaction("Test2", null, 43, transactionType, timeline, profile.Id, taxSchemeId);
+        transaction = Transaction.Create("Test2", null, 43, transactionType, timeline, profile.Id, taxSchemeId).Unwrap();
         context.Transactions.Add(transaction);
 
         timeline = new Timeline(new TimePeriod(new DateOnly(2013, 1, 1)));
-        transaction = new Transaction("Test2", null, 43, transactionType, timeline, profile.Id, taxSchemeId);
+        transaction = Transaction.Create("Test2", null, 43, transactionType, timeline, profile.Id, taxSchemeId).Unwrap();
         context.Transactions.Add(transaction);
 
         await context.SaveChangesAsync();
@@ -60,17 +60,17 @@ public class TransactionsTest {
         // ensure that endpoint returns transactions
 
         GetTransactionsQuery query = new() { Profile = profile.Id };
-        var result = await handler.Handle(query);
+        var result = (await handler.Handle(query)).Unwrap();
         Assert.Equal(3, result.Count);
 
         // ensure that endpoint returns transactions with filters
 
         query = new() { Profile = profile.Id, StartAfter = new DateOnly(2013, 1, 2) };
-        result = await handler.Handle(query);
+        result = (await handler.Handle(query)).Unwrap();
         Assert.Equal(2, result.Count);
 
         query = new() { Profile = profile.Id, StartBefore = new DateOnly(2023, 12, 1), StartAfter = new DateOnly(2022, 6, 7) };
-        result = await handler.Handle(query);
+        result = (await handler.Handle(query)).Unwrap();
         Assert.Single(result);
 
         // ensure that a new profile with no transactions returns an empty list
@@ -80,7 +80,7 @@ public class TransactionsTest {
         await context.SaveChangesAsync();
 
         query = new() { Profile = emptyProfile.Id };
-        result = await handler.Handle(query);
+        result = (await handler.Handle(query)).Unwrap();
         Assert.Empty(result);
 
         // ensure that profiles owned by different users do not leak data
@@ -113,7 +113,7 @@ public class TransactionsTest {
 
         // create transaction
 
-        var result = await handler.Handle(command);
+        var result = (await handler.Handle(command)).Unwrap();
         var transaction = context.Transactions.First(t => t.Id == result);
 
         // confirm details
@@ -154,7 +154,7 @@ public class TransactionsTest {
             TaxScheme = 1,
         };
 
-        var result = await handler.Handle(command);
+        var result = (await handler.Handle(command)).Unwrap();
         var transaction = context.Transactions.First(t => t.Id == result);
 
         // confirm details
@@ -186,7 +186,8 @@ public class TransactionsTest {
         var transactionType = TransactionType.Always;
         context.TransactionTypes.Attach(transactionType);
         var taxScheme = context.TaxSchemes.First(t => t.Id == 1);
-        var transaction = new Transaction("Hello", null, 10, transactionType, new Timeline(new TimePeriod(new DateOnly(2022, 1, 1))), profile, taxScheme);
+        var transaction = Transaction.Create("Hello", null, 10, transactionType, new Timeline(new TimePeriod(new DateOnly(2022, 1, 1))), profile, taxScheme)
+                                     .Unwrap();
         context.Transactions.Add(transaction);
         await context.SaveChangesAsync();
 
@@ -208,7 +209,7 @@ public class TransactionsTest {
             Asset = 1
         };
 
-        var result = await handler.Handle(command);
+        var result = (await handler.Handle(command)).Unwrap();
         await context.SaveChangesAsync();
         await context.Entry(transaction).ReloadAsync(); // reload data
 

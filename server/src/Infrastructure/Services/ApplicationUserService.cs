@@ -31,6 +31,13 @@ public abstract class ApplicationUserService : IApplicationUserService {
 
     protected abstract void AddTokenAsCookie(string token);
 
+    /// <summary>Create a new token for a user and assign it. This is useful to reflect new user data (e.g. profile creation/deletion).</summary>
+    public async Task UpdateClientToken(int userId) {
+        var appUser = GetApplicationUser(userId);
+        var token = await CreateToken(appUser);
+        AddTokenAsCookie(token);
+    }
+
     public User GetUserById(int userId) {
         var appUser = GetApplicationUser(userId);
 
