@@ -44,39 +44,6 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
     HashSet<TransactionCategory> _categories = null!;
     public IReadOnlyCollection<TransactionCategory> Categories => _categories;
 
-    //public Transaction(string? name,
-    //                   string? description,
-    //                   decimal amount,
-    //                   TransactionType type,
-    //                   Timeline paymentTimeline,
-    //                   Profile profile,
-    //                   TaxScheme taxScheme,
-    //                   Asset? asset = null)
-    //    : this(name, description, amount, type, paymentTimeline, profile.Id, taxScheme.Id, asset?.Id) {
-    //    Profile = profile;
-    //    TaxScheme = taxScheme;
-    //    Asset = asset;
-    //}
-
-    //public Transaction(string? name,
-    //                   string? description,
-    //                   decimal amount,
-    //                   TransactionType type,
-    //                   Timeline paymentTimeline,
-    //                   int profileId,
-    //                   int taxSchemeId,
-    //                   int? assetId = null) {
-    //    Name = name;
-    //    Description = description;
-    //    TypeId = type.Id;
-    //    Type = type;
-    //    PaymentTimeline = paymentTimeline;
-    //    ProfileId = profileId;
-    //    TaxSchemeId = taxSchemeId;
-    //    AssetId = assetId;
-    //    Amount = amount;
-    //}
-
     Transaction() { }
 
     public static IResult<Transaction, DomainException> Create(string? name,
@@ -124,13 +91,17 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
 
 
     /// <summary>Replace the transaction fields in-place.</summary>
-    public IResult<None, DomainException> Replace(string? name, string? description, decimal amount, TransactionType type, Timeline paymentTimeline, TaxScheme taxScheme, Asset? asset) {
+    public IResult<None, DomainException> Replace(string? name,
+                                                  string? description,
+                                                  decimal amount,
+                                                  TransactionType type,
+                                                  Timeline paymentTimeline,
+                                                  int taxSchemeId,
+                                                  int? assetId) {
         Type = type;
         TypeId = type.Id;
-        TaxScheme = taxScheme;
-        TaxSchemeId = taxScheme.Id;
-        Asset = asset;
-        AssetId = asset?.Id;
+        TaxSchemeId = taxSchemeId;
+        AssetId = assetId;
 
         var builder = new Result<Transaction, DomainException>.Builder().AddValue(this);
         return SetFields(builder, name, description, amount, type, paymentTimeline).Build().Then(None.Value);

@@ -107,7 +107,7 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
         }
 
         /// <summary>
-        /// Builds a Result object. If there are errors, returns a failed result. Otherwise, returns the result.
+        /// Builds a Result object. If there are errors, returns a failed result. Otherwise, returns a successful result with value.
         /// </summary>
         /// <returns>Result object.</returns>
         /// <exception cref="InvalidOperationException">If the builder received no value nor errors.</exception>
@@ -197,13 +197,6 @@ public class Result<T> : Result<T, IBaseException>, IResult<T> {
 
     public static new Result<T> Fail(IReadOnlyCollection<IBaseException> errors) {
         return new Result<T>(errors);
-    }
-
-    /// <summary>Return a simplified Result interface instance.</summary>
-    /// <param name="result">Result to convert.</param>
-    /// <returns>Converted result.</returns>
-    public static Result<T> From(IResult<T, IBaseException> result) {
-        return result.Success ? Result<T>.Ok(result.Unwrap()) : Result<T>.Fail(result.GetErrors());
     }
 
     IResult<TNew> IResult<T>.Then<TNew>(TNew value) {

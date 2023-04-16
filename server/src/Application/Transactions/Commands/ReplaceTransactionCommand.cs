@@ -3,6 +3,7 @@
 using Application.Common.Exceptions;
 using Application.Common.Extensions;
 using Application.Common.Interfaces;
+using Application.Transactions.Commands.Common;
 
 using Domain.AssetAggregate;
 using Domain.Common.Exceptions;
@@ -14,7 +15,7 @@ using Domain.TransactionAggregate.ValueObjects;
 
 namespace Application.Transactions.Commands;
 
-public record ReplaceTransactionCommand : ICommand<IResult<None>> {
+public record ReplaceTransactionCommand : ICommand<IResult<None>>, ITransactionFields {
     [Required] public required int Profile { get; init; }
     [Required] public required int Transaction { get; init; }
 
@@ -40,65 +41,39 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
     }
 
     public async Task<IResult<None>> Handle(ReplaceTransactionCommand request, CancellationToken token = default) {
-        // validation
+        // create a builder to collect validation errors
 
-        List<object?> recurringTransactionFields = new() { // fields required for recurrent transactions
-            request.PaymentEnd,
-            request.TimeUnit,
-            request.TimesPerCycle,
-            request.UnitsInCycle
-        };
-        bool isRecurringTransaction = recurringTransactionFields.AssertOptionalFieldSetValidity().Unwrap(); // TODO!
+        var builder = new Result<None>.Builder();
 
-        var taxScheme = _context.TaxSchemes.FirstOrDefault(ts => ts.Id == request.TaxScheme && ts.DeletedAt == null);
-        if (taxScheme is null) {
-            return Result<None>.Fail(new NotFoundValidationException(typeof(TaxScheme)));
-        }
-
-        Asset? asset = null;
-        if (request.Asset is not null) {
-            asset = _context.Assets.FirstOrDefault(a => (a.ProfileId == request.Profile || a.ProfileId == null)
-                                                        && a.Id == request.Asset
-                                                        && a.DeletedAt == null);
-            if (asset is null) {
-                return Result<None>.Fail(new NotFoundValidationException(typeof(Asset)));
-            }
-        }
-
-        // handling
+        // validate that the specified transaction exists
 
         var transaction = _context.Transactions.FirstOrDefault(t => t.Id == request.Transaction
                                                                     && t.ProfileId == request.Profile
                                                                     && t.DeletedAt == null);
         if (transaction is null) {
-            return Result<None>.Fail(new NotFoundValidationException(typeof(Transaction)));
+            builder.AddError(new NotFoundValidationException(typeof(Transaction)));
         }
 
-        var transactionType = _context.GetEnumerationEntityByCode<TransactionType>(request.Type).Unwrap(); // TODO!
-        IResult<None, DomainException> result;
+        // validate transaction fields
 
-        // update fields
+        var validationResult = request.ValidateTransactionFields(_context);
+        builder.AddResultErrors(validationResult);
 
-        if (isRecurringTransaction) {
-            var timeUnit = _context.GetEnumerationEntityByCode<TimeUnit>(request.TimeUnit!).Unwrap(); // TODO!
+        // if there are any validation errors at this point, return them
 
-            var paymentPeriod = new TimePeriod((DateOnly)request.PaymentStart!, (DateOnly)request.PaymentEnd!);
-            var paymentFrequency = new Frequency(timeUnit, (int)request.TimesPerCycle!, (int)request.UnitsInCycle!);
-            var paymentTimeline = new Timeline(paymentPeriod, paymentFrequency);
-
-            result = transaction.Replace(request.Name, request.Description, (decimal)request.Amount!, transactionType,
-                                         paymentTimeline, taxScheme, asset);
-        } else {
-            var paymentTimeline = new Timeline(new TimePeriod((DateOnly)request.PaymentStart!));
-
-            result = transaction.Replace(request.Name, request.Description, (decimal)request.Amount!, transactionType,
-                                         paymentTimeline, taxScheme, asset);
+        if (builder.HasErrors) {
+            return (IResult<None>)builder.Build();
         }
 
-        if (result.Success) {
+        // update the transaction
+
+        var (transactionType, paymentTimeline) = validationResult.Unwrap();
+        var result = transaction!.Replace(request.Name, request.Description, (decimal)request.Amount!, transactionType,
+                                          paymentTimeline, (int)request.TaxScheme!, request.Asset);
+
+        return await result.ThenAsync<None>(async _ => {
             await _context.SaveChangesWithHardDeletionAsync(token);
-        }
-
-        return Result<None>.From(result);
+            return Result<None>.Ok(None.Value);
+        });
     }
 }
