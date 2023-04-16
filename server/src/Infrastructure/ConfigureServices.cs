@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Text;
 
 using Application.Common.Interfaces;
@@ -24,6 +25,8 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class ConfigureServices {
     public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services,
                                                                      IConfiguration config) {
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
         var dbSettingsSection = config.GetSection(nameof(DatabaseSettings));
         var dbSettings = dbSettingsSection.Get<DatabaseSettings>()!;
         services.Configure<DatabaseSettings>(dbSettingsSection);

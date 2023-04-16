@@ -5,6 +5,8 @@ using System.Text;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 
+using AutoMapper;
+
 using Domain.UserAggregate;
 
 using Infrastructure.Auth;
@@ -21,28 +23,27 @@ using Shared.Models;
 namespace Infrastructure.Services;
 
 public class JwtApplicationUserService : ApplicationUserService {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly JwtSettings _jwtSettings;
+    readonly UserManager<ApplicationUser> _userManager;
+    readonly SignInManager<ApplicationUser> _signInManager;
+    readonly IHttpContextAccessor _httpContextAccessor;
+    readonly IMapper _mapper;
+    readonly JwtSettings _jwtSettings;
 
     public JwtApplicationUserService(IAppDbContext context,
                                      UserManager<ApplicationUser> userManager,
                                      SignInManager<ApplicationUser> signInManager,
                                      IHttpContextAccessor httpContextAccessor,
+                                     IMapper mapper,
                                      IOptions<JwtSettings> jwtSettings) : base(context) {
         _userManager = userManager;
         _signInManager = signInManager;
         _httpContextAccessor = httpContextAccessor;
+        _mapper = mapper;
         _jwtSettings = jwtSettings.Value;
     }
 
     public override async Task<int> CreateUserAsync(User user, string password, bool rememberMe) {
-        var appUser = new ApplicationUser {
-            DisplayName = user.Username,
-            UserName = user.Username,
-            Email = user.Email,
-        };
+        var appUser = _mapper.Map<ApplicationUser>(user);
 
         var result = await _userManager.CreateAsync(appUser, password);
         if (result.Succeeded) {

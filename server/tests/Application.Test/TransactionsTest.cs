@@ -28,7 +28,7 @@ public class TransactionsTest {
     public async Task GetTransactionsQuery_TransactionsAndProfiles_ReturnsAuthenticatedProfileTransactions() {
         const int taxSchemeId = 1;
         var context = _dbContextFixture.CreateDbContext();
-        var mapperConfig = new MapperConfiguration(cfg => { cfg.AddProfile(new AppMappingProfile()); });
+        var mapperConfig = new MapperConfiguration(cfg => { cfg.AddProfile(new ApplicationMappingProfile()); });
         var handler = new GetTransactionsQueryHandler(context, mapperConfig.CreateMapper());
 
         // set up a profile and three transactions

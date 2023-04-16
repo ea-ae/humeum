@@ -25,8 +25,8 @@ public class GetUserQueryHandler : IQueryHandler<GetUserQuery, IResult<UserDto, 
     }
 
     public Task<IResult<UserDto, IBaseException>> Handle(GetUserQuery request, CancellationToken token = default) {
-        var user = _userService.GetUserById(request.User);
-        var userDto = _mapper.MapToResult<UserDto>(user);
+        var userResult = _userService.GetUserById(request.User);
+        var userDto = userResult.Then(_mapper.MapToResult<UserDto>);
 
         return Task.FromResult(userDto);
     }

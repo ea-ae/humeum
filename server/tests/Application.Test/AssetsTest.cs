@@ -59,7 +59,7 @@ public class AssetsTest {
     [Fact]
     public async Task GetAssetQuery_OneAsset_ReturnsDto() {
         var context = _dbContextFixture.CreateDbContext();
-        var mapperConfig = new MapperConfiguration(cfg => { cfg.AddProfile(new AppMappingProfile()); });
+        var mapperConfig = new MapperConfiguration(cfg => { cfg.AddProfile(new ApplicationMappingProfile()); });
         var handler = new GetAssetQueryHandler(context, mapperConfig.CreateMapper());
 
         // create profile and asset

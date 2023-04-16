@@ -75,8 +75,8 @@ public class UsersController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> RegisterUser(RegisterUserCommand command) {
-        int id = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetUser), new { User = id }, null);
+        int userId = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetUser), new { User = userId }, null);
     }
 
     /// <summary>
@@ -99,9 +99,9 @@ public class UsersController : ControllerBase {
     /// <response code="200">Details of signed in user.</response>
     /// <response code="401">If the authentication attempt fails, e.g. invalid refresh token.</response>
     [HttpPost("{User:int}/refresh")]
-    public async Task<ActionResult<UserDto>> RefreshUser(RefreshUserCommand command) {
-        int userId = await _mediator.Send(command);
-        var user = await _mediator.Send(new GetUserQuery { User = userId });
+    public async Task<ActionResult<IResult<UserDto, IBaseException>>> RefreshUser(RefreshUserCommand command) {
+        var userIdResult = await _mediator.Send(command);
+        var user = userIdResult.ThenAsync(async userId => await _mediator.Send(new GetUserQuery { User = userId }));
         return Ok(user);
     }
 }

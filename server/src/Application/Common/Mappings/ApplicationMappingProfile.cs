@@ -15,8 +15,8 @@ using Domain.UserAggregate;
 
 namespace Application.Common.Mappings;
 
-public class AppMappingProfile : Profile {
-    public AppMappingProfile() {
+public class ApplicationMappingProfile : Profile {
+    public ApplicationMappingProfile() {
         CreateMap<Transaction, TransactionDto>()
             .ForMember(dest => dest.TaxScheme,
                        o => o.MapFrom(src => new TransactionDto.BriefRelatedResourceDto { Id = src.TaxScheme.Id, Name = src.TaxScheme.Name }))
