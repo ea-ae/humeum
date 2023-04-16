@@ -1,4 +1,5 @@
 ﻿using Domain.Common.Exceptions;
+using Domain.Common.Models;
 using Domain.TransactionAggregate.ValueObjects;
 
 using Xunit;
@@ -10,22 +11,34 @@ public class TimelineTest {
     public void TimelineConstructor_FrequencyWithNoEndDate_ThrowsDomainException() {
         // arrange
 
-        var timePeriod = new TimePeriod(new DateOnly(2022, 1, 1));
-        var frequency = new Frequency(TimeUnit.Weeks, 3, 2);
+        var timePeriod = TimePeriod.Create(new DateOnly(2022, 1, 1)).Unwrap();
+        var frequency = Frequency.Create(TimeUnit.Weeks, 3, 2).Unwrap();
 
-        // act & assert
+        // act
 
-        Assert.Throws<DomainException>(() => new Timeline(timePeriod, frequency));
+        var actual = Timeline.Create(timePeriod, frequency);
+
+        // assert
+
+        Assert.True(actual.Failure);
+        Assert.Equal(1, actual.GetErrors().Count);
+        Assert.IsType<DomainException>(actual.GetErrors().First());
     }
 
     [Fact]
     public void TimelineConstructor_NoFrequencyWithEndDate_ThrowsDomainException() {
-        // arrange 
+        // arrange
 
-        var timePeriod = new TimePeriod(new DateOnly(2022, 1, 1), new DateOnly(2023, 1, 1));
+        var period = TimePeriod.Create(new DateOnly(2022, 1, 1), new DateOnly(2023, 1, 1)).Unwrap();
 
-        // act & assert
+        // act
 
-        Assert.Throws<DomainException>(() => new Timeline(timePeriod));
+        var actual = Timeline.Create(period);
+
+        // assert
+
+        Assert.True(actual.Failure);
+        Assert.Equal(1, actual.GetErrors().Count);
+        Assert.IsType<DomainException>(actual.GetErrors().First());
     }
 }

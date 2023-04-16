@@ -66,7 +66,7 @@ public class ProfilesTests {
                                              null,
                                              1,
                                              context.GetEnumerationEntityByCode<TransactionType>("ALWAYS").Unwrap(),
-                                             new Timeline(new TimePeriod(new DateOnly(2021, 1, 1))),
+                                             Timeline.Create(TimePeriod.Create(new DateOnly(2021, 1, 1)).Unwrap()).Unwrap(),
                                              profile.Id,
                                              taxSchemeId).Unwrap();
         context.AssetTypes.Attach(AssetType.RealEstate);

@@ -1,4 +1,5 @@
 ﻿using Domain.Common.Exceptions;
+using Domain.Common.Interfaces;
 using Domain.Common.Models;
 
 namespace Domain.TransactionAggregate.ValueObjects;
@@ -16,18 +17,19 @@ public class TimePeriod : ValueObject {
     /// <summary>Whether the payment is recurring or single-time.</summary>
     public bool IsRecurring => End is not null;
 
-    public TimePeriod(DateOnly timePoint) {
-        Start = timePoint;
+    public static IResult<TimePeriod, DomainException> Create(DateOnly timePoint) {
+        return Result<TimePeriod, DomainException>.Ok(new TimePeriod { Start = timePoint });
     }
 
-    public TimePeriod(DateOnly start, DateOnly end) : this(start) {
+    public static IResult<TimePeriod, DomainException> Create(DateOnly start, DateOnly end) {
         if (end <= start) {
-            throw new DomainException(new ArgumentException("Time period must end after it starts."));
+            return Result<TimePeriod, DomainException>.Fail(new DomainException(new ArgumentException("Time period must end after it starts.")));
         }
-        End = end;
+
+        return Result<TimePeriod, DomainException>.Ok(new TimePeriod { Start = start, End = end });
     }
 
-    private TimePeriod() { }
+    TimePeriod() { }
 
     protected override IEnumerable<object?> GetEqualityComponents() {
         yield return Start;

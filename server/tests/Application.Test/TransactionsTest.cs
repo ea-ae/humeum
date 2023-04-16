@@ -40,18 +40,21 @@ public class TransactionsTest {
         var transactionType = TransactionType.Always;
         context.TransactionTypes.Attach(transactionType);
 
-        var timeline = new Timeline(new TimePeriod(new DateOnly(2023, 2, 3)));
+        var timeline = Timeline.Create(TimePeriod.Create(new DateOnly(2023, 2, 3)).Unwrap()).Unwrap();
         var transaction = Transaction.Create("Test", null, 42, transactionType, timeline, profile.Id, taxSchemeId).Unwrap();
         context.Transactions.Add(transaction);
 
         var timeUnit = TimeUnit.Years;
         context.TransactionTimeUnits.Attach(timeUnit);
-        timeline = new Timeline(new TimePeriod(new DateOnly(2022, 6, 6), new DateOnly(2024, 1, 1)), new Frequency(timeUnit, 2, 3));
+        timeline = Timeline.Create(
+            TimePeriod.Create(new DateOnly(2022, 6, 6), new DateOnly(2024, 1, 1)).Unwrap(), 
+            Frequency.Create(timeUnit, 2, 3).Unwrap()
+            ).Unwrap();
 
         transaction = Transaction.Create("Test2", null, 43, transactionType, timeline, profile.Id, taxSchemeId).Unwrap();
         context.Transactions.Add(transaction);
 
-        timeline = new Timeline(new TimePeriod(new DateOnly(2013, 1, 1)));
+        timeline = Timeline.Create(TimePeriod.Create(new DateOnly(2013, 1, 1)).Unwrap()).Unwrap();
         transaction = Transaction.Create("Test2", null, 43, transactionType, timeline, profile.Id, taxSchemeId).Unwrap();
         context.Transactions.Add(transaction);
 
@@ -186,7 +189,7 @@ public class TransactionsTest {
         var transactionType = TransactionType.Always;
         context.TransactionTypes.Attach(transactionType);
         var taxScheme = context.TaxSchemes.First(t => t.Id == 1);
-        var transaction = Transaction.Create("Hello", null, 10, transactionType, new Timeline(new TimePeriod(new DateOnly(2022, 1, 1))), profile, taxScheme)
+        var transaction = Transaction.Create("Hello", null, 10, transactionType, Timeline.Create(TimePeriod.Create(new DateOnly(2022, 1, 1)).Unwrap()).Unwrap(), profile, taxScheme)
                                      .Unwrap();
         context.Transactions.Add(transaction);
         await context.SaveChangesAsync();

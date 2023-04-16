@@ -44,8 +44,6 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
     HashSet<TransactionCategory> _categories = null!;
     public IReadOnlyCollection<TransactionCategory> Categories => _categories;
 
-    Transaction() { }
-
     public static IResult<Transaction, DomainException> Create(string? name,
                                                                string? description,
                                                                decimal amount,
@@ -55,7 +53,7 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
                                                                TaxScheme taxScheme,
                                                                Asset? asset = null) {
         var transaction = new Transaction() {
-            Type = type, TypeId = type.Id, Profile = profile, ProfileId = profile.Id, 
+            Type = type, TypeId = type.Id, Profile = profile, ProfileId = profile.Id,
             TaxScheme = taxScheme, TaxSchemeId = taxScheme.Id, Asset = asset, AssetId = asset?.Id
         };
         var builder = new Result<Transaction, DomainException>.Builder().AddValue(transaction);
@@ -88,7 +86,7 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
                       .Transform(transaction => transaction.SetPaymentTimeline(paymentTimeline));
     }
 
-
+    Transaction() { }
 
     /// <summary>Replace the transaction fields in-place.</summary>
     public IResult<None, DomainException> Replace(string? name,

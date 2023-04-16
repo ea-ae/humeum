@@ -66,20 +66,35 @@ internal static class TransactionCommandExtensions {
 
         // create a payment timeline value object for the transaction; return failed result early if needed
 
-        Timeline paymentTimeline;
+        IResult<Timeline, IBaseException> paymentTimeline;
 
         if (isRecurringTransaction.Unwrap()) {
-            var paymentPeriod = new TimePeriod((DateOnly)request.PaymentStart!, (DateOnly)request.PaymentEnd!);
+            var paymentPeriod = TimePeriod.Create((DateOnly)request.PaymentStart!, (DateOnly)request.PaymentEnd!);
+            builder.AddResultErrors(paymentPeriod);
+
             var timeUnit = context.GetEnumerationEntityByCode<TimeUnit>(request.TimeUnit!);
-            if (timeUnit.Failure) {
-                return builder.AddResultErrors(timeUnit).Build();
+            builder.AddResultErrors(timeUnit);
+
+            if (paymentPeriod.Failure || timeUnit.Failure) {
+                return builder.Build();
             }
 
-            var paymentFrequency = new Frequency(timeUnit.Unwrap(), (int)request.TimesPerCycle!, (int)request.UnitsInCycle!);
-            paymentTimeline = new Timeline(paymentPeriod, paymentFrequency);
+            var paymentFrequency = Frequency.Create(timeUnit.Unwrap(), (int)request.TimesPerCycle!, (int)request.UnitsInCycle!);
+            if (paymentFrequency.Failure) {
+                return builder.AddResultErrors(paymentFrequency).Build();
+            }
+
+            paymentTimeline = Timeline.Create(paymentPeriod.Unwrap(), paymentFrequency.Unwrap());
         } else {
-            paymentTimeline = new Timeline(new TimePeriod((DateOnly)request.PaymentStart!));
+            var paymentPeriod = TimePeriod.Create((DateOnly)request.PaymentStart!);
+            if (paymentPeriod.Failure) {
+                return builder.AddResultErrors(paymentPeriod).Build();
+            }
+
+            paymentTimeline = Timeline.Create(paymentPeriod.Unwrap());
         }
+
+        builder.AddResultErrors(paymentTimeline);
 
         // if there were any validation errors, return them
 
@@ -89,6 +104,6 @@ internal static class TransactionCommandExtensions {
 
         // otherwise, return validated data required for transaction
 
-        return builder.AddValue(new ValidatedTransactionData(transactionType.Unwrap(), paymentTimeline)).Build();
+        return builder.AddValue(new ValidatedTransactionData(transactionType.Unwrap(), paymentTimeline.Unwrap())).Build();
     }
 }
