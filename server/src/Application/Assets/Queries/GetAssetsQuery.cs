@@ -4,12 +4,10 @@ using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
-
-using Domain.Common.Interfaces;
-using Domain.Common.Models;
 
 using Microsoft.EntityFrameworkCore;
+
+using Shared.Interfaces;
 
 namespace Application.Assets.Queries;
 

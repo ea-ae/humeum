@@ -7,6 +7,9 @@ using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 using Domain.TransactionCategoryAggregate;
 
+using Shared.Interfaces;
+using Shared.Models;
+
 namespace Domain.TransactionAggregate;
 
 /// <summary>

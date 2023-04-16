@@ -1,16 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-using Application.Common.Exceptions;
-using Application.Common.Extensions;
 using Application.Common.Interfaces;
 using Application.Transactions.Commands.Common;
 
-using Domain.Common.Exceptions;
-using Domain.Common.Interfaces;
-using Domain.Common.Models;
-using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate;
-using Domain.TransactionAggregate.ValueObjects;
+
+using Shared.Interfaces;
+using Shared.Models;
 
 namespace Application.Transactions.Commands;
 

@@ -1,7 +1,7 @@
-﻿using Domain.Common.Interfaces;
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+
+using Shared.Interfaces;
 
 namespace Web.Filters;
 
@@ -19,12 +19,12 @@ public class ApplicationResultFilterAttribute : ResultFilterAttribute {
         if (context.Result is ObjectResult objectResult && objectResult.Value is IResult<object?, IBaseException> objectValueResult) {
             if (objectValueResult.Success && objectResult.Value is IResult<IActionResult, IBaseException> actionResult) {
                 // when a result contains an IActionResult, e.g.: result.Then(NoContent()), replace the response
-                context.Result = actionResult.Unwrap(); 
+                context.Result = actionResult.Unwrap();
             }
-            
+
             if (objectValueResult.Success) {
                 // when we are dealing with a result such as an Ok(Result<T>), unwrap its response contents
-                objectResult.Value = objectValueResult.Unwrap(); 
+                objectResult.Value = objectValueResult.Unwrap();
             } else {
                 // when we are dealing with a failed result, replace the response contents with an error response
                 context.Result = CreateErrorObject(objectValueResult);

@@ -1,4 +1,4 @@
-﻿namespace Domain.Common.Interfaces;
+﻿namespace Shared.Interfaces;
 
 /// <summary>
 /// Result object that contains either a result value or a collection of exceptions.
@@ -20,10 +20,14 @@ public interface IResult<out T, out E> where E : IBaseException {
     /// <exception cref="InvalidOperationException">If the result was a success.</exception>
     IReadOnlyCollection<E> GetErrors();
 
-    /// <inheritdoc cref="IResult{T}.Then{TNew}(TNew)"/>
+    /// <summary>Transforms the result into another result unless it is an error, in case of which an unsuccessful result is returned.</summary>
+    /// <typeparam name="TNew">Value type of the new result.</typeparam>
+    /// <param name="value">New result.</param>
+    /// <returns>Result with new value or the errors of the previous result.</returns>
     IResult<TNew, E> Then<TNew>(TNew value);
 
     /// <inheritdoc cref="Then{TNew}(TNew)"/>
+    /// <typeparam name="TNew">Value type of the new result.</typeparam>
     /// <typeparam name="ENew">Error type of new result. Previous result errors must be castable to this type.</typeparam>
     IResult<TNew, ENew> Then<TNew, ENew>(Func<T, IResult<TNew, ENew>> then) where ENew : IBaseException;
 

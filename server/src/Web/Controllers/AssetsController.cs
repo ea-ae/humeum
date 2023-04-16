@@ -1,14 +1,14 @@
 ﻿using Application.Assets.Commands;
 using Application.Assets.Queries;
 
-using Domain.Common.Interfaces;
-using Domain.Common.Models;
-
 using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
+using Shared.Interfaces;
+using Shared.Models;
 
 using Web.Filters;
 

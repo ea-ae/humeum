@@ -74,7 +74,7 @@ public class JwtApplicationUserService : ApplicationUserService {
     public override async Task<int> RefreshUserAsync(int userId) {
         var user = GetApplicationUser(userId);
         string refreshToken = GetRefreshTokenFromCookie();
-        
+
 
         if (user.RefreshToken != refreshToken) {
             throw new AuthenticationException("Provided refresh token is invalid or does not match.");

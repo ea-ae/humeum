@@ -1,12 +1,10 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 
-using Domain.Common.Interfaces;
 using Domain.Common.Models;
-using Domain.ProfileAggregate;
-using Domain.TransactionCategoryAggregate;
 
-using Microsoft.EntityFrameworkCore;
+using Shared.Interfaces;
+using Shared.Models;
 
 namespace Application.Common.Extensions;
 

@@ -1,6 +1,6 @@
 ﻿using Application.Common.Models;
 
-using Domain.Common.Interfaces;
+using Shared.Interfaces;
 
 namespace Application.Common.Interfaces;
 

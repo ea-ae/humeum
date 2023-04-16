@@ -5,6 +5,9 @@ using Domain.ProfileAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
 
+using Shared.Interfaces;
+using Shared.Models;
+
 namespace Domain.AssetAggregate;
 
 /// <summary>
@@ -104,7 +107,7 @@ public class Asset : TimestampedEntity, IOptionalProfileEntity {
         } else if (description?.Length == 0) {
             description = null;
         }
-        
+
         _description = description;
         return Result<None, DomainException>.Ok(None.Value);
     }

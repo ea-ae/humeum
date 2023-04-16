@@ -2,11 +2,12 @@
 using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
-using Domain.Common.Interfaces;
-using Domain.Common.Models;
 using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
+
+using Shared.Interfaces;
+using Shared.Models;
 
 namespace Application.Transactions.Commands.Common;
 

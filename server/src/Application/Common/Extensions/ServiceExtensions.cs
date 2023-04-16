@@ -5,8 +5,8 @@ using Application.Common.Models;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 
-using Domain.Common.Interfaces;
-using Domain.Common.Models;
+using Shared.Interfaces;
+using Shared.Models;
 
 namespace Application.Common.Extensions;
 

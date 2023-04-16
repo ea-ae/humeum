@@ -3,9 +3,10 @@
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 
-using Domain.Common.Interfaces;
-using Domain.Common.Models;
 using Domain.TransactionAggregate;
+
+using Shared.Interfaces;
+using Shared.Models;
 
 namespace Application.Transactions.Commands;
 

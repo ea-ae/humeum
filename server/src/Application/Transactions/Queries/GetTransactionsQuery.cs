@@ -6,10 +6,10 @@ using Application.Common.Models;
 
 using AutoMapper;
 
-using Domain.Common.Interfaces;
-using Domain.Common.Models;
-
 using Microsoft.EntityFrameworkCore;
+
+using Shared.Interfaces;
+using Shared.Models;
 
 namespace Application.Transactions.Queries;
 

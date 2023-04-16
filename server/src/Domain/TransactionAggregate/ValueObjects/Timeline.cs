@@ -1,6 +1,8 @@
 ﻿using Domain.Common.Exceptions;
-using Domain.Common.Interfaces;
 using Domain.Common.Models;
+
+using Shared.Interfaces;
+using Shared.Models;
 
 namespace Domain.TransactionAggregate.ValueObjects;
 

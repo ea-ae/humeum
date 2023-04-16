@@ -47,7 +47,7 @@ public class TransactionsTest {
         var timeUnit = TimeUnit.Years;
         context.TransactionTimeUnits.Attach(timeUnit);
         timeline = Timeline.Create(
-            TimePeriod.Create(new DateOnly(2022, 6, 6), new DateOnly(2024, 1, 1)).Unwrap(), 
+            TimePeriod.Create(new DateOnly(2022, 6, 6), new DateOnly(2024, 1, 1)).Unwrap(),
             Frequency.Create(timeUnit, 2, 3).Unwrap()
             ).Unwrap();
 

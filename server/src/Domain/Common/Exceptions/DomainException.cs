@@ -1,4 +1,6 @@
-﻿namespace Domain.Common.Exceptions;
+﻿using Shared.Exceptions;
+
+namespace Domain.Common.Exceptions;
 
 /// <summary>
 /// Domain exceptions are the validation exceptions of the domain layer, and signify violation of invariants.

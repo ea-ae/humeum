@@ -4,8 +4,9 @@ using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 
 using Domain.AssetAggregate;
-using Domain.Common.Interfaces;
-using Domain.Common.Models;
+
+using Shared.Interfaces;
+using Shared.Models;
 
 namespace Application.Assets.Commands;
 
