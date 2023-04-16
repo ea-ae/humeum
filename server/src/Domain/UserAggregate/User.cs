@@ -12,15 +12,11 @@ namespace Domain.UserAggregate;
 /// service, either internal or external, that has its own inner entities for users.
 /// </summary>
 public class User : Entity {
-    // public int ApplicationUserId { get; private set; }
-
     Username _username = null!;
     public string Username {
         get => _username.Value;
         private set => _username = new Username(value);
     }
-
-    // public Username Username { get; private set; } = null!;
 
     string? _email;
     public string? Email {

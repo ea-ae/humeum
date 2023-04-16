@@ -39,14 +39,5 @@ public class AddAssetCommandHandler : ICommandHandler<AddAssetCommand, IResult<i
             await _context.SaveChangesAsync(token);
             return Result<int, IBaseException>.Ok(value.Id);
         });
-
-        //if (asset.Failure) {
-        //    return Result<int>.Fail(asset.GetErrors());
-        //}
-
-        //_context.Assets.Add(asset.Unwrap());
-        //await _context.SaveChangesAsync(token);
-
-        //return Result<int>.Ok(asset.Unwrap().Id);
     }
 }
