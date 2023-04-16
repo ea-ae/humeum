@@ -62,7 +62,7 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
         // if there are any validation errors at this point, return them
 
         if (builder.HasErrors) {
-            return (IResult<None>)builder.Build();
+            return Result<None>.From(builder.Build());
         }
 
         // update the transaction

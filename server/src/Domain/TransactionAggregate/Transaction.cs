@@ -55,11 +55,12 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
                                                                TaxScheme taxScheme,
                                                                Asset? asset = null) {
         var transaction = new Transaction() {
-            Profile = profile, ProfileId = profile.Id, TaxScheme = taxScheme, TaxSchemeId = taxScheme.Id, Asset = asset, AssetId = asset?.Id
+            Type = type, TypeId = type.Id, Profile = profile, ProfileId = profile.Id, 
+            TaxScheme = taxScheme, TaxSchemeId = taxScheme.Id, Asset = asset, AssetId = asset?.Id
         };
         var builder = new Result<Transaction, DomainException>.Builder().AddValue(transaction);
 
-        return SetFields(builder, name, description, amount, type, paymentTimeline).Build();
+        return SetFields(builder, name, description, amount, paymentTimeline).Build();
     }
 
     public static IResult<Transaction, DomainException> Create(string? name,
@@ -70,17 +71,16 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
                                                                int profileId,
                                                                int taxSchemeId,
                                                                int? assetId = null) {
-        var transaction = new Transaction() { ProfileId = profileId, TaxSchemeId = taxSchemeId, AssetId = assetId };
+        var transaction = new Transaction() { Type = type, TypeId = type.Id, ProfileId = profileId, TaxSchemeId = taxSchemeId, AssetId = assetId };
         var builder = new Result<Transaction, DomainException>.Builder().AddValue(transaction);
 
-        return SetFields(builder, name, description, amount, type, paymentTimeline).Build();
+        return SetFields(builder, name, description, amount, paymentTimeline).Build();
     }
 
     static Result<Transaction, DomainException>.Builder SetFields(Result<Transaction, DomainException>.Builder builder,
                                                                   string? name,
                                                                   string? description,
                                                                   decimal amount,
-                                                                  TransactionType type,
                                                                   Timeline paymentTimeline) {
         return builder.Transform(transaction => transaction.SetName(name))
                       .Transform(transaction => transaction.SetDescription(description))
@@ -104,7 +104,7 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
         AssetId = assetId;
 
         var builder = new Result<Transaction, DomainException>.Builder().AddValue(this);
-        return SetFields(builder, name, description, amount, type, paymentTimeline).Build().Then(None.Value);
+        return SetFields(builder, name, description, amount, paymentTimeline).Build().Then(None.Value);
     }
 
     /// <summary>

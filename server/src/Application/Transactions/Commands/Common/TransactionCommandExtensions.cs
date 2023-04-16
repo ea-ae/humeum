@@ -12,7 +12,7 @@ namespace Application.Transactions.Commands.Common;
 
 internal static class TransactionCommandExtensions {
     /// <summary>Data retrieved during the transaction field validation process. To be used in transaction creation or replacement.</summary>
-    public record ValidatedTransactionData(TransactionType transactionType, Timeline paymentTimeline);
+    public record ValidatedTransactionData(TransactionType TransactionType, Timeline PaymentTimeline);
 
     /// <summary>
     /// Attempts to validate and prepare all of the required fields to create or replace a transaction.
@@ -56,7 +56,7 @@ internal static class TransactionCommandExtensions {
         // if the fields were specified partially, transaction creation cannot proceed; return failed result early
 
         if (isRecurringTransaction.Failure) {
-            return (IResult<ValidatedTransactionData>)builder.Build();
+            return Result<ValidatedTransactionData>.From(builder.Build());
         }
 
         // get the transaction type
@@ -72,7 +72,7 @@ internal static class TransactionCommandExtensions {
             var paymentPeriod = new TimePeriod((DateOnly)request.PaymentStart!, (DateOnly)request.PaymentEnd!);
             var timeUnit = context.GetEnumerationEntityByCode<TimeUnit>(request.TimeUnit!);
             if (timeUnit.Failure) {
-                return (IResult<ValidatedTransactionData>)builder.AddResultErrors(timeUnit).Build();
+                return Result<ValidatedTransactionData>.From(builder.AddResultErrors(timeUnit).Build());
             }
 
             var paymentFrequency = new Frequency(timeUnit.Unwrap(), (int)request.TimesPerCycle!, (int)request.UnitsInCycle!);
@@ -84,11 +84,11 @@ internal static class TransactionCommandExtensions {
         // if there were any validation errors, return them
 
         if (builder.HasErrors) {
-            return (IResult<ValidatedTransactionData>)builder.Build();
+            return Result<ValidatedTransactionData>.From(builder.Build());
         }
 
         // otherwise, return validated data required for transaction
 
-        return (IResult<ValidatedTransactionData>)builder.AddValue(new ValidatedTransactionData(transactionType.Unwrap(), paymentTimeline)).Build();
+        return Result<ValidatedTransactionData>.From(builder.AddValue(new ValidatedTransactionData(transactionType.Unwrap(), paymentTimeline)).Build());
     }
 }

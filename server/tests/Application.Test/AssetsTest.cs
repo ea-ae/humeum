@@ -65,7 +65,7 @@ public class AssetsTest {
         // create profile and asset
 
         var profile = new Domain.ProfileAggregate.Profile(1, "Default");
-        var assetType = context.GetEnumerationEntityByCode<AssetType>(AssetType.Bond.Code);
+        var assetType = context.GetEnumerationEntityByCode<AssetType>(AssetType.Bond.Code).Unwrap();
         var asset = Asset.Create("My asset", null, 5m, 5m, assetType, profile).Unwrap();
         context.Profiles.Add(profile);
         context.Assets.Add(asset);

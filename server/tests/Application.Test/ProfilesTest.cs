@@ -65,7 +65,7 @@ public class ProfilesTests {
         var transaction = Transaction.Create("My Transaction",
                                              null,
                                              1,
-                                             context.GetEnumerationEntityByCode<TransactionType>("ALWAYS"),
+                                             context.GetEnumerationEntityByCode<TransactionType>("ALWAYS").Unwrap(),
                                              new Timeline(new TimePeriod(new DateOnly(2021, 1, 1))),
                                              profile.Id,
                                              taxSchemeId).Unwrap();

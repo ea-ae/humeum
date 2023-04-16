@@ -199,6 +199,10 @@ public class Result<T> : Result<T, IBaseException>, IResult<T> {
         return new Result<T>(errors);
     }
 
+    public static Result<T> From(IResult<T, IBaseException> result) {
+        return result.Success ? Result<T>.Ok(result.Unwrap()) : Result<T>.Fail(result.GetErrors());
+    }
+
     IResult<TNew> IResult<T>.Then<TNew>(TNew value) {
         return Success ? Result<TNew>.Ok(value) : Result<TNew>.Fail(GetErrors());
     }
