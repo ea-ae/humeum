@@ -7,8 +7,6 @@ using Domain.Common.Interfaces;
 using Domain.Common.Models;
 using Domain.TransactionAggregate;
 
-using MediatR;
-
 namespace Application.Transactions.Commands;
 
 public record DeleteTransactionCommand : ICommand<IResult<None>> {

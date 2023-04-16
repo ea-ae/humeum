@@ -47,7 +47,7 @@ public class ApplicationResultFilterAttribute : ResultFilterAttribute {
                 Status = statusCode
             };
         } else {
-            var errorsDictionary = errors.ToDictionary(e => e.Title, e => new[] { e.Message });
+            var errorsDictionary = errors.GroupBy(e => e.Title).ToDictionary(g => g.Key, g => g.Select(e => e.Message).ToArray());
             statusCode = StatusCodes.Status400BadRequest;
 
             details = new ValidationProblemDetails(errorsDictionary) {

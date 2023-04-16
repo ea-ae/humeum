@@ -124,17 +124,16 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
 
 
     /// <summary>Replace the transaction fields in-place.</summary>
-    public void Replace(string? name, string? description, decimal amount, TransactionType type, Timeline paymentTimeline, TaxScheme taxScheme, Asset? asset) {
+    public IResult<None, DomainException> Replace(string? name, string? description, decimal amount, TransactionType type, Timeline paymentTimeline, TaxScheme taxScheme, Asset? asset) {
         Type = type;
         TypeId = type.Id;
         TaxScheme = taxScheme;
         TaxSchemeId = taxScheme.Id;
         Asset = asset;
         AssetId = asset?.Id;
-        SetName(name);
-        SetDescription(description);
-        SetAmount(amount);
-        SetPaymentTimeline(paymentTimeline);
+
+        var builder = new Result<Transaction, DomainException>.Builder().AddValue(this);
+        return SetFields(builder, name, description, amount, type, paymentTimeline).Build().Then(None.Value);
     }
 
     /// <summary>

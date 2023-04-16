@@ -5,13 +5,12 @@ using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using Domain.AssetAggregate;
+using Domain.Common.Exceptions;
 using Domain.Common.Interfaces;
 using Domain.Common.Models;
 using Domain.TaxSchemeAggregate;
 using Domain.TransactionAggregate;
 using Domain.TransactionAggregate.ValueObjects;
-
-using MediatR;
 
 namespace Application.Transactions.Commands;
 
@@ -49,7 +48,7 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
             request.TimesPerCycle,
             request.UnitsInCycle
         };
-        bool isRecurringTransaction = recurringTransactionFields.AssertOptionalFieldSetValidity();
+        bool isRecurringTransaction = recurringTransactionFields.AssertOptionalFieldSetValidity(); // !!!!!!!
 
         var taxScheme = _context.TaxSchemes.FirstOrDefault(ts => ts.Id == request.TaxScheme && ts.DeletedAt == null);
         if (taxScheme is null) {
@@ -76,7 +75,7 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
         }
 
         var transactionType = _context.GetEnumerationEntityByCode<TransactionType>(request.Type);
-        Timeline paymentTimeline;
+        IResult<None, DomainException> result;
 
         // update fields
 
@@ -85,19 +84,21 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
 
             var paymentPeriod = new TimePeriod((DateOnly)request.PaymentStart!, (DateOnly)request.PaymentEnd!);
             var paymentFrequency = new Frequency(timeUnit, (int)request.TimesPerCycle!, (int)request.UnitsInCycle!);
+            var paymentTimeline = new Timeline(paymentPeriod, paymentFrequency);
 
-            paymentTimeline = new Timeline(paymentPeriod, paymentFrequency);
-
-            transaction.Replace(request.Name, request.Description, (decimal)request.Amount!, transactionType,
-                                paymentTimeline, taxScheme, asset);
+            result = transaction.Replace(request.Name, request.Description, (decimal)request.Amount!, transactionType,
+                                         paymentTimeline, taxScheme, asset);
         } else {
-            paymentTimeline = new Timeline(new TimePeriod((DateOnly)request.PaymentStart!));
-            transaction.Replace(request.Name, request.Description, (decimal)request.Amount!, transactionType,
-                                paymentTimeline, taxScheme, asset);
+            var paymentTimeline = new Timeline(new TimePeriod((DateOnly)request.PaymentStart!));
+
+            result = transaction.Replace(request.Name, request.Description, (decimal)request.Amount!, transactionType,
+                                         paymentTimeline, taxScheme, asset);
         }
 
-        await _context.SaveChangesWithHardDeletionAsync(token);
+        if (result.Success) {
+            await _context.SaveChangesWithHardDeletionAsync(token);
+        }
 
-        return Result<None>.Ok(None.Value);
+        return Result<None>.From(result);
     }
 }
