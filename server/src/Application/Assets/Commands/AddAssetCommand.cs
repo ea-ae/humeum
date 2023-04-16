@@ -31,7 +31,7 @@ public class AddAssetCommandHandler : ICommandHandler<AddAssetCommand, IResult<i
                                  request.Description,
                                  (decimal)request.ReturnRate!,
                                  (decimal)request.StandardDeviation!,
-                                 assetType.Id,
+                                 assetType.Unwrap().Id,
                                  request.Profile);
 
         return await asset.ThenAsync<int>(async value => {
