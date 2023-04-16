@@ -2,18 +2,20 @@
 
 using Application.Common.Interfaces;
 
+using Shared.Interfaces;
+
 namespace Application.Users.Commands;
 
-public record RefreshUserCommand : ICommand<int> {
+public record RefreshUserCommand : ICommand<IResult<int, IAuthenticationException>> {
     [Required] public required int User { get; init; }
 }
 
-public class RefreshUserCommandHandler : ICommandHandler<RefreshUserCommand, int> {
+public class RefreshUserCommandHandler : ICommandHandler<RefreshUserCommand, IResult<int, IAuthenticationException>> {
     private readonly IApplicationUserService _userService;
 
     public RefreshUserCommandHandler(IApplicationUserService userService) => _userService = userService;
 
-    public async Task<int> Handle(RefreshUserCommand request, CancellationToken token) {
+    public async Task<IResult<int, IAuthenticationException>> Handle(RefreshUserCommand request, CancellationToken token) {
         return await _userService.RefreshUserAsync(request.User);
     }
 }

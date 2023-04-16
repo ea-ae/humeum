@@ -15,6 +15,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
+using Shared.Interfaces;
+using Shared.Models;
+
 namespace Infrastructure.Services;
 
 public class JwtApplicationUserService : ApplicationUserService {
@@ -35,7 +38,6 @@ public class JwtApplicationUserService : ApplicationUserService {
     }
 
     public override async Task<int> CreateUserAsync(User user, string password, bool rememberMe) {
-        // todo automapper
         var appUser = new ApplicationUser {
             DisplayName = user.Username,
             UserName = user.Username,
@@ -71,23 +73,27 @@ public class JwtApplicationUserService : ApplicationUserService {
         throw new AuthenticationException("Sign-in attempt failed.");
     }
 
-    public override async Task<int> RefreshUserAsync(int userId) {
-        var user = GetApplicationUser(userId);
-        string refreshToken = GetRefreshTokenFromCookie();
+    public override async Task<IResult<int, IAuthenticationException>> RefreshUserAsync(int userId) {
+        return await GetApplicationUser(userId).ThenAsync(async appUser => {
+            var builder = new Result<ApplicationUser, IAuthenticationException>.Builder();
 
+            string refreshToken = GetRefreshTokenFromCookie();
 
-        if (user.RefreshToken != refreshToken) {
-            throw new AuthenticationException("Provided refresh token is invalid or does not match.");
-        }
+            if (appUser.RefreshToken != refreshToken) {
+                builder.AddError(new AuthenticationException("Provided refresh token is invalid or does not match."));
+            }
 
-        if (user.RefreshTokenExpiry < DateTime.UtcNow) {
-            throw new AuthenticationException("Provided refresh token has expired.");
-        }
+            if (appUser.RefreshTokenExpiry < DateTime.UtcNow) {
+                builder.AddError(new AuthenticationException("Provided refresh token has expired."));
+            }
 
-        await _signInManager.SignInAsync(user, isPersistent: true); // todo: sure about this?
-        await SetupUserTokens(user);
+            return await builder.AddValue(appUser).Build().ThenAsync<int, IAuthenticationException>(async appUser => {
+                await _signInManager.SignInAsync(appUser, isPersistent: true); // todo: sure about this?
+                await SetupUserTokens(appUser);
 
-        return user.Id;
+                return Result<int, IAuthenticationException>.Ok(appUser.Id);
+            });
+        });
     }
 
     protected override async Task<string> CreateToken(ApplicationUser user) {

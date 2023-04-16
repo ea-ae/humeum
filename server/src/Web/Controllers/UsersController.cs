@@ -7,12 +7,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using Shared.Interfaces;
+
 using Web.Filters;
 
 namespace Web.Controllers;
 
 /// <inheritdoc cref="Domain.UserAggregate.User"/>
 [Route("api/v1/[controller]")]
+[ApplicationResultFilter]
 [ApplicationExceptionFilter]
 [CsrfXHeaderFilter]
 [Produces("application/json")]
@@ -36,7 +39,7 @@ public class UsersController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleUserData")]
-    public async Task<ActionResult<UserDto>> GetUser(GetUserQuery query) {
+    public async Task<ActionResult<IResult<UserDto, IBaseException>>> GetUser(GetUserQuery query) {
         var user = await _mediator.Send(query);
         return Ok(user);
     }
@@ -54,7 +57,7 @@ public class UsersController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<ActionResult<UserDto>> GetCurrentUser() {
+    public async Task<ActionResult<IResult<UserDto, IBaseException>>> GetCurrentUser() {
         var currentUserId = User.Claims.First(claim => claim.Type == "uid");
         var query = new GetUserQuery { User = int.Parse(currentUserId.Value) };
         var user = await _mediator.Send(query);

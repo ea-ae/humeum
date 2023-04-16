@@ -1,16 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Application.Common.Exceptions;
+using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using AutoMapper;
 
+using Shared.Interfaces;
+using Shared.Models;
+
 namespace Application.Users.Queries;
 
-public record GetUserQuery : IQuery<UserDto> {
+public record GetUserQuery : IQuery<IResult<UserDto, IBaseException>> {
     [Required] public required int User { get; init; }
 }
 
-public class GetUserQueryHandler : IQueryHandler<GetUserQuery, UserDto> {
+public class GetUserQueryHandler : IQueryHandler<GetUserQuery, IResult<UserDto, IBaseException>> {
     private readonly IApplicationUserService _userService;
     private readonly IMapper _mapper;
 
@@ -19,10 +24,10 @@ public class GetUserQueryHandler : IQueryHandler<GetUserQuery, UserDto> {
         _mapper = mapper;
     }
 
-    public Task<UserDto> Handle(GetUserQuery request, CancellationToken token = default) {
+    public Task<IResult<UserDto, IBaseException>> Handle(GetUserQuery request, CancellationToken token = default) {
         var user = _userService.GetUserById(request.User);
+        var userDto = _mapper.MapToResult<UserDto>(user);
 
-        var userDto = _mapper.Map<UserDto>(user);
-        return Task.Run(() => userDto);
+        return Task.FromResult(userDto);
     }
 }
