@@ -25,8 +25,30 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class ConfigureServices {
     public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services,
                                                                      IConfiguration config) {
+        services.ConfigureDatabaseServices(config);
+        services.ConfigureAuthenticationServices(config);
+        services.ConfigureAuthorizationServices();
+
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
+        return services;
+    }
+
+    /// <summary>
+    /// Automatically apply any pending database migrations. Useful in production.
+    /// </summary>
+    public static IApplicationBuilder MigrateDatabase(this IApplicationBuilder app) {
+        using var scope = app.ApplicationServices.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
+
+        if (context.Database.GetPendingMigrations().Any()) {
+            context.Database.Migrate();
+        }
+
+        return app;
+    }
+
+    static IServiceCollection ConfigureDatabaseServices(this IServiceCollection services, IConfiguration config) {
         var dbSettingsSection = config.GetSection(nameof(DatabaseSettings));
         var dbSettings = dbSettingsSection.Get<DatabaseSettings>()!;
         services.Configure<DatabaseSettings>(dbSettingsSection);
@@ -45,6 +67,10 @@ public static class ConfigureServices {
             throw new InvalidOperationException($"Database configuration type '${dbSettings.Database}' is invalid; use 'sqlite' or 'postgres'.");
         }
 
+        return services;
+    }
+
+    static IServiceCollection ConfigureAuthenticationServices(this IServiceCollection services, IConfiguration config) {
         var jwtSettingsSection = config.GetSection(nameof(JwtSettings));
         var jwtSettings = jwtSettingsSection.Get<JwtSettings>()!;
         services.Configure<JwtSettings>(jwtSettingsSection);
@@ -72,6 +98,10 @@ public static class ConfigureServices {
                 };
             });
 
+        return services;
+    }
+
+    static IServiceCollection ConfigureAuthorizationServices(this IServiceCollection services) {
         services.AddAuthorization(o => {
             o.AddPolicy("CanHandleUserData", builder => builder.AddRequirements(new UserOwnershipRequirement()));
             o.AddPolicy("CanHandleProfileData", builder => builder.AddRequirements(new UserOwnershipRequirement(),
@@ -101,19 +131,5 @@ public static class ConfigureServices {
         services.AddScoped<IApplicationUserService, JwtApplicationUserService>();
 
         return services;
-    }
-
-    /// <summary>
-    /// Automatically apply any pending database migrations. Useful in production.
-    /// </summary>
-    public static IApplicationBuilder MigrateDatabase(this IApplicationBuilder app) {
-        using var scope = app.ApplicationServices.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
-
-        if (context.Database.GetPendingMigrations().Any()) {
-            context.Database.Migrate();
-        }
-
-        return app;
     }
 }
