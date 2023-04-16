@@ -32,7 +32,7 @@ public class GetTransactionsQueryHandler : IPaginatedQueryHandler<GetTransaction
         _mapper = mapper;
     }
 
-    public Task<IResult<PaginatedList<TransactionDto>>> Handle(GetTransactionsQuery request, CancellationToken token = default) {
+    public Task<IResult<PaginatedList<TransactionDto>, IBaseException>> Handle(GetTransactionsQuery request, CancellationToken token = default) {
         var transactions = _context.Transactions.AsNoTracking()
                                                 .Include(t => t.Categories)
                                                 .Where(t => t.ProfileId == request.Profile
@@ -46,7 +46,7 @@ public class GetTransactionsQueryHandler : IPaginatedQueryHandler<GetTransaction
         }
 
         var list = transactions.OrderBy(t => t.Id).ToPaginatedList(request, _mapper);
-        IResult<PaginatedList<TransactionDto>> result = Result<PaginatedList<TransactionDto>>.Ok(list);
+        IResult<PaginatedList<TransactionDto>, IBaseException> result = Result<PaginatedList<TransactionDto>, IBaseException>.Ok(list);
         return Task.FromResult(result);
     }
 }

@@ -14,12 +14,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Assets.Queries;
 
-public record GetAssetQuery : IQuery<IResult<AssetDto>> {
+public record GetAssetQuery : IQuery<IResult<AssetDto, IBaseException>> {
     [Required] public required int Profile { get; init; }
     [Required] public required int Asset { get; init; }
 }
 
-public class GetAssetQueryHandler : IQueryHandler<GetAssetQuery, IResult<AssetDto>> {
+public class GetAssetQueryHandler : IQueryHandler<GetAssetQuery, IResult<AssetDto, IBaseException>> {
     private readonly IAppDbContext _context;
     private readonly IMapper _mapper;
 
@@ -28,7 +28,7 @@ public class GetAssetQueryHandler : IQueryHandler<GetAssetQuery, IResult<AssetDt
         _mapper = mapper;
     }
 
-    public Task<IResult<AssetDto>> Handle(GetAssetQuery request, CancellationToken token = default) {
+    public Task<IResult<AssetDto, IBaseException>> Handle(GetAssetQuery request, CancellationToken token = default) {
         var asset = _context.Assets.AsNoTracking()
                                    .Include(a => a.Type)
                                    .FirstOrDefault(a => a.Id == request.Asset

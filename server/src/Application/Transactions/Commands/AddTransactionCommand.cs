@@ -14,7 +14,7 @@ using Domain.TransactionAggregate.ValueObjects;
 
 namespace Application.Transactions.Commands;
 
-public record AddTransactionCommand : ICommand<IResult<int>>, ITransactionFields {
+public record AddTransactionCommand : ICommand<IResult<int, IBaseException>>, ITransactionFields {
     [Required] public required int Profile { get; init; }
 
     public string? Name { get; init; }
@@ -31,18 +31,18 @@ public record AddTransactionCommand : ICommand<IResult<int>>, ITransactionFields
     public int? UnitsInCycle { get; init; }
 }
 
-public class AddTransactionCommandHandler : ICommandHandler<AddTransactionCommand, IResult<int>> {
+public class AddTransactionCommandHandler : ICommandHandler<AddTransactionCommand, IResult<int, IBaseException>> {
     readonly IAppDbContext _context;
 
     public AddTransactionCommandHandler(IAppDbContext context) => _context = context;
 
-    public async Task<IResult<int>> Handle(AddTransactionCommand request, CancellationToken token = default) {
+    public async Task<IResult<int, IBaseException>> Handle(AddTransactionCommand request, CancellationToken token = default) {
         // validate the transaction creation request fields
 
         var validationResult = request.ValidateTransactionFields(_context);
 
         if (validationResult.Failure) {
-            return Result<int>.Fail(validationResult.GetErrors());
+            return Result<int, IBaseException>.Fail(validationResult.GetErrors());
         }
 
         var (transactionType, paymentTimeline) = validationResult.Unwrap();
@@ -54,10 +54,10 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
 
         // persist and return the transaction object ID or validation errors
 
-        return await transaction.ThenAsync<int>(async value => {
+        return await transaction.ThenAsync<int, IBaseException>(async value => {
             _context.Transactions.Add(value);
             await _context.SaveChangesAsync(token);
-            return Result<int>.Ok(value.Id);
+            return Result<int, IBaseException>.Ok(value.Id);
         });
     }
 }

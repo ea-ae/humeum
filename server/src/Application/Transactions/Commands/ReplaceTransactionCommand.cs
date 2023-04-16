@@ -15,7 +15,7 @@ using Domain.TransactionAggregate.ValueObjects;
 
 namespace Application.Transactions.Commands;
 
-public record ReplaceTransactionCommand : ICommand<IResult<None>>, ITransactionFields {
+public record ReplaceTransactionCommand : ICommand<IResult<None, IBaseException>>, ITransactionFields {
     [Required] public required int Profile { get; init; }
     [Required] public required int Transaction { get; init; }
 
@@ -33,17 +33,17 @@ public record ReplaceTransactionCommand : ICommand<IResult<None>>, ITransactionF
     public int? UnitsInCycle { get; init; }
 }
 
-public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransactionCommand, IResult<None>> {
+public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransactionCommand, IResult<None, IBaseException>> {
     readonly IAppDbContext _context;
 
     public ReplaceTransactionCommandHandler(IAppDbContext context) {
         _context = context;
     }
 
-    public async Task<IResult<None>> Handle(ReplaceTransactionCommand request, CancellationToken token = default) {
+    public async Task<IResult<None, IBaseException>> Handle(ReplaceTransactionCommand request, CancellationToken token = default) {
         // create a builder to collect validation errors
 
-        var builder = new Result<None>.Builder();
+        var builder = new Result<None, IBaseException>.Builder();
 
         // validate that the specified transaction exists
 
@@ -62,7 +62,7 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
         // if there are any validation errors at this point, return them
 
         if (builder.HasErrors) {
-            return Result<None>.From(builder.Build());
+            return builder.Build();
         }
 
         // update the transaction
@@ -71,9 +71,9 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
         var result = transaction!.Replace(request.Name, request.Description, (decimal)request.Amount!, transactionType,
                                           paymentTimeline, (int)request.TaxScheme!, request.Asset);
 
-        return await result.ThenAsync<None>(async _ => {
+        return await result.ThenAsync<None, IBaseException>(async _ => {
             await _context.SaveChangesWithHardDeletionAsync(token);
-            return Result<None>.Ok(None.Value);
+            return Result<None, IBaseException>.Ok(None.Value);
         });
     }
 }

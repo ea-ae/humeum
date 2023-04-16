@@ -14,12 +14,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Transactions.Queries;
 
-public record GetTransactionQuery : IQuery<IResult<TransactionDto>> {
+public record GetTransactionQuery : IQuery<IResult<TransactionDto, IBaseException>> {
     [Required] public required int Profile { get; init; }
     [Required] public required int Transaction { get; init; }
 }
 
-public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, IResult<TransactionDto>> {
+public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, IResult<TransactionDto, IBaseException>> {
     private readonly IAppDbContext _context;
     private readonly IMapper _mapper;
 
@@ -28,7 +28,7 @@ public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, IRe
         _mapper = mapper;
     }
 
-    public Task<IResult<TransactionDto>> Handle(GetTransactionQuery request, CancellationToken token) {
+    public Task<IResult<TransactionDto, IBaseException>> Handle(GetTransactionQuery request, CancellationToken token) {
         var transaction = _context.Transactions.AsNoTracking()
                                                .Include(t => t.Categories)
                                                .Include(t => t.Type)

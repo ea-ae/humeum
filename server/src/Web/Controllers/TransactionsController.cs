@@ -39,7 +39,7 @@ public class TransactionsController : ControllerBase {
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<TransactionDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IResult<IEnumerable<TransactionDto>>>> GetTransactions(GetTransactionsQuery query) {
+    public async Task<ActionResult<IResult<IEnumerable<TransactionDto>, IBaseException>>> GetTransactions(GetTransactionsQuery query) {
         var transactions = await _mediator.Send(query);
         return Ok(transactions);
     }
@@ -54,7 +54,7 @@ public class TransactionsController : ControllerBase {
     [HttpGet("{Transaction}")]
     [ProducesResponseType(typeof(TransactionDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IResult<TransactionDto>>> GetTransaction(GetTransactionQuery query) {
+    public async Task<ActionResult<IResult<TransactionDto, IBaseException>>> GetTransaction(GetTransactionQuery query) {
         var transaction = await _mediator.Send(query);
         return Ok(transaction);
     }
@@ -75,9 +75,9 @@ public class TransactionsController : ControllerBase {
     [ProducesResponseType(typeof(IActionResult), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult<IActionResult>> AddTransaction(int user, AddTransactionCommand command) {
+    public async Task<IResult<IActionResult, IBaseException>> AddTransaction(int user, AddTransactionCommand command) {
         var result = await _mediator.Send(command);
-        return result.Then(transaction => Result<IActionResult>.Ok(
+        return result.Then(transaction => Result<IActionResult, IBaseException>.Ok(
             CreatedAtAction(nameof(GetTransaction), new { user, command.Profile, transaction }, null)));
     }
 
@@ -110,7 +110,7 @@ public class TransactionsController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult<IActionResult>> ReplaceTransaction(ReplaceTransactionCommand command) {
+    public async Task<IResult<IActionResult, IBaseException>> ReplaceTransaction(ReplaceTransactionCommand command) {
         var result = await _mediator.Send(command);
         return result.Then(NoContent());
     }
@@ -125,7 +125,7 @@ public class TransactionsController : ControllerBase {
     [HttpDelete("{Transaction}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult<IActionResult>> DeleteTransaction(DeleteTransactionCommand command) {
+    public async Task<IResult<IActionResult, IBaseException>> DeleteTransaction(DeleteTransactionCommand command) {
         var result = await _mediator.Send(command);
         return result.Then(NoContent());
     }

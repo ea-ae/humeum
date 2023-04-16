@@ -119,10 +119,10 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
         }
     }
 
-    readonly T _value = default!;
-    readonly IReadOnlyCollection<E>? _errors;
+    protected T _value = default!;
+    IReadOnlyCollection<E>? _errors;
 
-    public bool Success { get; private init; }
+    public bool Success { get; protected init; }
 
     public bool Failure => !Success;
 
@@ -138,6 +138,22 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
         return new Result<T, E>(errors);
     }
 
+    Result(T value) {
+        Success = true;
+        _value = value;
+    }
+
+    Result(IReadOnlyCollection<E> errors) {
+        Success = false;
+        _errors = errors;
+    }
+
+    public T Unwrap() {
+        return Success ? _value : throw new InvalidOperationException("Result did not succeed, cannot access value.");
+    }
+
+    public IReadOnlyCollection<E> GetErrors() => _errors ?? throw new InvalidOperationException("Cannot access errors because the result was a success.");
+
     public IResult<TNew, E> Then<TNew>(TNew value) {
         return Success ? Result<TNew, E>.Ok(value) : Result<TNew, E>.Fail(GetErrors());
     }
@@ -146,62 +162,11 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
         return Success ? then.Invoke(_value) : Result<TNew, ENew>.Fail((IReadOnlyCollection<ENew>)GetErrors());
     }
 
-    public IResult<TNew> Then<TNew>(Func<T, IResult<TNew>> then) {
-        return Success ? then.Invoke(_value) : Result<TNew>.Fail((IReadOnlyCollection<IBaseException>)GetErrors());
-    }
-
     public Task<IResult<TNew, ENew>> ThenAsync<TNew, ENew>(Func<T, Task<IResult<TNew, ENew>>> then) where ENew : IBaseException {
         if (Success) {
             return then.Invoke(_value);
         }
         IResult<TNew, ENew> result = Result<TNew, ENew>.Fail((IReadOnlyCollection<ENew>)GetErrors());
         return Task.FromResult(result);
-    }
-
-    public Task<IResult<TNew>> ThenAsync<TNew>(Func<T, Task<IResult<TNew>>> then) {
-        if (Success) {
-            return then.Invoke(_value);
-        }
-        IResult<TNew> result = Result<TNew>.Fail((IReadOnlyCollection<IBaseException>)GetErrors());
-        return Task.FromResult(result);
-    }
-
-    public T Unwrap() {
-        return Success ? _value : throw new InvalidOperationException("Result did not succeed, cannot access value.");
-    }
-
-    public IReadOnlyCollection<E> GetErrors() => _errors ?? throw new InvalidOperationException("Result wasn't a failure, cannot access errors.");
-
-    protected Result(T value) {
-        Success = true;
-        _value = value;
-    }
-
-    protected Result(IReadOnlyCollection<E> errors) {
-        Success = false;
-        _errors = errors;
-    }
-}
-
-/// <inheritdoc cref="Result{T, E}" />
-public class Result<T> : Result<T, IBaseException>, IResult<T> {
-    protected Result(T value) : base(value) { }
-
-    protected Result(IReadOnlyCollection<IBaseException> errors) : base(errors) { }
-
-    public static new Result<T> Ok(T value) {
-        return new Result<T>(value);
-    }
-
-    public static new Result<T> Fail(IBaseException error) {
-        return new Result<T>(new List<IBaseException> { error });
-    }
-
-    public static new Result<T> Fail(IReadOnlyCollection<IBaseException> errors) {
-        return new Result<T>(errors);
-    }
-
-    public static Result<T> From(IResult<T, IBaseException> result) {
-        return result.Success ? Result<T>.Ok(result.Unwrap()) : Result<T>.Fail(result.GetErrors());
     }
 }

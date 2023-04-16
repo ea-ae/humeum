@@ -19,16 +19,16 @@ public static class AppDbContextExtensions {
     /// <param name="code">Enumeration entity code to match.</param>
     /// <returns>Attached enumeration entity that matches the given code.</returns>
     /// <exception cref="ApplicationValidationException">Thrown when the given code does not match any enumeration entity.</exception>
-    public static IResult<T> GetEnumerationEntityByCode<T>(this IAppDbContext context, string code) where T : Enumeration {
+    public static IResult<T, IBaseException> GetEnumerationEntityByCode<T>(this IAppDbContext context, string code) where T : Enumeration {
         T enumEntity;
         try {
             enumEntity = Enumeration.GetByCode<T>(code);
         } catch (InvalidOperationException) {
-            return Result<T>.Fail(new ApplicationValidationException($"Incorrect enumeration code {code} for {typeof(T).Name}"));
+            return Result<T, IBaseException>.Fail(new ApplicationValidationException($"Incorrect enumeration code {code} for {typeof(T).Name}"));
         }
 
         context.Set<T>().Attach(enumEntity);
-        return Result<T>.Ok(enumEntity);
+        return Result<T, IBaseException>.Ok(enumEntity);
     }
 
     /// <summary>

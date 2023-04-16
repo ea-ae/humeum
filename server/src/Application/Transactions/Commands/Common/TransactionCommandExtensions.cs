@@ -19,10 +19,10 @@ internal static class TransactionCommandExtensions {
     /// </summary>
     /// <param name="command">Command that contains all of the required transaction fields.</param>
     /// <returns>Result containing either prepared transaction data or validation errors.</returns>
-    public static IResult<ValidatedTransactionData> ValidateTransactionFields(this ITransactionFields request, IAppDbContext context) {
+    public static IResult<ValidatedTransactionData, IBaseException> ValidateTransactionFields(this ITransactionFields request, IAppDbContext context) {
         // create a builder to collect validation errors
 
-        var builder = new Result<ValidatedTransactionData>.Builder();
+        var builder = new Result<ValidatedTransactionData, IBaseException>.Builder();
 
         // validate that the fields for recurring transactions were provided either fully or not at all
 
@@ -53,16 +53,16 @@ internal static class TransactionCommandExtensions {
             }
         }
 
-        // if the fields were specified partially, transaction creation cannot proceed; return failed result early
-
-        if (isRecurringTransaction.Failure) {
-            return Result<ValidatedTransactionData>.From(builder.Build());
-        }
-
-        // get the transaction type
+        // validate and get the transaction type by code
 
         var transactionType = context.GetEnumerationEntityByCode<TransactionType>(request.Type);
         builder.AddResultErrors(transactionType);
+
+        // if the fields were specified partially, transaction creation cannot proceed; return failed result early
+
+        if (isRecurringTransaction.Failure) {
+            return builder.Build();
+        }
 
         // create a payment timeline value object for the transaction; return failed result early if needed
 
@@ -72,7 +72,7 @@ internal static class TransactionCommandExtensions {
             var paymentPeriod = new TimePeriod((DateOnly)request.PaymentStart!, (DateOnly)request.PaymentEnd!);
             var timeUnit = context.GetEnumerationEntityByCode<TimeUnit>(request.TimeUnit!);
             if (timeUnit.Failure) {
-                return Result<ValidatedTransactionData>.From(builder.AddResultErrors(timeUnit).Build());
+                return builder.AddResultErrors(timeUnit).Build();
             }
 
             var paymentFrequency = new Frequency(timeUnit.Unwrap(), (int)request.TimesPerCycle!, (int)request.UnitsInCycle!);
@@ -84,11 +84,11 @@ internal static class TransactionCommandExtensions {
         // if there were any validation errors, return them
 
         if (builder.HasErrors) {
-            return Result<ValidatedTransactionData>.From(builder.Build());
+            return builder.Build();
         }
 
         // otherwise, return validated data required for transaction
 
-        return Result<ValidatedTransactionData>.From(builder.AddValue(new ValidatedTransactionData(transactionType.Unwrap(), paymentTimeline)).Build());
+        return builder.AddValue(new ValidatedTransactionData(transactionType.Unwrap(), paymentTimeline)).Build();
     }
 }

@@ -39,7 +39,9 @@ internal static class ServiceExtensions {
     /// <param name="request">Request object that contains offset/limit information.</param>
     /// <param name="mapper">Automapper that projects the source entities.</param>
     /// <returns>Paginated list.</returns>
-    public static PaginatedList<TDestination> ToPaginatedList<TSource, TDestination>(this IOrderedQueryable<TSource> query, IPaginatedQuery<TDestination> request, IMapper mapper) {
+    public static PaginatedList<TDestination> ToPaginatedList<TSource, TDestination>(this IOrderedQueryable<TSource> query,
+                                                                                     IPaginatedQuery<TDestination> request,
+                                                                                     IMapper mapper) {
         return PaginatedList<TDestination>.ProjectAndCreateFromQuery(query, request, mapper);
     }
 
@@ -52,9 +54,9 @@ internal static class ServiceExtensions {
     /// <param name="mapper">Automapper.</param>
     /// <param name="entity">Source entity.</param>
     /// <returns>A result that contains either the mapped DTO or a not found error.</returns>
-    public static IResult<TDestination> ToMappedResultOrNotFound<TSource, TDestination>(this IMapper mapper, TSource? entity) {
+    public static IResult<TDestination, IBaseException> ToMappedResultOrNotFound<TSource, TDestination>(this IMapper mapper, TSource? entity) {
         if (entity is null) {
-            return Result<TDestination>.Fail(new NotFoundValidationException(typeof(TSource)));
+            return Result<TDestination, IBaseException>.Fail(new NotFoundValidationException(typeof(TSource)));
         }
 
         return mapper.MapToResult<TDestination>(entity);
@@ -67,9 +69,9 @@ internal static class ServiceExtensions {
     /// <param name="mapper">Automapper.</param>
     /// <param name="entity">Source entity.</param>
     /// <returns>Mapped entity contained within a successful result.</returns>
-    public static IResult<T> MapToResult<T>(this IMapper mapper, object entity) {
+    public static IResult<T, IBaseException> MapToResult<T>(this IMapper mapper, object entity) {
         T value = mapper.Map<T>(entity);
-        return Result<T>.Ok(value);
+        return Result<T, IBaseException>.Ok(value);
     }
 
     /// <summary>
@@ -79,8 +81,8 @@ internal static class ServiceExtensions {
     /// <param name="query">Queryable that contains all the source entities.</param>
     /// <param name="mapper">Automapper.</param>
     /// <returns>Projected entities contained within a successful result.</returns>
-    public static IResult<List<T>> ProjectToResult<T>(this IQueryable query, IMapper mapper) {
+    public static IResult<List<T>, IBaseException> ProjectToResult<T>(this IQueryable query, IMapper mapper) {
         var dto = query.ProjectTo<T>(mapper.ConfigurationProvider).ToList();
-        return Result<List<T>>.Ok(dto);
+        return Result<List<T>, IBaseException>.Ok(dto);
     }
 }
