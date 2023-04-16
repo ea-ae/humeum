@@ -36,49 +36,80 @@ public class AddTransactionCommandHandler : ICommandHandler<AddTransactionComman
     public AddTransactionCommandHandler(IAppDbContext context) => _context = context;
 
     public async Task<IResult<int>> Handle(AddTransactionCommand request, CancellationToken token = default) {
-        // validation
+        // create a builder to collect validation errors
 
-        List<object?> recurringTransactionFields = new() { // fields required for recurrent transactions
+        var builder = new Result<int>.Builder();
+
+        // validate that the fields for recurring transactions were provided either fully or not at all
+
+        List<object?> recurringTransactionFields = new() {
             request.PaymentEnd,
             request.TimeUnit,
             request.TimesPerCycle,
             request.UnitsInCycle
         };
-        bool isRecurringTransaction = recurringTransactionFields.AssertOptionalFieldSetValidity();
+        var isRecurringTransaction = recurringTransactionFields.AssertOptionalFieldSetValidity();
+        builder.AddResultErrors(isRecurringTransaction);
+
+        // validate that the tax scheme exists
 
         var taxSchemeExists = _context.TaxSchemes.Any(ts => ts.Id == request.TaxScheme && ts.DeletedAt == null);
         if (!taxSchemeExists) {
-            throw new NotFoundValidationException(typeof(TaxScheme));
+            builder.AddError(new NotFoundValidationException(typeof(TaxScheme)));
         }
+
+        // validate that the asset exists if one was specified
 
         if (request.Asset is not null) {
             var assetExists = _context.Assets.Any(a => (a.ProfileId == request.Profile || a.ProfileId == null)
                                                        && a.Id == request.Asset
                                                        && a.DeletedAt == null);
             if (!assetExists) {
-                throw new NotFoundValidationException(typeof(Transaction));
+                builder.AddError(new NotFoundValidationException(typeof(Transaction)));
             }
         }
 
-        // handling
+        // if the fields were specified partially, transaction creation cannot proceed; return failed result early
+
+        if (isRecurringTransaction.Failure) {
+            return (IResult<int>)builder.Build();
+        }
+
+        // get the transaction type
 
         var transactionType = _context.GetEnumerationEntityByCode<TransactionType>(request.Type);
-        IResult<Transaction, DomainException> transaction;
+        builder.AddResultErrors(transactionType);
 
-        if (isRecurringTransaction) {
-            var timeUnit = _context.GetEnumerationEntityByCode<TimeUnit>(request.TimeUnit!);
+        // create a payment timeline value object for the transaction; return failed result early if needed
+
+        Timeline paymentTimeline;
+
+        if (isRecurringTransaction.Unwrap()) {
             var paymentPeriod = new TimePeriod((DateOnly)request.PaymentStart!, (DateOnly)request.PaymentEnd!);
-            var paymentFrequency = new Frequency(timeUnit, (int)request.TimesPerCycle!, (int)request.UnitsInCycle!);
-            var paymentTimeline = new Timeline(paymentPeriod, paymentFrequency);
 
-            transaction = Transaction.Create(request.Name, request.Description, (decimal)request.Amount!, transactionType,
-                                             paymentTimeline, request.Profile!, (int)request.TaxScheme!, request.Asset);
+            var timeUnit = _context.GetEnumerationEntityByCode<TimeUnit>(request.TimeUnit!);
+            if (timeUnit.Failure) {
+                return (IResult<int>)builder.AddResultErrors(timeUnit).Build();
+            }
+
+            var paymentFrequency = new Frequency(timeUnit.Unwrap(), (int)request.TimesPerCycle!, (int)request.UnitsInCycle!);
+            paymentTimeline = new Timeline(paymentPeriod, paymentFrequency);
         } else {
-            var timeline = new Timeline(new TimePeriod((DateOnly)request.PaymentStart!));
-
-            transaction = Transaction.Create(request.Name, request.Description, (decimal)request.Amount!, transactionType,
-                                             timeline, request.Profile!, (int)request.TaxScheme!, request.Asset);
+            paymentTimeline = new Timeline(new TimePeriod((DateOnly)request.PaymentStart!));
         }
+
+        // if there were any validation errors, return them
+
+        if (builder.HasErrors) {
+            return (IResult<int>)builder.Build();
+        }
+
+        // build the transaction object
+
+        var transaction = Transaction.Create(request.Name, request.Description, (decimal)request.Amount!, transactionType.Unwrap(),
+                                             paymentTimeline, request.Profile!, (int)request.TaxScheme!, request.Asset);
+
+        // persist and return the transaction object ID or validation errors
 
         return await transaction.ThenAsync<int>(async value => {
             _context.Transactions.Add(value);

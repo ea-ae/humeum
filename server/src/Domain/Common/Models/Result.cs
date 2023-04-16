@@ -11,7 +11,24 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
         T _value = default!;
         public T Value { get => _hasValue ? _value : throw new InvalidOperationException("Value is not set."); }
 
+        public bool HasErrors => _errors.Any();
+
         public Builder() { }
+
+        /// <summary>
+        /// Adds a value to the result builder.
+        /// </summary>
+        /// <param name="value">Value to add.</param>
+        /// <returns>Fluent interface self reference.</returns>
+        /// <exception cref="InvalidOperationException">If a value or errors have been already added.</exception>
+        public Builder AddValue(T value) {
+            if (_hasValue) {
+                throw new InvalidOperationException("Result builder already has a value.");
+            }
+            _value = value;
+            _hasValue = true;
+            return this;
+        }
 
         /// <summary>
         /// Adds an error to the result builder.
@@ -20,6 +37,34 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
         /// <returns>Fluent interface self reference.</returns>
         public Builder AddError(E error) {
             _errors.Add(error);
+            return this;
+        }
+
+        /// <summary>
+        /// Add the value or errors of a result, depending on whether it succeeded.
+        /// </summary>
+        /// <typeparam name="TAny">Value type of the result whose value or errors will be added.</typeparam>
+        /// <param name="result">Result whose value or errors will be added.</param>
+        /// <returns>Fluent interface self reference.</returns>
+        public Builder AddResultValueOrErrors(IResult<T, E> result) {
+            if (result.Success) {
+                AddValue(result.Unwrap());
+            } else {
+                _errors.AddRange(result.GetErrors());
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Add the errors of a result in case it was a failure.
+        /// </summary>
+        /// <typeparam name="TAny">Value type of the result whose errors will be added.</typeparam>
+        /// <param name="result">Result whose errors will be added.</param>
+        /// <returns>Fluent interface self reference.</returns>
+        public Builder AddResultErrors<TAny>(IResult<TAny, E> result) {
+            if (result.Failure) {
+                _errors.AddRange(result.GetErrors());
+            }
             return this;
         }
 
@@ -58,21 +103,6 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
                 _errors.AddRange(result.GetErrors());
             }
 
-            return this;
-        }
-
-        /// <summary>
-        /// Adds a value to the result builder.
-        /// </summary>
-        /// <param name="value">Value to add.</param>
-        /// <returns>Fluent interface self reference.</returns>
-        /// <exception cref="InvalidOperationException">If a value or errors have been already added.</exception>
-        public Builder AddValue(T value) {
-            if (_hasValue) {
-                throw new InvalidOperationException("Result builder already has a value.");
-            }
-            _value = value;
-            _hasValue = true;
             return this;
         }
 

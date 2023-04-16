@@ -1,12 +1,10 @@
-﻿using Application.Assets.Queries;
-using Application.Common.Exceptions;
+﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using Application.Common.Models;
 
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 
-using Domain.AssetAggregate;
 using Domain.Common.Interfaces;
 using Domain.Common.Models;
 
@@ -20,17 +18,17 @@ internal static class ServiceExtensions {
     /// Asserts that a set of fields is either provided fully or not at all (aka every field is null).
     /// </summary>
     /// <param name="fields">Set of fields that must be either provided fully or not at all.</param>
-    /// <returns>True if the fields were fully provided, false if none were provided.</returns>
-    /// <exception cref="ApplicationValidationException">If the fields were provided partially and the assertion failed.</exception>
-    public static bool AssertOptionalFieldSetValidity(this List<object?> fields) {
+    /// <returns>True if the fields were fully provided, false if none were provided. An error if they were partially provided.</returns>
+    public static IResult<bool, ApplicationValidationException> AssertOptionalFieldSetValidity(this List<object?> fields) {
         int optionalFieldsProvided = fields.Count(field => field is not null);
         bool allFieldsProvided = optionalFieldsProvided == fields.Count;
 
         if (!allFieldsProvided && optionalFieldsProvided > 0) {
-            throw new ApplicationValidationException("Set of optional fields was only partially specified.");
+            var error = new ApplicationValidationException("Set of optional fields was only partially specified.");
+            return Result<bool, ApplicationValidationException>.Fail(error);
         }
 
-        return allFieldsProvided;
+        return Result<bool, ApplicationValidationException>.Ok(allFieldsProvided);
     }
 
     /// <summary>

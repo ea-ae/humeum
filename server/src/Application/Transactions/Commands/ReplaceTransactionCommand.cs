@@ -48,7 +48,7 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
             request.TimesPerCycle,
             request.UnitsInCycle
         };
-        bool isRecurringTransaction = recurringTransactionFields.AssertOptionalFieldSetValidity(); // !!!!!!!
+        bool isRecurringTransaction = recurringTransactionFields.AssertOptionalFieldSetValidity().Unwrap(); // TODO!
 
         var taxScheme = _context.TaxSchemes.FirstOrDefault(ts => ts.Id == request.TaxScheme && ts.DeletedAt == null);
         if (taxScheme is null) {
@@ -74,13 +74,13 @@ public class ReplaceTransactionCommandHandler : ICommandHandler<ReplaceTransacti
             return Result<None>.Fail(new NotFoundValidationException(typeof(Transaction)));
         }
 
-        var transactionType = _context.GetEnumerationEntityByCode<TransactionType>(request.Type);
+        var transactionType = _context.GetEnumerationEntityByCode<TransactionType>(request.Type).Unwrap(); // TODO!
         IResult<None, DomainException> result;
 
         // update fields
 
         if (isRecurringTransaction) {
-            var timeUnit = _context.GetEnumerationEntityByCode<TimeUnit>(request.TimeUnit!);
+            var timeUnit = _context.GetEnumerationEntityByCode<TimeUnit>(request.TimeUnit!).Unwrap(); // TODO!
 
             var paymentPeriod = new TimePeriod((DateOnly)request.PaymentStart!, (DateOnly)request.PaymentEnd!);
             var paymentFrequency = new Frequency(timeUnit, (int)request.TimesPerCycle!, (int)request.UnitsInCycle!);
