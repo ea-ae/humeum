@@ -19,6 +19,13 @@ public abstract class Enumeration : ValueObject, IComparable {
 
     protected Enumeration() { }
 
+    /// <summary>
+    /// Attempts to get an enumeration object through its code.
+    /// </summary>
+    /// <typeparam name="T">Type of enumeration entity.</typeparam>
+    /// <param name="code">Provided code.</param>
+    /// <returns>Enumeration entity with given code.</returns>
+    /// <exception cref="InvalidOperationException">If no object with given code exists.</exception>
     public static T GetByCode<T>(string code) where T : Enumeration {
         return GetAll<T>().First(t => t.Code == code);
     }
@@ -39,9 +46,7 @@ public abstract class Enumeration : ValueObject, IComparable {
     public override int GetHashCode() => Code.GetHashCode();
 
     protected static IEnumerable<T> GetAll<T>() where T : Enumeration =>
-        typeof(T).GetFields(BindingFlags.Public |
-                            BindingFlags.Static |
-                            BindingFlags.DeclaredOnly)
+        typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
                  .Select(f => f.GetValue(null))
                  .Cast<T>();
 

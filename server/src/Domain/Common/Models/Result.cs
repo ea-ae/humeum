@@ -146,7 +146,9 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
         return Success ? then.Invoke(_value) : Result<TNew, ENew>.Fail((IReadOnlyCollection<ENew>)GetErrors());
     }
 
-    public IResult<TNew> Then<TNew>(Func<T, IResult<TNew>> then) => (IResult<TNew>)Then<TNew, IBaseException>(then);
+    public IResult<TNew> Then<TNew>(Func<T, IResult<TNew>> then) {
+        return Success ? then.Invoke(_value) : Result<TNew>.Fail((IReadOnlyCollection<IBaseException>)GetErrors());
+    }
 
     public Task<IResult<TNew, ENew>> ThenAsync<TNew, ENew>(Func<T, Task<IResult<TNew, ENew>>> then) where ENew : IBaseException {
         if (Success) {
@@ -201,9 +203,5 @@ public class Result<T> : Result<T, IBaseException>, IResult<T> {
 
     public static Result<T> From(IResult<T, IBaseException> result) {
         return result.Success ? Result<T>.Ok(result.Unwrap()) : Result<T>.Fail(result.GetErrors());
-    }
-
-    IResult<TNew> IResult<T>.Then<TNew>(TNew value) {
-        return Success ? Result<TNew>.Ok(value) : Result<TNew>.Fail(GetErrors());
     }
 }

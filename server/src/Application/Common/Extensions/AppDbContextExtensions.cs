@@ -24,7 +24,7 @@ public static class AppDbContextExtensions {
         try {
             enumEntity = Enumeration.GetByCode<T>(code);
         } catch (InvalidOperationException) {
-            throw new ApplicationValidationException($"Incorrect enumeration code {code} for {typeof(T).Name}");
+            return Result<T>.Fail(new ApplicationValidationException($"Incorrect enumeration code {code} for {typeof(T).Name}"));
         }
 
         context.Set<T>().Attach(enumEntity);
