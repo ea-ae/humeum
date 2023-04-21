@@ -1,27 +1,38 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 
 using Domain.UserAggregate;
+
+using Microsoft.AspNetCore.Http.HttpResults;
+
+using Shared.Interfaces;
+using Shared.Models;
 
 namespace Application.Test.Common.Stubs;
 
 internal class ApplicationUserServiceStub : IApplicationUserService {
-    public Task<int> CreateUserAsync(User user, string password, bool rememberMe) {
-        return Task.FromResult(1);
+    public Task<IResult<int, IAuthenticationException>> CreateUserAsync(User user, string password, bool rememberMe) {
+        IResult<int, IAuthenticationException> result = Result<int, IAuthenticationException>.Ok(1);
+        return Task.FromResult(result);
     }
 
-    public User GetUserById(int id) {
-        return new User(id, "test");
+    public Task<IResult<int, IAuthenticationException>> SignInUserAsync(string username, string password, bool rememberMe) {
+        IResult<int, IAuthenticationException> result = Result<int, IAuthenticationException>.Ok(1);
+        return Task.FromResult(result);
     }
 
-    public Task<int> SignInUserAsync(string username, string password, bool rememberMe) {
-        return Task.FromResult(1);
+    public Task<IResult<int, IAuthenticationException>> RefreshUserAsync(int userId) {
+        IResult<int, IAuthenticationException> result = Result<int, IAuthenticationException>.Ok(1);
+        return Task.FromResult(result);
     }
 
-    public Task UpdateClientToken(int userId) {
-        return Task.CompletedTask;
+    public Task<IResult<None, NotFoundValidationException>> UpdateClientToken(int userId) {
+        IResult<None, NotFoundValidationException> result = Result<None, NotFoundValidationException>.Ok(None.Value);
+        return Task.FromResult(result);
     }
 
-    public Task<int> RefreshUserAsync(int userId) {
-        return Task.FromResult(1);
+    public IResult<User, NotFoundValidationException> GetUserById(int id) {
+        var user = new User(id, "test");
+        return Result<User, NotFoundValidationException>.Ok(user);
     }
 }
