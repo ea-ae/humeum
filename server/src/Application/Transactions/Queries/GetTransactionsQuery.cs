@@ -46,7 +46,8 @@ public class GetTransactionsQueryHandler : IPaginatedQueryHandler<GetTransaction
         }
 
         var list = transactions.OrderBy(t => t.Id).ToPaginatedList(request, _mapper);
-        IResult<PaginatedList<TransactionDto>, IBaseException> result = Result<PaginatedList<TransactionDto>, IBaseException>.Ok(list);
-        return Task.FromResult(result);
+        return Task.FromResult(list);
+        //IResult<PaginatedList<TransactionDto>, IBaseException> result = Result<PaginatedList<TransactionDto>, IBaseException>.Ok(list);
+       // return Task.FromResult(result);
     }
 }

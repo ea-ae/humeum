@@ -39,9 +39,9 @@ internal static class ServiceExtensions {
     /// <param name="request">Request object that contains offset/limit information.</param>
     /// <param name="mapper">Automapper that projects the source entities.</param>
     /// <returns>Paginated list.</returns>
-    public static PaginatedList<TDestination> ToPaginatedList<TSource, TDestination>(this IOrderedQueryable<TSource> query,
-                                                                                     IPaginatedQuery<TDestination> request,
-                                                                                     IMapper mapper) {
+    public static IResult<PaginatedList<TDestination>, IBaseException> ToPaginatedList<TSource, TDestination>(this IOrderedQueryable<TSource> query,
+                                                                                                              IPaginatedQuery<TDestination> request,
+                                                                                                              IMapper mapper) {
         return PaginatedList<TDestination>.ProjectAndCreateFromQuery(query, request, mapper);
     }
 

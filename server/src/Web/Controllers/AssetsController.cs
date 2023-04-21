@@ -18,7 +18,6 @@ namespace Web.Controllers;
 [Route("api/v1/users/{user}/profiles/{profile}/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleProfileData")]
 [ApplicationResultFilter]
-//[ApplicationExceptionFilter]
 [CsrfXHeaderFilter]
 [Produces("application/json")]
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]

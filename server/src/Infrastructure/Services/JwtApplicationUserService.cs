@@ -71,7 +71,7 @@ public class JwtApplicationUserService : ApplicationUserService {
             return Result<int, AuthenticationException>.Fail(new AuthenticationException("Too many attempts, try again later."));
         }
 
-        return Result<int, AuthenticationException>.Fail(new AuthenticationException("Sign-in attempt failed. Unknown username?"));
+        return Result<int, AuthenticationException>.Fail(new AuthenticationException("Sign-in attempt with username & password failed."));
     }
 
     public override async Task<IResult<int, IAuthenticationException>> RefreshUserAsync(int userId) {

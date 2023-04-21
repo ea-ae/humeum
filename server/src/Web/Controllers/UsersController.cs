@@ -17,7 +17,6 @@ namespace Web.Controllers;
 /// <inheritdoc cref="Domain.UserAggregate.User"/>
 [Route("api/v1/[controller]")]
 [ApplicationResultFilter]
-[ApplicationExceptionFilter]
 [CsrfXHeaderFilter]
 [Produces("application/json")]
 [ApiController]
