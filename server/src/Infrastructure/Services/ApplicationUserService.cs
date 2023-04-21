@@ -22,9 +22,9 @@ public abstract class ApplicationUserService : IApplicationUserService {
         }
     }
 
-    public abstract Task<int> CreateUserAsync(User user, string password, bool rememberMe);
+    public abstract Task<IResult<int, IAuthenticationException>> CreateUserAsync(User user, string password, bool rememberMe);
 
-    public abstract Task<int> SignInUserAsync(string username, string password, bool rememberMe);
+    public abstract Task<IResult<int, IAuthenticationException>> SignInUserAsync(string username, string password, bool rememberMe);
 
     public abstract Task<IResult<int, IAuthenticationException>> RefreshUserAsync(int userId);
 

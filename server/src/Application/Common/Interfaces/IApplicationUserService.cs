@@ -8,9 +8,9 @@ using Shared.Models;
 namespace Application.Common.Interfaces;
 
 public interface IApplicationUserService {
-    public Task<int> CreateUserAsync(User user, string password, bool rememberMe);
+    public Task<IResult<int, IAuthenticationException>> CreateUserAsync(User user, string password, bool rememberMe);
 
-    public Task<int> SignInUserAsync(string username, string password, bool rememberMe);
+    public Task<IResult<int, IAuthenticationException>> SignInUserAsync(string username, string password, bool rememberMe);
 
     public Task<IResult<int, IAuthenticationException>> RefreshUserAsync(int userId);
 

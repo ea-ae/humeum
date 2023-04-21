@@ -42,45 +42,48 @@ public class JwtApplicationUserService : ApplicationUserService {
         _jwtSettings = jwtSettings.Value;
     }
 
-    public override async Task<int> CreateUserAsync(User user, string password, bool rememberMe) {
+    public override async Task<IResult<int, IAuthenticationException>> CreateUserAsync(User user, string password, bool rememberMe) {
         var appUser = _mapper.Map<ApplicationUser>(user);
 
         var result = await _userManager.CreateAsync(appUser, password);
         if (result.Succeeded) {
             await _signInManager.SignInAsync(appUser, isPersistent: rememberMe);
             appUser = await _userManager.FindByNameAsync(user.Username) ?? throw new InvalidOperationException();
-            await SetupUserTokens(appUser);
-            return appUser.Id;
+            return (await SetupUserTokens(appUser)).Then(appUser.Id);
+            //return appUser.Id;
         }
 
         var error = result.Errors.First();
-        throw new AuthenticationException($"{error.Code}\n{error.Description}");
+        return Result<int, AuthenticationException>.Fail(new AuthenticationException($"{error.Code}\n{error.Description}"));
     }
 
-    public override async Task<int> SignInUserAsync(string username, string password, bool rememberMe) {
+    public override async Task<IResult<int, IAuthenticationException>> SignInUserAsync(string username, string password, bool rememberMe) {
         var result = await _signInManager.PasswordSignInAsync(username, password, isPersistent: rememberMe,
                                                               lockoutOnFailure: true);
 
         if (result.Succeeded) {
-            var user = await _userManager.FindByNameAsync(username) ?? throw new InvalidOperationException();
-            await SetupUserTokens(user);
-            return user.Id;
+            var appUser = await _userManager.FindByNameAsync(username) ?? throw new InvalidOperationException();
+            return (await SetupUserTokens(appUser)).Then(appUser.Id);
+            //return user.Id;
         }
 
         if (result.IsLockedOut) {
-            throw new AuthenticationException("Too many attempts, try again later.");
+            return Result<int, AuthenticationException>.Fail(new AuthenticationException("Too many attempts, try again later."));
         }
 
-        throw new AuthenticationException("Sign-in attempt failed.");
+        return Result<int, AuthenticationException>.Fail(new AuthenticationException("Sign-in attempt failed. Unknown username?"));
     }
 
     public override async Task<IResult<int, IAuthenticationException>> RefreshUserAsync(int userId) {
         return await GetApplicationUser(userId).ThenAsync(async appUser => {
             var builder = new Result<ApplicationUser, IAuthenticationException>.Builder();
 
-            string refreshToken = GetRefreshTokenFromCookie();
+            var refreshToken = GetRefreshTokenFromCookie();
+            if (refreshToken.Failure) {
+                return Result<int, IAuthenticationException>.Fail(refreshToken.GetErrors());
+            }
 
-            if (appUser.RefreshToken != refreshToken) {
+            if (appUser.RefreshToken != refreshToken.Unwrap()) {
                 builder.AddError(new AuthenticationException("Provided refresh token is invalid or does not match."));
             }
 
@@ -139,19 +142,19 @@ public class JwtApplicationUserService : ApplicationUserService {
         httpContext.Response.Cookies.Append(_jwtSettings.RefreshCookie, refreshToken, cookieOptions);
     }
 
-    string GetRefreshTokenFromCookie() {
+    IResult<string, IAuthenticationException> GetRefreshTokenFromCookie() {
         HttpContext httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException();
         bool found = httpContext.Request.Cookies.TryGetValue(_jwtSettings.RefreshCookie, out string? refreshToken);
 
         if (found) {
-            return refreshToken!;
+            return Result<string, IAuthenticationException>.Ok(refreshToken!);
         }
-        throw new AuthenticationException("Refresh token cookie could not be found.");
+        return Result<string, IAuthenticationException>.Fail(new AuthenticationException("Refresh token cookie could not be found."));
     }
 
-    async Task SetupUserTokens(ApplicationUser user) {
+    async Task<IResult<None, IAuthenticationException>> SetupUserTokens(ApplicationUser user) {
         if (!user.Enabled) {
-            throw new AuthenticationException("User account has been disabled.");
+            return Result<None, AuthenticationException>.Fail(new AuthenticationException("User account has been disabled."));
         }
 
         string token = await CreateToken(user);
@@ -166,6 +169,8 @@ public class JwtApplicationUserService : ApplicationUserService {
         user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(_jwtSettings.RefreshCookieExpireDays);
         _context.Users.Update(user); // in case unattached
         await _context.SaveChangesAsync();
+
+        return Result<None, AuthenticationException>.Ok(None.Value);
     }
 
     async Task<IEnumerable<Claim>> GetUserClaims(ApplicationUser user) {

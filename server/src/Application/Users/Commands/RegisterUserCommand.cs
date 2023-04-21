@@ -5,9 +5,11 @@ using Application.Common.Interfaces;
 
 using Domain.UserAggregate;
 
+using Shared.Interfaces;
+
 namespace Application.Users.Commands;
 
-public record RegisterUserCommand : ICommand<int> {
+public record RegisterUserCommand : ICommand<IResult<int, IAuthenticationException>> {
     [Required] public required string Username { get; init; }
     [Required] public required string Email { get; init; }
     [Required] public required string Password { get; init; }
@@ -15,12 +17,12 @@ public record RegisterUserCommand : ICommand<int> {
     public bool RememberMe { get; init; } = false;
 }
 
-public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, int> {
+public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, IResult<int, IAuthenticationException>> {
     private readonly IApplicationUserService _userService;
 
     public RegisterUserCommandHandler(IApplicationUserService userService) => _userService = userService;
 
-    public async Task<int> Handle(RegisterUserCommand request, CancellationToken token) {
+    public async Task<IResult<int, IAuthenticationException>> Handle(RegisterUserCommand request, CancellationToken token) {
         // validation
 
         if (request.Password.Length > 200) {
@@ -34,8 +36,6 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, i
         // handling
 
         var user = new User(request.Username, request.Email);
-        int userId = await _userService.CreateUserAsync(user, request.Password, request.RememberMe);
-
-        return userId;
+        return await _userService.CreateUserAsync(user, request.Password, request.RememberMe);
     }
 }

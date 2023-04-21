@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using Shared.Interfaces;
+using Shared.Models;
 
 using Web.Filters;
 
@@ -74,9 +75,10 @@ public class UsersController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> RegisterUser(RegisterUserCommand command) {
-        int userId = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetUser), new { User = userId }, null);
+    public async Task<IResult<IActionResult, IBaseException>> RegisterUser(RegisterUserCommand command) {
+        var userIdResult = await _mediator.Send(command);
+        return userIdResult.Then(userId => Result<IActionResult, IBaseException>.Ok(
+            CreatedAtAction(nameof(GetUser), new { User = userId }, null)));
     }
 
     /// <summary>
@@ -87,9 +89,9 @@ public class UsersController : ControllerBase {
     [HttpPost("sign-in")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<UserDto>> SignInUser(SignInUserCommand command) {
-        int userId = await _mediator.Send(command);
-        var user = await _mediator.Send(new GetUserQuery { User = userId });
+    public async Task<ActionResult<IResult<UserDto, IBaseException>>> SignInUser(SignInUserCommand command) {
+        var userIdResult = await _mediator.Send(command);
+        var user = await userIdResult.ThenAsync(async userId => await _mediator.Send(new GetUserQuery { User = userId }));
         return Ok(user);
     }
 
