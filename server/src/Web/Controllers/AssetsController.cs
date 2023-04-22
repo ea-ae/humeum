@@ -39,7 +39,7 @@ public class AssetsController : ControllerBase {
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<AssetDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<AssetDto>>> GetAssets(GetAssetsQuery query) {
+    public async Task<ActionResult<IResult<IEnumerable<AssetDto>, IBaseException>>> GetAssets(GetAssetsQuery query) {
         var assets = await _mediator.Send(query);
         return Ok(assets);
     }

@@ -3,8 +3,6 @@ using Application.Common.Interfaces;
 
 using Domain.UserAggregate;
 
-using Microsoft.AspNetCore.Http.HttpResults;
-
 using Shared.Interfaces;
 using Shared.Models;
 
