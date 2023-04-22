@@ -4,13 +4,15 @@ using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 
+using Shared.Interfaces;
+
 using Web.Filters;
 
 namespace Web.Controllers;
 
 /// <inheritdoc cref="Domain.TaxSchemeAggregate.TaxScheme"/>
 [Route("api/v1/[controller]")]
-[ApplicationExceptionFilter]
+[ApplicationResultFilter]
 [CsrfXHeaderFilter]
 [Produces("application/json")]
 [ApiController]
@@ -25,7 +27,7 @@ public class TaxSchemesController : ControllerBase {
     /// </summary>
     /// <response code="200">List of tax schemes.</response>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TaxSchemeDto>>> GetTaxSchemes(GetTaxSchemesQuery query) {
+    public async Task<ActionResult<IResult<IEnumerable<TaxSchemeDto>, IBaseException>>> GetTaxSchemes(GetTaxSchemesQuery query) {
         var taxSchemes = await _mediator.Send(query);
         return Ok(taxSchemes);
     }
