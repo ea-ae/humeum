@@ -3,6 +3,9 @@ using Domain.Common.Models;
 using Domain.TaxSchemeAggregate.ValueObjects;
 using Domain.TransactionAggregate;
 
+using Shared.Interfaces;
+using Shared.Models;
+
 namespace Domain.TaxSchemeAggregate;
 
 /// <summary>
@@ -16,27 +19,9 @@ public class TaxScheme : TimestampedEntity {
 
     public string? Description { get; private set; }
 
-    decimal _taxRate;
-    public decimal TaxRate {
-        get => _taxRate;
-        private set {
-            if (value < 0 && value > 100) {
-                throw new DomainException(new ArgumentOutOfRangeException(nameof(TaxRate), "Invalid tax rate percentage value."));
-            }
-            _taxRate = value;
-        }
-    }
+    public decimal TaxRate { get; private set; }
 
-    TaxIncentiveScheme? _incentiveScheme;
-    public TaxIncentiveScheme? IncentiveScheme {
-        get => _incentiveScheme;
-        private set {
-            if (value is not null && value.TaxRefundRate > TaxRate) {
-                throw new DomainException(new InvalidOperationException("Tax refund rate cannot be higher than tax rate."));
-            }
-            _incentiveScheme = value;
-        }
-    }
+    public TaxIncentiveScheme? IncentiveScheme { get; private set; }
 
     HashSet<Transaction> _transactions = null!;
     public IReadOnlyCollection<Transaction> Transactions => _transactions;
@@ -61,5 +46,43 @@ public class TaxScheme : TimestampedEntity {
         TaxRate = taxRate;
     }
 
-    private TaxScheme() { }
+    public static Result<TaxScheme, IBaseException> Create(int taxSchemeId, string name, string description, decimal taxRate,
+                                                           TaxIncentiveScheme? incentiveScheme = null) {
+        var taxScheme = new TaxScheme() { Id = taxSchemeId, Name = name, Description = description, TaxRate = taxRate };
+        var builder = new Result<TaxScheme, IBaseException>.Builder().AddValue(taxScheme);
+        return SetFields(builder, taxRate, incentiveScheme).Build();
+    }
+
+    public static Result<TaxScheme, IBaseException> Create(string name, string description, decimal taxRate, TaxIncentiveScheme? incentiveScheme = null) {
+        var taxScheme = new TaxScheme() { Name = name, Description = description, TaxRate = taxRate };
+        var builder = new Result<TaxScheme, IBaseException>.Builder().AddValue(taxScheme);
+        return SetFields(builder, taxRate, incentiveScheme).Build();
+    }
+
+    static Result<TaxScheme, IBaseException>.Builder SetFields(Result<TaxScheme, IBaseException>.Builder builder,
+                                                               decimal taxRate, TaxIncentiveScheme? incentiveScheme) {
+        return builder.Transform(taxScheme => taxScheme.SetTaxRate(taxRate))
+                      .Transform(taxScheme => taxScheme.SetIncentiveScheme(incentiveScheme));
+    }
+    
+    TaxScheme() { }
+
+    IResult<None, DomainException> SetTaxRate(decimal taxRate) {
+        if (taxRate < 0 || taxRate > 100) {
+            return Result<None, DomainException>.Fail(new DomainException("Invalid tax rate."));
+        }
+        TaxRate = taxRate;
+
+        return Result<None, DomainException>.Ok(None.Value);
+    }
+
+    IResult<None, DomainException> SetIncentiveScheme(TaxIncentiveScheme? incentiveScheme) {
+        if (incentiveScheme is not null && incentiveScheme.TaxRefundRate > TaxRate) {
+            return Result<None, DomainException>.Fail(new DomainException("Tax refund rate cannot be higher than tax rate."));
+        }
+        IncentiveScheme = incentiveScheme;
+
+        return Result<None, DomainException>.Ok(None.Value);
+    }
+
 }
