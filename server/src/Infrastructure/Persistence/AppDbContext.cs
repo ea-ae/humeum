@@ -38,23 +38,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
     protected override void OnModelCreating(ModelBuilder builder) {
         base.OnModelCreating(builder); // configure Identity schema
 
-        builder.Entity<Transaction>().Property(t => t.Name).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
-        builder.Entity<Transaction>().Property(t => t.Description).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
-        builder.Entity<Transaction>().Property(t => t.Amount).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
-        //builder.Entity<Transaction>().Property(t => t.PaymentTimeline).UsePropertyAccessMode(PropertyAccessMode.Field);
-        builder.Entity<Transaction>().HasOne(t => t.Type);
-        builder.Entity<Transaction>().HasOne(t => t.Profile).WithMany(p => p.Transactions);
-        builder.Entity<Transaction>().HasOne(t => t.TaxScheme).WithMany(ts => ts.Transactions);
-        builder.Entity<Transaction>().HasOne(t => t.Asset).WithMany(a => a.Transactions);
-        builder.Entity<Transaction>().HasMany(t => t.Categories).WithMany(tc => tc.Transactions)
-                                     .UsingEntity(j => j.ToTable("TransactionWithCategory"));
-        builder.Entity<Transaction>().OwnsOne(t => t.PaymentTimeline, pt => {
-            pt.OwnsOne(pt => pt.Period);
-            pt.OwnsOne(pt => pt.Frequency, f => {
-                f.HasOne(f => f.TimeUnit);
-            });
-        });
+        ConfigureTransactions(builder);
+        ConfigureAssets(builder);
+        ConfigureTaxSchemes(builder);
+    }
 
+    void ConfigureTransactions(ModelBuilder builder) {
         builder.Entity<TransactionType>().HasIndex(tt => tt.Code).IsUnique();
         builder.Entity<TransactionType>().HasData(TransactionType.Always,
                                                   TransactionType.PreRetirementOnly,
@@ -63,6 +52,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
         builder.Entity<TimeUnit>().HasIndex(tu => tu.Code).IsUnique();
         builder.Entity<TimeUnit>().Ignore(tu => tu.InTimeSpan);
         builder.Entity<TimeUnit>().HasData(TimeUnit.Days, TimeUnit.Weeks, TimeUnit.Months, TimeUnit.Years);
+
 
         builder.Entity<TransactionCategory>().HasOne(tc => tc.Profile).WithMany(p => p.TransactionCategories);
         builder.Entity<TransactionCategory>().HasData(
@@ -75,13 +65,16 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
             new TransactionCategory(7, "Transportation"),
             new TransactionCategory(8, "Gifts & Donations")
         );
+    }
 
+    static void ConfigureAssets(ModelBuilder builder) {
         builder.Entity<Asset>().Property(a => a.Name).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
         builder.Entity<Asset>().Property(a => a.Description).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
         builder.Entity<Asset>().Property(a => a.ReturnRate).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
         builder.Entity<Asset>().Property(a => a.StandardDeviation).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
         builder.Entity<Asset>().HasOne(a => a.Type);
         builder.Entity<Asset>().HasOne(a => a.Profile).WithMany(p => p.Assets).OnDelete(DeleteBehavior.Cascade);
+
         builder.Entity<Asset>().HasData(
             Asset.Create(1, "Index fund (default)",
                          "Index funds track the performance of a particular market index; great diversification, low fees, and easy management.",
@@ -98,7 +91,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
                                             AssetType.Bond,
                                             AssetType.Stock,
                                             AssetType.Other);
+    }
 
+    static void ConfigureTaxSchemes(ModelBuilder builder) {
         builder.Entity<TaxScheme>().HasData(
             TaxScheme.Create(1,
                 "Income tax",
@@ -141,7 +136,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
     /// <summary>
     /// Source: https://stackoverflow.com/a/74052251/4362799.
     /// </summary>
-    private void SetTimestampFields(object? sender, SavingChangesEventArgs eventArgs) {
+    void SetTimestampFields(object? sender, SavingChangesEventArgs eventArgs) {
         var context = (AppDbContext)(sender ?? throw new InvalidOperationException());
 
         if (!context._softDeletionMode) {
