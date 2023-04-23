@@ -1,6 +1,5 @@
+/* eslint-disable */
 const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
 const { merge } = require('webpack-merge');
 const common = require('./webpack.common.js');
 
@@ -12,11 +11,6 @@ module.exports = merge(common, {
     publicPath: '/',
     clean: true,
   },
-  plugins: [
-    new MiniCssExtractPlugin({
-      filename: '[name].[contenthash].css',
-    }),
-  ],
   optimization: {
     splitChunks: {
       chunks: 'all',

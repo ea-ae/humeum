@@ -27,6 +27,9 @@ module.exports = {
             filename: 'index.html',
             chunks: ['index'],
         }),
+        new MiniCssExtractPlugin({
+            filename: '[name].[contenthash].css',
+        }),
     ].concat(staticPages),
     module: { rules: [
         {
@@ -48,7 +51,6 @@ module.exports = {
                 path.resolve(__dirname, 'src'),
             ],
             use: [
-                'style-loader',
                 {
                     loader: MiniCssExtractPlugin.loader,
                     options: { esModule: false },
@@ -58,9 +60,4 @@ module.exports = {
             ],
         },
     ]},
-    // optimization: {
-    //     splitChunks: {
-    //         chunks: 'all',
-    //     },
-    // },
 };
