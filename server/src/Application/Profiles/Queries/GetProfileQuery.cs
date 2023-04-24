@@ -1,19 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-using Application.Common.Exceptions;
+using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using AutoMapper;
 
 using Microsoft.EntityFrameworkCore;
 
+using Shared.Interfaces;
+
 namespace Application.Profiles.Queries;
 
-public record GetProfileQuery : IQuery<ProfileDto> {
+public record GetProfileQuery : IQuery<IResult<ProfileDto, IBaseException>> {
     [Required] public int Profile { get; init; }
 }
 
-public class GetProfileQueryHandler : IQueryHandler<GetProfileQuery, ProfileDto> {
+public class GetProfileQueryHandler : IQueryHandler<GetProfileQuery, IResult<ProfileDto, IBaseException>> {
     private readonly IAppDbContext _context;
     private readonly IMapper _mapper;
 
@@ -22,14 +24,11 @@ public class GetProfileQueryHandler : IQueryHandler<GetProfileQuery, ProfileDto>
         _mapper = mapper;
     }
 
-    public async Task<ProfileDto> Handle(GetProfileQuery request, CancellationToken _) {
+    public Task<IResult<ProfileDto, IBaseException>> Handle(GetProfileQuery request, CancellationToken _) {
         var profile = _context.Profiles.AsNoTracking()
                                        .FirstOrDefault(p => p.Id == request.Profile && p.DeletedAt == null);
 
-        if (profile is null) {
-            throw new NotFoundValidationException(typeof(Profile));
-        }
-
-        return await Task.Run(() => _mapper.Map<ProfileDto>(profile));
+        var result = _mapper.ToMappedResultOrNotFound<Domain.ProfileAggregate.Profile, ProfileDto>(profile);
+        return Task.FromResult(result);
     }
 }

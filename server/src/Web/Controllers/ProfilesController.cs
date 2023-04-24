@@ -1,5 +1,6 @@
 ﻿using Application.Profiles.Commands;
 using Application.Profiles.Queries;
+using Shared.Interfaces;
 
 using MediatR;
 
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using Web.Filters;
+using Shared.Models;
 
 namespace Web.Controllers;
 
@@ -33,8 +35,8 @@ public class ProfilesController : ControllerBase {
     /// <response code="401">If a user route is accessed without an authentication token.</response>
     /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<ProfileDto>>> GetProfiles(GetProfilesQuery query) {
+    [ProducesResponseType(typeof(IEnumerable<ProfileDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IResult<IEnumerable<ProfileDto>, IBaseException>>> GetProfiles(GetProfilesQuery query) {
         var profiles = await _mediator.Send(query);
         return Ok(profiles);
     }
@@ -47,9 +49,9 @@ public class ProfilesController : ControllerBase {
     /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     /// <response code="404">Profile with given ID was not found for user.</response>
     [HttpGet("{Profile}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProfileDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ProfileDto>> GetProfile(GetProfileQuery query) {
+    public async Task<ActionResult<IResult<ProfileDto, IBaseException>>> GetProfile(GetProfileQuery query) {
         var profile = await _mediator.Send(query);
         return Ok(profile);
     }
@@ -65,9 +67,10 @@ public class ProfilesController : ControllerBase {
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> AddProfile(AddProfileCommand command) {
-        int id = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetProfile), new { command.User, Profile = id }, null);
+    public async Task<IResult<IActionResult, IBaseException>> AddProfile(AddProfileCommand command) {
+        var idResult = await _mediator.Send(command);
+        return idResult.Then(id => Result<IActionResult, IBaseException>.Ok(
+            CreatedAtAction(nameof(GetProfile), new { command.User, Profile = id }, null)));
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using AutoMapper;
@@ -7,16 +8,18 @@ using AutoMapper.QueryableExtensions;
 
 using Microsoft.EntityFrameworkCore;
 
+using Shared.Interfaces;
+
 namespace Application.Profiles.Queries;
 
 /// <summary>
 /// Get list of profiles owned by user.
 /// </summary>
-public record GetProfilesQuery : IQuery<List<ProfileDto>> {
+public record GetProfilesQuery : IQuery<IResult<List<ProfileDto>, IBaseException>> {
     [Required] public required int User { get; init; }
 }
 
-public class GetProfilesQueryHandler : IQueryHandler<GetProfilesQuery, List<ProfileDto>> {
+public class GetProfilesQueryHandler : IQueryHandler<GetProfilesQuery, IResult<List<ProfileDto>, IBaseException>> {
     private readonly IAppDbContext _context;
     private readonly IMapper _mapper;
 
@@ -25,9 +28,10 @@ public class GetProfilesQueryHandler : IQueryHandler<GetProfilesQuery, List<Prof
         _mapper = mapper;
     }
 
-    public async Task<List<ProfileDto>> Handle(GetProfilesQuery request, CancellationToken token) {
+    public Task<IResult<List<ProfileDto>, IBaseException>> Handle(GetProfilesQuery request, CancellationToken token) {
         var profiles = _context.Profiles.AsNoTracking().Where(p => p.UserId == request.User && p.DeletedAt == null);
 
-        return await profiles.ProjectTo<ProfileDto>(_mapper.ConfigurationProvider).ToListAsync(token);
+        var result = profiles.ProjectToResult<ProfileDto>(_mapper);
+        return Task.FromResult(result);
     }
 }
