@@ -26,17 +26,17 @@ public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, IRe
     }
 
     public Task<IResult<TransactionDto, IBaseException>> Handle(GetTransactionQuery request, CancellationToken token) {
-        var transaction = _context.Transactions.AsNoTracking()
-                                               .Include(t => t.Categories)
-                                               .Include(t => t.Type)
-                                               .Include(t => t.TaxScheme)
-                                               .Include(t => t.Asset)
-                                               .Include(t => t.PaymentTimeline.Frequency).ThenInclude(f => f!.TimeUnit)
-                                               .ToFoundResult(t => t.Id == request.Transaction
-                                                                   && t.ProfileId == request.Profile
-                                                                   && t.DeletedAt == null);
+        var transactionResult = _context.Transactions.AsNoTracking()
+                                                     .Include(t => t.Categories)
+                                                     .Include(t => t.Type)
+                                                     .Include(t => t.TaxScheme)
+                                                     .Include(t => t.Asset)
+                                                     .Include(t => t.PaymentTimeline.Frequency).ThenInclude(f => f!.TimeUnit)
+                                                     .ToFoundResult(t => t.Id == request.Transaction
+                                                                         && t.ProfileId == request.Profile
+                                                                         && t.DeletedAt == null);
 
-        var result = transaction.Then(t => _mapper.MapToResult<TransactionDto>(t));
+        var result = transactionResult.Then(transaction => _mapper.MapToResult<TransactionDto>(transaction));
         return Task.FromResult(result);
     }
 }

@@ -65,6 +65,11 @@ internal static class ServiceExtensions {
         return Result<T, IBaseException>.Ok(entity);
     }
 
+    /// <inheritdoc cref="ToFoundResult{T}(IQueryable{T}, Expression{Func{T, bool}})"/>
+    public static IResult<T, IBaseException> ToFoundResult<T>(this IQueryable<T> query) {
+        return query.ToFoundResult(x => true);
+    }
+
     /// <summary>
     /// Maps an entity to a successful result containing a DTO.
     /// </summary>

@@ -25,10 +25,10 @@ public class GetProfileQueryHandler : IQueryHandler<GetProfileQuery, IResult<Pro
     }
 
     public Task<IResult<ProfileDto, IBaseException>> Handle(GetProfileQuery request, CancellationToken _) {
-        var profile = _context.Profiles.AsNoTracking()
-                                       .ToFoundResult(p => p.Id == request.Profile && p.DeletedAt == null);
+        var profileResult = _context.Profiles.AsNoTracking()
+                                             .ToFoundResult(p => p.Id == request.Profile && p.DeletedAt == null);
 
-        var result = profile.Then(p => _mapper.MapToResult<ProfileDto>(p));
+        var result = profileResult.Then(profile => _mapper.MapToResult<ProfileDto>(p));
         return Task.FromResult(result);
     }
 }

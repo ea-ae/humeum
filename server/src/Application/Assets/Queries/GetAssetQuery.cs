@@ -28,13 +28,13 @@ public class GetAssetQueryHandler : IQueryHandler<GetAssetQuery, IResult<AssetDt
     }
 
     public Task<IResult<AssetDto, IBaseException>> Handle(GetAssetQuery request, CancellationToken token = default) {
-        var asset = _context.Assets.AsNoTracking()
-                                   .Include(a => a.Type)
-                                   .ToFoundResult(a => a.Id == request.Asset
-                                                       && (a.ProfileId == request.Profile || a.ProfileId == null)
-                                                       && a.DeletedAt == null);
+        var assetResult = _context.Assets.AsNoTracking()
+                                         .Include(a => a.Type)
+                                         .ToFoundResult(a => a.Id == request.Asset
+                                                             && (a.ProfileId == request.Profile || a.ProfileId == null)
+                                                             && a.DeletedAt == null);
 
-        var result = asset.Then(a => _mapper.MapToResult<AssetDto>(a));
+        var result = assetResult.Then(asset => _mapper.MapToResult<AssetDto>(asset));
         return Task.FromResult(result);
     }
 }

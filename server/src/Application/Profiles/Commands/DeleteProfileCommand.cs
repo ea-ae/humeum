@@ -32,14 +32,12 @@ public class DeleteProfileCommandHandler : ICommandHandler<DeleteProfileCommand,
                                        .Include(p => p.Assets)
                                        .ToFoundResult(p => p.Id == request.Profile && p.UserId == request.User && p.DeletedAt == null);
 
-        var result = profile.ThenAsync<None, IBaseException>(async p => {
+        return await profile.ThenAsync<None, IBaseException>(async p => {
             _context.Profiles.Remove(p);
             await _context.SaveChangesAsync(token);
             await _userService.UpdateClientToken(request.User); // token should reflect a valid list of profiles
 
             return Result<None, IBaseException>.Ok(None.Value);
         });
-
-        return await result;
     }
 }

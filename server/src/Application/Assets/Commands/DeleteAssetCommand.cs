@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using Application.Common.Exceptions;
+using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using Domain.AssetAggregate;
@@ -21,16 +22,13 @@ public class DeleteAssetCommandHandler : ICommandHandler<DeleteAssetCommand, IRe
     public DeleteAssetCommandHandler(IAppDbContext context) => _context = context;
 
     public async Task<IResult<None, IBaseException>> Handle(DeleteAssetCommand request, CancellationToken token = default) {
-        var asset = _context.Assets.Where(a => a.Id == request.Asset && a.ProfileId == request.Profile && a.DeletedAt == null)
-                                   .FirstOrDefault();
+        var assetResult = _context.Assets.Where(a => a.Id == request.Asset && a.ProfileId == request.Profile && a.DeletedAt == null)
+                                         .ToFoundResult();
 
-        if (asset is null) {
-            return Result<None, IBaseException>.Fail(new NotFoundValidationException(typeof(Asset)));
-        }
-
-        _context.Assets.Remove(asset);
-        await _context.SaveChangesAsync(token);
-
-        return Result<None, IBaseException>.Ok(None.Value);
+        return await assetResult.ThenAsync<None, IBaseException>(async asset => {
+            _context.Assets.Remove(asset);
+            await _context.SaveChangesAsync(token);
+            return Result<None, IBaseException>.Ok(None.Value);
+        });
     }
 }

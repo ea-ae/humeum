@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using Application.Common.Exceptions;
+using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using Domain.TransactionAggregate;
@@ -21,17 +22,14 @@ public class DeleteTransactionCommandHandler : ICommandHandler<DeleteTransaction
     public DeleteTransactionCommandHandler(IAppDbContext context) => _context = context;
 
     public async Task<IResult<None, IBaseException>> Handle(DeleteTransactionCommand request, CancellationToken token = default) {
-        var transaction = _context.Transactions.FirstOrDefault(t => t.Id == request.Transaction
-                                                                    && t.ProfileId == request.Profile
-                                                                    && t.DeletedAt == null);
+        var transactionResult = _context.Transactions.ToFoundResult(t => t.Id == request.Transaction
+                                                                         && t.ProfileId == request.Profile
+                                                                         && t.DeletedAt == null);
 
-        if (transaction is null) {
-            return Result<None, IBaseException>.Fail(new NotFoundValidationException(typeof(Transaction)));
-        }
-
-        _context.Transactions.Remove(transaction);
-        await _context.SaveChangesAsync(token);
-
-        return Result<None, IBaseException>.Ok(None.Value);
+        return await transactionResult.ThenAsync<None, IBaseException>(async transaction => {
+            _context.Transactions.Remove(transaction);
+            await _context.SaveChangesAsync(token);
+            return Result<None, IBaseException>.Ok(None.Value);
+        });
     }
 }
