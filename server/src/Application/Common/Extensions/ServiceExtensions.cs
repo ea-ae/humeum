@@ -1,4 +1,6 @@
-﻿using Application.Common.Exceptions;
+﻿using System.Linq.Expressions;
+
+using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using Application.Common.Models;
 
@@ -43,6 +45,24 @@ internal static class ServiceExtensions {
                                                                                                               IPaginatedQuery<TDestination> request,
                                                                                                               IMapper mapper) {
         return PaginatedList<TDestination>.ProjectAndCreateFromQuery(query, request, mapper);
+    }
+
+    /// <summary>
+    /// If an entity is not found, returns a failed <see cref="NotFoundValidationException"/> result. 
+    /// Otherwise, returns the entity in a result.
+    /// </summary>
+    /// <typeparam name="TSource">Type of the entity.</typeparam>
+    /// <param name="mapper">Automapper.</param>
+    /// <param name="query">Query with an entity.</param>
+    /// <returns>A result that contains either the entity or a not found error.</returns>
+    public static IResult<T, IBaseException> ToFoundResult<T>(this IQueryable<T> query, Expression<Func<T, bool>> predicate) {
+        var entity = query.FirstOrDefault(predicate);
+
+        if (entity is null) {
+            return Result<T, IBaseException>.Fail(new NotFoundValidationException(typeof(T)));
+        }
+
+        return Result<T, IBaseException>.Ok(entity);
     }
 
     /// <summary>

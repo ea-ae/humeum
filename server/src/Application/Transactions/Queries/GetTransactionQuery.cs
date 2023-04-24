@@ -5,8 +5,6 @@ using Application.Common.Interfaces;
 
 using AutoMapper;
 
-using Domain.TransactionAggregate;
-
 using Microsoft.EntityFrameworkCore;
 
 using Shared.Interfaces;
@@ -34,11 +32,11 @@ public class GetTransactionQueryHandler : IQueryHandler<GetTransactionQuery, IRe
                                                .Include(t => t.TaxScheme)
                                                .Include(t => t.Asset)
                                                .Include(t => t.PaymentTimeline.Frequency).ThenInclude(f => f!.TimeUnit)
-                                               .FirstOrDefault(t => t.Id == request.Transaction
-                                                                    && t.ProfileId == request.Profile
-                                                                    && t.DeletedAt == null);
+                                               .ToFoundResult(t => t.Id == request.Transaction
+                                                                   && t.ProfileId == request.Profile
+                                                                   && t.DeletedAt == null);
 
-        var result = _mapper.ToMappedResultOrNotFound<Transaction, TransactionDto>(transaction);
+        var result = transaction.Then(t => _mapper.MapToResult<TransactionDto>(t));
         return Task.FromResult(result);
     }
 }
