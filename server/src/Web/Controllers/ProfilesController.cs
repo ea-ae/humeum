@@ -83,8 +83,8 @@ public class ProfilesController : ControllerBase {
     [HttpDelete("{Profile}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteProfile(DeleteProfileCommand command) {
-        await _mediator.Send(command);
-        return NoContent();
+    public async Task<IResult<IActionResult, IBaseException>> DeleteProfile(DeleteProfileCommand command) {
+        var result = await _mediator.Send(command);
+        return result.Then(NoContent());
     }
 }

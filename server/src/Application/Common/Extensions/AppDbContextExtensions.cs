@@ -28,6 +28,4 @@ public static class AppDbContextExtensions {
         context.Set<T>().Attach(enumEntity);
         return Result<T, IBaseException>.Ok(enumEntity);
     }
-
-    // TODO: A simple entity Exists() extension method for validation with a pre-made exception
 }
