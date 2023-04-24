@@ -66,23 +66,6 @@ internal static class ServiceExtensions {
     }
 
     /// <summary>
-    /// If the entity is null, returns a failed <see cref="NotFoundValidationException"/> result. 
-    /// Otherwise, maps the entity to a DTO and returns a successful result.
-    /// </summary>
-    /// <typeparam name="TSource">Type of the source entity.</typeparam>
-    /// <typeparam name="TDestination">Type of the destination mapped DTO.</typeparam>
-    /// <param name="mapper">Automapper.</param>
-    /// <param name="entity">Source entity.</param>
-    /// <returns>A result that contains either the mapped DTO or a not found error.</returns>
-    public static IResult<TDestination, IBaseException> ToMappedResultOrNotFound<TSource, TDestination>(this IMapper mapper, TSource? entity) {
-        if (entity is null) {
-            return Result<TDestination, IBaseException>.Fail(new NotFoundValidationException(typeof(TSource)));
-        }
-
-        return mapper.MapToResult<TDestination>(entity);
-    }
-
-    /// <summary>
     /// Maps an entity to a successful result containing a DTO.
     /// </summary>
     /// <typeparam name="T">Type to map entity to.</typeparam>
