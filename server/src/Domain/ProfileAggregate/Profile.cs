@@ -1,7 +1,11 @@
 ﻿using Domain.AssetAggregate;
+using Domain.Common.Exceptions;
 using Domain.Common.Models;
 using Domain.TransactionAggregate;
 using Domain.TransactionCategoryAggregate;
+
+using Shared.Interfaces;
+using Shared.Models;
 
 namespace Domain.ProfileAggregate;
 
@@ -33,12 +37,25 @@ public class Profile : TimestampedEntity {
     HashSet<Asset> _assets = null!;
     public IReadOnlyCollection<Asset> Assets => _assets;
 
-    public Profile(int userId, string name, string? description = null, decimal? withdrawalRate = null) {
-        UserId = userId;
-        Name = name;
-        Description = description ?? Description;
-        WithdrawalRate = withdrawalRate ?? WithdrawalRate;
+    public static IResult<Profile, DomainException> Create(int userId, string name, string? description = null, decimal? withdrawalRate = null) {
+        var builder = new Result<Profile, DomainException>.Builder();
+
+        if (name.Length > 50) {
+            builder.AddError(new DomainException("Name cannot exceed 50 characters."));
+        }
+
+        if (description == "") {
+            description = null;
+        }
+
+        if (withdrawalRate <= 0) {
+            builder.AddError(new DomainException("Withdrawal rate cannot be zero or below."));
+        }
+
+        var profile = new Profile() { UserId = userId, Name = name, Description = description, WithdrawalRate = withdrawalRate ?? 3.5m };
+
+        return builder.AddValue(profile).Build();
     }
 
-    private Profile() { }
+    Profile() { }
 }

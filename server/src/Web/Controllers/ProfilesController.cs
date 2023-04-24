@@ -16,7 +16,7 @@ namespace Web.Controllers;
 /// <inheritdoc cref="Domain.ProfileAggregate.Profile"/>
 [Route("api/v1/users/{User}/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleUserData")]
-[ApplicationExceptionFilter]
+[ApplicationResultFilter]
 [CsrfXHeaderFilter]
 [Produces("application/json")]
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]

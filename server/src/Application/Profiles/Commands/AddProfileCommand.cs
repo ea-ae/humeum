@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 
 using Domain.ProfileAggregate;
 
 using Shared.Interfaces;
+using Shared.Models;
 
 namespace Application.Profiles.Commands;
 
@@ -25,13 +27,14 @@ public class AddProfileCommandHandler : ICommandHandler<AddProfileCommand, IResu
     }
 
     public async Task<IResult<int, IBaseException>> Handle(AddProfileCommand request, CancellationToken token = default) {
-        Profile profile = new(request.User, request.Name, request.Description, request.WithdrawalRate);
+        var profileResult = Profile.Create(request.User, request.Name, request.Description, request.WithdrawalRate);
 
-        _context.Profiles.Add(profile);
-        await _context.SaveChangesAsync(token);
+        return await profileResult.ThenAsync(async profile => {
+            _context.Profiles.Add(profile);
+            await _context.SaveChangesAsync(token);
 
-        var result = await _userService.UpdateClientToken(request.User); // token should reflect a valid list of profiles
-
-        return result.Then(profile.Id);
+            var result = await _userService.UpdateClientToken(request.User); // token should reflect a valid list of profiles
+            return result.Then(profile.Id);
+        });
     }
 }
