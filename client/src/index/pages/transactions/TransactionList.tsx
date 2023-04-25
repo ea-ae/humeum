@@ -29,16 +29,12 @@ function TransactionList() {
 
       const set = (value: TransactionDto[]) => setTransactions(value);
 
-      // eslint-disable-next-line no-console
       const fail = () => {
         setAuthentication(null);
         navigate('/login');
       };
 
-      get().then(
-        (res) => set(res.result),
-        (err) => TransactionsClient.handleError(err, user.id, get, set, fail, cancelSource.token)
-      );
+      TransactionsClient.callAuthenticatedEndpoint(get, set, fail, user.id, cancelSource.token);
     }
 
     return () => cancelSource.cancel();

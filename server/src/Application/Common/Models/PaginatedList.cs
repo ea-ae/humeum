@@ -47,7 +47,10 @@ public class PaginatedList<T> : IReadOnlyList<T> {
                 new ApplicationValidationException($"Limit cannot be higher than {MAX_LIMIT}."));
         }
 
-        var list = query.Skip(request.Offset).Take(request.Limit).ProjectTo<T>(mapper.ConfigurationProvider).ToList();
+        //var query2 = query.Skip(request.Offset);
+        //query2 = query.Take(request.Limit);
+        var x = query.ProjectTo<T>(mapper.ConfigurationProvider);
+        var list = x.ToList();
         var paginatedList = new PaginatedList<T>(list);
         return Result<PaginatedList<T>, ApplicationValidationException>.Ok(paginatedList);
     }

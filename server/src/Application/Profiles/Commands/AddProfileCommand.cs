@@ -1,12 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 
 using Domain.ProfileAggregate;
 
 using Shared.Interfaces;
-using Shared.Models;
 
 namespace Application.Profiles.Commands;
 

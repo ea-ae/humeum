@@ -44,6 +44,23 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
     }
 
     void ConfigureTransactions(ModelBuilder builder) {
+        builder.Entity<Transaction>().Property(t => t.Name).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
+        builder.Entity<Transaction>().Property(t => t.Description).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
+        builder.Entity<Transaction>().Property(t => t.Amount).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
+        //builder.Entity<Transaction>().Property(t => t.PaymentTimeline).UsePropertyAccessMode(PropertyAccessMode.Field);
+        builder.Entity<Transaction>().HasOne(t => t.Type);
+        builder.Entity<Transaction>().HasOne(t => t.Profile).WithMany(p => p.Transactions);
+        builder.Entity<Transaction>().HasOne(t => t.TaxScheme).WithMany(ts => ts.Transactions);
+        builder.Entity<Transaction>().HasOne(t => t.Asset).WithMany(a => a.Transactions);
+        builder.Entity<Transaction>().HasMany(t => t.Categories).WithMany(tc => tc.Transactions)
+                                     .UsingEntity(j => j.ToTable("TransactionWithCategory"));
+        builder.Entity<Transaction>().OwnsOne(t => t.PaymentTimeline, pt => {
+            pt.OwnsOne(pt => pt.Period);
+            pt.OwnsOne(pt => pt.Frequency, f => {
+                f.HasOne(f => f.TimeUnit);
+            });
+        });
+
         builder.Entity<TransactionType>().HasIndex(tt => tt.Code).IsUnique();
         builder.Entity<TransactionType>().HasData(TransactionType.Always,
                                                   TransactionType.PreRetirementOnly,

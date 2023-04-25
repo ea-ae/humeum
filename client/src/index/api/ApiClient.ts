@@ -21,12 +21,33 @@ export default class ApiClient {
   }
 
   /**
+   * Call an authenticated endpoint and perform a token refresh upon need.
+   * @param get Function that attempts to call an endpoint.
+   * @param set Function that handles a successful endpoint call.
+   * @param fail Function that handles a failed endpoint call.
+   * @param userId User ID for token refreshes.
+   * @param token Cancellation token.
+   */
+  public static callAuthenticatedEndpoint<T>(
+    get: () => Promise<SwaggerResponse<T>>,
+    set: (value: T) => void,
+    fail: () => void,
+    userId: number,
+    token: CancelToken
+  ) {
+    get().then(
+      (res) => set(res.result),
+      (err) => this.handleError(err, userId, get, set, fail, token)
+    );
+  }
+
+  /**
    * In case of an authentication error, attempts to refresh the JWT token and retry the initial request.
    * If the refresh fails, an action such as a redirect to the login page is performed.
    * @param error Error to handle.
-   * @param get Code to run if the request should be retried.
-   * @param set Code to run if the retried request succeeds.
-   * @param fail Code to run if the retried request fails or a retry is not possible.
+   * @param get Function that retries the request.
+   * @param set Function to run if the retried request succeeds.
+   * @param fail Function to run if the retried request fails or a retry is not possible.
    */
   public static handleError<T>(
     error: Error | AxiosError, // ApiException?
@@ -36,13 +57,9 @@ export default class ApiClient {
     fail: () => void,
     token: CancelToken
   ) {
-    // eslint-disable-next-line no-console
-    console.log('error:');
-    console.log(error.name);
-
     // if the error is not an authentication error, we can't attempt to refresh the token
     if (error.name !== 'Error') {
-      // in case of a cancelled request from page change, do not redirect etc
+      // in case of a cancelled request from a page change, do not redirect etc
       if (error.name !== 'CanceledError') {
         fail();
       }
@@ -53,15 +70,14 @@ export default class ApiClient {
     const client = new UsersClient();
     client.refreshUser(userId, token).then(
       () => {
+        // token was refreshed
         get().then(
-          (res) => set(res.result),
-          () => fail()
+          // retry the initial request
+          (res) => set(res.result), // retry succeeds, set state
+          () => fail() // retry fails (now perform something like a redirection to the login page)
         );
       },
-      (err) => {
-        console.log(err);
-        fail();
-      }
+      () => fail() // token could not be refreshed
     );
   }
 

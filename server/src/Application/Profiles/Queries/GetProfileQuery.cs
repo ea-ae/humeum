@@ -28,7 +28,7 @@ public class GetProfileQueryHandler : IQueryHandler<GetProfileQuery, IResult<Pro
         var profileResult = _context.Profiles.AsNoTracking()
                                              .ToFoundResult(p => p.Id == request.Profile && p.DeletedAt == null);
 
-        var result = profileResult.Then(profile => _mapper.MapToResult<ProfileDto>(p));
+        var result = profileResult.Then(profile => _mapper.MapToResult<ProfileDto>(profile));
         return Task.FromResult(result);
     }
 }

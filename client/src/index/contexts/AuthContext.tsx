@@ -4,7 +4,7 @@ import { UserDto } from '../api/api';
 
 export interface AuthProps {
   user: UserDto | null;
-  setAuthentication: (authentication: UserDto) => void;
+  setAuthentication: (authentication: UserDto | null) => void;
   isAuthenticated: () => boolean;
 }
 

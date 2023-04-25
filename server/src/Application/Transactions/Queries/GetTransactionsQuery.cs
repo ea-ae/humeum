@@ -35,6 +35,10 @@ public class GetTransactionsQueryHandler : IPaginatedQueryHandler<GetTransaction
     public Task<IResult<PaginatedList<TransactionDto>, IBaseException>> Handle(GetTransactionsQuery request, CancellationToken token = default) {
         var transactions = _context.Transactions.AsNoTracking()
                                                 .Include(t => t.Categories)
+                                                //.Include(t => t.Type)
+                                                //.Include(t => t.TaxScheme)
+                                                //.Include(t => t.Asset)
+                                                //.Include(t => t.PaymentTimeline.Frequency).ThenInclude(f => f!.TimeUnit)
                                                 .Where(t => t.ProfileId == request.Profile
                                                             && t.DeletedAt == null);
 
