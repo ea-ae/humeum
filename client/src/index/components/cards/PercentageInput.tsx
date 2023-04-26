@@ -5,11 +5,19 @@ interface Props {
   tooltip?: string;
   defaultValue: string;
   disabled?: boolean;
+
+  onChange?: (percentage: number) => void;
 }
 
-export default function PercentageInput({ label, tooltip, defaultValue, disabled }: Props) {
+export default function PercentageInput({ label, tooltip, defaultValue, disabled, onChange }: Props) {
   const typePattern = /^[0-9]{0,3}($|[,.][0-9]{0,2}$)/;
   const validPattern = /^[0-9]{1,3}($|[,.][0-9]{1,2})$/;
+
+  const onInputChange = (input: string) => {
+    if (onChange !== null && onChange !== undefined) {
+      onChange(parseFloat(input));
+    }
+  };
 
   return (
     <Input
@@ -20,6 +28,7 @@ export default function PercentageInput({ label, tooltip, defaultValue, disabled
       typePattern={typePattern}
       validPattern={validPattern}
       disabled={disabled}
+      onInputChange={onInputChange}
     />
   );
 }
@@ -27,4 +36,5 @@ export default function PercentageInput({ label, tooltip, defaultValue, disabled
 PercentageInput.defaultProps = {
   tooltip: '',
   disabled: false,
+  onChange: undefined,
 };

@@ -32,7 +32,7 @@ export class AssetsClient extends ApiClient {
      * @return Returns the assets.
      */
     getAssets(profile: number, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<AssetDto[]>> {
-        let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/assets";
+        let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{Profile}/assets";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
