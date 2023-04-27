@@ -86,7 +86,7 @@ public class UsersController : ControllerBase {
     /// <response code="200">Details of signed in user.</response>
     /// <response code="401">If the authentication attempt fails, e.g. incorrect password.</response>
     [HttpPost("sign-in")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<IResult<UserDto, IBaseException>>> SignInUser(SignInUserCommand command) {
         var userIdResult = await _mediator.Send(command);
@@ -100,6 +100,7 @@ public class UsersController : ControllerBase {
     /// <response code="200">Details of signed in user.</response>
     /// <response code="401">If the authentication attempt fails, e.g. invalid refresh token.</response>
     [HttpPost("{User:int}/refresh")]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     public async Task<ActionResult<IResult<UserDto, IBaseException>>> RefreshUser(RefreshUserCommand command) {
         var userIdResult = await _mediator.Send(command);
         var user = userIdResult.ThenAsync(async userId => await _mediator.Send(new GetUserQuery { User = userId }));
