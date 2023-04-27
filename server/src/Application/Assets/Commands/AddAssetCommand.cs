@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Application.Common.Exceptions;
 using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
@@ -28,6 +29,11 @@ public class AddAssetCommandHandler : ICommandHandler<AddAssetCommand, IResult<i
 
     public async Task<IResult<int, IBaseException>> Handle(AddAssetCommand request, CancellationToken token = default) {
         var assetType = _context.GetEnumerationEntityByCode<AssetType>(request.AssetType);
+
+        if (assetType.Failure) {
+            return Result<int, NotFoundValidationException>.Fail(new NotFoundValidationException(nameof(assetType)));
+        }
+
         var asset = Asset.Create(request.Name,
                                  request.Description,
                                  (decimal)request.ReturnRate!,

@@ -90,6 +90,16 @@ public class Asset : TimestampedEntity, IOptionalProfileEntity {
                       .Transform(asset => asset.SetStandardDeviation(standardDeviation));
     }
 
+    public IResult<None, DomainException> Replace(string name,
+                                                  string? description,
+                                                  decimal returnRate,
+                                                  decimal standardDeviation,
+                                                  int typeId) {
+        TypeId = typeId;
+        var builder = new Result<Asset, DomainException>.Builder().AddValue(this);
+        return SetFields(builder, name, description, returnRate, standardDeviation).Build().Then(None.Value);
+    }
+
     public bool IsDefaultAsset => ProfileId is not null || Profile is not null;
 
     IResult<None, DomainException> SetName(string name) {

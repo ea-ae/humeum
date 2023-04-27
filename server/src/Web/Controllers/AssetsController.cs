@@ -1,5 +1,6 @@
 ﻿using Application.Assets.Commands;
 using Application.Assets.Queries;
+using Application.Transactions.Commands;
 
 using MediatR;
 
@@ -15,7 +16,7 @@ using Web.Filters;
 namespace Web.Controllers;
 
 /// <inheritdoc cref="Domain.AssetAggregate.Asset"/>
-[Route("api/v1/users/{user}/profiles/{profile}/[controller]")]
+[Route("api/v1/users/{User}/profiles/{Profile}/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleProfileData")]
 [ApplicationResultFilter]
 [CsrfXHeaderFilter]
@@ -75,6 +76,23 @@ public class AssetsController : ControllerBase {
         var result = await _mediator.Send(command);
         return result.Then(asset => Result<IActionResult, IBaseException>.Ok(
             CreatedAtAction(nameof(GetAsset), new { user, command.Profile, asset }, null)));
+    }
+
+    /// <summary>
+    /// Replaces an asset's fields.
+    /// </summary>
+    /// <response code="204">If asset was successfully replaced.</response>
+    /// <response code="400">If fields didn't satisfy domain invariants or the optional ones were only partially specified.</response>
+    /// <response code="401">If a user route is accessed without an authentication token.</response>
+    /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
+    /// <response code="404">If a profile or asset type with the specified ID could not be found.</response>
+    [HttpPut("{Asset}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult<IActionResult, IBaseException>> ReplaceAsset(ReplaceAssetCommand command) {
+        var result = await _mediator.Send(command);
+        return result.Then(NoContent());
     }
 
     /// <summary>
