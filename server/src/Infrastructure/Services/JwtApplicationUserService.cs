@@ -134,6 +134,7 @@ public class JwtApplicationUserService : ApplicationUserService {
     protected void AddRefreshTokenAsCookie(string refreshToken) {
         var cookieOptions = new CookieOptions() {
             HttpOnly = true,
+            SameSite = SameSiteMode.Lax,
             Expires = DateTime.UtcNow.AddDays(_jwtSettings.RefreshCookieExpireDays),
             Path = "/api/v1/users" // hardcoded!
         };
