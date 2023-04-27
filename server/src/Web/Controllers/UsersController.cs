@@ -34,7 +34,7 @@ public class UsersController : ControllerBase {
     /// <response code="403">If a user route is accessed with an authentication token assigned to another user ID.</response>
     /// <response code="404">If a user with the specified ID could not be found.</response>
     [HttpGet("{User:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -52,7 +52,7 @@ public class UsersController : ControllerBase {
     /// <response code="403">If a user route is accessed with an authentication token assigned to another user ID.</response>
     /// <response code="404">If a user with the specified ID could not be found.</response>
     [HttpGet("me")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
