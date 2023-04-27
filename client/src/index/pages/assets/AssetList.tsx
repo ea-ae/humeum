@@ -22,7 +22,7 @@ export default function AssetList() {
     const client = new AssetsClient();
 
     if (user === null || assets === null) {
-      throw new Error('User or null was null in event handler');
+      throw new Error('User or state was null in event handler');
     }
 
     const get = () =>
@@ -36,6 +36,7 @@ export default function AssetList() {
         standardDeviation,
         asset.type.code
       );
+
     const set = () => {
       const newAsset = asset;
       newAsset.returnRate = realReturn;
@@ -43,6 +44,19 @@ export default function AssetList() {
     };
 
     AssetsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
+  };
+
+  const onAssetDelete = (asset: AssetDto) => {
+    const client = new AssetsClient();
+
+    if (user === null || assets === null) {
+      throw new Error('User or state was null in event handler');
+    }
+
+    const get = () => client.deleteAsset(user.profiles[0].id, asset.id, user.id.toString());
+
+    setAssets(assets.filter((a) => a.id !== asset.id));
+    AssetsClient.callAuthenticatedEndpoint(get, null, fail, user.id);
   };
 
   React.useEffect(() => {
@@ -73,6 +87,7 @@ export default function AssetList() {
           standardDeviation={asset.standardDeviation}
           readOnly={asset.default}
           onSave={(realReturn: number, standardDeviation: number) => onAssetSave(asset, realReturn, standardDeviation)}
+          onDelete={() => onAssetDelete(asset)}
         />
       ))}
       <NewItemCard text="Create custom asset" />

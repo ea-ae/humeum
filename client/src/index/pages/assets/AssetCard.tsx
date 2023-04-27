@@ -12,9 +12,10 @@ interface Props {
   readOnly?: boolean;
 
   onSave?: (realReturn: number, standardDeviation: number) => void;
+  onDelete?: () => void;
 }
 
-export default function AssetCard({ name, description, returnRate, standardDeviation, readOnly, onSave }: Props) {
+export default function AssetCard({ name, description, returnRate, standardDeviation, readOnly, onSave, onDelete }: Props) {
   const [data, setData] = React.useState<{ returnRate: number; standardDeviation: number }>({ returnRate, standardDeviation });
 
   const onSaveClick = () => {
@@ -22,6 +23,8 @@ export default function AssetCard({ name, description, returnRate, standardDevia
       onSave(data.returnRate, data.standardDeviation);
     }
   };
+
+  const onDeleteClick = () => onDelete();
 
   return (
     <Card>
@@ -48,7 +51,7 @@ export default function AssetCard({ name, description, returnRate, standardDevia
         <Mui.Button onClick={onSaveClick} disabled={readOnly} className="border-0">
           Save
         </Mui.Button>
-        <Mui.Button disabled={readOnly} className={`border-0 ${readOnly ? '' : 'text-red-700 hover:bg-red-50'}`}>
+        <Mui.Button onClick={onDeleteClick} disabled={readOnly} className={`border-0 ${readOnly ? '' : 'text-red-700 hover:bg-red-50'}`}>
           Delete
         </Mui.Button>
       </Mui.ButtonGroup>
@@ -59,4 +62,5 @@ export default function AssetCard({ name, description, returnRate, standardDevia
 AssetCard.defaultProps = {
   readOnly: false,
   onSave: null,
+  onDelete: null,
 };

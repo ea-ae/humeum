@@ -1,6 +1,6 @@
-import type { AxiosError, AxiosRequestConfig, AxiosResponseTransformer, CanceledError, CancelToken } from 'axios';
+import type { AxiosError, AxiosRequestConfig, CancelToken } from 'axios';
 
-import { ApiException, SwaggerResponse, UsersClient } from './api';
+import { SwaggerResponse, UsersClient } from './api';
 
 interface ApiOptions extends AxiosRequestConfig<unknown> {
   headers: { [key: string]: string };
@@ -30,13 +30,13 @@ export default class ApiClient {
    */
   public static callAuthenticatedEndpoint<T>(
     get: () => Promise<SwaggerResponse<T>>,
-    set: (value: T) => void,
-    fail: () => void,
+    set: null | ((value: T) => void),
+    fail: null | (() => void),
     userId: number,
     token?: CancelToken
   ) {
     get().then(
-      (res) => set(res.result),
+      (res) => (set === null ? null : set(res.result)),
       (err) => this.handleError(err, userId, get, set, fail, token)
     );
   }
@@ -53,14 +53,14 @@ export default class ApiClient {
     error: Error | AxiosError, // ApiException?
     userId: number,
     get: () => Promise<SwaggerResponse<T>>,
-    set: (value: T) => void,
-    fail: () => void,
+    set: null | ((value: T) => void),
+    fail: null | (() => void),
     token?: CancelToken
   ) {
     // if the error is not an authentication error, we can't attempt to refresh the token
     if (error.name !== 'Error') {
       // in case of a cancelled request from a page change, do not redirect etc
-      if (error.name !== 'CanceledError') {
+      if (error.name !== 'CanceledError' && fail !== null) {
         fail();
       }
       return;
@@ -73,11 +73,11 @@ export default class ApiClient {
         // token was refreshed
         get().then(
           // retry the initial request
-          (res) => set(res.result), // retry succeeds, set state
-          () => fail() // retry fails (now perform something like a redirection to the login page)
+          (res) => (set === null ? null : set(res.result)), // retry succeeds, set state
+          () => (fail === null ? null : fail()) // retry fails (now perform something like a redirection to the login page)
         );
       },
-      () => fail() // token could not be refreshed
+      () => (fail === null ? null : fail()) // token could not be refreshed
     );
   }
 
