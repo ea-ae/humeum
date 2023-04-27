@@ -32,7 +32,7 @@ public class ApplicationMappingProfile : Profile {
 
         CreateMap<Asset, AssetDto>()
             .ForMember(dest => dest.Type,
-                       o => o.MapFrom(src => new AssetDto.AssetTypeDto { Id = src.TypeId, Name = src.Type.Name }))
+                       o => o.MapFrom(src => new AssetDto.AssetTypeDto { Id = src.TypeId, Name = src.Type.Name, Code = src.Type.Code }))
             .ForMember(dest => dest.Default,
                        o => o.MapFrom(src => src.ProfileId == null));
 

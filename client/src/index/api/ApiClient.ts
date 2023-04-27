@@ -33,7 +33,7 @@ export default class ApiClient {
     set: (value: T) => void,
     fail: () => void,
     userId: number,
-    token: CancelToken
+    token?: CancelToken
   ) {
     get().then(
       (res) => set(res.result),
@@ -55,7 +55,7 @@ export default class ApiClient {
     get: () => Promise<SwaggerResponse<T>>,
     set: (value: T) => void,
     fail: () => void,
-    token: CancelToken
+    token?: CancelToken
   ) {
     // if the error is not an authentication error, we can't attempt to refresh the token
     if (error.name !== 'Error') {

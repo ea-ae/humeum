@@ -32,13 +32,13 @@ export class AssetsClient extends ApiClient {
      * @return Returns the assets.
      */
     getAssets(profile: number, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<AssetDto[]>> {
-        let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{Profile}/assets";
+        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/assets";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
-        url_ = url_.replace("{user}", encodeURIComponent("" + user));
+        url_ = url_.replace("{User}", encodeURIComponent("" + user));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
@@ -125,7 +125,7 @@ export class AssetsClient extends ApiClient {
      * @return Returns a location header to the newly created item.
      */
     addAsset(user: number, profile: number, name?: string | null | undefined, description?: string | null | undefined, returnRate?: number | null | undefined, standardDeviation?: number | null | undefined, assetType?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<FileResponse>> {
-        let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/assets?";
+        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/assets?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{user}", encodeURIComponent("" + user));
@@ -228,7 +228,7 @@ export class AssetsClient extends ApiClient {
      * @return Returns the asset.
      */
     getAsset(profile: number, asset: number, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<AssetDto>> {
-        let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/assets/{Asset}";
+        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/assets/{Asset}";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
@@ -237,7 +237,7 @@ export class AssetsClient extends ApiClient {
         url_ = url_.replace("{Asset}", encodeURIComponent("" + asset));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
-        url_ = url_.replace("{user}", encodeURIComponent("" + user));
+        url_ = url_.replace("{User}", encodeURIComponent("" + user));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
@@ -308,11 +308,16 @@ export class AssetsClient extends ApiClient {
     }
 
     /**
-     * Deletes a custom asset with given ID from a profile.
-     * @return If asset was deleted.
+     * Replaces an asset's fields.
+     * @param name (optional) 
+     * @param description (optional) 
+     * @param returnRate (optional) 
+     * @param standardDeviation (optional) 
+     * @param assetType (optional) 
+     * @return If asset was successfully replaced.
      */
-    deleteAsset(profile: number, asset: number, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
-        let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/assets/{Asset}";
+    replaceAsset(profile: number, asset: number, user: string, name?: string | null | undefined, description?: string | null | undefined, returnRate?: number | null | undefined, standardDeviation?: number | null | undefined, assetType?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/assets/{Asset}?";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
@@ -321,7 +326,104 @@ export class AssetsClient extends ApiClient {
         url_ = url_.replace("{Asset}", encodeURIComponent("" + asset));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
-        url_ = url_.replace("{user}", encodeURIComponent("" + user));
+        url_ = url_.replace("{User}", encodeURIComponent("" + user));
+        if (name !== undefined && name !== null)
+            url_ += "Name=" + encodeURIComponent("" + name) + "&";
+        if (description !== undefined && description !== null)
+            url_ += "Description=" + encodeURIComponent("" + description) + "&";
+        if (returnRate !== undefined && returnRate !== null)
+            url_ += "ReturnRate=" + encodeURIComponent("" + returnRate) + "&";
+        if (standardDeviation !== undefined && standardDeviation !== null)
+            url_ += "StandardDeviation=" + encodeURIComponent("" + standardDeviation) + "&";
+        if (assetType !== undefined && assetType !== null)
+            url_ += "AssetType=" + encodeURIComponent("" + assetType) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "PUT",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processReplaceAsset(_response);
+        });
+    }
+
+    protected processReplaceAsset(response: AxiosResponse): Promise<SwaggerResponse<void>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 401) {
+            const _responseText = response.data;
+            let result401: any = null;
+            let resultData401  = _responseText;
+            result401 = ProblemDetails.fromJS(resultData401);
+            return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            let result403: any = null;
+            let resultData403  = _responseText;
+            result403 = ProblemDetails.fromJS(resultData403);
+            return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
+
+        } else if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
+
+        } else if (status === 400) {
+            const _responseText = response.data;
+            let result400: any = null;
+            let resultData400  = _responseText;
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("If fields didn\'t satisfy domain invariants or the optional ones were only partially specified.", status, _responseText, _headers, result400);
+
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("If a profile or asset type with the specified ID could not be found.", status, _responseText, _headers, result404);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
+    }
+
+    /**
+     * Deletes a custom asset with given ID from a profile.
+     * @return If asset was deleted.
+     */
+    deleteAsset(profile: number, asset: number, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/assets/{Asset}";
+        if (profile === undefined || profile === null)
+            throw new Error("The parameter 'profile' must be defined.");
+        url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
+        if (asset === undefined || asset === null)
+            throw new Error("The parameter 'asset' must be defined.");
+        url_ = url_.replace("{Asset}", encodeURIComponent("" + asset));
+        if (user === undefined || user === null)
+            throw new Error("The parameter 'user' must be defined.");
+        url_ = url_.replace("{User}", encodeURIComponent("" + user));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
@@ -489,7 +591,7 @@ export class ProfilesClient extends ApiClient {
      * @param withdrawalRate (optional) 
      * @return Returns a location header to the newly created item.
      */
-    addProfile(user: number, name?: string | null | undefined, description?: string | null | undefined, withdrawalRate?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+    addProfile(user: number, name?: string | null | undefined, description?: string | null | undefined, withdrawalRate?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<IResultOfIActionResultAndIBaseException>> {
         let url_ = this.baseUrl + "/api/v1/users/{User}/profiles?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -506,6 +608,7 @@ export class ProfilesClient extends ApiClient {
             method: "POST",
             url: url_,
             headers: {
+                "Accept": "application/json"
             },
             cancelToken
         };
@@ -523,7 +626,7 @@ export class ProfilesClient extends ApiClient {
         });
     }
 
-    protected processAddProfile(response: AxiosResponse): Promise<SwaggerResponse<void>> {
+    protected processAddProfile(response: AxiosResponse): Promise<SwaggerResponse<IResultOfIActionResultAndIBaseException>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -549,7 +652,10 @@ export class ProfilesClient extends ApiClient {
 
         } else if (status === 201) {
             const _responseText = response.data;
-            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = IResultOfIActionResultAndIBaseException.fromJS(resultData201);
+            return Promise.resolve<SwaggerResponse<IResultOfIActionResultAndIBaseException>>(new SwaggerResponse<IResultOfIActionResultAndIBaseException>(status, _headers, result201));
 
         } else if (status === 400) {
             const _responseText = response.data;
@@ -562,7 +668,7 @@ export class ProfilesClient extends ApiClient {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
+        return Promise.resolve<SwaggerResponse<IResultOfIActionResultAndIBaseException>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
@@ -744,7 +850,7 @@ export class TaxSchemesClient extends ApiClient {
      * @param query (optional) 
      * @return List of tax schemes.
      */
-    getTaxSchemes(query?: GetTaxSchemesQuery | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<TaxSchemeDto[]>> {
+    getTaxSchemes(query?: GetTaxSchemesQuery | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException>> {
         let url_ = this.baseUrl + "/api/v1/tax-schemes?";
         if (query !== undefined && query !== null)
             url_ += "query=" + encodeURIComponent("" + query) + "&";
@@ -772,7 +878,7 @@ export class TaxSchemesClient extends ApiClient {
         });
     }
 
-    protected processGetTaxSchemes(response: AxiosResponse): Promise<SwaggerResponse<TaxSchemeDto[]>> {
+    protected processGetTaxSchemes(response: AxiosResponse): Promise<SwaggerResponse<IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -786,21 +892,14 @@ export class TaxSchemesClient extends ApiClient {
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(TaxSchemeDto.fromJS(item));
-            }
-            else {
-                result200 = <any>null;
-            }
-            return Promise.resolve<SwaggerResponse<TaxSchemeDto[]>>(new SwaggerResponse<TaxSchemeDto[]>(status, _headers, result200));
+            result200 = IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException.fromJS(resultData200);
+            return Promise.resolve<SwaggerResponse<IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException>>(new SwaggerResponse<IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException>(status, _headers, result200));
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<SwaggerResponse<TaxSchemeDto[]>>(new SwaggerResponse(status, _headers, null as any));
+        return Promise.resolve<SwaggerResponse<IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException>>(new SwaggerResponse(status, _headers, null as any));
     }
 }
 
@@ -2008,7 +2107,7 @@ export class UsersClient extends ApiClient {
      * @param rememberMe (optional) 
      * @return Returns the location of newly created user and an authentication token.
      */
-    registerUser(username?: string | null | undefined, email?: string | null | undefined, password?: string | null | undefined, confirmPassword?: string | null | undefined, rememberMe?: boolean | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+    registerUser(username?: string | null | undefined, email?: string | null | undefined, password?: string | null | undefined, confirmPassword?: string | null | undefined, rememberMe?: boolean | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<IResultOfIActionResultAndIBaseException>> {
         let url_ = this.baseUrl + "/api/v1/users/register?";
         if (username !== undefined && username !== null)
             url_ += "Username=" + encodeURIComponent("" + username) + "&";
@@ -2028,6 +2127,7 @@ export class UsersClient extends ApiClient {
             method: "POST",
             url: url_,
             headers: {
+                "Accept": "application/json"
             },
             cancelToken
         };
@@ -2045,7 +2145,7 @@ export class UsersClient extends ApiClient {
         });
     }
 
-    protected processRegisterUser(response: AxiosResponse): Promise<SwaggerResponse<void>> {
+    protected processRegisterUser(response: AxiosResponse): Promise<SwaggerResponse<IResultOfIActionResultAndIBaseException>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -2057,7 +2157,10 @@ export class UsersClient extends ApiClient {
         }
         if (status === 201) {
             const _responseText = response.data;
-            return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse<void>(status, _headers, null as any));
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = IResultOfIActionResultAndIBaseException.fromJS(resultData201);
+            return Promise.resolve<SwaggerResponse<IResultOfIActionResultAndIBaseException>>(new SwaggerResponse<IResultOfIActionResultAndIBaseException>(status, _headers, result201));
 
         } else if (status === 400) {
             const _responseText = response.data;
@@ -2077,7 +2180,7 @@ export class UsersClient extends ApiClient {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
+        return Promise.resolve<SwaggerResponse<IResultOfIActionResultAndIBaseException>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
@@ -2087,7 +2190,7 @@ export class UsersClient extends ApiClient {
      * @param rememberMe (optional) 
      * @return Details of signed in user.
      */
-    signInUser(username?: string | null | undefined, password?: string | null | undefined, rememberMe?: boolean | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<UserDto>> {
+    signInUser(username?: string | null | undefined, password?: string | null | undefined, rememberMe?: boolean | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<IResultOfUserDtoAndIBaseException>> {
         let url_ = this.baseUrl + "/api/v1/users/sign-in?";
         if (username !== undefined && username !== null)
             url_ += "Username=" + encodeURIComponent("" + username) + "&";
@@ -2121,7 +2224,7 @@ export class UsersClient extends ApiClient {
         });
     }
 
-    protected processSignInUser(response: AxiosResponse): Promise<SwaggerResponse<UserDto>> {
+    protected processSignInUser(response: AxiosResponse): Promise<SwaggerResponse<IResultOfUserDtoAndIBaseException>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -2135,8 +2238,8 @@ export class UsersClient extends ApiClient {
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-            result200 = UserDto.fromJS(resultData200);
-            return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse<UserDto>(status, _headers, result200));
+            result200 = IResultOfUserDtoAndIBaseException.fromJS(resultData200);
+            return Promise.resolve<SwaggerResponse<IResultOfUserDtoAndIBaseException>>(new SwaggerResponse<IResultOfUserDtoAndIBaseException>(status, _headers, result200));
 
         } else if (status === 401) {
             const _responseText = response.data;
@@ -2149,14 +2252,14 @@ export class UsersClient extends ApiClient {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse(status, _headers, null as any));
+        return Promise.resolve<SwaggerResponse<IResultOfUserDtoAndIBaseException>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
      * Refreshes user authentication through a refresh token.
      * @return Details of signed in user.
      */
-    refreshUser(user: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<UserDto>> {
+    refreshUser(user: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<IResultOfUserDtoAndIBaseException>> {
         let url_ = this.baseUrl + "/api/v1/users/{User}/refresh";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
@@ -2185,7 +2288,7 @@ export class UsersClient extends ApiClient {
         });
     }
 
-    protected processRefreshUser(response: AxiosResponse): Promise<SwaggerResponse<UserDto>> {
+    protected processRefreshUser(response: AxiosResponse): Promise<SwaggerResponse<IResultOfUserDtoAndIBaseException>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -2199,14 +2302,14 @@ export class UsersClient extends ApiClient {
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-            result200 = UserDto.fromJS(resultData200);
-            return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse<UserDto>(status, _headers, result200));
+            result200 = IResultOfUserDtoAndIBaseException.fromJS(resultData200);
+            return Promise.resolve<SwaggerResponse<IResultOfUserDtoAndIBaseException>>(new SwaggerResponse<IResultOfUserDtoAndIBaseException>(status, _headers, result200));
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse(status, _headers, null as any));
+        return Promise.resolve<SwaggerResponse<IResultOfUserDtoAndIBaseException>>(new SwaggerResponse(status, _headers, null as any));
     }
 }
 
@@ -2340,6 +2443,7 @@ export interface IAssetDto {
 export class AssetTypeDto implements IAssetTypeDto {
     id!: number;
     name!: string;
+    code!: string;
 
     constructor(data?: IAssetTypeDto) {
         if (data) {
@@ -2354,6 +2458,7 @@ export class AssetTypeDto implements IAssetTypeDto {
         if (_data) {
             this.id = _data["id"];
             this.name = _data["name"];
+            this.code = _data["code"];
         }
     }
 
@@ -2368,6 +2473,7 @@ export class AssetTypeDto implements IAssetTypeDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["code"] = this.code;
         return data;
     }
 }
@@ -2375,6 +2481,7 @@ export class AssetTypeDto implements IAssetTypeDto {
 export interface IAssetTypeDto {
     id: number;
     name: string;
+    code: string;
 }
 
 export class ProfileDto implements IProfileDto {
@@ -2425,17 +2532,14 @@ export interface IProfileDto {
     withdrawalRate: number;
 }
 
-export class TaxSchemeDto implements ITaxSchemeDto {
-    id!: number;
-    name!: string;
-    description!: string;
-    taxRate!: number;
-    incentiveSchemeTaxRefundRate?: number | undefined;
-    incentiveSchemeMinAge?: number | undefined;
-    incentiveSchemeMaxIncomePercentage?: number | undefined;
-    incentiveSchemeMaxApplicableIncome?: number | undefined;
+/** Result object that contains either a result value or a collection of exceptions. */
+export abstract class IResultOfIActionResultAndIBaseException implements IIResultOfIActionResultAndIBaseException {
+    /** Whether the result is a success. */
+    success!: boolean;
+    /** Whether the result is a failure. */
+    failure!: boolean;
 
-    constructor(data?: ITaxSchemeDto) {
+    constructor(data?: IIResultOfIActionResultAndIBaseException) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2446,47 +2550,74 @@ export class TaxSchemeDto implements ITaxSchemeDto {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.description = _data["description"];
-            this.taxRate = _data["taxRate"];
-            this.incentiveSchemeTaxRefundRate = _data["incentiveSchemeTaxRefundRate"];
-            this.incentiveSchemeMinAge = _data["incentiveSchemeMinAge"];
-            this.incentiveSchemeMaxIncomePercentage = _data["incentiveSchemeMaxIncomePercentage"];
-            this.incentiveSchemeMaxApplicableIncome = _data["incentiveSchemeMaxApplicableIncome"];
+            this.success = _data["success"];
+            this.failure = _data["failure"];
         }
     }
 
-    static fromJS(data: any): TaxSchemeDto {
+    static fromJS(data: any): IResultOfIActionResultAndIBaseException {
         data = typeof data === 'object' ? data : {};
-        let result = new TaxSchemeDto();
-        result.init(data);
-        return result;
+        throw new Error("The abstract class 'IResultOfIActionResultAndIBaseException' cannot be instantiated.");
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["description"] = this.description;
-        data["taxRate"] = this.taxRate;
-        data["incentiveSchemeTaxRefundRate"] = this.incentiveSchemeTaxRefundRate;
-        data["incentiveSchemeMinAge"] = this.incentiveSchemeMinAge;
-        data["incentiveSchemeMaxIncomePercentage"] = this.incentiveSchemeMaxIncomePercentage;
-        data["incentiveSchemeMaxApplicableIncome"] = this.incentiveSchemeMaxApplicableIncome;
+        data["success"] = this.success;
+        data["failure"] = this.failure;
         return data;
     }
 }
 
-export interface ITaxSchemeDto {
-    id: number;
-    name: string;
-    description: string;
-    taxRate: number;
-    incentiveSchemeTaxRefundRate?: number | undefined;
-    incentiveSchemeMinAge?: number | undefined;
-    incentiveSchemeMaxIncomePercentage?: number | undefined;
-    incentiveSchemeMaxApplicableIncome?: number | undefined;
+/** Result object that contains either a result value or a collection of exceptions. */
+export interface IIResultOfIActionResultAndIBaseException {
+    /** Whether the result is a success. */
+    success: boolean;
+    /** Whether the result is a failure. */
+    failure: boolean;
+}
+
+/** Result object that contains either a result value or a collection of exceptions. */
+export abstract class IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException implements IIResultOfIEnumerableOfTaxSchemeDtoAndIBaseException {
+    /** Whether the result is a success. */
+    success!: boolean;
+    /** Whether the result is a failure. */
+    failure!: boolean;
+
+    constructor(data?: IIResultOfIEnumerableOfTaxSchemeDtoAndIBaseException) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.failure = _data["failure"];
+        }
+    }
+
+    static fromJS(data: any): IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException {
+        data = typeof data === 'object' ? data : {};
+        throw new Error("The abstract class 'IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException' cannot be instantiated.");
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["failure"] = this.failure;
+        return data;
+    }
+}
+
+/** Result object that contains either a result value or a collection of exceptions. */
+export interface IIResultOfIEnumerableOfTaxSchemeDtoAndIBaseException {
+    /** Whether the result is a success. */
+    success: boolean;
+    /** Whether the result is a failure. */
+    failure: boolean;
 }
 
 export class GetTaxSchemesQuery implements IGetTaxSchemesQuery {
@@ -2760,6 +2891,50 @@ export class BriefProfile implements IBriefProfile {
 export interface IBriefProfile {
     id: number;
     name: string;
+}
+
+/** Result object that contains either a result value or a collection of exceptions. */
+export abstract class IResultOfUserDtoAndIBaseException implements IIResultOfUserDtoAndIBaseException {
+    /** Whether the result is a success. */
+    success!: boolean;
+    /** Whether the result is a failure. */
+    failure!: boolean;
+
+    constructor(data?: IIResultOfUserDtoAndIBaseException) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.failure = _data["failure"];
+        }
+    }
+
+    static fromJS(data: any): IResultOfUserDtoAndIBaseException {
+        data = typeof data === 'object' ? data : {};
+        throw new Error("The abstract class 'IResultOfUserDtoAndIBaseException' cannot be instantiated.");
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["failure"] = this.failure;
+        return data;
+    }
+}
+
+/** Result object that contains either a result value or a collection of exceptions. */
+export interface IIResultOfUserDtoAndIBaseException {
+    /** Whether the result is a success. */
+    success: boolean;
+    /** Whether the result is a failure. */
+    failure: boolean;
 }
 
 function formatDate(d: Date) {

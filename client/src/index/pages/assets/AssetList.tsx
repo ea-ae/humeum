@@ -13,8 +13,32 @@ export default function AssetList() {
   const { user, setAuthentication } = useAuth();
   const navigate = useNavigate();
 
-  const onAssetSave = (id: number, realReturn: number, standardDeviation: number) => {
-    console.log(`saving ${id} with ${realReturn} and ${standardDeviation}`);
+  const fail = () => {
+    setAuthentication(null);
+    navigate('/login');
+  };
+
+  const onAssetSave = (asset: AssetDto, realReturn: number, standardDeviation: number) => {
+    const client = new AssetsClient();
+
+    if (user === null || assets === null) {
+      throw new Error('User or null was null in event handler');
+    }
+
+    const get = () =>
+      client.replaceAsset(
+        user.profiles[0].id,
+        asset.id,
+        user.id.toString(),
+        asset.name,
+        asset.description,
+        realReturn,
+        standardDeviation,
+        asset.type.code
+      );
+    const set = () => null;
+
+    AssetsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
   };
 
   React.useEffect(() => {
@@ -24,13 +48,7 @@ export default function AssetList() {
       const client = new AssetsClient();
 
       const get = () => client.getAssets(user.profiles[0].id, user.id.toString(), cancelSource.token);
-
       const set = (value: AssetDto[]) => setAssets(value);
-
-      const fail = () => {
-        setAuthentication(null);
-        navigate('/login');
-      };
 
       AssetsClient.callAuthenticatedEndpoint(get, set, fail, user.id, cancelSource.token);
     }
@@ -50,7 +68,7 @@ export default function AssetList() {
           returnRate={asset.returnRate}
           standardDeviation={asset.standardDeviation}
           readOnly={asset.default}
-          onSave={(realReturn: number, standardDeviation: number) => onAssetSave(asset.id, realReturn, standardDeviation)}
+          onSave={(realReturn: number, standardDeviation: number) => onAssetSave(asset, realReturn, standardDeviation)}
         />
       ))}
       <NewItemCard text="Create custom asset" />
