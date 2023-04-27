@@ -36,7 +36,11 @@ export default function AssetList() {
         standardDeviation,
         asset.type.code
       );
-    const set = () => null;
+    const set = () => {
+      const newAsset = asset;
+      newAsset.returnRate = realReturn;
+      setAssets(assets.map((a) => (a.id === asset.id ? newAsset : a)));
+    };
 
     AssetsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
   };
