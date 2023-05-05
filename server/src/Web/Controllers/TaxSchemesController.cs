@@ -27,7 +27,7 @@ public class TaxSchemesController : ControllerBase {
     /// </summary>
     /// <response code="200">List of tax schemes.</response>
     [HttpGet]
-    [ProducesResponseType(typeof(TaxSchemeDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<TaxSchemeDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IResult<IEnumerable<TaxSchemeDto>, IBaseException>>> GetTaxSchemes(GetTaxSchemesQuery query) {
         var taxSchemes = await _mediator.Send(query);
         return Ok(taxSchemes);

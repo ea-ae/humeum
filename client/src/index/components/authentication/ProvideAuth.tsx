@@ -10,7 +10,7 @@ import AuthContext from '../../contexts/AuthContext';
 function isPreAuthenticated(): Promise<UserDto | null> {
   const client = new UsersClient();
   const authenticated = client
-    .getCurrentUser()
+    .getCurrentUser('1')
     .then((res) => res.result)
     .catch((err) => {
       // eslint-disable-next-line no-console

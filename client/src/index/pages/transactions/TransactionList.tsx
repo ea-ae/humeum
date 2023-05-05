@@ -24,8 +24,10 @@ function TransactionList() {
     if (user !== null && transactions === null) {
       const client = new TransactionsClient();
 
-      const get = () =>
-        client.getTransactions(user.profiles[0].id, user.id.toString(), undefined, undefined, undefined, undefined, cancelSource.token);
+      const userId = user.id.toString();
+      const profileId = user.profiles[0].id;
+
+      const get = () => client.getTransactions(profileId, '1', userId, undefined, undefined, undefined, undefined, cancelSource.token);
 
       const set = (value: TransactionDto[]) => setTransactions(value);
 

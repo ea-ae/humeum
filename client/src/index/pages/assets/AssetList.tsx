@@ -29,6 +29,7 @@ export default function AssetList() {
       client.replaceAsset(
         user.profiles[0].id,
         asset.id,
+        '1',
         user.id.toString(),
         asset.name,
         asset.description,
@@ -53,7 +54,7 @@ export default function AssetList() {
       throw new Error('User or state was null in event handler');
     }
 
-    const get = () => client.deleteAsset(user.profiles[0].id, asset.id, user.id.toString());
+    const get = () => client.deleteAsset(user.profiles[0].id, asset.id, '1', user.id.toString());
 
     setAssets(assets.filter((a) => a.id !== asset.id));
     AssetsClient.callAuthenticatedEndpoint(get, null, fail, user.id);
@@ -65,7 +66,7 @@ export default function AssetList() {
     if (user !== null && assets === null) {
       const client = new AssetsClient();
 
-      const get = () => client.getAssets(user.profiles[0].id, user.id.toString(), cancelSource.token);
+      const get = () => client.getAssets(user.profiles[0].id, '1', user.id.toString(), cancelSource.token);
       const set = (value: AssetDto[]) => setAssets(value);
 
       AssetsClient.callAuthenticatedEndpoint(get, set, fail, user.id, cancelSource.token);
@@ -93,35 +94,4 @@ export default function AssetList() {
       <NewItemCard text="Create custom asset" />
     </div>
   );
-
-  // return (
-  //   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-  //     <AssetCard
-  //       name="Index fund (default)"
-  //       description="Index funds track the performance of a particular market index; great diversification, low fees, and easy management."
-  //       returnRate={8.1}
-  //       standardDeviation={15.2}
-  //       readOnly
-  //     />
-  //     <AssetCard
-  //       name="Bond fund (default)"
-  //       description="Bonds funds provide great diversification potential and are generally less volatile than other securities (depending on bond type)."
-  //       returnRate={1.9}
-  //       standardDeviation={3}
-  //       readOnly
-  //     />
-  //     <AssetCard name="Custom asset type 1" description="Custom asset description goes here." returnRate={5} standardDeviation={5} />
-  //     <AssetCard
-  //       name="Custom asset type 2"
-  //       description={
-  //         'Custom asset description goes here. These descriptions can sometimes get very long, ' +
-  //         'inwhichcasewordwrappingandgridlayoutsshouldtakecareofitwellenough.'
-  //       }
-  //       returnRate={9.4}
-  //       standardDeviation={44.21}
-  //     />
-  //     <AssetCard name="Custom asset type 3" description="Custom asset description goes here." returnRate={1} standardDeviation={1} />
-  //     <NewItemCard text="Create custom asset" />
-  //   </div>
-  // );
 }

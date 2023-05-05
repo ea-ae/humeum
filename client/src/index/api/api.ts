@@ -31,11 +31,14 @@ export class AssetsClient extends ApiClient {
      * Get asset options for a specific user.
      * @return Returns the assets.
      */
-    getAssets(profile: number, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<AssetDto[]>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/assets";
+    getAssets(profile: number, version: string, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<AssetDto[]>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/assets";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
@@ -124,14 +127,17 @@ export class AssetsClient extends ApiClient {
      * @param assetType (optional) 
      * @return Returns a location header to the newly created item.
      */
-    addAsset(user: number, profile: number, name?: string | null | undefined, description?: string | null | undefined, returnRate?: number | null | undefined, standardDeviation?: number | null | undefined, assetType?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<FileResponse>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/assets?";
+    addAsset(user: number, profile: number, version: string, name?: string | null | undefined, description?: string | null | undefined, returnRate?: number | null | undefined, standardDeviation?: number | null | undefined, assetType?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<FileResponse>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/assets?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{user}", encodeURIComponent("" + user));
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (name !== undefined && name !== null)
             url_ += "Name=" + encodeURIComponent("" + name) + "&";
         if (description !== undefined && description !== null)
@@ -227,14 +233,17 @@ export class AssetsClient extends ApiClient {
      * Get asset with given ID.
      * @return Returns the asset.
      */
-    getAsset(profile: number, asset: number, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<AssetDto>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/assets/{Asset}";
+    getAsset(profile: number, asset: number, version: string, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<AssetDto>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/assets/{Asset}";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
         if (asset === undefined || asset === null)
             throw new Error("The parameter 'asset' must be defined.");
         url_ = url_.replace("{Asset}", encodeURIComponent("" + asset));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
@@ -316,14 +325,17 @@ export class AssetsClient extends ApiClient {
      * @param assetType (optional) 
      * @return If asset was successfully replaced.
      */
-    replaceAsset(profile: number, asset: number, user: string, name?: string | null | undefined, description?: string | null | undefined, returnRate?: number | null | undefined, standardDeviation?: number | null | undefined, assetType?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/assets/{Asset}?";
+    replaceAsset(profile: number, asset: number, version: string, user: string, name?: string | null | undefined, description?: string | null | undefined, returnRate?: number | null | undefined, standardDeviation?: number | null | undefined, assetType?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/assets/{Asset}?";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
         if (asset === undefined || asset === null)
             throw new Error("The parameter 'asset' must be defined.");
         url_ = url_.replace("{Asset}", encodeURIComponent("" + asset));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
@@ -413,14 +425,17 @@ export class AssetsClient extends ApiClient {
      * Deletes a custom asset with given ID from a profile.
      * @return If asset was deleted.
      */
-    deleteAsset(profile: number, asset: number, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/assets/{Asset}";
+    deleteAsset(profile: number, asset: number, version: string, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/assets/{Asset}";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
         if (asset === undefined || asset === null)
             throw new Error("The parameter 'asset' must be defined.");
         url_ = url_.replace("{Asset}", encodeURIComponent("" + asset));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
@@ -509,11 +524,14 @@ export class ProfilesClient extends ApiClient {
      * Get profiles owned by a user.
      * @return Returns the profiles.
      */
-    getProfiles(user: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<ProfileDto[]>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles";
+    getProfiles(user: number, version: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<ProfileDto[]>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
@@ -591,11 +609,14 @@ export class ProfilesClient extends ApiClient {
      * @param withdrawalRate (optional) 
      * @return Returns a location header to the newly created item.
      */
-    addProfile(user: number, name?: string | null | undefined, description?: string | null | undefined, withdrawalRate?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<IResultOfIActionResultAndIBaseException>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles?";
+    addProfile(user: number, version: string, name?: string | null | undefined, description?: string | null | undefined, withdrawalRate?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<IResultOfIActionResultAndIBaseException>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (name !== undefined && name !== null)
             url_ += "Name=" + encodeURIComponent("" + name) + "&";
         if (description !== undefined && description !== null)
@@ -675,11 +696,14 @@ export class ProfilesClient extends ApiClient {
      * Returns profile with given ID owned by user.
      * @return Returns the profile.
      */
-    getProfile(profile: number, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<ProfileDto>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}";
+    getProfile(profile: number, version: string, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<ProfileDto>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
@@ -756,14 +780,17 @@ export class ProfilesClient extends ApiClient {
      * Deletes a profile with the given ID.
      * @return If profile was deleted.
      */
-    deleteProfile(user: number, profile: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}";
+    deleteProfile(user: number, profile: number, version: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
@@ -850,8 +877,11 @@ export class TaxSchemesClient extends ApiClient {
      * @param query (optional) 
      * @return List of tax schemes.
      */
-    getTaxSchemes(query?: GetTaxSchemesQuery | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException>> {
-        let url_ = this.baseUrl + "/api/v1/tax-schemes?";
+    getTaxSchemes(version: string, query?: GetTaxSchemesQuery | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<TaxSchemeDto[]>> {
+        let url_ = this.baseUrl + "/api/v{Version}/tax-schemes?";
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (query !== undefined && query !== null)
             url_ += "query=" + encodeURIComponent("" + query) + "&";
         url_ = url_.replace(/[?&]$/, "");
@@ -878,7 +908,7 @@ export class TaxSchemesClient extends ApiClient {
         });
     }
 
-    protected processGetTaxSchemes(response: AxiosResponse): Promise<SwaggerResponse<IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException>> {
+    protected processGetTaxSchemes(response: AxiosResponse): Promise<SwaggerResponse<TaxSchemeDto[]>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -892,14 +922,21 @@ export class TaxSchemesClient extends ApiClient {
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-            result200 = IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException.fromJS(resultData200);
-            return Promise.resolve<SwaggerResponse<IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException>>(new SwaggerResponse<IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException>(status, _headers, result200));
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(TaxSchemeDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return Promise.resolve<SwaggerResponse<TaxSchemeDto[]>>(new SwaggerResponse<TaxSchemeDto[]>(status, _headers, result200));
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<SwaggerResponse<IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException>>(new SwaggerResponse(status, _headers, null as any));
+        return Promise.resolve<SwaggerResponse<TaxSchemeDto[]>>(new SwaggerResponse(status, _headers, null as any));
     }
 }
 
@@ -921,11 +958,14 @@ export class TransactionCategoriesClient extends ApiClient {
     /**
      * Get all categories that are either default or created by the profile.
      */
-    getCategories(profile: number, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
-        let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/transactions/categories";
+    getCategories(profile: number, version: string, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{user}/profiles/{profile}/transactions/categories";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{user}", encodeURIComponent("" + user));
@@ -988,14 +1028,17 @@ export class TransactionCategoriesClient extends ApiClient {
      * @param name (optional) 
      * @return Returns a location header to the newly created item.
      */
-    addCategory(user: number, profile: number, name?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
-        let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/transactions/categories?";
+    addCategory(user: number, profile: number, version: string, name?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{user}/profiles/{profile}/transactions/categories?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{user}", encodeURIComponent("" + user));
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (name !== undefined && name !== null)
             url_ += "Name=" + encodeURIComponent("" + name) + "&";
         url_ = url_.replace(/[?&]$/, "");
@@ -1073,14 +1116,17 @@ export class TransactionCategoriesClient extends ApiClient {
     /**
      * Get details of a category with given ID.
      */
-    getCategory(profile: number, category: number, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
-        let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/transactions/categories/{Category}";
+    getCategory(profile: number, category: number, version: string, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{user}/profiles/{profile}/transactions/categories/{Category}";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
         if (category === undefined || category === null)
             throw new Error("The parameter 'category' must be defined.");
         url_ = url_.replace("{Category}", encodeURIComponent("" + category));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{user}", encodeURIComponent("" + user));
@@ -1142,14 +1188,17 @@ export class TransactionCategoriesClient extends ApiClient {
      * Delete a category by its ID.
      * @return If category is successfully deleted.
      */
-    deleteCategory(profile: number, category: number, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
-        let url_ = this.baseUrl + "/api/v1/users/{user}/profiles/{profile}/transactions/categories/{Category}";
+    deleteCategory(profile: number, category: number, version: string, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{user}/profiles/{profile}/transactions/categories/{Category}";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
         if (category === undefined || category === null)
             throw new Error("The parameter 'category' must be defined.");
         url_ = url_.replace("{Category}", encodeURIComponent("" + category));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{user}", encodeURIComponent("" + user));
@@ -1242,11 +1291,14 @@ export class TransactionsClient extends ApiClient {
      * @param limit (optional) 
      * @return Returns the transactions.
      */
-    getTransactions(profile: number, user: string, startBefore?: Date | null | undefined, startAfter?: Date | null | undefined, offset?: number | undefined, limit?: number | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<TransactionDto[]>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/transactions?";
+    getTransactions(profile: number, version: string, user: string, startBefore?: Date | null | undefined, startAfter?: Date | null | undefined, offset?: number | undefined, limit?: number | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<TransactionDto[]>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/transactions?";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
@@ -1357,14 +1409,17 @@ export class TransactionsClient extends ApiClient {
      * @param unitsInCycle (optional) 
      * @return Returns a location header to the newly created item.
      */
-    addTransaction(user: number, profile: number, name?: string | null | undefined, description?: string | null | undefined, amount?: number | null | undefined, type?: string | undefined, paymentStart?: Date | null | undefined, taxScheme?: number | null | undefined, asset?: number | null | undefined, paymentEnd?: Date | null | undefined, timeUnit?: string | null | undefined, timesPerCycle?: number | null | undefined, unitsInCycle?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<FileResponse>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/transactions?";
+    addTransaction(user: number, profile: number, version: string, name?: string | null | undefined, description?: string | null | undefined, amount?: number | null | undefined, type?: string | undefined, paymentStart?: Date | null | undefined, taxScheme?: number | null | undefined, asset?: number | null | undefined, paymentEnd?: Date | null | undefined, timeUnit?: string | null | undefined, timesPerCycle?: number | null | undefined, unitsInCycle?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<FileResponse>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/transactions?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{user}", encodeURIComponent("" + user));
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (name !== undefined && name !== null)
             url_ += "Name=" + encodeURIComponent("" + name) + "&";
         if (description !== undefined && description !== null)
@@ -1474,14 +1529,17 @@ export class TransactionsClient extends ApiClient {
      * Get transaction with given ID.
      * @return Returns the transaction.
      */
-    getTransaction(profile: number, transaction: number, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<TransactionDto>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/transactions/{Transaction}";
+    getTransaction(profile: number, transaction: number, version: string, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<TransactionDto>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/transactions/{Transaction}";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
         if (transaction === undefined || transaction === null)
             throw new Error("The parameter 'transaction' must be defined.");
         url_ = url_.replace("{Transaction}", encodeURIComponent("" + transaction));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
@@ -1569,14 +1627,17 @@ export class TransactionsClient extends ApiClient {
      * @param unitsInCycle (optional) 
      * @return If transaction was successfully replaced.
      */
-    replaceTransaction(profile: number, transaction: number, user: string, name?: string | null | undefined, description?: string | null | undefined, amount?: number | null | undefined, type?: string | undefined, paymentStart?: Date | null | undefined, taxScheme?: number | null | undefined, asset?: number | null | undefined, paymentEnd?: Date | null | undefined, timeUnit?: string | null | undefined, timesPerCycle?: number | null | undefined, unitsInCycle?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/transactions/{Transaction}?";
+    replaceTransaction(profile: number, transaction: number, version: string, user: string, name?: string | null | undefined, description?: string | null | undefined, amount?: number | null | undefined, type?: string | undefined, paymentStart?: Date | null | undefined, taxScheme?: number | null | undefined, asset?: number | null | undefined, paymentEnd?: Date | null | undefined, timeUnit?: string | null | undefined, timesPerCycle?: number | null | undefined, unitsInCycle?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/transactions/{Transaction}?";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
         if (transaction === undefined || transaction === null)
             throw new Error("The parameter 'transaction' must be defined.");
         url_ = url_.replace("{Transaction}", encodeURIComponent("" + transaction));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
@@ -1680,14 +1741,17 @@ export class TransactionsClient extends ApiClient {
      * Deletes a transaction with given ID from a profile.
      * @return If transaction was deleted.
      */
-    deleteTransaction(profile: number, transaction: number, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/transactions/{Transaction}";
+    deleteTransaction(profile: number, transaction: number, version: string, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/transactions/{Transaction}";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
         if (transaction === undefined || transaction === null)
             throw new Error("The parameter 'transaction' must be defined.");
         url_ = url_.replace("{Transaction}", encodeURIComponent("" + transaction));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
@@ -1761,14 +1825,17 @@ export class TransactionsClient extends ApiClient {
      * @param category (optional) 
      * @return If the category was successfully added.
      */
-    addCategoryToTransaction(profile: number, transaction: number, user: string, category?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/transactions/{Transaction}/categories?";
+    addCategoryToTransaction(profile: number, transaction: number, version: string, user: string, category?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/transactions/{Transaction}/categories?";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
         if (transaction === undefined || transaction === null)
             throw new Error("The parameter 'transaction' must be defined.");
         url_ = url_.replace("{Transaction}", encodeURIComponent("" + transaction));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
@@ -1851,14 +1918,17 @@ export class TransactionsClient extends ApiClient {
      * @param category (optional) 
      * @return If the category was successfully removed.
      */
-    removeCategoryFromTransaction(profile: number, transaction: number, user: string, category?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/profiles/{Profile}/transactions/{Transaction}/categories?";
+    removeCategoryFromTransaction(profile: number, transaction: number, version: string, user: string, category?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/transactions/{Transaction}/categories?";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
         if (transaction === undefined || transaction === null)
             throw new Error("The parameter 'transaction' must be defined.");
         url_ = url_.replace("{Transaction}", encodeURIComponent("" + transaction));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
@@ -1949,11 +2019,14 @@ export class UsersClient extends ApiClient {
      * Get details of a user with a given ID.
      * @return Details of user with given ID.
      */
-    getUser(user: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<UserDto>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}";
+    getUser(user: number, version: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<UserDto>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
@@ -2027,8 +2100,11 @@ export class UsersClient extends ApiClient {
      * Get details of a user with a given ID.
      * @return Details of user with given ID.
      */
-    getCurrentUser(  cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<UserDto>> {
-        let url_ = this.baseUrl + "/api/v1/users/me";
+    getCurrentUser(version: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<UserDto>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/me";
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
@@ -2107,8 +2183,11 @@ export class UsersClient extends ApiClient {
      * @param rememberMe (optional) 
      * @return Returns the location of newly created user and an authentication token.
      */
-    registerUser(username?: string | null | undefined, email?: string | null | undefined, password?: string | null | undefined, confirmPassword?: string | null | undefined, rememberMe?: boolean | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<IResultOfIActionResultAndIBaseException>> {
-        let url_ = this.baseUrl + "/api/v1/users/register?";
+    registerUser(version: string, username?: string | null | undefined, email?: string | null | undefined, password?: string | null | undefined, confirmPassword?: string | null | undefined, rememberMe?: boolean | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<IResultOfIActionResultAndIBaseException>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/register?";
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (username !== undefined && username !== null)
             url_ += "Username=" + encodeURIComponent("" + username) + "&";
         if (email !== undefined && email !== null)
@@ -2190,8 +2269,11 @@ export class UsersClient extends ApiClient {
      * @param rememberMe (optional) 
      * @return Details of signed in user.
      */
-    signInUser(username?: string | null | undefined, password?: string | null | undefined, rememberMe?: boolean | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<IResultOfUserDtoAndIBaseException>> {
-        let url_ = this.baseUrl + "/api/v1/users/sign-in?";
+    signInUser(version: string, username?: string | null | undefined, password?: string | null | undefined, rememberMe?: boolean | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<UserDto>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/sign-in?";
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (username !== undefined && username !== null)
             url_ += "Username=" + encodeURIComponent("" + username) + "&";
         if (password !== undefined && password !== null)
@@ -2224,7 +2306,7 @@ export class UsersClient extends ApiClient {
         });
     }
 
-    protected processSignInUser(response: AxiosResponse): Promise<SwaggerResponse<IResultOfUserDtoAndIBaseException>> {
+    protected processSignInUser(response: AxiosResponse): Promise<SwaggerResponse<UserDto>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -2238,8 +2320,8 @@ export class UsersClient extends ApiClient {
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-            result200 = IResultOfUserDtoAndIBaseException.fromJS(resultData200);
-            return Promise.resolve<SwaggerResponse<IResultOfUserDtoAndIBaseException>>(new SwaggerResponse<IResultOfUserDtoAndIBaseException>(status, _headers, result200));
+            result200 = UserDto.fromJS(resultData200);
+            return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse<UserDto>(status, _headers, result200));
 
         } else if (status === 401) {
             const _responseText = response.data;
@@ -2252,18 +2334,21 @@ export class UsersClient extends ApiClient {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<SwaggerResponse<IResultOfUserDtoAndIBaseException>>(new SwaggerResponse(status, _headers, null as any));
+        return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
      * Refreshes user authentication through a refresh token.
      * @return Details of signed in user.
      */
-    refreshUser(user: number , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<IResultOfUserDtoAndIBaseException>> {
-        let url_ = this.baseUrl + "/api/v1/users/{User}/refresh";
+    refreshUser(user: number, version: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<UserDto>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/refresh";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{User}", encodeURIComponent("" + user));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
@@ -2288,7 +2373,7 @@ export class UsersClient extends ApiClient {
         });
     }
 
-    protected processRefreshUser(response: AxiosResponse): Promise<SwaggerResponse<IResultOfUserDtoAndIBaseException>> {
+    protected processRefreshUser(response: AxiosResponse): Promise<SwaggerResponse<UserDto>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -2302,14 +2387,14 @@ export class UsersClient extends ApiClient {
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-            result200 = IResultOfUserDtoAndIBaseException.fromJS(resultData200);
-            return Promise.resolve<SwaggerResponse<IResultOfUserDtoAndIBaseException>>(new SwaggerResponse<IResultOfUserDtoAndIBaseException>(status, _headers, result200));
+            result200 = UserDto.fromJS(resultData200);
+            return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse<UserDto>(status, _headers, result200));
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<SwaggerResponse<IResultOfUserDtoAndIBaseException>>(new SwaggerResponse(status, _headers, null as any));
+        return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse(status, _headers, null as any));
     }
 }
 
@@ -2576,14 +2661,17 @@ export interface IIResultOfIActionResultAndIBaseException {
     failure: boolean;
 }
 
-/** Result object that contains either a result value or a collection of exceptions. */
-export abstract class IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException implements IIResultOfIEnumerableOfTaxSchemeDtoAndIBaseException {
-    /** Whether the result is a success. */
-    success!: boolean;
-    /** Whether the result is a failure. */
-    failure!: boolean;
+export class TaxSchemeDto implements ITaxSchemeDto {
+    id!: number;
+    name!: string;
+    description!: string;
+    taxRate!: number;
+    incentiveSchemeTaxRefundRate?: number | undefined;
+    incentiveSchemeMinAge?: number | undefined;
+    incentiveSchemeMaxIncomePercentage?: number | undefined;
+    incentiveSchemeMaxApplicableIncome?: number | undefined;
 
-    constructor(data?: IIResultOfIEnumerableOfTaxSchemeDtoAndIBaseException) {
+    constructor(data?: ITaxSchemeDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2594,30 +2682,47 @@ export abstract class IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException implem
 
     init(_data?: any) {
         if (_data) {
-            this.success = _data["success"];
-            this.failure = _data["failure"];
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.taxRate = _data["taxRate"];
+            this.incentiveSchemeTaxRefundRate = _data["incentiveSchemeTaxRefundRate"];
+            this.incentiveSchemeMinAge = _data["incentiveSchemeMinAge"];
+            this.incentiveSchemeMaxIncomePercentage = _data["incentiveSchemeMaxIncomePercentage"];
+            this.incentiveSchemeMaxApplicableIncome = _data["incentiveSchemeMaxApplicableIncome"];
         }
     }
 
-    static fromJS(data: any): IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException {
+    static fromJS(data: any): TaxSchemeDto {
         data = typeof data === 'object' ? data : {};
-        throw new Error("The abstract class 'IResultOfIEnumerableOfTaxSchemeDtoAndIBaseException' cannot be instantiated.");
+        let result = new TaxSchemeDto();
+        result.init(data);
+        return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["success"] = this.success;
-        data["failure"] = this.failure;
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["taxRate"] = this.taxRate;
+        data["incentiveSchemeTaxRefundRate"] = this.incentiveSchemeTaxRefundRate;
+        data["incentiveSchemeMinAge"] = this.incentiveSchemeMinAge;
+        data["incentiveSchemeMaxIncomePercentage"] = this.incentiveSchemeMaxIncomePercentage;
+        data["incentiveSchemeMaxApplicableIncome"] = this.incentiveSchemeMaxApplicableIncome;
         return data;
     }
 }
 
-/** Result object that contains either a result value or a collection of exceptions. */
-export interface IIResultOfIEnumerableOfTaxSchemeDtoAndIBaseException {
-    /** Whether the result is a success. */
-    success: boolean;
-    /** Whether the result is a failure. */
-    failure: boolean;
+export interface ITaxSchemeDto {
+    id: number;
+    name: string;
+    description: string;
+    taxRate: number;
+    incentiveSchemeTaxRefundRate?: number | undefined;
+    incentiveSchemeMinAge?: number | undefined;
+    incentiveSchemeMaxIncomePercentage?: number | undefined;
+    incentiveSchemeMaxApplicableIncome?: number | undefined;
 }
 
 export class GetTaxSchemesQuery implements IGetTaxSchemesQuery {
@@ -2891,50 +2996,6 @@ export class BriefProfile implements IBriefProfile {
 export interface IBriefProfile {
     id: number;
     name: string;
-}
-
-/** Result object that contains either a result value or a collection of exceptions. */
-export abstract class IResultOfUserDtoAndIBaseException implements IIResultOfUserDtoAndIBaseException {
-    /** Whether the result is a success. */
-    success!: boolean;
-    /** Whether the result is a failure. */
-    failure!: boolean;
-
-    constructor(data?: IIResultOfUserDtoAndIBaseException) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.success = _data["success"];
-            this.failure = _data["failure"];
-        }
-    }
-
-    static fromJS(data: any): IResultOfUserDtoAndIBaseException {
-        data = typeof data === 'object' ? data : {};
-        throw new Error("The abstract class 'IResultOfUserDtoAndIBaseException' cannot be instantiated.");
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["success"] = this.success;
-        data["failure"] = this.failure;
-        return data;
-    }
-}
-
-/** Result object that contains either a result value or a collection of exceptions. */
-export interface IIResultOfUserDtoAndIBaseException {
-    /** Whether the result is a success. */
-    success: boolean;
-    /** Whether the result is a failure. */
-    failure: boolean;
 }
 
 function formatDate(d: Date) {

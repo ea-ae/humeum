@@ -14,7 +14,7 @@ function TaxSchemeList() {
 
     if (taxSchemes === null) {
       const client = new TaxSchemesClient();
-      client.getTaxSchemes(null, cancelSource.token).then((res) => setTaxSchemes(res.result));
+      client.getTaxSchemes('1', null, cancelSource.token).then((res) => setTaxSchemes(res.result));
     }
 
     return () => cancelSource.cancel();

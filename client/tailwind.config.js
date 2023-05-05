@@ -23,8 +23,9 @@ module.exports = {
         },
         secondary: {
           // 400: '#DB5756',
-          400: '#E6BD70', // used for sidebar
-          500: '#CCA864', // used for selected sidebar item
+          100: '#FCF5DE', // used for saturated sidebar background
+          400: '#E6BD70', // used for selected sidebar item
+          500: '#CCA864',
         },
         tertiary: {
           // 500: '#078DA3',
