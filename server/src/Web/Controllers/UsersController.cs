@@ -103,7 +103,7 @@ public class UsersController : ControllerBase {
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     public async Task<ActionResult<IResult<UserDto, IBaseException>>> RefreshUser(RefreshUserCommand command) {
         var userIdResult = await _mediator.Send(command);
-        var user = userIdResult.ThenAsync(async userId => await _mediator.Send(new GetUserQuery { User = userId }));
+        var user = await userIdResult.ThenAsync(async userId => await _mediator.Send(new GetUserQuery { User = userId }));
         return Ok(user);
     }
 }
