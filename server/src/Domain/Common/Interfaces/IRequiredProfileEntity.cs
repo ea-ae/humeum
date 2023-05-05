@@ -1,4 +1,4 @@
-﻿using Domain.ProfileAggregate;
+﻿using Domain.V1.ProfileAggregate;
 
 namespace Domain.Common.Interfaces;
 

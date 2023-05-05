@@ -1,14 +1,11 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Mappings;
 using Application.Test.Common;
-using Application.Transactions.Commands;
-using Application.Transactions.Queries;
-
+using Application.V1.Transactions.Commands;
+using Application.V1.Transactions.Queries;
 using AutoMapper;
-
-using Domain.TransactionAggregate;
-using Domain.TransactionAggregate.ValueObjects;
-
+using Domain.V1.TransactionAggregate;
+using Domain.V1.TransactionAggregate.ValueObjects;
 using Xunit;
 
 namespace Application.Test;
@@ -33,7 +30,7 @@ public class TransactionsTest {
 
         // set up a profile and three transactions
 
-        var profile = new Domain.ProfileAggregate.Profile(100, "Default");
+        var profile = Domain.V1.ProfileAggregate.Profile.Create(100, "Default").Unwrap();
         context.Profiles.Add(profile);
         await context.SaveChangesAsync();
 
@@ -78,7 +75,7 @@ public class TransactionsTest {
 
         // ensure that a new profile with no transactions returns an empty list
 
-        var emptyProfile = new Domain.ProfileAggregate.Profile(200, "EmptyProfile");
+        var emptyProfile = Domain.V1.ProfileAggregate.Profile.Create(200, "EmptyProfile").Unwrap();
         context.Profiles.Add(emptyProfile);
         await context.SaveChangesAsync();
 
@@ -100,7 +97,7 @@ public class TransactionsTest {
         var context = _dbContextFixture.CreateDbContext();
         var handler = new AddTransactionCommandHandler(context);
 
-        var profile = new Domain.ProfileAggregate.Profile(1, "Default");
+        var profile = Domain.V1.ProfileAggregate.Profile.Create(1, "Default").Unwrap();
         context.Profiles.Add(profile);
         await context.SaveChangesAsync();
 
@@ -137,7 +134,7 @@ public class TransactionsTest {
         var context = _dbContextFixture.CreateDbContext();
         var handler = new AddTransactionCommandHandler(context);
 
-        var profile = new Domain.ProfileAggregate.Profile(1, "Default");
+        var profile = Domain.V1.ProfileAggregate.Profile.Create(1, "Default").Unwrap();
         context.Profiles.Add(profile);
         await context.SaveChangesAsync();
 
@@ -180,7 +177,7 @@ public class TransactionsTest {
         var context = _dbContextFixture.CreateDbContext();
         var handler = new ReplaceTransactionCommandHandler(context);
 
-        var profile = new Domain.ProfileAggregate.Profile(1, "Default");
+        var profile = Domain.V1.ProfileAggregate.Profile.Create(1, "Default").Unwrap();
         context.Profiles.Add(profile);
         await context.SaveChangesAsync();
 

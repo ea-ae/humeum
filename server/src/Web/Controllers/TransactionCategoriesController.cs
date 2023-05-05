@@ -1,7 +1,5 @@
-﻿using Application.TransactionCategories.Commands;
-using Application.TransactionCategories.Queries;
-using Application.Transactions.Queries;
-
+﻿using Application.V1.TransactionCategories.Commands;
+using Application.V1.TransactionCategories.Queries;
 using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,7 +10,7 @@ using Web.Filters;
 
 namespace Web.Controllers;
 
-/// <inheritdoc cref="Domain.TransactionCategoryAggregate.TransactionCategory"/>
+/// <inheritdoc cref="Domain.V1.TransactionCategoryAggregate.TransactionCategory"/>
 [Route("api/v{Version:ApiVersion}/users/{user}/profiles/{profile}/transactions/categories")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleProfileData")]
 [ApplicationExceptionFilter]

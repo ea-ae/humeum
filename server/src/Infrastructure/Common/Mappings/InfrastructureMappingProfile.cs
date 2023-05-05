@@ -1,9 +1,7 @@
-﻿using Application.Transactions.Queries;
+﻿using Application.V1.Transactions.Queries;
 
 using AutoMapper;
-
-using Domain.UserAggregate;
-
+using Domain.V1.UserAggregate;
 using Infrastructure.Auth;
 
 namespace Application.Common.Mappings;

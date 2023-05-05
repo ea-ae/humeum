@@ -1,6 +1,5 @@
-﻿using Application.TaxSchemes.Queries;
-using Application.Users.Queries;
-
+﻿using Application.Users.Queries;
+using Application.V1.TaxSchemes.Queries;
 using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +10,7 @@ using Web.Filters;
 
 namespace Web.Controllers;
 
-/// <inheritdoc cref="Domain.TaxSchemeAggregate.TaxScheme"/>
+/// <inheritdoc cref="Domain.V1.TaxSchemeAggregate.TaxScheme"/>
 [Route("api/v{Version:ApiVersion}/[controller]")]
 [ApplicationResultFilter]
 [CsrfXHeaderFilter]

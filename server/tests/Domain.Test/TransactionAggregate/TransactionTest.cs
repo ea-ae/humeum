@@ -1,6 +1,5 @@
-using Domain.TransactionAggregate;
-using Domain.TransactionAggregate.ValueObjects;
-
+using Domain.V1.TransactionAggregate;
+using Domain.V1.TransactionAggregate.ValueObjects;
 using Xunit;
 
 namespace Domain.Test.TransactionAggregate;

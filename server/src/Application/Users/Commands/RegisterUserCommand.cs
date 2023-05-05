@@ -3,7 +3,7 @@
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 
-using Domain.UserAggregate;
+using Domain.V1.UserAggregate;
 
 using Shared.Interfaces;
 

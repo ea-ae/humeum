@@ -6,9 +6,7 @@ using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 
 using AutoMapper;
-
-using Domain.UserAggregate;
-
+using Domain.V1.UserAggregate;
 using Infrastructure.Auth;
 using Infrastructure.Common.Settings;
 

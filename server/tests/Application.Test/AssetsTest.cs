@@ -1,14 +1,11 @@
-﻿using Application.Assets.Commands;
-using Application.Assets.Queries;
-using Application.Common.Extensions;
+﻿using Application.Common.Extensions;
 using Application.Common.Mappings;
 using Application.Test.Common;
-
+using Application.V1.Assets.Commands;
+using Application.V1.Assets.Queries;
 using AutoMapper;
-
-using Domain.AssetAggregate;
-using Domain.TransactionAggregate.ValueObjects;
-
+using Domain.V1.AssetAggregate;
+using Domain.V1.AssetAggregate.ValueObjects;
 using Xunit;
 
 namespace Application.Test;
@@ -29,7 +26,7 @@ public class AssetsTest {
         var context = _dbContextFixture.CreateDbContext();
         var handler = new AddAssetCommandHandler(context);
 
-        var profile = new Domain.ProfileAggregate.Profile(1, "Default");
+        var profile = Domain.V1.ProfileAggregate.Profile.Create(1, "Default").Unwrap();
         context.Profiles.Add(profile);
         await context.SaveChangesAsync();
 
@@ -64,7 +61,7 @@ public class AssetsTest {
 
         // create profile and asset
 
-        var profile = new Domain.ProfileAggregate.Profile(1, "Default");
+        var profile = Domain.V1.ProfileAggregate.Profile.Create(1, "Default").Unwrap();
         var assetType = context.GetEnumerationEntityByCode<AssetType>(AssetType.Bond.Code).Unwrap();
         var asset = Asset.Create("My asset", null, 5m, 5m, assetType, profile).Unwrap();
         context.Profiles.Add(profile);

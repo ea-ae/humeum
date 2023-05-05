@@ -1,13 +1,12 @@
 ﻿using Application.Common.Extensions;
-using Application.Profiles.Commands;
 using Application.Test.Common;
 using Application.Test.Common.Stubs;
-
-using Domain.AssetAggregate;
-using Domain.ProfileAggregate;
-using Domain.TransactionAggregate;
-using Domain.TransactionAggregate.ValueObjects;
-
+using Application.V1.Profiles.Commands;
+using Domain.V1.AssetAggregate;
+using Domain.V1.AssetAggregate.ValueObjects;
+using Domain.V1.ProfileAggregate;
+using Domain.V1.TransactionAggregate;
+using Domain.V1.TransactionAggregate.ValueObjects;
 using Xunit;
 
 namespace Application.Test;
@@ -38,7 +37,7 @@ public class ProfilesTests {
             Description = profileDescription,
             WithdrawalRate = profileWithdrawalRate
         };
-        int profileId = await handler.Handle(command);
+        int profileId = (await handler.Handle(command)).Unwrap();
         var profile = context.Profiles.FirstOrDefault(p => p.Id == profileId);
 
         Assert.NotNull(profile);
@@ -56,7 +55,7 @@ public class ProfilesTests {
 
         // create a new profile
 
-        var profile = new Profile(1000, "My Profile Name", "About to delete", 5.5m);
+        var profile = Profile.Create(1000, "My Profile Name", "About to delete", 5.5m).Unwrap();
         context.Profiles.Add(profile);
         await context.SaveChangesAsync();
 

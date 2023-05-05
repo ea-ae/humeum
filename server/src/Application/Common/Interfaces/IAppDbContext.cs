@@ -1,10 +1,10 @@
-﻿using Domain.AssetAggregate;
-using Domain.ProfileAggregate;
-using Domain.TaxSchemeAggregate;
-using Domain.TransactionAggregate;
-using Domain.TransactionAggregate.ValueObjects;
-using Domain.TransactionCategoryAggregate;
-
+﻿using Domain.V1.AssetAggregate;
+using Domain.V1.AssetAggregate.ValueObjects;
+using Domain.V1.ProfileAggregate;
+using Domain.V1.TaxSchemeAggregate;
+using Domain.V1.TransactionAggregate;
+using Domain.V1.TransactionAggregate.ValueObjects;
+using Domain.V1.TransactionCategoryAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;

@@ -1,21 +1,20 @@
-﻿using Application.Assets.Queries;
-using Application.Profiles.Queries;
-using Application.TaxSchemes.Queries;
-using Application.TransactionCategories.Queries;
-using Application.Transactions.Queries;
-using Application.Users.Queries;
-
+﻿using Application.Users.Queries;
+using Application.V1.Assets.Queries;
+using Application.V1.Profiles.Queries;
+using Application.V1.TaxSchemes.Queries;
+using Application.V1.TransactionCategories.Queries;
+using Application.V1.Transactions.Queries;
 using AutoMapper;
-
-using Domain.AssetAggregate;
-using Domain.TaxSchemeAggregate;
-using Domain.TransactionAggregate;
-using Domain.TransactionCategoryAggregate;
-using Domain.UserAggregate;
+using Domain.V1.AssetAggregate;
+using Domain.V1.ProfileAggregate;
+using Domain.V1.TaxSchemeAggregate;
+using Domain.V1.TransactionAggregate;
+using Domain.V1.TransactionCategoryAggregate;
+using Domain.V1.UserAggregate;
 
 namespace Application.Common.Mappings;
 
-public class ApplicationMappingProfile : Profile {
+public class ApplicationMappingProfile : AutoMapper.Profile {
     public ApplicationMappingProfile() {
         CreateMap<Transaction, TransactionDto>()
             .ForMember(dest => dest.TaxScheme,
@@ -38,7 +37,7 @@ public class ApplicationMappingProfile : Profile {
 
         CreateMap<TaxScheme, TaxSchemeDto>();
 
-        CreateMap<Domain.ProfileAggregate.Profile, ProfileDto>();
+        CreateMap<Domain.V1.ProfileAggregate.Profile, ProfileDto>();
 
         CreateMap<User, UserDto>()
             .ForMember(dest => dest.Profiles,

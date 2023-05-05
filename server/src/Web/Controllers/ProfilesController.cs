@@ -1,6 +1,4 @@
-﻿using Application.Profiles.Commands;
-using Application.Profiles.Queries;
-using Shared.Interfaces;
+﻿using Shared.Interfaces;
 
 using MediatR;
 
@@ -10,10 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 
 using Web.Filters;
 using Shared.Models;
+using Application.V1.Profiles.Commands;
+using Application.V1.Profiles.Queries;
 
 namespace Web.Controllers;
 
-/// <inheritdoc cref="Domain.ProfileAggregate.Profile"/>
+/// <inheritdoc cref="Domain.V1.ProfileAggregate.Profile"/>
 [Route("api/v{Version:ApiVersion}/users/{User}/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleUserData")]
 [ApplicationResultFilter]

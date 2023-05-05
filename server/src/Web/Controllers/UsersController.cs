@@ -14,7 +14,7 @@ using Web.Filters;
 
 namespace Web.Controllers;
 
-/// <inheritdoc cref="Domain.UserAggregate.User"/>
+/// <inheritdoc cref="Domain.V1.UserAggregate.User"/>
 [Route("api/v{Version:ApiVersion}/[controller]")]
 [ApplicationResultFilter]
 [CsrfXHeaderFilter]

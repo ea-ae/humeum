@@ -1,7 +1,5 @@
-﻿using Application.Assets.Commands;
-using Application.Assets.Queries;
-using Application.Transactions.Commands;
-
+﻿using Application.V1.Assets.Commands;
+using Application.V1.Assets.Queries;
 using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,7 +13,7 @@ using Web.Filters;
 
 namespace Web.Controllers;
 
-/// <inheritdoc cref="Domain.AssetAggregate.Asset"/>
+/// <inheritdoc cref="Domain.V1.AssetAggregate.Asset"/>
 [Route("api/v{Version:ApiVersion}/users/{User}/profiles/{Profile}/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleProfileData")]
 [ApplicationResultFilter]

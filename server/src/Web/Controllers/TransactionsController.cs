@@ -1,6 +1,5 @@
-﻿using Application.Transactions.Commands;
-using Application.Transactions.Queries;
-
+﻿using Application.V1.Transactions.Commands;
+using Application.V1.Transactions.Queries;
 using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,7 +13,7 @@ using Web.Filters;
 
 namespace Web.Controllers;
 
-/// <inheritdoc cref="Domain.TransactionAggregate.Transaction"/>
+/// <inheritdoc cref="Domain.V1.TransactionAggregate.Transaction"/>
 [Route("api/v{Version:ApiVersion}/users/{User}/profiles/{Profile}/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleProfileData")]
 [ApplicationResultFilter]

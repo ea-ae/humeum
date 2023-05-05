@@ -1,13 +1,12 @@
 ﻿using Application.Common.Interfaces;
-
-using Domain.AssetAggregate;
 using Domain.Common.Models;
-using Domain.ProfileAggregate;
-using Domain.TaxSchemeAggregate;
-using Domain.TransactionAggregate;
-using Domain.TransactionAggregate.ValueObjects;
-using Domain.TransactionCategoryAggregate;
-
+using Domain.V1.AssetAggregate;
+using Domain.V1.AssetAggregate.ValueObjects;
+using Domain.V1.ProfileAggregate;
+using Domain.V1.TaxSchemeAggregate;
+using Domain.V1.TransactionAggregate;
+using Domain.V1.TransactionAggregate.ValueObjects;
+using Domain.V1.TransactionCategoryAggregate;
 using Infrastructure.Auth;
 
 using Microsoft.AspNetCore.Identity;
