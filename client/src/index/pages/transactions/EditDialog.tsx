@@ -26,24 +26,26 @@ export default function EditDialog({ transaction, isOpen, onClose }: Props) {
     <Mui.Dialog open={isOpen} onClose={onClose} fullScreen={fullScreen} classes={{ paper: 'md:min-w-[60vw] lg:min-w-[30vw]' }}>
       <Mui.DialogTitle>Edit transaction #{transaction.id}</Mui.DialogTitle>
       <Mui.DialogContent dividers>
-        <Input
-          label="Name"
-          defaultValue={transaction.name}
-          typePattern={namePattern}
-          validPattern={namePattern}
-          variant="outlined"
-          className="my-4"
-          isOutlined
-        />
-        <Input
-          label="Description"
-          defaultValue={transaction.description}
-          typePattern={descriptionPattern}
-          validPattern={descriptionPattern}
-          className="my-4"
-          isOutlined
-        />
-        <CurrencyInput label="Amount" defaultValue={transaction.amount.toString()} className="my-4" isOutlined />
+        <div>
+          <Input
+            label="Name"
+            defaultValue={transaction.name}
+            typePattern={namePattern}
+            validPattern={namePattern}
+            variant="outlined"
+            className=""
+            isOutlined
+          />
+          <Input
+            label="Description"
+            defaultValue={transaction.description}
+            typePattern={descriptionPattern}
+            validPattern={descriptionPattern}
+            className=""
+            isOutlined
+          />
+          <CurrencyInput label="Amount" defaultValue={transaction.amount.toString()} className="my-4" isOutlined />
+        </div>
       </Mui.DialogContent>
       <Mui.DialogActions>
         <Mui.Button onClick={onClose}>Cancel</Mui.Button>

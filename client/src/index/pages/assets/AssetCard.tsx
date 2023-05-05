@@ -24,7 +24,11 @@ export default function AssetCard({ name, description, returnRate, standardDevia
     }
   };
 
-  const onDeleteClick = () => onDelete();
+  const onDeleteClick = () => {
+    if (onDelete !== null && onDelete !== undefined) {
+      onDelete();
+    }
+  };
 
   return (
     <Card>
