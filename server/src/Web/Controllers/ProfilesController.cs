@@ -14,7 +14,7 @@ using Shared.Models;
 namespace Web.Controllers;
 
 /// <inheritdoc cref="Domain.ProfileAggregate.Profile"/>
-[Route("api/v1/users/{User}/[controller]")]
+[Route("api/v{Version:ApiVersion}/users/{User}/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleUserData")]
 [ApplicationResultFilter]
 [CsrfXHeaderFilter]

@@ -13,7 +13,7 @@ using Web.Filters;
 namespace Web.Controllers;
 
 /// <inheritdoc cref="Domain.TransactionCategoryAggregate.TransactionCategory"/>
-[Route("api/v1/users/{user}/profiles/{profile}/transactions/categories")]
+[Route("api/v{Version:ApiVersion}/users/{user}/profiles/{profile}/transactions/categories")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleProfileData")]
 [ApplicationExceptionFilter]
 [CsrfXHeaderFilter]

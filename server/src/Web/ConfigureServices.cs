@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
 
 using Web;
 using Web.Common;
+using Web.Controllers;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -20,13 +22,19 @@ public static class ConfigureServices {
             o.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
         });
 
-        services.AddEndpointsApiExplorer();
+        services.AddApiVersioning(o => {
+            o.ReportApiVersions = true;
+            o.RouteConstraintName = "ApiVersion";
 
-        //services.AddSwaggerGen(o => {
-        //    // add xml comment docs to swagger
-        //    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-        //    o.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-        //});
+            o.Conventions.Controller<AssetsController>().HasApiVersion(1, 0);
+            o.Conventions.Controller<ProfilesController>().HasApiVersion(1, 0);
+            o.Conventions.Controller<TaxSchemesController>().HasApiVersion(1, 0);
+            o.Conventions.Controller<TransactionCategoriesController>().HasApiVersion(1, 0);
+            o.Conventions.Controller<TransactionsController>().HasApiVersion(1, 0);
+            o.Conventions.Controller<UsersController>().HasApiVersion(1, 0);
+        });
+
+        services.AddEndpointsApiExplorer();
 
         services.AddSwaggerDocument();
 

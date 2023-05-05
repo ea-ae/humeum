@@ -15,7 +15,7 @@ using Web.Filters;
 namespace Web.Controllers;
 
 /// <inheritdoc cref="Domain.TransactionAggregate.Transaction"/>
-[Route("api/v1/users/{User}/profiles/{Profile}/[controller]")]
+[Route("api/v{Version:ApiVersion}/users/{User}/profiles/{Profile}/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleProfileData")]
 [ApplicationResultFilter]
 [CsrfXHeaderFilter]

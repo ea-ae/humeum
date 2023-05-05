@@ -15,7 +15,7 @@ using Web.Filters;
 namespace Web.Controllers;
 
 /// <inheritdoc cref="Domain.UserAggregate.User"/>
-[Route("api/v1/[controller]")]
+[Route("api/v{Version:ApiVersion}/[controller]")]
 [ApplicationResultFilter]
 [CsrfXHeaderFilter]
 [Produces("application/json")]
