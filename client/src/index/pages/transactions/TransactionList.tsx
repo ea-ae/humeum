@@ -42,6 +42,8 @@ function TransactionList() {
     return () => cancelSource.cancel();
   }, []);
 
+  const onTransactionSave = (transaction: TransactionDto) => 1;
+
   const transactionRows = React.useMemo(() => {
     if (transactions !== null) {
       const rows = transactions.map((transaction) => {
@@ -140,7 +142,7 @@ function TransactionList() {
           Footer: TransactionListFooter,
         }}
       />
-      <EditDialog transaction={selectedTransaction} isOpen={isEditDialogOpen} onClose={onEditDialogClose} />
+      <EditDialog transaction={selectedTransaction} isOpen={isEditDialogOpen} onSave={onEditDialogClose} />
     </>
   );
 }

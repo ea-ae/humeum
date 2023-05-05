@@ -10,45 +10,51 @@ import Input from '../../components/cards/Input';
 interface Props {
   transaction: TransactionDto | null; // transaction remains after closing for the transition
   isOpen: boolean;
-  onClose: () => void;
+  onSave: () => void;
 }
 
-export default function EditDialog({ transaction, isOpen, onClose }: Props) {
-  const theme = useTheme();
-
+export default function EditDialog({ transaction, isOpen, onSave }: Props) {
   if (transaction === null) return null;
+
+  const [data, setData] = React.useState<{ name: string; description: string; amount: number }>({
+    name: transaction.name,
+    description: transaction.description,
+    amount: transaction.amount,
+  });
+
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const namePattern = /[A-Za-z0-9ÕÄÖÜõäöü ]{0,50}/;
   const descriptionPattern = /[A-Za-z0-9ÕÄÖÜõäöü ]{0,400}/;
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
-    <Mui.Dialog open={isOpen} onClose={onClose} fullScreen={fullScreen} classes={{ paper: 'md:min-w-[60vw] lg:min-w-[30vw]' }}>
+    <Mui.Dialog open={isOpen} onClose={onSave} fullScreen={fullScreen} classes={{ paper: 'md:min-w-[60vw] lg:min-w-[30vw]' }}>
       <Mui.DialogTitle>Edit transaction #{transaction.id}</Mui.DialogTitle>
       <Mui.DialogContent dividers>
-        <div>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
           <Input
             label="Name"
             defaultValue={transaction.name}
             typePattern={namePattern}
             validPattern={namePattern}
             variant="outlined"
-            className=""
+            className="2xl:col-span-2"
             isOutlined
           />
+          <CurrencyInput label="Amount" defaultValue={transaction.amount.toString()} isOutlined />
           <Input
             label="Description"
             defaultValue={transaction.description}
             typePattern={descriptionPattern}
             validPattern={descriptionPattern}
-            className=""
+            className="grow-1 lg:col-span-2 2xl:col-span-3"
             isOutlined
           />
-          <CurrencyInput label="Amount" defaultValue={transaction.amount.toString()} className="my-4" isOutlined />
         </div>
       </Mui.DialogContent>
       <Mui.DialogActions>
-        <Mui.Button onClick={onClose}>Cancel</Mui.Button>
+        <Mui.Button onClick={(_) => onSave()}>Save</Mui.Button>
       </Mui.DialogActions>
     </Mui.Dialog>
   );

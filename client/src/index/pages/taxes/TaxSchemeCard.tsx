@@ -21,7 +21,7 @@ export default function TaxSchemeCard({ name, description, taxRate, discount, di
     <Card>
       <h1 className="font-semibold">{name}</h1>
       <p className="flex-grow mt-2 mb-4 text-stone-700 text-sm break-words">{description}</p>
-      <div className="flex flex-row flex-wrap">
+      <div className="flex flex-row flex-wrap gap-x-8">
         <PercentageInput
           disabled={readOnly}
           label="Tax rate"

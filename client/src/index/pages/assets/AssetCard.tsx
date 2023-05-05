@@ -40,6 +40,7 @@ export default function AssetCard({ name, description, returnRate, standardDevia
           label="Real return"
           tooltip="Annual mean real (inflation-adjusted) return of the asset."
           defaultValue={returnRate.toString()}
+          className="mr-8"
           onChange={(value: number) => setData({ returnRate: value, standardDeviation: data.standardDeviation })}
         />
         <PercentageInput

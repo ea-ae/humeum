@@ -15,7 +15,7 @@ type Props = Mui.TextFieldProps & {
 export default function Input(props: Props) {
   const { tooltip, defaultValue, typePattern, validPattern, symbol, isOutlined, onInputChange } = props; // Input props
   const { id, label, disabled, fullWidth } = props; // TextField props (todo: do not use Mui.TextFieldProps bc it has too many)
-  const textFieldStyle = `flex-grow my-2 mr-8 ${props.className}` ?? '';
+  const textFieldStyle = `flex-grow my-2 ${props.className}` ?? '';
 
   const [value, setValue] = React.useState<string>(defaultValue);
   const [isValid, setIsValid] = React.useState<boolean>(validPattern.test(value));
