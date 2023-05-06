@@ -10,6 +10,52 @@ import useCache from '../../hooks/useCache';
 import EditDialog from './EditDialog';
 import TransactionListFooter from './TransactionListFooter';
 
+const getGridColumns = (onEdit: (rowId: number) => void): GridColDef[] => {
+  const onEditClick = (e: React.MouseEvent, params: GridRenderCellParams) => {
+    e.preventDefault();
+    onEdit(params.row.id as number);
+  };
+
+  return [
+    { field: 'name', headerName: 'Name', flex: 2, minWidth: 180, editable: false },
+    {
+      field: 'amount',
+      headerName: 'Amount',
+      type: 'number',
+      minWidth: 100,
+      editable: false,
+      valueFormatter: (params) => `${params.value} €`,
+      cellClassName: (params) => (params.value > 0 ? 'text-green-700' : 'text-red-700'),
+    },
+    { field: 'date', headerName: 'Date', type: 'date', flex: 1, minWidth: 100, editable: true },
+    {
+      field: 'taxScheme',
+      headerName: 'Tax Scheme',
+      type: 'singleSelect',
+      minWidth: 100,
+      editable: false,
+      valueOptions: ['Income tax', 'III pillar post-2021', 'III pillar pre-2021', 'Non-taxable'],
+    },
+    {
+      field: 'asset',
+      headerName: 'Asset',
+      type: 'singleSelect',
+      minWidth: 100,
+      editable: false,
+      valueOptions: ['Index fund', 'Bond fund'],
+    },
+    {
+      field: 'editAction',
+      headerName: 'Edit',
+      renderCell: (params) => (
+        <Mui.Button variant="text" className="text-tertiary-300" onClick={(e) => onEditClick(e, params)}>
+          Edit
+        </Mui.Button>
+      ),
+    },
+  ];
+};
+
 function TransactionList() {
   const [pageSize, setPageSize] = React.useState<number>(10);
   const [transactions, setTransactions] = useCache<TransactionDto[] | null>('transactions', null);
@@ -70,7 +116,7 @@ function TransactionList() {
 
   const transactionRows = React.useMemo(() => {
     if (transactions !== null) {
-      const rows = transactions.map((transaction) => {
+      return transactions.map((transaction) => {
         const start = transaction.paymentTimelinePeriodStart.toLocaleDateString();
         const end = transaction.paymentTimelinePeriodEnd?.toLocaleDateString();
         const date = end ? `${start} — ${end}` : start;
@@ -84,19 +130,15 @@ function TransactionList() {
           asset: transaction.asset?.name ?? '',
         };
       });
-      return rows;
     }
     return [];
   }, [transactions]);
 
-  const onTransactionEditClick = (e: React.MouseEvent, params: GridRenderCellParams) => {
-    e.stopPropagation();
-
+  const onTransactionEditClick = (id: number) => {
     if (transactions === null) {
       throw new Error('Transactions list not set.');
     }
 
-    const id = params.row.id as number;
     const transaction = transactions?.find((t) => t.id === id);
     if (transaction === undefined) {
       throw new Error('Transaction not found.');
@@ -106,44 +148,7 @@ function TransactionList() {
     setSelectedTransaction(transaction);
   };
 
-  const columns: GridColDef[] = [
-    { field: 'name', headerName: 'Name', flex: 2, minWidth: 180, editable: true },
-    {
-      field: 'amount',
-      headerName: 'Amount',
-      type: 'number',
-      minWidth: 100,
-      editable: false,
-      valueFormatter: (params) => `${params.value} €`,
-      cellClassName: (params) => (params.value > 0 ? 'text-green-700' : 'text-red-700'),
-    },
-    { field: 'date', headerName: 'Date', type: 'date', flex: 1, minWidth: 100, editable: true },
-    {
-      field: 'taxScheme',
-      headerName: 'Tax Scheme',
-      type: 'singleSelect',
-      minWidth: 100,
-      editable: false,
-      valueOptions: ['Income tax', 'III pillar post-2021', 'III pillar pre-2021', 'Non-taxable'],
-    },
-    {
-      field: 'asset',
-      headerName: 'Asset',
-      type: 'singleSelect',
-      minWidth: 100,
-      editable: false,
-      valueOptions: ['Index fund', 'Bond fund'],
-    },
-    {
-      field: 'editAction',
-      headerName: 'Edit',
-      renderCell: (params) => (
-        <Mui.Button variant="text" className="text-tertiary-300" onClick={(e) => onTransactionEditClick(e, params)}>
-          Edit
-        </Mui.Button>
-      ),
-    },
-  ];
+  const columns: GridColDef[] = getGridColumns(onTransactionEditClick);
 
   return (
     <>
