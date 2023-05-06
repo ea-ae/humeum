@@ -30,7 +30,7 @@ export default function PercentageInput({ label, tooltip, defaultValue, disabled
       validPattern={validPattern}
       disabled={disabled}
       className={className}
-      onInputChange={onInputChange}
+      onChange={onInputChange}
     />
   );
 }

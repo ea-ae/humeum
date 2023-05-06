@@ -36,9 +36,14 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
             validPattern={namePattern}
             className="2xl:col-span-2"
             isOutlined
-            onInputChange={(value: string) => setData(new TransactionDto({ ...data, name: value }))}
+            onChange={(value: string) => setData(new TransactionDto({ ...data, name: value }))}
           />
-          <CurrencyInput label="Amount" defaultValue={transaction.amount.toString()} isOutlined />
+          <CurrencyInput
+            label="Amount"
+            defaultValue={transaction.amount.toString()}
+            isOutlined
+            onChange={(value: number) => setData(new TransactionDto({ ...data, amount: value }))}
+          />
           <Input
             label="Description"
             defaultValue={transaction.description}
@@ -46,6 +51,7 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
             validPattern={descriptionPattern}
             className="grow-1 lg:col-span-2 2xl:col-span-3"
             isOutlined
+            onChange={(value: string) => setData(new TransactionDto({ ...data, description: value }))}
           />
         </div>
       </Mui.DialogContent>

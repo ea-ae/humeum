@@ -33,7 +33,7 @@ export default function CurrencyInput({ label, tooltip, defaultValue, disabled, 
       className={className}
       isOutlined={isOutlined}
       fullWidth
-      onInputChange={onInputChange}
+      onChange={onInputChange}
     />
   );
 }

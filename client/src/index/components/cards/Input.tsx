@@ -15,11 +15,11 @@ type Props = {
   fullWidth?: boolean;
   className?: string;
 
-  onInputChange?: (input: string) => void;
+  onChange?: (input: string) => void;
 };
 
 export default function Input(props: Props) {
-  const { tooltip, defaultValue, typePattern, validPattern, symbol, isOutlined, onInputChange } = props; // Input props
+  const { tooltip, defaultValue, typePattern, validPattern, symbol, isOutlined, onChange } = props; // Input props
   const { id, label, disabled, fullWidth } = props; // TextField props (todo: do not use Mui.TextFieldProps bc it has too many)
   const textFieldStyle = `flex-grow my-2 ${props.className}` ?? '';
 
@@ -34,8 +34,8 @@ export default function Input(props: Props) {
       setIsValid(validPattern.test(e.target.value));
       setHasChanged(true);
 
-      if (onInputChange !== null && onInputChange !== undefined) {
-        onInputChange(e.target.value);
+      if (onChange !== null && onChange !== undefined) {
+        onChange(e.target.value);
       }
     }
   };
@@ -62,7 +62,7 @@ Input.defaultProps = {
   tooltip: '',
   symbol: null,
   isOutlined: false,
-  onInputChange: undefined,
+  onChange: undefined,
   id: undefined,
   disabled: false,
   fullWidth: false,
