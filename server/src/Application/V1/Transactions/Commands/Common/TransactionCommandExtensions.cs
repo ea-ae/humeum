@@ -72,10 +72,13 @@ internal static class TransactionCommandExtensions
         // create a payment timeline value object for the transaction; return failed result early if needed
 
         IResult<Timeline, IBaseException> paymentTimeline;
+        var start = DateOnly.FromDateTime((DateTime)request.PaymentStart!);
+
 
         if (isRecurringTransaction.Unwrap())
         {
-            var paymentPeriod = TimePeriod.Create((DateOnly)request.PaymentStart!, (DateOnly)request.PaymentEnd!);
+            var end = DateOnly.FromDateTime((DateTime)request.PaymentEnd!);
+            var paymentPeriod = TimePeriod.Create(start, end);
             builder.AddResultErrors(paymentPeriod);
 
             var timeUnit = context.GetEnumerationEntityByCode<TimeUnit>(request.TimeUnit!);
@@ -96,7 +99,7 @@ internal static class TransactionCommandExtensions
         }
         else
         {
-            var paymentPeriod = TimePeriod.Create((DateOnly)request.PaymentStart!);
+            var paymentPeriod = TimePeriod.Create(start);
             if (paymentPeriod.Failure)
             {
                 return builder.AddResultErrors(paymentPeriod).Build();

@@ -25,7 +25,7 @@ export default function LoginPage() {
 
     const usersClient = new UsersClient();
     usersClient
-      .signInUser(user, password, false)
+      .signInUser('1', user, password, false)
       .then((res) => {
         // eslint-disable-next-line no-console
         console.log(res);
@@ -37,6 +37,11 @@ export default function LoginPage() {
       });
   };
 
+  const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    login();
+  };
+
   return (
     <Layout centerFooter>
       <div className="flex justify-center">
@@ -44,7 +49,7 @@ export default function LoginPage() {
           <div className="grow pt-5 pb-4 px-2 lg:px-12 text-2xl lg:text-3xl tracking-tighter font-semibold text-shadow text-center text-white bg-secondary-400 shadow-[0_3px_6px_-6px] shadow-black">
             Welcome to Humeum
           </div>
-          <div className="flex flex-col px-8">
+          <form onSubmit={onFormSubmit} className="flex flex-col px-8">
             <Mui.TextField
               className="min-w-[25vw] mt-8 mb-4"
               id="return"
@@ -62,10 +67,10 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <Mui.Button className="my-8 px-8 py-3 text-lg tracking-widest" variant="contained" onClick={login}>
+            <Mui.Button type="submit" className="my-8 px-8 py-3 text-lg tracking-widest" variant="contained" onClick={login}>
               Login
             </Mui.Button>
-          </div>
+          </form>
         </Card>
       </div>
     </Layout>

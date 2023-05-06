@@ -1,13 +1,19 @@
 import * as Mui from '@mui/material';
 import * as React from 'react';
 
-type Props = Mui.TextFieldProps & {
+type Props = {
   tooltip?: string;
   defaultValue: string;
   typePattern: RegExp;
   validPattern: RegExp;
   symbol?: string | null;
   isOutlined?: boolean;
+
+  label: string;
+  id?: string | undefined;
+  disabled?: boolean;
+  fullWidth?: boolean;
+  className?: string;
 
   onInputChange?: (input: string) => void;
 };
@@ -57,4 +63,8 @@ Input.defaultProps = {
   symbol: null,
   isOutlined: false,
   onInputChange: undefined,
+  id: undefined,
+  disabled: false,
+  fullWidth: false,
+  className: '',
 };

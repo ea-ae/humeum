@@ -16,11 +16,11 @@ public record AddTransactionCommand : ICommand<IResult<int, IBaseException>>, IT
     public string? Description { get; init; }
     [Required] public decimal? Amount { get; init; }
     [Required] public required string Type { get; init; }
-    [Required] public DateOnly? PaymentStart { get; init; }
+    [Required] public DateTime? PaymentStart { get; init; }
     [Required] public required int? TaxScheme { get; init; }
     public int? Asset { get; init; }
 
-    public DateOnly? PaymentEnd { get; init; }
+    public DateTime? PaymentEnd { get; init; }
     public string? TimeUnit { get; init; }
     public int? TimesPerCycle { get; init; }
     public int? UnitsInCycle { get; init; }

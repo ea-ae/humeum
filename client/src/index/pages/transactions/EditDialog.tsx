@@ -10,17 +10,13 @@ import Input from '../../components/cards/Input';
 interface Props {
   transaction: TransactionDto | null; // transaction remains after closing for the transition
   isOpen: boolean;
-  onSave: () => void;
+  onSave: (transaction: TransactionDto) => void;
 }
 
 export default function EditDialog({ transaction, isOpen, onSave }: Props) {
   if (transaction === null) return null;
 
-  const [data, setData] = React.useState<{ name: string; description: string; amount: number }>({
-    name: transaction.name,
-    description: transaction.description,
-    amount: transaction.amount,
-  });
+  const [data, setData] = React.useState<TransactionDto>(transaction);
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -38,9 +34,9 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
             defaultValue={transaction.name}
             typePattern={namePattern}
             validPattern={namePattern}
-            variant="outlined"
             className="2xl:col-span-2"
             isOutlined
+            onInputChange={(value: string) => setData(new TransactionDto({ ...data, name: value }))}
           />
           <CurrencyInput label="Amount" defaultValue={transaction.amount.toString()} isOutlined />
           <Input
@@ -54,7 +50,7 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
         </div>
       </Mui.DialogContent>
       <Mui.DialogActions>
-        <Mui.Button onClick={(_) => onSave()}>Save</Mui.Button>
+        <Mui.Button onClick={(_) => onSave(data)}>Save</Mui.Button>
       </Mui.DialogActions>
     </Mui.Dialog>
   );

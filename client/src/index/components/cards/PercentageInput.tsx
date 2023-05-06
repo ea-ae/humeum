@@ -7,7 +7,7 @@ interface Props {
   disabled?: boolean;
   className?: string;
 
-  onChange?: (percentage: number) => void;
+  onChange?: undefined | ((percentage: number) => void);
 }
 
 export default function PercentageInput({ label, tooltip, defaultValue, disabled, className, onChange }: Props) {

@@ -18,31 +18,55 @@ function TransactionList() {
   const { user, setAuthentication } = useAuth();
   const navigate = useNavigate();
 
+  const client = new TransactionsClient();
+
+  const fail = () => {
+    setAuthentication(null);
+    navigate('/login');
+  };
+
   React.useEffect(() => {
+    if (user === null) {
+      throw new Error('User was null in startup effect');
+    }
+
     const cancelSource = axios.CancelToken.source();
 
-    if (user !== null && transactions === null) {
-      const client = new TransactionsClient();
+    const userId = user.id.toString();
+    const profileId = user.profiles[0].id;
 
-      const userId = user.id.toString();
-      const profileId = user.profiles[0].id;
-
-      const get = () => client.getTransactions(profileId, '1', userId, undefined, undefined, undefined, undefined, cancelSource.token);
-
-      const set = (value: TransactionDto[]) => setTransactions(value);
-
-      const fail = () => {
-        setAuthentication(null);
-        navigate('/login');
-      };
-
-      TransactionsClient.callAuthenticatedEndpoint(get, set, fail, user.id, cancelSource.token);
-    }
+    const get = () => client.getTransactions(profileId, '1', userId, undefined, undefined, undefined, undefined, cancelSource.token);
+    const set = (value: TransactionDto[]) => setTransactions(value);
+    TransactionsClient.callAuthenticatedEndpoint(get, set, fail, user.id, cancelSource.token);
 
     return () => cancelSource.cancel();
   }, []);
 
-  const onTransactionSave = (transaction: TransactionDto) => 1;
+  const onTransactionSave = (transaction: TransactionDto) => {
+    setIsEditDialogOpen(false); // we do not null the transaction here, because we want to keep it for the transition
+
+    if (user !== null && transactions !== null) {
+      const userId = user.id.toString();
+      const profileId = user.profiles[0].id;
+
+      const get = () =>
+        client.replaceTransaction(
+          profileId,
+          transaction.id,
+          '1',
+          userId,
+          transaction.name,
+          transaction.description,
+          transaction.amount,
+          transaction.typeCode,
+          transaction.paymentTimelinePeriodStart,
+          transaction.taxScheme.id,
+          transaction.asset?.id
+        );
+      const set = () => setTransactions(transactions.map((t) => (t.id === transaction.id ? transaction : t)));
+      TransactionsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
+    }
+  };
 
   const transactionRows = React.useMemo(() => {
     if (transactions !== null) {
@@ -80,10 +104,6 @@ function TransactionList() {
 
     setIsEditDialogOpen(true);
     setSelectedTransaction(transaction);
-  };
-
-  const onEditDialogClose = () => {
-    setIsEditDialogOpen(false); // we do not null the transaction here, because we want to keep it for the transition
   };
 
   const columns: GridColDef[] = [
@@ -142,7 +162,7 @@ function TransactionList() {
           Footer: TransactionListFooter,
         }}
       />
-      <EditDialog transaction={selectedTransaction} isOpen={isEditDialogOpen} onSave={onEditDialogClose} />
+      <EditDialog transaction={selectedTransaction} isOpen={isEditDialogOpen} onSave={onTransactionSave} />
     </>
   );
 }
