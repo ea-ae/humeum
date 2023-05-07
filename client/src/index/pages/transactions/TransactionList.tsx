@@ -1,5 +1,4 @@
-import * as Mui from '@mui/material';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import axios from 'axios';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -70,7 +69,7 @@ function TransactionList() {
 
     const get = () => client.getTransactions(profileId, '1', userId, undefined, undefined, undefined, undefined, cancelSource.token);
     const set = (value: TransactionDto[]) => setTransactions(value);
-    TransactionsClient.callAuthenticatedEndpoint(get, set, fail, user.id, cancelSource.token);
+    TransactionsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
 
     return () => cancelSource.cancel();
   }, []);

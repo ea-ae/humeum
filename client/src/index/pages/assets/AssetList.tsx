@@ -29,7 +29,7 @@ export default function AssetList() {
 
     const get = () => client.getAssets(user.profiles[0].id, '1', user.id.toString());
     const set = (value: AssetDto[]) => setAssets(value);
-    AssetsClient.callAuthenticatedEndpoint(get, set, fail, user.id, cancelSource.token);
+    AssetsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
 
     return () => {
       cancelSource.cancel();
@@ -51,8 +51,7 @@ export default function AssetList() {
         asset.description,
         realReturn,
         standardDeviation,
-        asset.type.code,
-        cancelSource.token
+        asset.type.code
       );
 
     const set = () => {
@@ -61,7 +60,7 @@ export default function AssetList() {
       setAssets(assets.map((a) => (a.id === asset.id ? newAsset : a)));
     };
 
-    AssetsClient.callAuthenticatedEndpoint(get, set, fail, user.id, cancelSource.token);
+    AssetsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
   };
 
   const onAssetDelete = (asset: AssetDto) => {
@@ -72,7 +71,7 @@ export default function AssetList() {
     const get = () => client.deleteAsset(user.profiles[0].id, asset.id, '1', user.id.toString());
 
     setAssets(assets.filter((a) => a.id !== asset.id));
-    AssetsClient.callAuthenticatedEndpoint(get, null, fail, user.id, cancelSource.token);
+    AssetsClient.callAuthenticatedEndpoint(get, null, fail, user.id);
   };
 
   if (assets === null) return <p>Loading...</p>;

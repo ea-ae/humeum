@@ -2,6 +2,7 @@ import * as Mui from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 import * as React from 'react';
 
 import { TransactionDto } from '../../api/api';
@@ -61,7 +62,12 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
         isOutlined
         onChange={(value: string) => setData(new TransactionDto({ ...data, description: value }))}
       />
-      <DatePicker label="Start date" className="my-2" />
+      <DatePicker
+        label="Start date"
+        defaultValue={dayjs(transaction.paymentTimelinePeriodStart)}
+        className="my-2"
+        onChange={(value) => setData(new TransactionDto({ ...data, paymentTimelinePeriodStart: (value as dayjs.Dayjs).toDate() }))}
+      />
       <Mui.Select value={selectedTaxScheme} className="my-2" onChange={(event) => setSelectedTaxScheme(event.target.value as number)}>
         <Mui.MenuItem value={1}>Income tax</Mui.MenuItem>
         <Mui.MenuItem value={2}>Value added tax</Mui.MenuItem>
@@ -95,8 +101,18 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
         <Mui.MenuItem value="MONTHS">Months</Mui.MenuItem>
         <Mui.MenuItem value="YEARS">Years</Mui.MenuItem>
       </Mui.Select>
-      <DatePicker label="Start date" className="md:col-span-3 my-2" />
-      <DatePicker label="End date" className="md:col-span-3 my-2" />
+      <DatePicker
+        label="Start date"
+        defaultValue={dayjs(transaction.paymentTimelinePeriodStart)}
+        className="md:col-span-3 my-2"
+        onChange={(value) => setData(new TransactionDto({ ...data, paymentTimelinePeriodStart: (value as dayjs.Dayjs).toDate() }))}
+      />
+      <DatePicker
+        label="End date"
+        defaultValue={dayjs(transaction.paymentTimelinePeriodEnd)}
+        className="md:col-span-3 my-2"
+        onChange={(value) => setData(new TransactionDto({ ...data, paymentTimelinePeriodEnd: (value as dayjs.Dayjs).toDate() }))}
+      />
     </>
   );
 

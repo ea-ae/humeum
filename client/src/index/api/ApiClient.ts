@@ -32,12 +32,11 @@ export default class ApiClient {
     get: () => Promise<SwaggerResponse<T>>,
     set: null | ((value: T) => void),
     fail: null | (() => void),
-    userId: number,
-    token?: CancelToken
+    userId: number
   ) {
     get().then(
       (res) => (set === null ? null : set(res.result)),
-      (err) => this.handleError(err, userId, get, set, fail, token)
+      (err) => this.handleError(err, userId, get, set, fail)
     );
   }
 
@@ -54,8 +53,7 @@ export default class ApiClient {
     userId: number,
     get: () => Promise<SwaggerResponse<T>>,
     set: null | ((value: T) => void),
-    fail: null | (() => void),
-    token?: CancelToken
+    fail: null | (() => void)
   ) {
     // if the error is not an authentication error, we can't attempt to refresh the token
     if (error.name !== 'Error') {
@@ -68,7 +66,7 @@ export default class ApiClient {
 
     // attempt a token refresh
     const client = new UsersClient();
-    client.refreshUser('1', null, token).then(
+    client.refreshUser('1').then(
       () => {
         // token was refreshed
         get().then(
