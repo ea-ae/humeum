@@ -7,6 +7,7 @@ import * as React from 'react';
 import { TransactionDto } from '../../api/api';
 import CurrencyInput from '../../components/cards/CurrencyInput';
 import Input from '../../components/cards/Input';
+import PositiveIntegerInput from '../../components/cards/PositiveIntegerInput';
 
 interface Props {
   transaction: TransactionDto; // transaction remains after closing for the transition
@@ -14,18 +15,25 @@ interface Props {
   onSave: (transaction: TransactionDto) => void;
 }
 
+type TimeUnit = 'DAYS' | 'WEEKS' | 'MONTHS' | 'YEARS';
+
 export default function EditDialog({ transaction, isOpen, onSave }: Props) {
   const [data, setData] = React.useState<TransactionDto>(transaction);
   const [activeTab, setActiveTab] = React.useState<number>(0);
   const [selectedTaxScheme, setSelectedTaxScheme] = React.useState<number>(transaction.taxScheme.id);
   const [selectedAsset, setSelectedAsset] = React.useState<number>(transaction.asset?.id ?? -1);
   const [selectedCategories, setSelectedCategories] = React.useState<number[]>(transaction.categories.map((c) => c.id));
+  const [selectedTimeUnit, setSelectedTimeUnit] = React.useState<TimeUnit>(
+    (transaction.paymentTimelineFrequencyTimeUnitCode ?? 'MONTHS') as TimeUnit
+  );
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const namePattern = /[A-Za-z0-9ÕÄÖÜõäöü ]{0,50}/;
   const descriptionPattern = /[A-Za-z0-9ÕÄÖÜõäöü ]{0,400}/;
+
+  // const renderCategoriesPlaceholder = (selected: number[]) => selected.length === 0 ? 'No categories' : `${selected.length} categories`;
 
   const singleTransactionTab = (
     <>
@@ -34,7 +42,7 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
         defaultValue={transaction.name}
         typePattern={namePattern}
         validPattern={namePattern}
-        className="lg:col-span-2"
+        className="md:col-span-2"
         isOutlined
         onChange={(value: string) => setData(new TransactionDto({ ...data, name: value }))}
       />
@@ -49,7 +57,7 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
         defaultValue={transaction.description}
         typePattern={descriptionPattern}
         validPattern={descriptionPattern}
-        className="lg:col-span-2"
+        className="md:col-span-2"
         isOutlined
         onChange={(value: string) => setData(new TransactionDto({ ...data, description: value }))}
       />
@@ -65,8 +73,10 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
       <Mui.Select
         value={selectedCategories}
         multiple
+        displayEmpty
         className="my-2"
         onChange={(event) => setSelectedCategories(event.target.value as number[])}
+        renderValue={(selected) => (selected.length === 0 ? 'No categories' : `${selected.length} categories`)}
       >
         <Mui.MenuItem value={1}>Food</Mui.MenuItem>
         <Mui.MenuItem value={2}>Rent</Mui.MenuItem>
@@ -75,7 +85,20 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
     </>
   );
 
-  const recurringTransactionTab = <></>;
+  const recurringTransactionTab = (
+    <>
+      <PositiveIntegerInput label="n times" defaultValue={transaction.paymentTimelineFrequencyTimesPerCycle ?? 1} />
+      <PositiveIntegerInput label="every n" defaultValue={transaction.paymentTimelineFrequencyUnitsInCycle ?? 1} />
+      <Mui.Select value={selectedTimeUnit} className="my-2" onChange={(event) => setSelectedTimeUnit(event.target.value as TimeUnit)}>
+        <Mui.MenuItem value="DAYS">Days</Mui.MenuItem>
+        <Mui.MenuItem value="WEEKS">Weeks</Mui.MenuItem>
+        <Mui.MenuItem value="MONTHS">Months</Mui.MenuItem>
+        <Mui.MenuItem value="YEARS">Years</Mui.MenuItem>
+      </Mui.Select>
+      <DatePicker label="Start date" className="md:col-span-3 my-2" />
+      <DatePicker label="End date" className="md:col-span-3 my-2" />
+    </>
+  );
 
   return (
     <Mui.Dialog open={isOpen} onClose={onSave} fullScreen={fullScreen} classes={{ paper: 'md:min-w-[60vw] lg:min-w-[30vw]' }}>
@@ -85,13 +108,16 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
           <Mui.Tab label="Recurring" />
         </Mui.Tabs>
         <Mui.Divider />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-1 my-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 my-4">
           {activeTab === 0 ? singleTransactionTab : null}
           {activeTab === 1 ? recurringTransactionTab : null}
         </div>
       </Mui.DialogContent>
       <Mui.DialogActions>
-        <Mui.Button onClick={(_) => onSave(data)}>Save as One-Time Transaction</Mui.Button>
+        <Mui.Button onClick={(_) => onSave(data)}>
+          {activeTab === 0 ? 'Save as a single-time transaction' : null}
+          {activeTab === 1 ? 'Save as a recurring transaction' : null}
+        </Mui.Button>
       </Mui.DialogActions>
     </Mui.Dialog>
   );
