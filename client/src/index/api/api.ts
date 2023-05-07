@@ -2339,16 +2339,16 @@ export class UsersClient extends ApiClient {
 
     /**
      * Refreshes user authentication through a refresh token.
+     * @param command (optional) 
      * @return Details of signed in user.
      */
-    refreshUser(user: number, version: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<UserDto>> {
-        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/refresh";
-        if (user === undefined || user === null)
-            throw new Error("The parameter 'user' must be defined.");
-        url_ = url_.replace("{User}", encodeURIComponent("" + user));
+    refreshUser(version: string, command?: RefreshUserCommand | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<UserDto>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/refresh?";
         if (version === undefined || version === null)
             throw new Error("The parameter 'version' must be defined.");
         url_ = url_.replace("{Version}", encodeURIComponent("" + version));
+        if (command !== undefined && command !== null)
+            url_ += "command=" + encodeURIComponent("" + command) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
@@ -2996,6 +2996,36 @@ export class BriefProfile implements IBriefProfile {
 export interface IBriefProfile {
     id: number;
     name: string;
+}
+
+export class RefreshUserCommand implements IRefreshUserCommand {
+
+    constructor(data?: IRefreshUserCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+    }
+
+    static fromJS(data: any): RefreshUserCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new RefreshUserCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        return data;
+    }
+}
+
+export interface IRefreshUserCommand {
 }
 
 function formatDate(d: Date) {

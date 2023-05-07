@@ -7,19 +7,18 @@ import AuthContext from '../../contexts/AuthContext';
  * Checks whether the user is already authenticated through an HttpOnly cookie.
  * @returns Whether the user is authenticated.
  */
-function isPreAuthenticated(): Promise<UserDto | null> {
-  const client = new UsersClient();
-  const authenticated = client
-    .getCurrentUser('1')
-    .then((res) => res.result)
-    .catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log(err);
-      return null;
-    });
+// function isPreAuthenticated(): Promise<UserDto | null> {
+//   const client = new UsersClient();
+//   // const authenticated = client.getCurrentUser('1').then(
+//   //   (res) => res.result,
+//   //   (_) => null
+//   // );
 
-  return authenticated;
-}
+//   const get = () => client.getCurrentUser('1');
+//   const set
+
+//   return authenticated;
+// }
 
 const { Provider } = AuthContext;
 
@@ -36,7 +35,14 @@ export default function ProvideAuth({ children }: Props) {
   const [user, setUser] = React.useState<UserDto | null>(null);
 
   React.useEffect(() => {
-    isPreAuthenticated().then(setUser);
+    // isPreAuthenticated().then(setUser);
+    const client = new UsersClient();
+
+    const get = () => client.getCurrentUser('1');
+    const set = (value: UserDto) => setUser(value);
+    const fail = () => setUser(null);
+
+    UsersClient.callAuthenticatedEndpoint(get, set, fail, -1);
   }, []);
 
   const setAuthentication = (authentication: UserDto | null) => {

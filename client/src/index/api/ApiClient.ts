@@ -68,7 +68,7 @@ export default class ApiClient {
 
     // attempt a token refresh
     const client = new UsersClient();
-    client.refreshUser(userId, '1', token).then(
+    client.refreshUser('1', null, token).then(
       () => {
         // token was refreshed
         get().then(
