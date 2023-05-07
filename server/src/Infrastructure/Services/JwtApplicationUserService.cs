@@ -76,7 +76,7 @@ public class JwtApplicationUserService : ApplicationUserService {
 
     public override async Task<IResult<int, IAuthenticationException>> RefreshUserAsync() {
         return await GetRefreshTokenFromCookie()
-            .Then(refreshToken => _context.Users.ToFoundResult(u => u.RefreshToken == refreshToken).ThenError(new AuthenticationException("Invalid refresh token")))
+            .Then(refreshToken => _context.Users.ToFoundResult(u => u.RefreshToken == refreshToken).ThenError<IAuthenticationException>(new AuthenticationException("Invalid refresh token.")))
             .ThenAsync<int, IAuthenticationException>(async appUser => {
                 if (appUser.RefreshTokenExpiry < DateTime.UtcNow) {
                     return Result<int, IAuthenticationException>.Fail(new AuthenticationException("Provided refresh token has expired."));
@@ -113,7 +113,9 @@ public class JwtApplicationUserService : ApplicationUserService {
     protected override void AddTokenAsCookie(string token) {
         var cookieOptions = new CookieOptions() {
             HttpOnly = true,
-            Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.CookieExpireMinutes)
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.CookieExpireMinutes),
+            Path = "/api"
         };
 
         HttpContext httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException();
@@ -125,7 +127,7 @@ public class JwtApplicationUserService : ApplicationUserService {
             HttpOnly = true,
             SameSite = SameSiteMode.Lax,
             Expires = DateTime.UtcNow.AddDays(_jwtSettings.RefreshCookieExpireDays),
-            Path = "/api/v1/users" // hardcoded!
+            Path = "/api"
         };
 
         HttpContext httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException();
@@ -155,9 +157,9 @@ public class JwtApplicationUserService : ApplicationUserService {
 
         // persist tokens in DB
 
+        _context.Users.Update(user); // in case unattached
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(_jwtSettings.RefreshCookieExpireDays);
-        _context.Users.Update(user); // in case unattached
         await _context.SaveChangesAsync();
 
         return Result<None, AuthenticationException>.Ok(None.Value);
