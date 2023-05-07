@@ -82,8 +82,14 @@ public class JwtApplicationUserService : ApplicationUserService {
                     return Result<int, IAuthenticationException>.Fail(new AuthenticationException("Provided refresh token has expired."));
                 }
 
+                if (!appUser.Enabled) {
+                    return Result<int, IAuthenticationException>.Fail(new AuthenticationException("User account has been disabled."));
+                }
+
+                // create new JWT token and log user in
+                string token = await CreateToken(appUser);
+                AddTokenAsCookie(token);
                 await _signInManager.SignInAsync(appUser, isPersistent: true); // todo: sure about this?
-                await SetupUserTokens(appUser);
 
                 return Result<int, IAuthenticationException>.Ok(appUser.Id);
             });
@@ -114,8 +120,7 @@ public class JwtApplicationUserService : ApplicationUserService {
         var cookieOptions = new CookieOptions() {
             HttpOnly = true,
             SameSite = SameSiteMode.Lax,
-            Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.CookieExpireMinutes),
-            Path = "/api"
+            Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.CookieExpireMinutes)
         };
 
         HttpContext httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException();
@@ -126,8 +131,7 @@ public class JwtApplicationUserService : ApplicationUserService {
         var cookieOptions = new CookieOptions() {
             HttpOnly = true,
             SameSite = SameSiteMode.Lax,
-            Expires = DateTime.UtcNow.AddDays(_jwtSettings.RefreshCookieExpireDays),
-            Path = "/api"
+            Expires = DateTime.UtcNow.AddDays(_jwtSettings.RefreshCookieExpireDays)
         };
 
         HttpContext httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException();
@@ -155,7 +159,7 @@ public class JwtApplicationUserService : ApplicationUserService {
         string refreshToken = CreateRefreshToken();
         AddRefreshTokenAsCookie(refreshToken);
 
-        // persist tokens in DB
+        // persist refresh token in DB
 
         _context.Users.Update(user); // in case unattached
         user.RefreshToken = refreshToken;
