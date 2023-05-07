@@ -17,6 +17,9 @@ interface Props {
 export default function EditDialog({ transaction, isOpen, onSave }: Props) {
   const [data, setData] = React.useState<TransactionDto>(transaction);
   const [activeTab, setActiveTab] = React.useState<number>(0);
+  const [selectedTaxScheme, setSelectedTaxScheme] = React.useState<number>(transaction.taxScheme.id);
+  const [selectedAsset, setSelectedAsset] = React.useState<number>(transaction.asset?.id ?? -1);
+  const [selectedCategories, setSelectedCategories] = React.useState<number[]>(transaction.categories.map((c) => c.id));
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -27,17 +30,18 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
   return (
     <Mui.Dialog open={isOpen} onClose={onSave} fullScreen={fullScreen} classes={{ paper: 'md:min-w-[60vw] lg:min-w-[30vw]' }}>
       <Mui.DialogContent dividers>
-        <Mui.Tabs value={activeTab} centered onChange={(_, value) => setActiveTab(value)}>
+        <Mui.Tabs value={activeTab} centered={!fullScreen} variant="fullWidth" onChange={(_, value) => setActiveTab(value)}>
           <Mui.Tab label="Single" />
           <Mui.Tab label="Recurring" />
         </Mui.Tabs>
-        <div className="grid grid-cols-1 gap-x-4 gap-y-2 lg:grid-cols-2 2xl:grid-cols-3">
+        <Mui.Divider />
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-x-4 gap-y-1 my-4">
           <Input
             label="Name"
             defaultValue={transaction.name}
             typePattern={namePattern}
             validPattern={namePattern}
-            className="2xl:col-span-2"
+            className="xl:col-span-2"
             isOutlined
             onChange={(value: string) => setData(new TransactionDto({ ...data, name: value }))}
           />
@@ -52,11 +56,24 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
             defaultValue={transaction.description}
             typePattern={descriptionPattern}
             validPattern={descriptionPattern}
-            className="grow-1 lg:col-span-2 2xl:col-span-3"
+            className="row-span-2 xl:row-span-1 xl:col-span-2"
             isOutlined
             onChange={(value: string) => setData(new TransactionDto({ ...data, description: value }))}
           />
           <DatePicker label="Start date" className="my-2" />
+          <Mui.Select value={selectedTaxScheme} onChange={(event) => setSelectedTaxScheme(event.target.value as number)}>
+            <Mui.MenuItem value={1}>Income tax</Mui.MenuItem>
+            <Mui.MenuItem value={2}>Value added tax</Mui.MenuItem>
+          </Mui.Select>
+          <Mui.Select value={selectedAsset} sx={{}} onChange={(event) => setSelectedAsset(event.target.value as number)}>
+            <Mui.MenuItem value={-1}>No asset</Mui.MenuItem>
+            <Mui.MenuItem value={1}>III pillar, pre-2021</Mui.MenuItem>
+          </Mui.Select>
+          <Mui.Select value={selectedCategories} multiple onChange={(event) => setSelectedCategories(event.target.value as number[])}>
+            <Mui.MenuItem value={1}>Food</Mui.MenuItem>
+            <Mui.MenuItem value={2}>Rent</Mui.MenuItem>
+            <Mui.MenuItem value={3}>Lifestyle</Mui.MenuItem>
+          </Mui.Select>
         </div>
       </Mui.DialogContent>
       <Mui.DialogActions>
