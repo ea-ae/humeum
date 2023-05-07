@@ -3,10 +3,13 @@ using System.Security.Claims;
 using System.Text;
 
 using Application.Common.Exceptions;
+using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 using AutoMapper;
+
 using Domain.V1.UserAggregate;
+
 using Infrastructure.Auth;
 using Infrastructure.Common.Settings;
 
@@ -62,7 +65,6 @@ public class JwtApplicationUserService : ApplicationUserService {
         if (result.Succeeded) {
             var appUser = await _userManager.FindByNameAsync(username) ?? throw new InvalidOperationException();
             return (await SetupUserTokens(appUser)).Then(appUser.Id);
-            //return user.Id;
         }
 
         if (result.IsLockedOut) {
@@ -72,30 +74,19 @@ public class JwtApplicationUserService : ApplicationUserService {
         return Result<int, AuthenticationException>.Fail(new AuthenticationException("Sign-in attempt with username & password failed."));
     }
 
-    public override async Task<IResult<int, IAuthenticationException>> RefreshUserAsync(int userId) {
-        return await GetApplicationUser(userId).ThenAsync(async appUser => {
-            var builder = new Result<ApplicationUser, IAuthenticationException>.Builder();
+    public override async Task<IResult<int, IAuthenticationException>> RefreshUserAsync() {
+        return await GetRefreshTokenFromCookie()
+            .Then(refreshToken => _context.Users.ToFoundResult(u => u.RefreshToken == refreshToken).ThenError(new AuthenticationException("Invalid refresh token")))
+            .ThenAsync<int, IAuthenticationException>(async appUser => {
+                if (appUser.RefreshTokenExpiry < DateTime.UtcNow) {
+                    return Result<int, IAuthenticationException>.Fail(new AuthenticationException("Provided refresh token has expired."));
+                }
 
-            var refreshToken = GetRefreshTokenFromCookie();
-            if (refreshToken.Failure) {
-                return Result<int, IAuthenticationException>.Fail(refreshToken.GetErrors());
-            }
-
-            if (appUser.RefreshToken != refreshToken.Unwrap()) {
-                builder.AddError(new AuthenticationException("Provided refresh token is invalid or does not match."));
-            }
-
-            if (appUser.RefreshTokenExpiry < DateTime.UtcNow) {
-                builder.AddError(new AuthenticationException("Provided refresh token has expired."));
-            }
-
-            return await builder.AddValue(appUser).Build().ThenAsync<int, IAuthenticationException>(async appUser => {
                 await _signInManager.SignInAsync(appUser, isPersistent: true); // todo: sure about this?
                 await SetupUserTokens(appUser);
 
                 return Result<int, IAuthenticationException>.Ok(appUser.Id);
             });
-        });
     }
 
     protected override async Task<string> CreateToken(ApplicationUser user) {

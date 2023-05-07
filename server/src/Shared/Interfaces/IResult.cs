@@ -33,4 +33,9 @@ public interface IResult<out T, out E> where E : IBaseException {
 
     /// <inheritdoc cref="Then{TNew, ENew}(Func{T, IResult{TNew, ENew}})"/>
     Task<IResult<TNew, ENew>> ThenAsync<TNew, ENew>(Func<T, Task<IResult<TNew, ENew>>> then) where ENew : IBaseException;
+
+    /// <summary>Transforms the result into a result with another error type, replacing the error in case it was a failure.</summary>
+    /// <typeparam name="ENew">Error type of new result.</typeparam>
+    /// <param name="error">Error value.</param>
+    IResult<T, ENew> ThenError<ENew>(ENew error) where ENew : IBaseException;
 }

@@ -182,4 +182,7 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
         IResult<TNew, ENew> result = Result<TNew, ENew>.Fail((IReadOnlyCollection<ENew>)GetErrors());
         return Task.FromResult(result);
     }
+
+    /// <inheritdoc/>
+    public IResult<T, ENew> ThenError<ENew>(ENew error) where ENew : IBaseException => Success ? Result<T, ENew>.Ok(_value) : Result<T, ENew>.Fail(error);
 }

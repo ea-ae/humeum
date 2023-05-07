@@ -99,7 +99,7 @@ public class UsersController : ControllerBase {
     /// </summary>
     /// <response code="200">Details of signed in user.</response>
     /// <response code="401">If the authentication attempt fails, e.g. invalid refresh token.</response>
-    [HttpPost("{User:int}/refresh")]
+    [HttpPost("refresh")]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     public async Task<ActionResult<IResult<UserDto, IBaseException>>> RefreshUser(RefreshUserCommand command) {
         var userIdResult = await _mediator.Send(command);

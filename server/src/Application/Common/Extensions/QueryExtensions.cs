@@ -15,7 +15,7 @@ namespace Application.Common.Extensions;
 /// <summary>
 /// Extensions for command and query handlers.
 /// </summary>
-internal static class ServiceExtensions {
+public static class QueryExtensions {
     /// <summary>
     /// Asserts that a set of fields is either provided fully or not at all (aka every field is null).
     /// </summary>
