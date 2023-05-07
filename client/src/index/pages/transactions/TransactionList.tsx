@@ -10,8 +10,8 @@ import useCache from '../../hooks/useCache';
 import EditDialog from './EditDialog';
 import TransactionListFooter from './TransactionListFooter';
 
-const gridColumns = [
-  { field: 'name', headerName: 'Name', flex: 2, minWidth: 180, editable: false },
+const gridColumns: GridColDef[] = [
+  { field: 'name', headerName: 'Name', flex: 2, minWidth: 180, cellClassName: 'group-hover:text-blue-600', editable: false },
   {
     field: 'amount',
     headerName: 'Amount',
@@ -146,7 +146,7 @@ function TransactionList() {
         checkboxSelection
         disableSelectionOnClick
         experimentalFeatures={{ newEditingApi: true }}
-        classes={{ cell: 'outline-none', columnHeader: 'outline-none' }}
+        classes={{ cell: 'outline-none', columnHeader: 'outline-none', row: 'group' }}
         className="min-w-fit card"
         components={{
           Footer: TransactionListFooter,

@@ -26,7 +26,6 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
 
   return (
     <Mui.Dialog open={isOpen} onClose={onSave} fullScreen={fullScreen} classes={{ paper: 'md:min-w-[60vw] lg:min-w-[30vw]' }}>
-      <Mui.DialogTitle>Edit transaction #{transaction.id}</Mui.DialogTitle>
       <Mui.DialogContent dividers>
         <Mui.Tabs value={activeTab} centered onChange={(_, value) => setActiveTab(value)}>
           <Mui.Tab label="Single" />
@@ -61,7 +60,7 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
         </div>
       </Mui.DialogContent>
       <Mui.DialogActions>
-        <Mui.Button onClick={(_) => onSave(data)}>Save</Mui.Button>
+        <Mui.Button onClick={(_) => onSave(data)}>Save as One-Time Transaction</Mui.Button>
       </Mui.DialogActions>
     </Mui.Dialog>
   );
