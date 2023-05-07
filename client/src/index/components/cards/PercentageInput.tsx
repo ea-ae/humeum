@@ -3,7 +3,7 @@ import Input from './Input';
 interface Props {
   label: string;
   tooltip?: string;
-  defaultValue: string;
+  defaultValue: number;
   disabled?: boolean;
   className?: string;
 
@@ -24,7 +24,7 @@ export default function PercentageInput({ label, tooltip, defaultValue, disabled
     <Input
       label={label}
       tooltip={tooltip}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue.toString()}
       symbol="%"
       typePattern={typePattern}
       validPattern={validPattern}

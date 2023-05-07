@@ -17,12 +17,23 @@ const getGridColumns = (onEdit: (rowId: number) => void): GridColDef[] => {
   };
 
   return [
+    {
+      field: 'editAction',
+      headerName: 'Edit',
+      flex: 1,
+      renderCell: (params) => (
+        <Mui.Button variant="text" className="text-tertiary-300" onClick={(e) => onEditClick(e, params)}>
+          Edit
+        </Mui.Button>
+      ),
+    },
     { field: 'name', headerName: 'Name', flex: 2, minWidth: 180, editable: false },
     {
       field: 'amount',
       headerName: 'Amount',
       type: 'number',
-      minWidth: 100,
+      flex: 1,
+      minWidth: 50,
       editable: false,
       valueFormatter: (params) => `${params.value} €`,
       cellClassName: (params) => (params.value > 0 ? 'text-green-700' : 'text-red-700'),
@@ -32,6 +43,7 @@ const getGridColumns = (onEdit: (rowId: number) => void): GridColDef[] => {
       field: 'taxScheme',
       headerName: 'Tax Scheme',
       type: 'singleSelect',
+      flex: 1,
       minWidth: 100,
       editable: false,
       valueOptions: ['Income tax', 'III pillar post-2021', 'III pillar pre-2021', 'Non-taxable'],
@@ -40,18 +52,10 @@ const getGridColumns = (onEdit: (rowId: number) => void): GridColDef[] => {
       field: 'asset',
       headerName: 'Asset',
       type: 'singleSelect',
+      flex: 1,
       minWidth: 100,
       editable: false,
       valueOptions: ['Index fund', 'Bond fund'],
-    },
-    {
-      field: 'editAction',
-      headerName: 'Edit',
-      renderCell: (params) => (
-        <Mui.Button variant="text" className="text-tertiary-300" onClick={(e) => onEditClick(e, params)}>
-          Edit
-        </Mui.Button>
-      ),
     },
   ];
 };
@@ -167,7 +171,9 @@ function TransactionList() {
           Footer: TransactionListFooter,
         }}
       />
-      <EditDialog transaction={selectedTransaction} isOpen={isEditDialogOpen} onSave={onTransactionSave} />
+      {selectedTransaction !== null ? (
+        <EditDialog transaction={selectedTransaction} isOpen={isEditDialogOpen} onSave={onTransactionSave} />
+      ) : null}
     </>
   );
 }

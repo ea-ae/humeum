@@ -2,13 +2,13 @@ import Input from './Input';
 
 interface Props {
   label: string;
+  defaultValue: number;
   tooltip?: string;
-  defaultValue: string; // todo make number
   disabled?: boolean;
   className?: string;
   isOutlined?: boolean;
 
-  onChange?: undefined | ((percentage: number) => void);
+  onChange?: (percentage: number) => void;
 }
 
 export default function CurrencyInput({ label, tooltip, defaultValue, disabled, className, isOutlined, onChange }: Props) {
@@ -25,7 +25,7 @@ export default function CurrencyInput({ label, tooltip, defaultValue, disabled, 
     <Input
       label={label}
       tooltip={tooltip}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue.toString()}
       symbol="€"
       typePattern={typePattern}
       validPattern={validPattern}
@@ -43,5 +43,5 @@ CurrencyInput.defaultProps = {
   disabled: false,
   className: '',
   isOutlined: false,
-  onChange: undefined,
+  onChange: (_: number) => null,
 };

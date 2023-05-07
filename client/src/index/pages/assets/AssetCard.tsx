@@ -39,7 +39,7 @@ export default function AssetCard({ name, description, returnRate, standardDevia
           disabled={readOnly}
           label="Real return"
           tooltip="Annual mean real (inflation-adjusted) return of the asset."
-          defaultValue={returnRate.toString()}
+          defaultValue={returnRate}
           className="mr-8"
           onChange={(value: number) => setData({ ...data, returnRate: value })}
         />
@@ -47,7 +47,7 @@ export default function AssetCard({ name, description, returnRate, standardDevia
           disabled={readOnly}
           label="Standard deviation"
           tooltip="Measures the volatility of the asset; how much the return deviates from the annual mean on average."
-          defaultValue={standardDeviation.toString()}
+          defaultValue={standardDeviation}
           onChange={(value: number) => setData({ ...data, standardDeviation: value })}
         />
       </div>

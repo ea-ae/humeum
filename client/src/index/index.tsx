@@ -1,6 +1,8 @@
 import './index.css';
 
 import * as Mui from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import * as React from 'react';
 import ReactDOM from 'react-dom/client';
 import * as Router from 'react-router-dom';
@@ -25,9 +27,11 @@ const root = ReactDOM.createRoot(container);
 root.render(
   <React.StrictMode>
     <Mui.ThemeProvider theme={theme}>
-      <ProvideAuth>
-        <Router.RouterProvider router={router} />
-      </ProvideAuth>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <ProvideAuth>
+          <Router.RouterProvider router={router} />
+        </ProvideAuth>
+      </LocalizationProvider>
     </Mui.ThemeProvider>
   </React.StrictMode>
 );

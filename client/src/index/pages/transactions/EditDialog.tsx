@@ -1,6 +1,7 @@
 import * as Mui from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import * as React from 'react';
 
 import { TransactionDto } from '../../api/api';
@@ -8,15 +9,14 @@ import CurrencyInput from '../../components/cards/CurrencyInput';
 import Input from '../../components/cards/Input';
 
 interface Props {
-  transaction: TransactionDto | null; // transaction remains after closing for the transition
+  transaction: TransactionDto; // transaction remains after closing for the transition
   isOpen: boolean;
   onSave: (transaction: TransactionDto) => void;
 }
 
 export default function EditDialog({ transaction, isOpen, onSave }: Props) {
-  if (transaction === null) return null;
-
   const [data, setData] = React.useState<TransactionDto>(transaction);
+  const [activeTab, setActiveTab] = React.useState<number>(0);
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -28,7 +28,11 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
     <Mui.Dialog open={isOpen} onClose={onSave} fullScreen={fullScreen} classes={{ paper: 'md:min-w-[60vw] lg:min-w-[30vw]' }}>
       <Mui.DialogTitle>Edit transaction #{transaction.id}</Mui.DialogTitle>
       <Mui.DialogContent dividers>
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+        <Mui.Tabs value={activeTab} centered onChange={(_, value) => setActiveTab(value)}>
+          <Mui.Tab label="Single" />
+          <Mui.Tab label="Recurring" />
+        </Mui.Tabs>
+        <div className="grid grid-cols-1 gap-x-4 gap-y-2 lg:grid-cols-2 2xl:grid-cols-3">
           <Input
             label="Name"
             defaultValue={transaction.name}
@@ -40,7 +44,7 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
           />
           <CurrencyInput
             label="Amount"
-            defaultValue={transaction.amount.toString()}
+            defaultValue={transaction.amount}
             isOutlined
             onChange={(value: number) => setData(new TransactionDto({ ...data, amount: value }))}
           />
@@ -53,6 +57,7 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
             isOutlined
             onChange={(value: string) => setData(new TransactionDto({ ...data, description: value }))}
           />
+          <DatePicker label="Start date" className="my-2" />
         </div>
       </Mui.DialogContent>
       <Mui.DialogActions>
