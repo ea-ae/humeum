@@ -10,55 +10,38 @@ import useCache from '../../hooks/useCache';
 import EditDialog from './EditDialog';
 import TransactionListFooter from './TransactionListFooter';
 
-const getGridColumns = (onEdit: (rowId: number) => void): GridColDef[] => {
-  const onEditClick = (e: React.MouseEvent, params: GridRenderCellParams) => {
-    e.preventDefault();
-    onEdit(params.row.id as number);
-  };
-
-  return [
-    {
-      field: 'editAction',
-      headerName: 'Edit',
-      flex: 1,
-      renderCell: (params) => (
-        <Mui.Button variant="text" className="text-tertiary-300" onClick={(e) => onEditClick(e, params)}>
-          Edit
-        </Mui.Button>
-      ),
-    },
-    { field: 'name', headerName: 'Name', flex: 2, minWidth: 180, editable: false },
-    {
-      field: 'amount',
-      headerName: 'Amount',
-      type: 'number',
-      flex: 1,
-      minWidth: 50,
-      editable: false,
-      valueFormatter: (params) => `${params.value} €`,
-      cellClassName: (params) => (params.value > 0 ? 'text-green-700' : 'text-red-700'),
-    },
-    { field: 'date', headerName: 'Date', type: 'date', flex: 1, minWidth: 100, editable: true },
-    {
-      field: 'taxScheme',
-      headerName: 'Tax Scheme',
-      type: 'singleSelect',
-      flex: 1,
-      minWidth: 100,
-      editable: false,
-      valueOptions: ['Income tax', 'III pillar post-2021', 'III pillar pre-2021', 'Non-taxable'],
-    },
-    {
-      field: 'asset',
-      headerName: 'Asset',
-      type: 'singleSelect',
-      flex: 1,
-      minWidth: 100,
-      editable: false,
-      valueOptions: ['Index fund', 'Bond fund'],
-    },
-  ];
-};
+const gridColumns = [
+  { field: 'name', headerName: 'Name', flex: 2, minWidth: 180, editable: false },
+  {
+    field: 'amount',
+    headerName: 'Amount',
+    type: 'number',
+    flex: 1,
+    minWidth: 50,
+    editable: false,
+    valueFormatter: (params) => `${params.value} €`,
+    cellClassName: (params) => (params.value > 0 ? 'text-green-700' : 'text-red-700'),
+  },
+  { field: 'date', headerName: 'Date', type: 'date', flex: 1, minWidth: 100, editable: true },
+  {
+    field: 'taxScheme',
+    headerName: 'Tax Scheme',
+    type: 'singleSelect',
+    flex: 1,
+    minWidth: 100,
+    editable: false,
+    valueOptions: ['Income tax', 'III pillar post-2021', 'III pillar pre-2021', 'Non-taxable'],
+  },
+  {
+    field: 'asset',
+    headerName: 'Asset',
+    type: 'singleSelect',
+    flex: 1,
+    minWidth: 100,
+    editable: false,
+    valueOptions: ['Index fund', 'Bond fund'],
+  },
+];
 
 function TransactionList() {
   const [pageSize, setPageSize] = React.useState<number>(10);
@@ -152,13 +135,11 @@ function TransactionList() {
     setSelectedTransaction(transaction);
   };
 
-  const columns: GridColDef[] = getGridColumns(onTransactionEditClick);
-
   return (
     <>
       <DataGrid
         rows={transactionRows}
-        columns={columns}
+        columns={gridColumns}
         pageSize={pageSize}
         rowsPerPageOptions={[5, 10, 25, 50]}
         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
@@ -170,6 +151,7 @@ function TransactionList() {
         components={{
           Footer: TransactionListFooter,
         }}
+        onRowClick={(params) => onTransactionEditClick(params.id as number)}
       />
       {selectedTransaction !== null ? (
         <EditDialog transaction={selectedTransaction} isOpen={isEditDialogOpen} onSave={onTransactionSave} />
