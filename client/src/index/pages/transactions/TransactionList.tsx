@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { TransactionDto, TransactionsClient } from '../../api/api';
 import useAuth from '../../hooks/useAuth';
-import useCache from '../../hooks/useCache';
+import useCache, { CacheKey } from '../../hooks/useCache';
 import EditDialog from './EditDialog';
 import TransactionListFooter from './TransactionListFooter';
 
@@ -44,7 +44,7 @@ const gridColumns: GridColDef[] = [
 
 function TransactionList() {
   const [pageSize, setPageSize] = React.useState<number>(10);
-  const [transactions, setTransactions] = useCache<TransactionDto[] | null>('transactions', null);
+  const [transactions, setTransactions] = useCache<TransactionDto[] | null>(CacheKey.Transactions, null);
   const [isEditDialogOpen, setIsEditDialogOpen] = React.useState<boolean>(false);
   const [selectedTransaction, setSelectedTransaction] = React.useState<TransactionDto | null>(null);
   const { user, setAuthentication } = useAuth();

@@ -3,11 +3,11 @@ import axios from 'axios';
 import * as React from 'react';
 
 import { TaxSchemeDto, TaxSchemesClient } from '../../api/api';
-import useCache from '../../hooks/useCache';
+import useCache, { CacheKey } from '../../hooks/useCache';
 import TaxSchemeCard from './TaxSchemeCard';
 
 function TaxSchemeList() {
-  const [taxSchemes, setTaxSchemes] = useCache<TaxSchemeDto[] | null>('taxSchemes', null);
+  const [taxSchemes, setTaxSchemes] = useCache<TaxSchemeDto[] | null>(CacheKey.TaxSchemes, null);
 
   React.useEffect(() => {
     const cancelSource = axios.CancelToken.source();

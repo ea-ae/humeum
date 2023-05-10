@@ -1,8 +1,14 @@
 import * as React from 'react';
 
 // should we scrap this in favor of Context?
-
 const cache: { [key: number | string]: unknown } = {};
+
+// eslint-disable-next-line no-shadow
+export enum CacheKey {
+  Transactions = 'transactions',
+  TaxSchemes = 'taxSchemes',
+  Assets = 'assets',
+}
 
 function isCacheInitializationFunction<T>(updateCache: (() => T) | T): updateCache is () => T {
   return typeof updateCache === 'function';

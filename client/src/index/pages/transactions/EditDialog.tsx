@@ -9,6 +9,7 @@ import { TransactionDto } from '../../api/api';
 import CurrencyInput from '../../components/cards/CurrencyInput';
 import Input from '../../components/cards/Input';
 import PositiveIntegerInput from '../../components/cards/PositiveIntegerInput';
+import useCache, { CacheKey } from '../../hooks/useCache';
 
 // eslint bug:
 // eslint-disable-next-line no-shadow
@@ -26,6 +27,9 @@ interface Props {
 }
 
 export default function EditDialog({ transaction, isOpen, onSave }: Props) {
+  const [taxSchemes, setTaxSchemes] = useCache<TransactionDto[] | null>(CacheKey.TaxSchemes, null);
+  const [assets, setAssets] = useCache<TransactionDto[] | null>(CacheKey.Assets, null);
+
   const [data, setData] = React.useState<TransactionDto>(transaction);
   const [selectedTaxScheme, setSelectedTaxScheme] = React.useState<number>(transaction.taxScheme.id);
   const [selectedAsset, setSelectedAsset] = React.useState<number>(transaction.asset?.id ?? -1);
