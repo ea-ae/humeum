@@ -6,6 +6,7 @@ interface Props {
   defaultValue: number | null;
   disabled?: boolean;
   className?: string;
+  isOutlined?: boolean;
 
   onChange?: undefined | ((percentage: number | null) => void);
 }
@@ -13,7 +14,7 @@ interface Props {
 const typePattern = /^[0-9]{0,3}$/;
 const validPattern = /^0*[1-9][0-9]{0,2}$/;
 
-export default function PositiveIntegerInput({ label, tooltip, defaultValue, disabled, className, onChange }: Props) {
+export default function PositiveIntegerInput({ label, tooltip, defaultValue, disabled, className, isOutlined, onChange }: Props) {
   const onInputChange = (input: string) => {
     if (onChange !== null && onChange !== undefined) {
       onChange(input === '' ? null : parseInt(input, 10));
@@ -24,6 +25,7 @@ export default function PositiveIntegerInput({ label, tooltip, defaultValue, dis
     <Input
       label={label}
       tooltip={tooltip}
+      isOutlined={isOutlined}
       defaultValue={defaultValue?.toString() ?? ''}
       typePattern={typePattern}
       validPattern={validPattern}
@@ -38,5 +40,6 @@ PositiveIntegerInput.defaultProps = {
   tooltip: '',
   disabled: false,
   className: '',
+  isOutlined: false,
   onChange: undefined,
 };
