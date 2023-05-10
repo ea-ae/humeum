@@ -43,8 +43,7 @@ const gridColumns: GridColDef[] = [
 ];
 
 function TransactionList() {
-  const [transactions, setTransactions] = useCache<TransactionDto[] | null>(CacheKey.Transactions, null);
-  fetchTransactions(transactions, setTransactions);
+  const [transactions, setTransactions] = fetchTransactions(...useCache<TransactionDto[] | null>(CacheKey.Transactions, null));
 
   const [pageSize, setPageSize] = React.useState<number>(10);
   const [isEditDialogOpen, setIsEditDialogOpen] = React.useState<boolean>(false);

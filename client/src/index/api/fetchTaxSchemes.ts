@@ -14,4 +14,6 @@ export default function fetchTaxSchemes(taxSchemes: TaxSchemeDto[] | null, setTa
 
     return () => cancelSource.cancel();
   });
+
+  return [taxSchemes, setTaxSchemes];
 }

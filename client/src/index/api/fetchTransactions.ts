@@ -35,4 +35,6 @@ export default function fetchTransactions(transactions: TransactionDto[] | null,
 
     return () => cancelSource.cancel();
   }, []);
+
+  return [transactions, setTransactions];
 }

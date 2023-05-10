@@ -28,8 +28,7 @@ interface Props {
 }
 
 export default function EditDialog({ transaction, isOpen, onSave }: Props) {
-  const [taxSchemes, setTaxSchemes] = useCache<TaxSchemeDto[] | null>(CacheKey.TaxSchemes, null);
-  fetchTaxSchemes(taxSchemes, setTaxSchemes);
+  const [taxSchemes, setTaxSchemes] = fetchTaxSchemes(...useCache<TaxSchemeDto[] | null>(CacheKey.TaxSchemes, null));
 
   const [assets, setAssets] = useCache<AssetDto[] | null>(CacheKey.Assets, null);
 

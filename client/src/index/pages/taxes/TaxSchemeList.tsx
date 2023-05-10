@@ -8,8 +8,7 @@ import useCache, { CacheKey } from '../../hooks/useCache';
 import TaxSchemeCard from './TaxSchemeCard';
 
 function TaxSchemeList() {
-  const [taxSchemes, setTaxSchemes] = useCache<TaxSchemeDto[] | null>(CacheKey.TaxSchemes, null);
-  fetchTaxSchemes(taxSchemes, setTaxSchemes);
+  const [taxSchemes, setTaxSchemes] = fetchTaxSchemes(...useCache<TaxSchemeDto[] | null>(CacheKey.TaxSchemes, null));
 
   let elements: React.ReactElement[];
   if (taxSchemes !== null) {
