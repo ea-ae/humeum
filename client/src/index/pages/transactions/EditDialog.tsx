@@ -184,7 +184,12 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
   };
 
   return (
-    <Mui.Dialog open={isOpen} onClose={onDialogClose} fullScreen={fullScreen} classes={{ paper: 'md:min-w-[60vw] lg:min-w-[30vw]' }}>
+    <Mui.Dialog
+      open={isOpen}
+      onClose={onDialogClose}
+      fullScreen={fullScreen}
+      classes={{ paper: 'md:min-w-[70vw] lg:min-w-[65vw] 2xl:min-w-[45w]' }}
+    >
       <Mui.DialogContent dividers>
         <Mui.Tabs value={activeTab} centered={!fullScreen} variant="fullWidth" onChange={(_, value) => setActiveTab(value)}>
           <Mui.Tab label="Single" />
