@@ -27,10 +27,13 @@ interface Props {
   onSave: (transaction: TransactionDto) => void;
 }
 
-export default function EditDialog({ transaction, isOpen, onSave }: Props) {
-  const [taxSchemes, setTaxSchemes] = fetchTaxSchemes(...useCache<TaxSchemeDto[] | null>(CacheKey.TaxSchemes, null));
+const namePattern = /[A-Za-z0-9ÕÄÖÜõäöü ]{0,50}/;
+const descriptionPattern = /[A-Za-z0-9ÕÄÖÜõäöü ]{0,400}/;
 
-  const [assets, setAssets] = useCache<AssetDto[] | null>(CacheKey.Assets, null);
+export default function EditDialog({ transaction, isOpen, onSave }: Props) {
+  const [taxSchemes, _setTaxSchemes] = fetchTaxSchemes(...useCache<TaxSchemeDto[] | null>(CacheKey.TaxSchemes, null));
+
+  const [assets, _setAssets] = useCache<AssetDto[] | null>(CacheKey.Assets, null);
 
   const [data, setData] = React.useState<TransactionDto>(transaction);
   const [selectedAsset, setSelectedAsset] = React.useState<number>(transaction.asset?.id ?? -1);
@@ -47,9 +50,6 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-
-  const namePattern = /[A-Za-z0-9ÕÄÖÜõäöü ]{0,50}/;
-  const descriptionPattern = /[A-Za-z0-9ÕÄÖÜõäöü ]{0,400}/;
 
   if (taxSchemes === null) return null;
 

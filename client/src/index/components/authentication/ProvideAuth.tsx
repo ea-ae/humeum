@@ -3,23 +3,6 @@ import * as React from 'react';
 import { UserDto, UsersClient } from '../../api/api';
 import AuthContext from '../../contexts/AuthContext';
 
-/**
- * Checks whether the user is already authenticated through an HttpOnly cookie.
- * @returns Whether the user is authenticated.
- */
-// function isPreAuthenticated(): Promise<UserDto | null> {
-//   const client = new UsersClient();
-//   // const authenticated = client.getCurrentUser('1').then(
-//   //   (res) => res.result,
-//   //   (_) => null
-//   // );
-
-//   const get = () => client.getCurrentUser('1');
-//   const set
-
-//   return authenticated;
-// }
-
 const { Provider } = AuthContext;
 
 interface Props {

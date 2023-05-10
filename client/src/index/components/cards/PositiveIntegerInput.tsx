@@ -10,10 +10,10 @@ interface Props {
   onChange?: undefined | ((percentage: number | null) => void);
 }
 
-export default function PositiveIntegerInput({ label, tooltip, defaultValue, disabled, className, onChange }: Props) {
-  const typePattern = /^[0-9]{0,3}$/;
-  const validPattern = /^0*[1-9][0-9]{0,2}$/;
+const typePattern = /^[0-9]{0,3}$/;
+const validPattern = /^0*[1-9][0-9]{0,2}$/;
 
+export default function PositiveIntegerInput({ label, tooltip, defaultValue, disabled, className, onChange }: Props) {
   const onInputChange = (input: string) => {
     if (onChange !== null && onChange !== undefined) {
       onChange(input === '' ? null : parseInt(input, 10));

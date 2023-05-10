@@ -1,14 +1,13 @@
 import * as Mui from '@mui/material';
-import axios from 'axios';
 import * as React from 'react';
 
-import { TaxSchemeDto, TaxSchemesClient } from '../../api/api';
+import { TaxSchemeDto } from '../../api/api';
 import fetchTaxSchemes from '../../api/fetchTaxSchemes';
 import useCache, { CacheKey } from '../../hooks/useCache';
 import TaxSchemeCard from './TaxSchemeCard';
 
 function TaxSchemeList() {
-  const [taxSchemes, setTaxSchemes] = fetchTaxSchemes(...useCache<TaxSchemeDto[] | null>(CacheKey.TaxSchemes, null));
+  const [taxSchemes, _setTaxSchemes] = fetchTaxSchemes(...useCache<TaxSchemeDto[] | null>(CacheKey.TaxSchemes, null));
 
   let elements: React.ReactElement[];
   if (taxSchemes !== null) {
