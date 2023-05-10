@@ -5,7 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import { TransactionDto, TransactionsClient } from './api';
 
-export default function fetchTransactions(transactions: TransactionDto[] | null, setTransactions: (data: TransactionDto[]) => void) {
+export default function fetchTransactions(
+  transactions: TransactionDto[] | null,
+  setTransactions: (data: TransactionDto[]) => void
+): [TransactionDto[] | null, (data: TransactionDto[]) => void] {
   const { user, setAuthentication } = useAuth();
   const navigate = useNavigate();
 

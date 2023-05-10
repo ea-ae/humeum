@@ -3,7 +3,10 @@ import * as React from 'react';
 
 import { TaxSchemeDto, TaxSchemesClient } from './api';
 
-export default function fetchTaxSchemes(taxSchemes: TaxSchemeDto[] | null, setTaxSchemes: (data: TaxSchemeDto[]) => void) {
+export default function fetchTaxSchemes(
+  taxSchemes: TaxSchemeDto[] | null,
+  setTaxSchemes: (data: TaxSchemeDto[]) => void
+): [TaxSchemeDto[] | null, (data: TaxSchemeDto[]) => void] {
   React.useEffect(() => {
     const cancelSource = axios.CancelToken.source();
 
