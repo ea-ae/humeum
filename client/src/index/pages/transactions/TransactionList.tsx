@@ -1,9 +1,9 @@
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import axios from 'axios';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { TransactionDto, TransactionsClient } from '../../api/api';
+import fetchTransactions from '../../api/fetchTransactions';
 import useAuth from '../../hooks/useAuth';
 import useCache, { CacheKey } from '../../hooks/useCache';
 import EditDialog from './EditDialog';
@@ -43,41 +43,26 @@ const gridColumns: GridColDef[] = [
 ];
 
 function TransactionList() {
-  const [pageSize, setPageSize] = React.useState<number>(10);
   const [transactions, setTransactions] = useCache<TransactionDto[] | null>(CacheKey.Transactions, null);
+  fetchTransactions(transactions, setTransactions);
+
+  const [pageSize, setPageSize] = React.useState<number>(10);
   const [isEditDialogOpen, setIsEditDialogOpen] = React.useState<boolean>(false);
   const [selectedTransaction, setSelectedTransaction] = React.useState<TransactionDto | null>(null);
+
   const { user, setAuthentication } = useAuth();
   const navigate = useNavigate();
-
-  const client = new TransactionsClient();
 
   const fail = () => {
     setAuthentication(null);
     navigate('/login');
   };
 
-  React.useEffect(() => {
-    if (user === null) {
-      throw new Error('User was null in startup effect');
-    }
-
-    const cancelSource = axios.CancelToken.source();
-
-    const userId = user.id.toString();
-    const profileId = user.profiles[0].id;
-
-    const get = () => client.getTransactions(profileId, '1', userId, undefined, undefined, undefined, undefined, cancelSource.token);
-    const set = (value: TransactionDto[]) => setTransactions(value);
-    TransactionsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
-
-    return () => cancelSource.cancel();
-  }, []);
-
   const onTransactionSave = (transaction: TransactionDto) => {
     setIsEditDialogOpen(false); // we do not null the transaction here, because we want to keep it for the transition
 
     if (user !== null && transactions !== null) {
+      const client = new TransactionsClient();
       const userId = user.id.toString();
       const profileId = user.profiles[0].id;
 
