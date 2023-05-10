@@ -3,6 +3,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 
 import { TransactionDto } from '../../api/api';
+import CurrencyInput from '../../components/cards/CurrencyInput';
 import Input from '../../components/cards/Input';
 import PositiveIntegerInput from '../../components/cards/PositiveIntegerInput';
 
@@ -39,11 +40,16 @@ export default function RecurringTransactionTab({ data, setData }: Props) {
       <Input
         label="Name"
         defaultValue={data.name}
-        typePattern={/[A-Za-z0-9ÕÄÖÜõäöü,.;:!? ]{0,50}/}
-        validPattern={/[A-Za-z0-9ÕÄÖÜõäöü,.;:!? ]{1,50}/}
-        className="md:col-span-2"
+        typePattern={/^[A-Za-z0-9ÕÄÖÜõäöü,.;:!? ]{0,50}$/}
+        validPattern={/^[A-Za-z0-9ÕÄÖÜõäöü,.;:!? ]{1,50}$/}
         isOutlined
         onChange={(value: string) => setData(new TransactionDto({ ...data, name: value }))}
+      />
+      <CurrencyInput
+        label="Amount"
+        defaultValue={data.amount}
+        isOutlined
+        onChange={(value: number) => setData(new TransactionDto({ ...data, amount: value }))}
       />
       <DatePicker
         label="Start date"

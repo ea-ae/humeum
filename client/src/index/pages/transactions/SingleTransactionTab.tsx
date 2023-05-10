@@ -18,8 +18,8 @@ export default function SingleTransactionTab({ data, setData, taxSchemes }: Prop
       <Input
         label="Name"
         defaultValue={data.name}
-        typePattern={/[A-Za-z0-9ÕÄÖÜõäöü,.;:!? ]{0,50}/}
-        validPattern={/[A-Za-z0-9ÕÄÖÜõäöü,.;:!? ]{1,50}/}
+        typePattern={/^[A-Za-z0-9ÕÄÖÜõäöü,.;:!? ]{0,50}$/}
+        validPattern={/^[A-Za-z0-9ÕÄÖÜõäöü,.;:!? ]{1,50}$/}
         className="md:col-span-2"
         isOutlined
         onChange={(value: string) => setData(new TransactionDto({ ...data, name: value }))}
@@ -33,8 +33,8 @@ export default function SingleTransactionTab({ data, setData, taxSchemes }: Prop
       <Input
         label="Description"
         defaultValue={data.description ?? ''}
-        typePattern={/[A-Za-z0-9ÕÄÖÜõäöü,.;:!? ]{0,400}/}
-        validPattern={/[A-Za-z0-9ÕÄÖÜõäöü,.;:!? ]{0,400}/}
+        typePattern={/^[A-Za-z0-9ÕÄÖÜõäöü,.;:!? ]{0,400}$/}
+        validPattern={/^[A-Za-z0-9ÕÄÖÜõäöü,.;:!? ]{0,400}$/}
         className="md:col-span-2"
         isOutlined
         onChange={(value: string) => setData(new TransactionDto({ ...data, description: value }))}
