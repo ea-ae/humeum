@@ -12,7 +12,7 @@ interface Props {
 
 export default function PositiveIntegerInput({ label, tooltip, defaultValue, disabled, className, onChange }: Props) {
   const typePattern = /^[0-9]{0,3}$/;
-  const validPattern = /^[1-9][0-9]{0,2}$/;
+  const validPattern = /^0*[1-9][0-9]{0,2}$/;
 
   const onInputChange = (input: string) => {
     if (onChange !== null && onChange !== undefined) {

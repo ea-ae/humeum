@@ -93,9 +93,15 @@ function TransactionList() {
           transaction.typeCode,
           transaction.paymentTimelinePeriodStart,
           transaction.taxScheme.id,
-          transaction.asset?.id
+          transaction.asset?.id,
+          transaction.paymentTimelinePeriodEnd,
+          transaction.paymentTimelineFrequencyTimeUnitCode,
+          transaction.paymentTimelineFrequencyTimesPerCycle,
+          transaction.paymentTimelineFrequencyUnitsInCycle
         );
+
       const set = () => setTransactions(transactions.map((t) => (t.id === transaction.id ? transaction : t)));
+
       TransactionsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
     }
   };
@@ -130,8 +136,8 @@ function TransactionList() {
       throw new Error('Transaction not found.');
     }
 
-    setIsEditDialogOpen(true);
     setSelectedTransaction(transaction);
+    setIsEditDialogOpen(true);
   };
 
   return (

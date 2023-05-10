@@ -27,6 +27,8 @@ export default function Input(props: Props) {
   const [isValid, setIsValid] = React.useState<boolean>(validPattern.test(value));
   const [hasChanged, setHasChanged] = React.useState<boolean>(false);
 
+  React.useEffect(() => setValue(defaultValue), [defaultValue]);
+
   const validate = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     e.preventDefault();
     if (typePattern.test(e.target.value)) {
