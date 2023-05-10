@@ -36,7 +36,7 @@ export default function Input(props: Props) {
       setIsValid(validPattern.test(e.target.value));
       setHasChanged(true);
 
-      if (onChange !== null && onChange !== undefined) {
+      if (validPattern.test(e.target.value) && onChange !== null && onChange !== undefined) {
         onChange(e.target.value);
       }
     }
