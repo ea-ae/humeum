@@ -66,7 +66,7 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
       />
       <Input
         label="Description"
-        defaultValue={data.description}
+        defaultValue={data.description ?? ''}
         typePattern={descriptionPattern}
         validPattern={descriptionPattern}
         className="md:col-span-2"
