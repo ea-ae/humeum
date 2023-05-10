@@ -57,9 +57,11 @@ function TransactionList() {
     navigate('/login');
   };
 
-  const onTransactionSave = (transaction: TransactionDto) => {
+  const onDialogClose = () => {
     setIsEditDialogOpen(false); // we do not null the transaction here, because we want to keep it for the transition
+  };
 
+  const onTransactionSave = (transaction: TransactionDto) => {
     if (user !== null && transactions !== null) {
       const client = new TransactionsClient();
       const userId = user.id.toString();
@@ -145,7 +147,7 @@ function TransactionList() {
         onRowClick={(params) => onTransactionEditClick(params.id as number)}
       />
       {selectedTransaction !== null ? (
-        <EditDialog transaction={selectedTransaction} isOpen={isEditDialogOpen} onSave={onTransactionSave} />
+        <EditDialog transaction={selectedTransaction} isOpen={isEditDialogOpen} onClose={onDialogClose} onSave={onTransactionSave} />
       ) : null}
     </>
   );

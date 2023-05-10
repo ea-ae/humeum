@@ -54,8 +54,17 @@ export default function RecurringTransactionTab({ data, setData }: Props) {
       <DatePicker
         label="Start date"
         defaultValue={dayjs(data.paymentTimelinePeriodStart)}
-        className="md:col-start-3 my-2"
+        className="my-2"
         onChange={(value) => setData(new TransactionDto({ ...data, paymentTimelinePeriodStart: (value as dayjs.Dayjs).toDate() }))}
+      />
+      <Input
+        label="Description"
+        defaultValue={data.description ?? ''}
+        typePattern={/^[A-Za-z0-9ÕÄÖÜõäöü,.;:!? ]{0,400}$/}
+        validPattern={/^[A-Za-z0-9ÕÄÖÜõäöü,.;:!? ]{0,400}$/}
+        className="md:col-span-2"
+        isOutlined
+        onChange={(value: string) => setData(new TransactionDto({ ...data, description: value }))}
       />
       <DatePicker
         label="End date"

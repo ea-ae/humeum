@@ -21,10 +21,12 @@ type TimeUnit = 'DAYS' | 'WEEKS' | 'MONTHS' | 'YEARS';
 interface Props {
   transaction: TransactionDto; // transaction remains after closing for the transition
   isOpen: boolean;
+
+  onClose: () => void;
   onSave: (transaction: TransactionDto) => void;
 }
 
-export default function EditDialog({ transaction, isOpen, onSave }: Props) {
+export default function EditDialog({ transaction, isOpen, onClose, onSave }: Props) {
   const [taxSchemes, _setTaxSchemes] = fetchTaxSchemes(...useCache<TaxSchemeDto[] | null>(CacheKey.TaxSchemes, null));
 
   const [assets, _setAssets] = useCache<AssetDto[] | null>(CacheKey.Assets, null);
@@ -47,7 +49,7 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
 
   if (taxSchemes === null) return null;
 
-  const onDialogClose = () => {
+  const onTransactionSave = () => {
     if (activeTab === EditDialogTab.SINGLE_TRANSACTION) {
       const singleTransaction = new TransactionDto({
         ...data,
@@ -61,12 +63,13 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
     } else {
       onSave(data);
     }
+    onClose();
   };
 
   return (
     <Mui.Dialog
       open={isOpen}
-      onClose={onDialogClose}
+      onClose={onClose}
       fullScreen={fullScreen}
       classes={{ paper: 'md:min-w-[70vw] lg:min-w-[65vw] xl:min-w-[38w] 2xl:min-w-[25w]' }}
     >
@@ -84,7 +87,7 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
         </div>
       </Mui.DialogContent>
       <Mui.DialogActions>
-        <Mui.Button onClick={onDialogClose}>
+        <Mui.Button onClick={onTransactionSave}>
           {activeTab === EditDialogTab.SINGLE_TRANSACTION ? 'Save as a single-time transaction' : null}
           {activeTab === EditDialogTab.RECURRING_TRANSACTION ? 'Save as a recurring transaction' : null}
         </Mui.Button>
