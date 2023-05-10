@@ -3,11 +3,11 @@ import Input from './Input';
 interface Props {
   label: string;
   tooltip?: string;
-  defaultValue: number;
+  defaultValue: number | null;
   disabled?: boolean;
   className?: string;
 
-  onChange?: undefined | ((percentage: number) => void);
+  onChange?: undefined | ((percentage: number | null) => void);
 }
 
 export default function PositiveIntegerInput({ label, tooltip, defaultValue, disabled, className, onChange }: Props) {
@@ -16,7 +16,7 @@ export default function PositiveIntegerInput({ label, tooltip, defaultValue, dis
 
   const onInputChange = (input: string) => {
     if (onChange !== null && onChange !== undefined) {
-      onChange(parseFloat(input));
+      onChange(input === '' ? null : parseInt(input, 10));
     }
   };
 
@@ -24,7 +24,7 @@ export default function PositiveIntegerInput({ label, tooltip, defaultValue, dis
     <Input
       label={label}
       tooltip={tooltip}
-      defaultValue={defaultValue.toString()}
+      defaultValue={defaultValue?.toString() ?? ''}
       typePattern={typePattern}
       validPattern={validPattern}
       disabled={disabled}

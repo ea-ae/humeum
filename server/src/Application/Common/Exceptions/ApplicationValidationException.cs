@@ -10,5 +10,5 @@ public class ApplicationValidationException : BaseException {
 
     public override string Title => "Validation Error";
 
-    public override int StatusCode => 401;
+    public override int StatusCode => 400;
 }

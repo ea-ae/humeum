@@ -30,9 +30,6 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
   const [selectedTaxScheme, setSelectedTaxScheme] = React.useState<number>(transaction.taxScheme.id);
   const [selectedAsset, setSelectedAsset] = React.useState<number>(transaction.asset?.id ?? -1);
   const [selectedCategories, setSelectedCategories] = React.useState<number[]>(transaction.categories.map((c) => c.id));
-  const [selectedTimeUnit, setSelectedTimeUnit] = React.useState<TimeUnit>(
-    (transaction.paymentTimelineFrequencyTimeUnitCode ?? 'MONTHS') as TimeUnit
-  );
 
   const [activeTab, setActiveTab] = React.useState<number>(EditDialogTab.SINGLE_TRANSACTION);
 
@@ -41,7 +38,6 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
     setSelectedTaxScheme(transaction.taxScheme.id);
     setSelectedAsset(transaction.asset?.id ?? -1);
     setSelectedCategories(transaction.categories.map((c) => c.id));
-    setSelectedTimeUnit((transaction.paymentTimelineFrequencyTimeUnitCode ?? 'MONTHS') as TimeUnit);
     setActiveTab(EditDialogTab.SINGLE_TRANSACTION);
   }, [transaction.id]); // whenever the default value changes, reset the state
 
@@ -56,7 +52,6 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
       <Input
         label="Name"
         defaultValue={data.name}
-        value={data.name}
         typePattern={namePattern}
         validPattern={namePattern}
         className="md:col-span-2"
@@ -109,9 +104,21 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
 
   const recurringTransactionTab = (
     <>
-      <PositiveIntegerInput label="n times" defaultValue={data.paymentTimelineFrequencyTimesPerCycle ?? 1} />
-      <PositiveIntegerInput label="every n" defaultValue={data.paymentTimelineFrequencyUnitsInCycle ?? 1} />
-      <Mui.Select value={selectedTimeUnit} className="my-2" onChange={(event) => setSelectedTimeUnit(event.target.value as TimeUnit)}>
+      <PositiveIntegerInput
+        label="n times"
+        defaultValue={data.paymentTimelineFrequencyTimesPerCycle ?? null}
+        onChange={(n) => setData(new TransactionDto({ ...data, paymentTimelineFrequencyTimesPerCycle: n ?? undefined }))}
+      />
+      <PositiveIntegerInput
+        label="every n"
+        defaultValue={data.paymentTimelineFrequencyUnitsInCycle ?? null}
+        onChange={(n) => setData(new TransactionDto({ ...data, paymentTimelineFrequencyUnitsInCycle: n ?? undefined }))}
+      />
+      <Mui.Select
+        value={data.paymentTimelineFrequencyTimeUnitCode ?? ''}
+        className="my-2"
+        onChange={(event) => setData(new TransactionDto({ ...data, paymentTimelineFrequencyTimeUnitCode: event.target.value as TimeUnit }))}
+      >
         <Mui.MenuItem value="DAYS">Days</Mui.MenuItem>
         <Mui.MenuItem value="WEEKS">Weeks</Mui.MenuItem>
         <Mui.MenuItem value="MONTHS">Months</Mui.MenuItem>
@@ -125,7 +132,7 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
       />
       <DatePicker
         label="End date"
-        defaultValue={dayjs(data.paymentTimelinePeriodEnd)}
+        defaultValue={data.paymentTimelinePeriodEnd === undefined ? null : dayjs(data.paymentTimelinePeriodEnd)}
         className="md:col-span-3 my-2"
         onChange={(value) => setData(new TransactionDto({ ...data, paymentTimelinePeriodEnd: (value as dayjs.Dayjs).toDate() }))}
       />

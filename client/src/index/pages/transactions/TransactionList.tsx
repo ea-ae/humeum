@@ -81,6 +81,8 @@ function TransactionList() {
       const userId = user.id.toString();
       const profileId = user.profiles[0].id;
 
+      console.log(transaction);
+
       const get = () =>
         client.replaceTransaction(
           profileId,
