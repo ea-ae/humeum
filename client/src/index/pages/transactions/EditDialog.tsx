@@ -34,7 +34,6 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
   const [assets, setAssets] = useCache<AssetDto[] | null>(CacheKey.Assets, null);
 
   const [data, setData] = React.useState<TransactionDto>(transaction);
-  const [selectedTaxScheme, setSelectedTaxScheme] = React.useState<number>(transaction.taxScheme.id);
   const [selectedAsset, setSelectedAsset] = React.useState<number>(transaction.asset?.id ?? -1);
   const [selectedCategories, setSelectedCategories] = React.useState<number[]>(transaction.categories.map((c) => c.id));
 
@@ -42,7 +41,6 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
 
   React.useEffect(() => {
     setData(transaction);
-    setSelectedTaxScheme(transaction.taxScheme.id);
     setSelectedAsset(transaction.asset?.id ?? -1);
     setSelectedCategories(transaction.categories.map((c) => c.id));
     setActiveTab(EditDialogTab.SINGLE_TRANSACTION);
@@ -54,9 +52,7 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
   const namePattern = /[A-Za-z0-9ÕÄÖÜõäöü ]{0,50}/;
   const descriptionPattern = /[A-Za-z0-9ÕÄÖÜõäöü ]{0,400}/;
 
-  if (taxSchemes === null) {
-    return 'Loading...';
-  }
+  if (taxSchemes === null) return null;
 
   const singleTransactionTab = (
     <>
