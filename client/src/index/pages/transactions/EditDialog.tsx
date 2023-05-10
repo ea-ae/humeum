@@ -5,7 +5,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import * as React from 'react';
 
-import { TransactionDto } from '../../api/api';
+import { AssetDto, BriefRelatedResourceDto, TaxSchemeDto, TransactionDto } from '../../api/api';
+import fetchTaxSchemes from '../../api/fetchTaxSchemes';
 import CurrencyInput from '../../components/cards/CurrencyInput';
 import Input from '../../components/cards/Input';
 import PositiveIntegerInput from '../../components/cards/PositiveIntegerInput';
@@ -27,8 +28,10 @@ interface Props {
 }
 
 export default function EditDialog({ transaction, isOpen, onSave }: Props) {
-  const [taxSchemes, setTaxSchemes] = useCache<TransactionDto[] | null>(CacheKey.TaxSchemes, null);
-  const [assets, setAssets] = useCache<TransactionDto[] | null>(CacheKey.Assets, null);
+  const [taxSchemes, setTaxSchemes] = useCache<TaxSchemeDto[] | null>(CacheKey.TaxSchemes, null);
+  fetchTaxSchemes(taxSchemes, setTaxSchemes);
+
+  const [assets, setAssets] = useCache<AssetDto[] | null>(CacheKey.Assets, null);
 
   const [data, setData] = React.useState<TransactionDto>(transaction);
   const [selectedTaxScheme, setSelectedTaxScheme] = React.useState<number>(transaction.taxScheme.id);
@@ -50,6 +53,10 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
 
   const namePattern = /[A-Za-z0-9ÕÄÖÜõäöü ]{0,50}/;
   const descriptionPattern = /[A-Za-z0-9ÕÄÖÜõäöü ]{0,400}/;
+
+  if (taxSchemes === null) {
+    return 'Loading...';
+  }
 
   const singleTransactionTab = (
     <>
@@ -83,9 +90,26 @@ export default function EditDialog({ transaction, isOpen, onSave }: Props) {
         className="my-2"
         onChange={(value) => setData(new TransactionDto({ ...data, paymentTimelinePeriodStart: (value as dayjs.Dayjs).toDate() }))}
       />
-      <Mui.Select value={selectedTaxScheme} className="my-2" onChange={(event) => setSelectedTaxScheme(event.target.value as number)}>
-        <Mui.MenuItem value={1}>Income tax</Mui.MenuItem>
-        <Mui.MenuItem value={2}>Value added tax</Mui.MenuItem>
+      <Mui.Select
+        value={data.taxScheme.id}
+        className="my-2"
+        onChange={(event) =>
+          setData(
+            new TransactionDto({
+              ...data,
+              taxScheme: new BriefRelatedResourceDto({
+                id: event.target.value as number,
+                name: taxSchemes[event.target.value as number].name,
+              }),
+            })
+          )
+        }
+      >
+        {taxSchemes?.map((taxScheme) => (
+          <Mui.MenuItem value={taxScheme.id} key={taxScheme.id}>
+            {taxScheme.name}
+          </Mui.MenuItem>
+        ))}
       </Mui.Select>
       <Mui.Select value={selectedAsset} className="my-2" onChange={(event) => setSelectedAsset(event.target.value as number)}>
         <Mui.MenuItem value={-1}>No asset</Mui.MenuItem>
