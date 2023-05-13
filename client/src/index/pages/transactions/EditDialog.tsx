@@ -4,6 +4,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import * as React from 'react';
 
 import { AssetDto, TaxSchemeDto, TransactionDto } from '../../api/api';
+import fetchAssets from '../../api/fetchAssets';
 import fetchTaxSchemes from '../../api/fetchTaxSchemes';
 import useCache, { CacheKey } from '../../hooks/useCache';
 import RecurringTransactionTab from './RecurringTransactionTab';
@@ -16,8 +17,6 @@ enum EditDialogTab {
   RECURRING_TRANSACTION,
 }
 
-type TimeUnit = 'DAYS' | 'WEEKS' | 'MONTHS' | 'YEARS';
-
 interface Props {
   transaction: TransactionDto; // transaction remains after closing for the transition
   isOpen: boolean;
@@ -28,8 +27,7 @@ interface Props {
 
 export default function EditDialog({ transaction, isOpen, onClose, onSave }: Props) {
   const [taxSchemes, _setTaxSchemes] = fetchTaxSchemes(...useCache<TaxSchemeDto[] | null>(CacheKey.TaxSchemes, null));
-
-  const [assets, _setAssets] = useCache<AssetDto[] | null>(CacheKey.Assets, null);
+  const [assets, _setAssets] = fetchAssets(...useCache<AssetDto[] | null>(CacheKey.Assets, null));
 
   const [data, setData] = React.useState<TransactionDto>(transaction);
   // const [selectedAsset, setSelectedAsset] = React.useState<number>(transaction.asset?.id ?? -1);
@@ -47,7 +45,7 @@ export default function EditDialog({ transaction, isOpen, onClose, onSave }: Pro
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-  if (taxSchemes === null) return null;
+  if (taxSchemes === null || assets === null) return null;
 
   const onTransactionSave = () => {
     if (activeTab === EditDialogTab.SINGLE_TRANSACTION) {
@@ -81,7 +79,7 @@ export default function EditDialog({ transaction, isOpen, onClose, onSave }: Pro
         <Mui.Divider />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 my-4">
           {activeTab === EditDialogTab.SINGLE_TRANSACTION ? (
-            <SingleTransactionTab data={data} setData={setData} taxSchemes={taxSchemes} />
+            <SingleTransactionTab data={data} setData={setData} taxSchemes={taxSchemes} assets={assets} />
           ) : null}
           {activeTab === EditDialogTab.RECURRING_TRANSACTION ? <RecurringTransactionTab data={data} setData={setData} /> : null}
         </div>

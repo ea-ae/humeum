@@ -1,15 +1,14 @@
-import axios from 'axios';
-import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AssetDto, AssetsClient } from '../../api/api';
+import fetchAssets from '../../api/fetchAssets';
 import NewItemCard from '../../components/cards/NewItemCard';
 import useAuth from '../../hooks/useAuth';
 import useCache from '../../hooks/useCache';
 import AssetCard from './AssetCard';
 
 export default function AssetList() {
-  const [assets, setAssets] = useCache<AssetDto[] | null>('assets', null);
+  const [assets, setAssets] = fetchAssets(...useCache<AssetDto[] | null>('assets', null));
   const { user, setAuthentication } = useAuth();
   const navigate = useNavigate();
 
@@ -19,22 +18,6 @@ export default function AssetList() {
     setAuthentication(null);
     navigate('/login');
   };
-
-  React.useEffect(() => {
-    if (user === null) {
-      throw new Error('User was null in startup effect');
-    }
-
-    const cancelSource = axios.CancelToken.source();
-
-    const get = () => client.getAssets(user.profiles[0].id, '1', user.id.toString());
-    const set = (value: AssetDto[]) => setAssets(value);
-    AssetsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
-
-    return () => {
-      cancelSource.cancel();
-    };
-  }, []);
 
   const onAssetSave = (asset: AssetDto, realReturn: number, standardDeviation: number) => {
     if (user === null || assets === null) {
