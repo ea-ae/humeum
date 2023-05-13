@@ -71,7 +71,7 @@ public class UsersController : ControllerBase {
     /// <response code="400">If the user fields do not match domain or application rules.</response>
     /// <response code="401">If the user creation attempt fails, e.g. username or email is already in use.</response>
     [HttpPost("register")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(CreatedAtActionResult), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IResult<IActionResult, IBaseException>> RegisterUser(RegisterUserCommand command) {

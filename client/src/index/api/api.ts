@@ -2183,7 +2183,7 @@ export class UsersClient extends ApiClient {
      * @param rememberMe (optional) 
      * @return Returns the location of newly created user and an authentication token.
      */
-    registerUser(version: string, username?: string | null | undefined, email?: string | null | undefined, password?: string | null | undefined, confirmPassword?: string | null | undefined, rememberMe?: boolean | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<IResultOfIActionResultAndIBaseException>> {
+    registerUser(version: string, username?: string | null | undefined, email?: string | null | undefined, password?: string | null | undefined, confirmPassword?: string | null | undefined, rememberMe?: boolean | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<FileResponse>> {
         let url_ = this.baseUrl + "/api/v{Version}/users/register?";
         if (version === undefined || version === null)
             throw new Error("The parameter 'version' must be defined.");
@@ -2203,6 +2203,7 @@ export class UsersClient extends ApiClient {
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
+            responseType: "blob",
             method: "POST",
             url: url_,
             headers: {
@@ -2224,7 +2225,7 @@ export class UsersClient extends ApiClient {
         });
     }
 
-    protected processRegisterUser(response: AxiosResponse): Promise<SwaggerResponse<IResultOfIActionResultAndIBaseException>> {
+    protected processRegisterUser(response: AxiosResponse): Promise<SwaggerResponse<FileResponse>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -2235,12 +2236,16 @@ export class UsersClient extends ApiClient {
             }
         }
         if (status === 201) {
-            const _responseText = response.data;
-            let result201: any = null;
-            let resultData201  = _responseText;
-            result201 = IResultOfIActionResultAndIBaseException.fromJS(resultData201);
-            return Promise.resolve<SwaggerResponse<IResultOfIActionResultAndIBaseException>>(new SwaggerResponse<IResultOfIActionResultAndIBaseException>(status, _headers, result201));
-
+            const contentDisposition = response.headers ? response.headers["content-disposition"] : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            }
+            return Promise.resolve<SwaggerResponse<FileResponse>>(new SwaggerResponse(status, _headers, { fileName: fileName, status: status, data: new Blob([response.data], { type: response.headers["content-type"] }), headers: _headers }));
         } else if (status === 400) {
             const _responseText = response.data;
             let result400: any = null;
@@ -2259,7 +2264,7 @@ export class UsersClient extends ApiClient {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<SwaggerResponse<IResultOfIActionResultAndIBaseException>>(new SwaggerResponse(status, _headers, null as any));
+        return Promise.resolve<SwaggerResponse<FileResponse>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**

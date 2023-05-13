@@ -59,6 +59,10 @@ function TransactionList() {
 
   const onDialogClose = () => {
     setIsEditDialogOpen(false); // we do not null the transaction here, because we want to keep it for the transition
+
+    // if (transactions !== null) {
+    //   setTransactions(transactions.map((t) => (t.id === transaction.id ? transaction : t)));
+    // }
   };
 
   const onTransactionSave = (transaction: TransactionDto) => {
@@ -66,8 +70,6 @@ function TransactionList() {
       const client = new TransactionsClient();
       const userId = user.id.toString();
       const profileId = user.profiles[0].id;
-
-      console.log(transaction);
 
       const get = () =>
         client.replaceTransaction(

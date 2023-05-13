@@ -7,6 +7,7 @@ import Sidebar from './components/layouts/Sidebar';
 import AssetsPage from './pages/assets/AssetsPage';
 import HomePage from './pages/home/HomePage';
 import LoginPage from './pages/login/LoginPage';
+import RegisterPage from './pages/register/RegisterPage';
 import SettingsPage from './pages/settings/SettingsPage';
 import TaxesPage from './pages/taxes/TaxesPage';
 import TransactionsIndex from './pages/transactions/TransactionsPage';
@@ -18,6 +19,7 @@ const withLayout = (element: React.ReactNode, activeTabLabel: string) => (
 const router = Router.createBrowserRouter(
   Router.createRoutesFromElements(
     <>
+      <Router.Route path="/register" element={<RegisterPage />} />
       <Router.Route path="/login" element={<LoginPage />} />
       <Router.Route path="/" element={<Authenticated>{withLayout(<HomePage />, 'home')}</Authenticated>} />
       <Router.Route path="/transactions" element={<Authenticated>{withLayout(<TransactionsIndex />, 'transactions')}</Authenticated>} />
