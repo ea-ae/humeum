@@ -116,6 +116,18 @@ function TransactionList() {
     return [];
   }, [transactions]);
 
+  const onTransactionCreateClick = () => {
+    // const newTransation = new TransactionDto({
+    //   id: -1,
+    //   name: '',
+    //   description: '',
+    //   amount: 0,
+    //   typeName:
+    // });
+    setSelectedTransaction(null);
+    setIsEditDialogOpen(true);
+  };
+
   const onTransactionEditClick = (id: number) => {
     if (transactions === null) {
       throw new Error('Transactions list not set.');
@@ -129,6 +141,8 @@ function TransactionList() {
     setSelectedTransaction(transaction);
     setIsEditDialogOpen(true);
   };
+
+  const footerConstructor = () => <TransactionListFooter onCreateClick={onTransactionCreateClick} />;
 
   return (
     <>
@@ -144,7 +158,7 @@ function TransactionList() {
         classes={{ cell: 'outline-none', columnHeader: 'outline-none', row: 'group' }}
         className="min-w-fit card"
         components={{
-          Footer: TransactionListFooter,
+          Footer: footerConstructor,
         }}
         onRowClick={(params) => onTransactionEditClick(params.id as number)}
       />

@@ -6,6 +6,20 @@ import { AssetDto, BriefRelatedResourceDto, TaxSchemeDto, TransactionDto } from 
 import CurrencyInput from '../../components/cards/CurrencyInput';
 import Input from '../../components/cards/Input';
 
+// lazy so doing transaction types this way
+
+interface TransactionType {
+  id: number;
+  name: string;
+  code: string;
+}
+
+const TRANSACTION_TYPES: TransactionType[] = [
+  { id: 1, name: 'Always', code: 'ALWAYS' },
+  { id: 2, name: 'Pre-retirement only', code: 'PRERETIREMENTONLY' },
+  { id: 3, name: 'Retirement only', code: 'RETIREMENTONLY' },
+];
+
 interface Props {
   data: TransactionDto;
   setData: (data: TransactionDto) => void;
@@ -57,6 +71,18 @@ export default function SingleTransactionTab({ data, setData, taxSchemes, assets
     );
   };
 
+  const setTransactionType = (event: Mui.SelectChangeEvent<number>) => {
+    const transactionType = TRANSACTION_TYPES.find((tt) => tt.id === (event.target.value as number)) as TransactionType;
+
+    setData(
+      new TransactionDto({
+        ...data,
+        typeCode: transactionType.code,
+        typeName: transactionType.name,
+      })
+    );
+  };
+
   return (
     <>
       <Input
@@ -64,7 +90,6 @@ export default function SingleTransactionTab({ data, setData, taxSchemes, assets
         defaultValue={data.name}
         typePattern={/^[A-Za-z0-9ÕÄÖÜõäöü,.;:!? ]{0,50}$/}
         validPattern={/^[A-Za-z0-9ÕÄÖÜõäöü,.;:!? ]{1,50}$/}
-        className="md:col-span-2"
         isOutlined
         onChange={(value: string) => setData(new TransactionDto({ ...data, name: value }))}
       />
@@ -74,6 +99,17 @@ export default function SingleTransactionTab({ data, setData, taxSchemes, assets
         isOutlined
         onChange={(value: number) => setData(new TransactionDto({ ...data, amount: value }))}
       />
+      <Mui.Select
+        value={(TRANSACTION_TYPES.find((tt) => tt.code === data.typeCode) as TransactionType).id}
+        className="my-2"
+        onChange={setTransactionType}
+      >
+        {TRANSACTION_TYPES.map((transactionType) => (
+          <Mui.MenuItem value={transactionType.id} key={transactionType.id}>
+            {transactionType.name}
+          </Mui.MenuItem>
+        ))}
+      </Mui.Select>
       <Input
         label="Description"
         defaultValue={data.description ?? ''}
