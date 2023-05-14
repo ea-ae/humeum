@@ -33,7 +33,9 @@ export default function EditDialog({ transaction, isOpen, onClose, onSave }: Pro
   // const [selectedAsset, setSelectedAsset] = React.useState<number>(transaction.asset?.id ?? -1);
   // const [selectedCategories, setSelectedCategories] = React.useState<number[]>(transaction.categories.map((c) => c.id));
 
-  const [activeTab, setActiveTab] = React.useState<number>(EditDialogTab.SINGLE_TRANSACTION);
+  const [activeTab, setActiveTab] = React.useState<number>(
+    transaction.paymentTimelinePeriodEnd === null ? EditDialogTab.SINGLE_TRANSACTION : EditDialogTab.RECURRING_TRANSACTION
+  );
 
   React.useEffect(() => {
     setData(transaction);
