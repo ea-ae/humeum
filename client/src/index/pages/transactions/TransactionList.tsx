@@ -2,12 +2,26 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { TransactionDto, TransactionsClient } from '../../api/api';
+import { BriefRelatedResourceDto, TransactionDto, TransactionsClient } from '../../api/api';
 import fetchTransactions from '../../api/fetchTransactions';
 import useAuth from '../../hooks/useAuth';
 import useCache, { CacheKey } from '../../hooks/useCache';
 import EditDialog from './EditDialog';
 import TransactionListFooter from './TransactionListFooter';
+
+const createDefaultTransaction = () =>
+  new TransactionDto({
+    id: -1,
+    name: '',
+    description: '',
+    amount: 1,
+    typeName: 'Always',
+    typeCode: 'ALWAYS',
+    paymentTimelinePeriodStart: new Date(),
+    taxScheme: new BriefRelatedResourceDto({ id: 1, name: '' }),
+    asset: undefined,
+    categories: [],
+  });
 
 const gridColumns: GridColDef[] = [
   { field: 'name', headerName: 'Name', flex: 2, minWidth: 180, cellClassName: 'group-hover:text-blue-600', editable: false },
@@ -68,15 +82,34 @@ function TransactionList() {
   const onTransactionSave = (transaction: TransactionDto) => {
     if (user !== null && transactions !== null) {
       const client = new TransactionsClient();
-      const userId = user.id.toString();
       const profileId = user.profiles[0].id;
 
-      const get = () =>
+      // i just don't care
+
+      const getAdd = () =>
+        client.addTransaction(
+          user.id,
+          profileId,
+          '1',
+          transaction.name,
+          transaction.description,
+          transaction.amount,
+          transaction.typeCode,
+          transaction.paymentTimelinePeriodStart,
+          transaction.taxScheme.id,
+          transaction.asset?.id,
+          transaction.paymentTimelinePeriodEnd,
+          transaction.paymentTimelineFrequencyTimeUnitCode,
+          transaction.paymentTimelineFrequencyTimesPerCycle,
+          transaction.paymentTimelineFrequencyUnitsInCycle
+        );
+
+      const getReplace = () =>
         client.replaceTransaction(
           profileId,
           transaction.id,
           '1',
-          userId,
+          user.id.toString(),
           transaction.name,
           transaction.description,
           transaction.amount,
@@ -92,7 +125,7 @@ function TransactionList() {
 
       const set = () => setTransactions(transactions.map((t) => (t.id === transaction.id ? transaction : t)));
 
-      TransactionsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
+      TransactionsClient.callAuthenticatedEndpoint<unknown>(transaction.id === -1 ? getAdd : getReplace, set, fail, user.id);
     }
   };
 
@@ -117,14 +150,7 @@ function TransactionList() {
   }, [transactions]);
 
   const onTransactionCreateClick = () => {
-    // const newTransation = new TransactionDto({
-    //   id: -1,
-    //   name: '',
-    //   description: '',
-    //   amount: 0,
-    //   typeName:
-    // });
-    setSelectedTransaction(null);
+    setSelectedTransaction(createDefaultTransaction());
     setIsEditDialogOpen(true);
   };
 

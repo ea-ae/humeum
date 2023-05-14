@@ -132,7 +132,6 @@ export default function SingleTransactionTab({ data, setData, taxSchemes, assets
           </Mui.MenuItem>
         ))}
       </Mui.Select>
-      {/* onChange={(event) => setSelectedAsset(event.target.value as number) */}
       <Mui.Select value={data.asset?.id ?? -1} className="my-2" onChange={setAsset}>
         <Mui.MenuItem value={-1}>No asset</Mui.MenuItem>
         {assets.map((asset) => (
@@ -140,8 +139,6 @@ export default function SingleTransactionTab({ data, setData, taxSchemes, assets
             {asset.name}
           </Mui.MenuItem>
         ))}
-        {/* <Mui.MenuItem value={-1}>No asset</Mui.MenuItem>
-        <Mui.MenuItem value={1}>III pillar, pre-2021</Mui.MenuItem> */}
       </Mui.Select>
       <Mui.Select
         value={data.categories.map((c) => c.id)}

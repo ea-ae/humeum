@@ -10,6 +10,7 @@ namespace Application.V1.Transactions.Commands;
 
 public record AddTransactionCommand : ICommand<IResult<int, IBaseException>>, ITransactionFields
 {
+    [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }
 
     public string? Name { get; init; }

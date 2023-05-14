@@ -1413,7 +1413,7 @@ export class TransactionsClient extends ApiClient {
         let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/transactions?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
-        url_ = url_.replace("{user}", encodeURIComponent("" + user));
+        url_ = url_.replace("{User}", encodeURIComponent("" + user));
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));

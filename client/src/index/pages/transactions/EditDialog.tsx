@@ -18,7 +18,7 @@ enum EditDialogTab {
 }
 
 interface Props {
-  transaction: TransactionDto; // transaction remains after closing for the transition
+  transaction: TransactionDto;
   isOpen: boolean;
 
   onClose: () => void;
