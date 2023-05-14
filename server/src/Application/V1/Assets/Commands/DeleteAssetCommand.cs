@@ -6,6 +6,8 @@ using Application.Common.Interfaces;
 
 using Domain.V1.AssetAggregate;
 
+using Microsoft.EntityFrameworkCore;
+
 using Shared.Interfaces;
 using Shared.Models;
 
@@ -26,6 +28,7 @@ public class DeleteAssetCommandHandler : ICommandHandler<DeleteAssetCommand, IRe
     public async Task<IResult<None, IBaseException>> Handle(DeleteAssetCommand request, CancellationToken token = default)
     {
         var assetResult = _context.Assets.Where(a => a.Id == request.Asset && a.ProfileId == request.Profile && a.DeletedAt == null)
+                                         .Include(a => a.Transactions)
                                          .ToFoundResult();
 
         return await assetResult.ThenAsync<None, IBaseException>(async asset =>
