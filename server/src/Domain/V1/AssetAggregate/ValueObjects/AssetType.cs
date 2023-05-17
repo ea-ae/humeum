@@ -21,4 +21,6 @@ public class AssetType : Enumeration
     private AssetType(int id, string code, string name) : base(id, code, name) { }
 
     private AssetType() { }
+
+    public static IEnumerable<AssetType> GetAll() => GetAll<AssetType>();
 }

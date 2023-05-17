@@ -94,6 +94,8 @@ public class Asset : TimestampedEntity, IOptionalProfileEntity
                       .Transform(asset => asset.SetStandardDeviation(standardDeviation));
     }
 
+    public static IEnumerable<AssetType> Types => AssetType.GetAll();
+
     public IResult<None, DomainException> Replace(string name,
                                                   string? description,
                                                   decimal returnRate,

@@ -4,9 +4,8 @@ using Application.V1.Profiles.Queries;
 using Application.V1.TaxSchemes.Queries;
 using Application.V1.TransactionCategories.Queries;
 using Application.V1.Transactions.Queries;
-using AutoMapper;
 using Domain.V1.AssetAggregate;
-using Domain.V1.ProfileAggregate;
+using Domain.V1.AssetAggregate.ValueObjects;
 using Domain.V1.TaxSchemeAggregate;
 using Domain.V1.TransactionAggregate;
 using Domain.V1.TransactionCategoryAggregate;
@@ -31,9 +30,11 @@ public class ApplicationMappingProfile : AutoMapper.Profile {
 
         CreateMap<Asset, AssetDto>()
             .ForMember(dest => dest.Type,
-                       o => o.MapFrom(src => new AssetDto.AssetTypeDto { Id = src.TypeId, Name = src.Type.Name, Code = src.Type.Code }))
+                       o => o.MapFrom(src => new AssetTypeDto { Id = src.TypeId, Name = src.Type.Name, Code = src.Type.Code }))
             .ForMember(dest => dest.Default,
                        o => o.MapFrom(src => src.ProfileId == null));
+
+        CreateMap<AssetType, AssetTypeDto>();
 
         CreateMap<TaxScheme, TaxSchemeDto>();
 

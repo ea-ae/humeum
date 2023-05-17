@@ -1,5 +1,8 @@
 ﻿using Application.V1.Assets.Commands;
 using Application.V1.Assets.Queries;
+
+using Domain.V1.AssetAggregate.ValueObjects;
+
 using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -56,6 +59,20 @@ public class AssetsController : ControllerBase {
     public async Task<ActionResult<IResult<AssetDto, IBaseException>>> GetAsset(GetAssetQuery query) {
         var asset = await _mediator.Send(query);
         return Ok(asset);
+    }
+
+    /// <summary>
+    /// Get existing asset types.
+    /// </summary>
+    /// <response code="200">Returns the asset types.</response>
+    /// <response code="401">If a user route is accessed without an authentication token.</response>
+    /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
+    /// <response code="404">If a profile with given ID wasn't found for the user.</response>
+    [HttpGet("types")]
+    [ProducesResponseType(typeof(IEnumerable<AssetType>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IResult<IEnumerable<AssetTypeDto>, IBaseException>>> GetAssetTypes(GetAssetTypesQuery query) {
+        var assetTypes = await _mediator.Send(query);
+        return Ok(assetTypes);
     }
 
     /// <summary>
