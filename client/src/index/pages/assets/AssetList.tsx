@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AssetDto, AssetsClient } from '../../api/api';
@@ -6,9 +7,12 @@ import NewItemCard from '../../components/cards/NewItemCard';
 import useAuth from '../../hooks/useAuth';
 import useCache from '../../hooks/useCache';
 import AssetCard from './AssetCard';
+import CreateDialog from './CreateDialog';
 
 export default function AssetList() {
   const [assets, setAssets] = fetchAssets(...useCache<AssetDto[] | null>('assets', null));
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = React.useState<boolean>(false);
+
   const { user, setAuthentication } = useAuth();
   const navigate = useNavigate();
 
@@ -46,6 +50,8 @@ export default function AssetList() {
     AssetsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
   };
 
+  const onAssetCreate = (asset: AssetDto) => {};
+
   const onAssetDelete = (asset: AssetDto) => {
     if (user === null || assets === null) {
       throw new Error('User or state was null in event handler');
@@ -73,7 +79,8 @@ export default function AssetList() {
           onDelete={() => onAssetDelete(asset)}
         />
       ))}
-      <NewItemCard text="Create custom asset" />
+      <NewItemCard text="Create custom asset" onClick={() => setIsCreateDialogOpen(true)} />
+      <CreateDialog isOpen={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)} onCreate={onAssetCreate} />
     </div>
   );
 }
