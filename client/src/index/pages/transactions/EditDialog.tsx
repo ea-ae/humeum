@@ -23,9 +23,10 @@ interface Props {
 
   onClose: () => void;
   onSave: (transaction: TransactionDto) => void;
+  onDelete: (transactionId: number) => void;
 }
 
-export default function EditDialog({ transaction, isOpen, onClose, onSave }: Props) {
+export default function EditDialog({ transaction, isOpen, onClose, onSave, onDelete }: Props) {
   const [taxSchemes, _setTaxSchemes] = fetchTaxSchemes(...useCache<TaxSchemeDto[] | null>(CacheKey.TaxSchemes, null));
   const [assets, _setAssets] = fetchAssets(...useCache<AssetDto[] | null>(CacheKey.Assets, null));
 
@@ -46,6 +47,7 @@ export default function EditDialog({ transaction, isOpen, onClose, onSave }: Pro
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const newTransaction = transaction.id === -1;
 
   if (taxSchemes === null || assets === null) return null;
 
@@ -64,6 +66,12 @@ export default function EditDialog({ transaction, isOpen, onClose, onSave }: Pro
       onSave(data);
     }
     onClose();
+  };
+
+  const onTransactionDelete = () => {
+    if (newTransaction) return; // cannot delete a transaction that has not been saved yet
+    onClose();
+    onDelete(data.id);
   };
 
   return (
@@ -87,6 +95,13 @@ export default function EditDialog({ transaction, isOpen, onClose, onSave }: Pro
         </div>
       </Mui.DialogContent>
       <Mui.DialogActions>
+        <Mui.Button
+          onClick={onTransactionDelete}
+          disabled={newTransaction}
+          className={newTransaction ? '' : 'text-red-700 hover:bg-red-50'}
+        >
+          Delete
+        </Mui.Button>
         <Mui.Button onClick={onTransactionSave}>
           {activeTab === EditDialogTab.SINGLE_TRANSACTION ? 'Save as a single-time transaction' : null}
           {activeTab === EditDialogTab.RECURRING_TRANSACTION ? 'Save as a recurring transaction' : null}

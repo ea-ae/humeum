@@ -181,6 +181,17 @@ function TransactionList() {
     setIsEditDialogOpen(true);
   };
 
+  const onTransactionDelete = (id: number) => {
+    if (user !== null && transactions !== null) {
+      const client = new TransactionsClient();
+      const profileId = user.profiles[0].id;
+      const get = () => client.deleteTransaction(profileId, id, '1', user.id.toString());
+      const set = () => setTransactions(transactions.filter((t) => t.id !== id));
+
+      TransactionsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
+    }
+  };
+
   const footerConstructor = () => <TransactionListFooter onCreateClick={onTransactionCreateClick} />;
 
   return (
@@ -202,7 +213,13 @@ function TransactionList() {
         onRowClick={(params) => onTransactionEditClick(params.id as number)}
       />
       {selectedTransaction !== null ? (
-        <EditDialog transaction={selectedTransaction} isOpen={isEditDialogOpen} onClose={onDialogClose} onSave={onTransactionSave} />
+        <EditDialog
+          transaction={selectedTransaction}
+          isOpen={isEditDialogOpen}
+          onClose={onDialogClose}
+          onSave={onTransactionSave}
+          onDelete={onTransactionDelete}
+        />
       ) : null}
     </>
   );
