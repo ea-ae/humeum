@@ -12,6 +12,7 @@ namespace Application.V1.Assets.Commands;
 
 public record AddAssetCommand : ICommand<IResult<int, IBaseException>>
 {
+    [Required] public required int User { get; init; }
     [Required] public required int Profile { get; init; }
 
     [Required] public required string Name { get; init; }

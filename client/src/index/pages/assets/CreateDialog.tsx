@@ -4,6 +4,22 @@ import * as React from 'react';
 import { AssetDto, AssetTypeDto } from '../../api/api';
 import Input from '../../components/cards/Input';
 
+interface AssetType {
+  id: number;
+  name: string;
+  code: string;
+}
+
+const ASSET_TYPES: AssetType[] = [
+  { id: 1, name: 'Liquid/Cash', code: 'LIQUID' },
+  { id: 2, name: 'Index fund', code: 'INDEX' },
+  { id: 3, name: 'Managed fund', code: 'MANAGED' },
+  { id: 4, name: 'Real estate', code: 'REALESTATE' },
+  { id: 5, name: 'Bond', code: 'BOND' },
+  { id: 6, name: 'Stock/Derivative', code: 'STOCK' },
+  { id: 7, name: 'Other', code: 'OTHER' },
+];
+
 interface Props {
   isOpen: boolean;
 
@@ -20,7 +36,7 @@ export default function CreateDialog({ isOpen, onClose, onCreate }: Props) {
       returnRate: 5,
       standardDeviation: 5,
       default: false,
-      type: new AssetTypeDto({ id: -1, code: '', name: '' }),
+      type: new AssetTypeDto({ id: 7, code: 'OTHER', name: 'Other' }),
     })
   );
 
@@ -29,6 +45,14 @@ export default function CreateDialog({ isOpen, onClose, onCreate }: Props) {
 
   const onAssetCreate = () => onCreate(new AssetDto());
 
+  const setAssetType = (event: Mui.SelectChangeEvent<number>) => {
+    const id = event.target.value as number;
+    const assetType = ASSET_TYPES.find((at) => at.id === id);
+    if (assetType === undefined) throw new Error(`Asset type with id ${data.type.id} not found`);
+
+    setData(new AssetDto({ ...data, type: new AssetTypeDto({ id: assetType.id, code: assetType.code, name: assetType.name }) }));
+  };
+
   return (
     <Mui.Dialog
       open={isOpen}
@@ -36,7 +60,7 @@ export default function CreateDialog({ isOpen, onClose, onCreate }: Props) {
       fullScreen={fullScreen}
       classes={{ paper: 'md:min-w-[50vw] lg:min-w-[40vw] 2xl:min-w-[30w]' }}
     >
-      <Mui.DialogContent dividers>
+      <Mui.DialogContent className="flex flex-col" dividers>
         <Input
           label="Name"
           defaultValue={data.name}
@@ -54,6 +78,13 @@ export default function CreateDialog({ isOpen, onClose, onCreate }: Props) {
           isOutlined
           onChange={(value: string) => setData(new AssetDto({ ...data, description: value }))}
         />
+        <Mui.Select value={data.type.id} className="my-2" onChange={setAssetType}>
+          {ASSET_TYPES.map((assetType) => (
+            <Mui.MenuItem value={assetType.id} key={assetType.id}>
+              {assetType.name}
+            </Mui.MenuItem>
+          ))}
+        </Mui.Select>
       </Mui.DialogContent>
       <Mui.DialogActions>
         <Mui.Button onClick={onAssetCreate}>Create asset</Mui.Button>

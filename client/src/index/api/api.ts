@@ -128,7 +128,7 @@ export class AssetsClient extends ApiClient {
      * @return Returns a location header to the newly created item.
      */
     addAsset(user: number, profile: number, version: string, name?: string | null | undefined, description?: string | null | undefined, returnRate?: number | null | undefined, standardDeviation?: number | null | undefined, assetType?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<FileResponse>> {
-        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/assets?";
+        let url_ = this.baseUrl + "/api/v{Version}/users/{user}/profiles/{Profile}/assets?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{user}", encodeURIComponent("" + user));

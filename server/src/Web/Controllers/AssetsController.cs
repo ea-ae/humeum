@@ -87,10 +87,10 @@ public class AssetsController : ControllerBase {
     [ProducesResponseType(typeof(IActionResult), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult<IActionResult, IBaseException>> AddAsset(int user, AddAssetCommand command) {
+    public async Task<IResult<IActionResult, IBaseException>> AddAsset(AddAssetCommand command) {
         var result = await _mediator.Send(command);
         return result.Then(asset => Result<IActionResult, IBaseException>.Ok(
-            CreatedAtAction(nameof(GetAsset), new { user, command.Profile, asset }, null)));
+            CreatedAtAction(nameof(GetAsset), new { command.User, command.Profile, asset }, null)));
     }
 
     /// <summary>

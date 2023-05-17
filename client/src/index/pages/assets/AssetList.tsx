@@ -50,7 +50,27 @@ export default function AssetList() {
     AssetsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
   };
 
-  const onAssetCreate = (asset: AssetDto) => {};
+  const onAssetCreate = (asset: AssetDto) => {
+    if (user === null || assets === null) {
+      throw new Error('User or state was null in event handler');
+    }
+
+    const get = () =>
+      client.addAsset(
+        user.id,
+        user.profiles[0].id,
+        '1',
+        asset.name,
+        asset.description,
+        asset.returnRate,
+        asset.standardDeviation,
+        asset.type.code
+      );
+
+    const set = () => setAssets([...assets, asset]);
+
+    AssetsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
+  };
 
   const onAssetDelete = (asset: AssetDto) => {
     if (user === null || assets === null) {
