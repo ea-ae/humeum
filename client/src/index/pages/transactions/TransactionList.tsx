@@ -84,9 +84,9 @@ function TransactionList() {
       const client = new TransactionsClient();
       const profileId = user.profiles[0].id;
 
-      // i just don't care
+      // i just don't care at all i need to get this homework done
 
-      const getAdd = () =>
+      const get = () =>
         client.addTransaction(
           user.id,
           profileId,
@@ -104,7 +104,20 @@ function TransactionList() {
           transaction.paymentTimelineFrequencyUnitsInCycle
         );
 
-      const getReplace = () =>
+      const set = () => setTransactions(transactions.concat(transaction));
+
+      // yep yep i know this is terrible ..~((~.. but let it be ..~))~~..
+
+      setSelectedTransaction(null);
+      TransactionsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
+    }
+  };
+
+  const replaceTransaction = (transaction: TransactionDto) => {
+    if (user !== null && transactions !== null) {
+      const client = new TransactionsClient();
+      const profileId = user.profiles[0].id;
+      const get = () =>
         client.replaceTransaction(
           profileId,
           transaction.id,
@@ -125,7 +138,7 @@ function TransactionList() {
 
       const set = () => setTransactions(transactions.map((t) => (t.id === transaction.id ? transaction : t)));
 
-      TransactionsClient.callAuthenticatedEndpoint<unknown>(transaction.id === -1 ? getAdd : getReplace, set, fail, user.id);
+      TransactionsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
     }
   };
 
