@@ -2,7 +2,7 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { BriefRelatedResourceDto, TransactionDto, TransactionsClient } from '../../api/api';
+import { BriefRelatedResourceDto, TransactionCategoriesClient, TransactionDto, TransactionsClient } from '../../api/api';
 import fetchTransactions from '../../api/fetchTransactions';
 import useAuth from '../../hooks/useAuth';
 import useCache, { CacheKey } from '../../hooks/useCache';
@@ -80,8 +80,8 @@ function TransactionList() {
 
       // i just don't care at all i need to get this homework done
 
-      const get = () =>
-        client.addTransaction(
+      const get = async () => {
+        const result = await client.addTransaction(
           user.id,
           profileId,
           '1',
@@ -97,6 +97,12 @@ function TransactionList() {
           transaction.paymentTimelineFrequencyTimesPerCycle,
           transaction.paymentTimelineFrequencyUnitsInCycle
         );
+
+        const createdId = result.headers.location.split('/').pop() as string;
+
+        transaction.categories.forEach((c) => client.addCategoryToTransaction(profileId, createdId, '1', user.id.toString(), c.id));
+        return result;
+      };
 
       const set = () => setTransactions(transactions.concat(transaction));
 

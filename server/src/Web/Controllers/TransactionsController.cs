@@ -16,6 +16,7 @@ namespace Web.Controllers;
 /// <inheritdoc cref="Domain.V1.TransactionAggregate.Transaction"/>
 [Route("api/v{Version:ApiVersion}/users/{User}/profiles/{Profile}/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleProfileData")]
+[ApplicationExceptionFilter]
 [ApplicationResultFilter]
 [CsrfXHeaderFilter]
 [Produces("application/json")]
