@@ -98,7 +98,7 @@ function TransactionList() {
           transaction.paymentTimelineFrequencyUnitsInCycle
         );
 
-        const createdId = result.headers.location.split('/').pop() as string;
+        const createdId = parseInt(result.headers.location.split('/').pop() as string, 10);
 
         transaction.categories.forEach((c) => client.addCategoryToTransaction(profileId, createdId, '1', user.id.toString(), c.id));
         return result;
@@ -117,8 +117,9 @@ function TransactionList() {
     if (user !== null && transactions !== null) {
       const client = new TransactionsClient();
       const profileId = user.profiles[0].id;
-      const get = () =>
-        client.replaceTransaction(
+
+      const get = async () => {
+        const result = await client.replaceTransaction(
           profileId,
           transaction.id,
           '1',
@@ -135,6 +136,22 @@ function TransactionList() {
           transaction.paymentTimelineFrequencyTimesPerCycle,
           transaction.paymentTimelineFrequencyUnitsInCycle
         );
+
+        // get a diff of categories to add and remove from the transaction and apply it through API calls
+        const originalTransaction = transactions.find((t) => t.id === transaction.id);
+        if (originalTransaction === undefined) throw new Error(`Transaction with id ${transaction.id} not found`);
+
+        const originalCategories = originalTransaction.categories.map((c) => c.id);
+        const newCategories = transaction.categories.map((c) => c.id);
+
+        const categoriesToAdd = newCategories.filter((c) => !originalCategories.includes(c));
+        const categoriesToRemove = originalCategories.filter((c) => !newCategories.includes(c));
+
+        categoriesToAdd.forEach((c) => client.addCategoryToTransaction(profileId, transaction.id, '1', user.id.toString(), c));
+        categoriesToRemove.forEach((c) => client.removeCategoryFromTransaction(profileId, transaction.id, '1', user.id.toString(), c));
+
+        return result;
+      };
 
       const set = () => setTransactions(transactions.map((t) => (t.id === transaction.id ? transaction : t)));
 
