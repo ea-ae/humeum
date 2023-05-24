@@ -71,15 +71,9 @@ function TransactionList() {
     navigate('/login');
   };
 
-  const onDialogClose = () => {
-    setIsEditDialogOpen(false); // we do not null the transaction here, because we want to keep it for the transition
+  const onDialogClose = () => setIsEditDialogOpen(false); // we do not null the transaction here, because we want to keep it for the transition
 
-    // if (transactions !== null) {
-    //   setTransactions(transactions.map((t) => (t.id === transaction.id ? transaction : t)));
-    // }
-  };
-
-  const onTransactionSave = (transaction: TransactionDto) => {
+  const createTransaction = (transaction: TransactionDto) => {
     if (user !== null && transactions !== null) {
       const client = new TransactionsClient();
       const profileId = user.profiles[0].id;
@@ -139,6 +133,14 @@ function TransactionList() {
       const set = () => setTransactions(transactions.map((t) => (t.id === transaction.id ? transaction : t)));
 
       TransactionsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
+    }
+  };
+
+  const onTransactionSave = (transaction: TransactionDto) => {
+    if (transaction.id === -1) {
+      createTransaction(transaction);
+    } else {
+      replaceTransaction(transaction);
     }
   };
 
