@@ -2462,6 +2462,72 @@ export class UsersClient extends ApiClient {
     }
 
     /**
+     * Signs out the user.
+     * @param command (optional) 
+     */
+    signOutUser(version: string, command?: SignOutUserCommand | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<UserDto>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/sign-out?";
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
+        if (command !== undefined && command !== null)
+            url_ += "command=" + encodeURIComponent("" + command) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "POST",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processSignOutUser(_response);
+        });
+    }
+
+    protected processSignOutUser(response: AxiosResponse): Promise<SwaggerResponse<UserDto>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = UserDto.fromJS(resultData200);
+            return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse<UserDto>(status, _headers, result200));
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            let result401: any = null;
+            let resultData401  = _responseText;
+            result401 = ProblemDetails.fromJS(resultData401);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result401);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<SwaggerResponse<UserDto>>(new SwaggerResponse(status, _headers, null as any));
+    }
+
+    /**
      * Refreshes user authentication through a refresh token.
      * @param command (optional) 
      * @return Details of signed in user.
@@ -3288,6 +3354,36 @@ export class BriefProfile implements IBriefProfile {
 export interface IBriefProfile {
     id: number;
     name: string;
+}
+
+export class SignOutUserCommand implements ISignOutUserCommand {
+
+    constructor(data?: ISignOutUserCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+    }
+
+    static fromJS(data: any): SignOutUserCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new SignOutUserCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        return data;
+    }
+}
+
+export interface ISignOutUserCommand {
 }
 
 export class RefreshUserCommand implements IRefreshUserCommand {

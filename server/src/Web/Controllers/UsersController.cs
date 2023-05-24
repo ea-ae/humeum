@@ -95,6 +95,18 @@ public class UsersController : ControllerBase {
     }
 
     /// <summary>
+    /// Signs out the user.
+    /// </summary>
+    /// <response code="204">If the user is logged out successfully.</response>
+    [HttpPost("sign-out")]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IResult<IActionResult, IBaseException>> SignOutUser(SignOutUserCommand command) {
+        var result = await _mediator.Send(command);
+        return result.Then(NoContent());
+    }
+
+    /// <summary>
     /// Refreshes user authentication through a refresh token.
     /// </summary>
     /// <response code="200">Details of signed in user.</response>

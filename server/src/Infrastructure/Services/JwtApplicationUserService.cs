@@ -74,6 +74,18 @@ public class JwtApplicationUserService : ApplicationUserService {
         return Result<int, AuthenticationException>.Fail(new AuthenticationException("Sign-in attempt with username & password failed."));
     }
 
+    public override async Task<IResult<None, IBaseException>> SignOutUserAsync() {
+        return await GetRefreshTokenFromCookie()
+            .Then(refreshToken => _context.Users.ToFoundResult(u => u.RefreshToken == refreshToken).ThenError<IAuthenticationException>(new AuthenticationException("Invalid refresh token.")))
+            .ThenAsync<None, IBaseException>(async appUser => {
+                AddTokenAsCookie("");
+
+                appUser.RefreshToken = null;
+                await _context.SaveChangesAsync();
+                return Result<None, IBaseException>.Ok(None.Value);
+            });
+    }
+
     public override async Task<IResult<int, IAuthenticationException>> RefreshUserAsync() {
         return await GetRefreshTokenFromCookie()
             .Then(refreshToken => _context.Users.ToFoundResult(u => u.RefreshToken == refreshToken).ThenError<IAuthenticationException>(new AuthenticationException("Invalid refresh token.")))

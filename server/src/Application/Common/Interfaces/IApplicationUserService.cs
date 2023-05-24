@@ -11,6 +11,8 @@ public interface IApplicationUserService {
 
     public Task<IResult<int, IAuthenticationException>> SignInUserAsync(string username, string password, bool rememberMe);
 
+    public Task<IResult<None, IBaseException>> SignOutUserAsync();
+
     public Task<IResult<int, IAuthenticationException>> RefreshUserAsync();
 
     public Task<IResult<None, NotFoundValidationException>> UpdateClientToken(int userId);
