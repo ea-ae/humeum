@@ -40,15 +40,54 @@ public class Timeline : ValueObject
 
     Timeline() { }
 
-    public IEnumerable<DateOnly> GetPaymentDates() {
-        throw new NotImplementedException();
-        //List<DateOnly> dates = new();
-        //DateOnly cursor = Period.Start;
+    public IResult<IEnumerable<DateOnly>, DomainException> GetPaymentDates() {
+        if (Frequency is null) {
+            return Result<IEnumerable<DateOnly>, DomainException>.Ok(new List<DateOnly>() { Period.Start });
+        }
 
-        //while (cursor <= Period.End) {
-        //    dates.Add(cursor);
+        List<DateOnly> dates = new();
+        DateOnly cursor = Period.Start.AddDays(-1);
 
-        //}
+        while (cursor <= Period.End) {
+            DateOnly dateAfterCycle;
+
+            // get the date after the cycle
+            if (Frequency.TimeUnit == TimeUnit.Days) {
+                dateAfterCycle = cursor.AddDays(Frequency.UnitsInCycle);
+            } else if (Frequency.TimeUnit == TimeUnit.Weeks) {
+                dateAfterCycle = cursor.AddDays(Frequency.UnitsInCycle * 7);
+            } else if (Frequency.TimeUnit == TimeUnit.Months) {
+                dateAfterCycle = cursor.AddMonths(Frequency.UnitsInCycle);
+            } else if (Frequency.TimeUnit == TimeUnit.Years) {
+                dateAfterCycle = cursor.AddYears(Frequency.UnitsInCycle);
+            } else {
+                throw new NotImplementedException();
+            }
+
+            // get cycle length in days
+            int cycleLength = dateAfterCycle.DayNumber - cursor.DayNumber;
+
+            // get amount of days in a single frequency period of the cycle
+            int daysInCyclePeriod = (int)Math.Ceiling((double)cycleLength / Frequency.TimesPerCycle);
+
+            // add date points, making sure the numbers add up to the cycle length
+            // e.g. 3 payments over a week would mean payments on days 3/6/7
+            for (int daysRemaining = cycleLength; daysRemaining > 0; daysRemaining -= daysInCyclePeriod) {
+                if (daysRemaining < daysInCyclePeriod) {
+                    daysInCyclePeriod = daysRemaining; // add the remaining days to the last period
+                }
+
+                cursor = cursor.AddDays(daysInCyclePeriod);
+
+                if (cursor > Period.End) {
+                    break;
+                }
+
+                dates.Add(cursor);
+            }
+        }
+
+        return Result<IEnumerable<DateOnly>, DomainException>.Ok(dates);
     }
 
     protected override IEnumerable<object?> GetEqualityComponents()

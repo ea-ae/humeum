@@ -55,14 +55,14 @@ public class TimeUnit : Enumeration
     }
 #pragma warning restore IDE0051 // Remove unused private members
 
-    TimeUnit(int id, string code, Func<DateOnly, DateOnly, int> unitsInTimeSpanDelegate) : base(id, code)
+    TimeUnit(int id, string code, Func<DateOnly, DateOnly, int> unitsInTimeSpan) : base(id, code)
     {
-        InTimeSpan = unitsInTimeSpanDelegate;
+        InTimeSpan = unitsInTimeSpan;
     }
 
+    /// <summary>Returns the proper function during EF entity construction through the provided constructors.</summary>
     static Func<DateOnly, DateOnly, int> GetTimeSpanForCode(string code)
     {
-        // assigns proper delegate during EF Core entity construction
         var timeUnit = GetAll<TimeUnit>().First(t => t.Code == code);
         return timeUnit.InTimeSpan;
     }
