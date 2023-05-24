@@ -162,8 +162,13 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity
     /// </summary>
     public decimal TotalTransactionAmount => Amount * TotalTransactionCount;
 
-    public IResult<decimal, DomainException> GetTransactionAmountInPeriod(DateOnly from, DateOnly until) {
-        throw new NotImplementedException();
+    /// <summary>Returns all the dates at which payments are made at for this transaction.</summary>
+    public IResult<IEnumerable<DateOnly>, DomainException> GetPaymentDates() => PaymentTimeline.GetPaymentDates();
+
+    /// <summary>Returns all the dates at which payments are made at for this transaction within a provided time range.</summary>
+    public IResult<IEnumerable<DateOnly>, DomainException> GetPaymentDates(DateOnly from, DateOnly until) {
+
+        return PaymentTimeline.GetPaymentDates().Then(dates => Result<IEnumerable<DateOnly>, DomainException>.Ok(dates.Where(d => d >= from && d <= until)));
     }
 
     IResult<None, DomainException> SetName(string? name)

@@ -208,6 +208,25 @@ public class TransactionTest {
         Assert.Equal(expected, actual);
     }
 
+    [Fact]
+    public void GetPaymentDates_DateFilter_ReturnsFilteredResults() {
+        // arrange
+
+        var period = TimePeriod.Create(new DateOnly(2000, 1, 1), new DateOnly(2000, 1, 14)).Unwrap();
+        var frequency = Frequency.Create(TimeUnit.Weeks, 2, 1).Unwrap();
+        var timeline = Timeline.Create(period, frequency).Unwrap();
+        var transaction = Transaction.Create(null, null, 1, TransactionType.PreRetirementOnly, timeline, 1, 1).Unwrap();
+        int expected = 2;
+
+        // act
+
+        int actual = transaction.GetPaymentDates(new DateOnly(2000, 1, 7), new DateOnly(2000, 1, 12)).Unwrap().Count();
+
+        // assert
+
+        Assert.Equal(expected, actual);
+    }
+
     /// <summary>
     /// Construct a partial Transaction object for testing purposes.
     /// </summary>

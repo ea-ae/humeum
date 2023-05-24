@@ -38,10 +38,6 @@ public class Frequency : ValueObject
 
     Frequency() { }
 
-    public DateTime AddPeriodToTime(DateTime time) {
-        throw new NotImplementedException();
-    }
-
     protected override IEnumerable<object?> GetEqualityComponents()
     {
         yield return TimeUnitId;
