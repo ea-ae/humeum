@@ -51,7 +51,7 @@ export default function EditDialog({ transaction, isOpen, onClose, onSave, onDel
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const newTransaction = transaction.id === -1;
 
-  if (taxSchemes === null || assets === null) return null;
+  if (categories === null || taxSchemes === null || assets === null) return null;
 
   const onTransactionSave = () => {
     if (activeTab === EditDialogTab.SINGLE_TRANSACTION) {
@@ -91,7 +91,7 @@ export default function EditDialog({ transaction, isOpen, onClose, onSave, onDel
         <Mui.Divider />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 my-4">
           {activeTab === EditDialogTab.SINGLE_TRANSACTION ? (
-            <SingleTransactionTab data={data} setData={setData} taxSchemes={taxSchemes} assets={assets} />
+            <SingleTransactionTab data={data} setData={setData} categories={categories} taxSchemes={taxSchemes} assets={assets} />
           ) : null}
           {activeTab === EditDialogTab.RECURRING_TRANSACTION ? <RecurringTransactionTab data={data} setData={setData} /> : null}
         </div>

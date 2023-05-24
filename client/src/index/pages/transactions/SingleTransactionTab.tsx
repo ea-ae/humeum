@@ -85,6 +85,11 @@ export default function SingleTransactionTab({ data, setData, categories, taxSch
     );
   };
 
+  const setSelectedCategories = (selectedCategories: number[]) => {
+    const newCategories = categories.filter((c) => selectedCategories.includes(c.id));
+    setData(new TransactionDto({ ...data, categories: newCategories }));
+  };
+
   return (
     <>
       <Input
@@ -147,12 +152,14 @@ export default function SingleTransactionTab({ data, setData, categories, taxSch
         multiple
         displayEmpty
         className="my-2"
-        // onChange={(event) => setSelectedCategories(event.target.value as number[])}
+        onChange={(event) => setSelectedCategories(event.target.value as number[])}
         renderValue={(selected) => (selected.length === 0 ? 'No categories' : `${selected.length} categories`)}
       >
-        <Mui.MenuItem value={1}>Food</Mui.MenuItem>
-        <Mui.MenuItem value={2}>Rent</Mui.MenuItem>
-        <Mui.MenuItem value={3}>Lifestyle</Mui.MenuItem>
+        {categories.map((category) => (
+          <Mui.MenuItem value={category.id} key={category.id}>
+            {category.name}
+          </Mui.MenuItem>
+        ))}
       </Mui.Select>
     </>
   );
