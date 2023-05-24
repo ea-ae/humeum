@@ -6,6 +6,7 @@ const cache: { [key: number | string]: unknown } = {};
 // eslint-disable-next-line no-shadow
 export enum CacheKey {
   Transactions = 'transactions',
+  TransactionCategories = 'transactionCategories',
   TaxSchemes = 'taxSchemes',
   Assets = 'assets',
 }

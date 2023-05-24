@@ -128,10 +128,10 @@ export class AssetsClient extends ApiClient {
      * @return Returns a location header to the newly created item.
      */
     addAsset(user: number, profile: number, version: string, name?: string | null | undefined, description?: string | null | undefined, returnRate?: number | null | undefined, standardDeviation?: number | null | undefined, assetType?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<FileResponse>> {
-        let url_ = this.baseUrl + "/api/v{Version}/users/{user}/profiles/{Profile}/assets?";
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/assets?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
-        url_ = url_.replace("{user}", encodeURIComponent("" + user));
+        url_ = url_.replace("{User}", encodeURIComponent("" + user));
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
@@ -502,6 +502,93 @@ export class AssetsClient extends ApiClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
+    }
+
+    /**
+     * Get existing asset types.
+     * @param query (optional) 
+     * @return Returns the asset types.
+     */
+    getAssetTypes(version: string, user: string, profile: string, query?: GetAssetTypesQuery | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<AssetType[]>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/assets/types?";
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
+        if (user === undefined || user === null)
+            throw new Error("The parameter 'user' must be defined.");
+        url_ = url_.replace("{User}", encodeURIComponent("" + user));
+        if (profile === undefined || profile === null)
+            throw new Error("The parameter 'profile' must be defined.");
+        url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
+        if (query !== undefined && query !== null)
+            url_ += "query=" + encodeURIComponent("" + query) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetAssetTypes(_response);
+        });
+    }
+
+    protected processGetAssetTypes(response: AxiosResponse): Promise<SwaggerResponse<AssetType[]>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 401) {
+            const _responseText = response.data;
+            let result401: any = null;
+            let resultData401  = _responseText;
+            result401 = ProblemDetails.fromJS(resultData401);
+            return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            let result403: any = null;
+            let resultData403  = _responseText;
+            result403 = ProblemDetails.fromJS(resultData403);
+            return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
+
+        } else if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(AssetType.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return Promise.resolve<SwaggerResponse<AssetType[]>>(new SwaggerResponse<AssetType[]>(status, _headers, result200));
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<SwaggerResponse<AssetType[]>>(new SwaggerResponse(status, _headers, null as any));
     }
 }
 
@@ -957,9 +1044,10 @@ export class TransactionCategoriesClient extends ApiClient {
 
     /**
      * Get all categories that are either default or created by the profile.
+     * @return Returns all the transaction categories.
      */
-    getCategories(profile: number, version: string, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
-        let url_ = this.baseUrl + "/api/v{Version}/users/{user}/profiles/{profile}/transactions/categories";
+    getCategories(profile: number, version: string, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<CategoryDto[]>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/transactions/categories";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
@@ -968,13 +1056,14 @@ export class TransactionCategoriesClient extends ApiClient {
         url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
-        url_ = url_.replace("{user}", encodeURIComponent("" + user));
+        url_ = url_.replace("{User}", encodeURIComponent("" + user));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
             method: "GET",
             url: url_,
             headers: {
+                "Accept": "application/json"
             },
             cancelToken
         };
@@ -992,7 +1081,7 @@ export class TransactionCategoriesClient extends ApiClient {
         });
     }
 
-    protected processGetCategories(response: AxiosResponse): Promise<SwaggerResponse<void>> {
+    protected processGetCategories(response: AxiosResponse): Promise<SwaggerResponse<CategoryDto[]>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1007,20 +1096,34 @@ export class TransactionCategoriesClient extends ApiClient {
             let result401: any = null;
             let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
-            return throwException("A server side error occurred.", status, _responseText, _headers, result401);
+            return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
 
         } else if (status === 403) {
             const _responseText = response.data;
             let result403: any = null;
             let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
-            return throwException("A server side error occurred.", status, _responseText, _headers, result403);
+            return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
+
+        } else if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(CategoryDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return Promise.resolve<SwaggerResponse<CategoryDto[]>>(new SwaggerResponse<CategoryDto[]>(status, _headers, result200));
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
+        return Promise.resolve<SwaggerResponse<CategoryDto[]>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
@@ -1029,7 +1132,7 @@ export class TransactionCategoriesClient extends ApiClient {
      * @return Returns a location header to the newly created item.
      */
     addCategory(user: number, profile: number, version: string, name?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
-        let url_ = this.baseUrl + "/api/v{Version}/users/{user}/profiles/{profile}/transactions/categories?";
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/transactions/categories?";
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
         url_ = url_.replace("{user}", encodeURIComponent("" + user));
@@ -1115,9 +1218,10 @@ export class TransactionCategoriesClient extends ApiClient {
 
     /**
      * Get details of a category with given ID.
+     * @return Returns a transaction category with the specified ID.
      */
-    getCategory(profile: number, category: number, version: string, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
-        let url_ = this.baseUrl + "/api/v{Version}/users/{user}/profiles/{profile}/transactions/categories/{Category}";
+    getCategory(profile: number, category: number, version: string, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<CategoryDto>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/transactions/categories/{Category}";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
@@ -1129,13 +1233,14 @@ export class TransactionCategoriesClient extends ApiClient {
         url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
-        url_ = url_.replace("{user}", encodeURIComponent("" + user));
+        url_ = url_.replace("{User}", encodeURIComponent("" + user));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
             method: "GET",
             url: url_,
             headers: {
+                "Accept": "application/json"
             },
             cancelToken
         };
@@ -1153,7 +1258,7 @@ export class TransactionCategoriesClient extends ApiClient {
         });
     }
 
-    protected processGetCategory(response: AxiosResponse): Promise<SwaggerResponse<void>> {
+    protected processGetCategory(response: AxiosResponse): Promise<SwaggerResponse<CategoryDto>> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1168,20 +1273,34 @@ export class TransactionCategoriesClient extends ApiClient {
             let result401: any = null;
             let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
-            return throwException("A server side error occurred.", status, _responseText, _headers, result401);
+            return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
 
         } else if (status === 403) {
             const _responseText = response.data;
             let result403: any = null;
             let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
-            return throwException("A server side error occurred.", status, _responseText, _headers, result403);
+            return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
+
+        } else if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = CategoryDto.fromJS(resultData200);
+            return Promise.resolve<SwaggerResponse<CategoryDto>>(new SwaggerResponse<CategoryDto>(status, _headers, result200));
+
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("If a transaction category with given ID was not found.", status, _responseText, _headers, result404);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
+        return Promise.resolve<SwaggerResponse<CategoryDto>>(new SwaggerResponse(status, _headers, null as any));
     }
 
     /**
@@ -1189,7 +1308,7 @@ export class TransactionCategoriesClient extends ApiClient {
      * @return If category is successfully deleted.
      */
     deleteCategory(profile: number, category: number, version: string, user: string , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<void>> {
-        let url_ = this.baseUrl + "/api/v{Version}/users/{user}/profiles/{profile}/transactions/categories/{Category}";
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/transactions/categories/{Category}";
         if (profile === undefined || profile === null)
             throw new Error("The parameter 'profile' must be defined.");
         url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
@@ -1201,7 +1320,7 @@ export class TransactionCategoriesClient extends ApiClient {
         url_ = url_.replace("{Version}", encodeURIComponent("" + version));
         if (user === undefined || user === null)
             throw new Error("The parameter 'user' must be defined.");
-        url_ = url_.replace("{user}", encodeURIComponent("" + user));
+        url_ = url_.replace("{User}", encodeURIComponent("" + user));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
@@ -2574,6 +2693,130 @@ export interface IAssetTypeDto {
     code: string;
 }
 
+export abstract class ValueObject implements IValueObject {
+
+    constructor(data?: IValueObject) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+    }
+
+    static fromJS(data: any): ValueObject {
+        data = typeof data === 'object' ? data : {};
+        throw new Error("The abstract class 'ValueObject' cannot be instantiated.");
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        return data;
+    }
+}
+
+export interface IValueObject {
+}
+
+export abstract class Enumeration extends ValueObject implements IEnumeration {
+    id!: number;
+    code!: string;
+    name!: string;
+
+    constructor(data?: IEnumeration) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.id = _data["id"];
+            this.code = _data["code"];
+            this.name = _data["name"];
+        }
+    }
+
+    static override fromJS(data: any): Enumeration {
+        data = typeof data === 'object' ? data : {};
+        throw new Error("The abstract class 'Enumeration' cannot be instantiated.");
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["code"] = this.code;
+        data["name"] = this.name;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IEnumeration extends IValueObject {
+    id: number;
+    code: string;
+    name: string;
+}
+
+export class AssetType extends Enumeration implements IAssetType {
+
+    constructor(data?: IAssetType) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+    }
+
+    static override fromJS(data: any): AssetType {
+        data = typeof data === 'object' ? data : {};
+        let result = new AssetType();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IAssetType extends IEnumeration {
+}
+
+export class GetAssetTypesQuery implements IGetAssetTypesQuery {
+
+    constructor(data?: IGetAssetTypesQuery) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+    }
+
+    static fromJS(data: any): GetAssetTypesQuery {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetAssetTypesQuery();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        return data;
+    }
+}
+
+export interface IGetAssetTypesQuery {
+}
+
 export class ProfileDto implements IProfileDto {
     id!: number;
     name!: string;
@@ -2758,6 +3001,50 @@ export class GetTaxSchemesQuery implements IGetTaxSchemesQuery {
 }
 
 export interface IGetTaxSchemesQuery {
+}
+
+export class CategoryDto implements ICategoryDto {
+    id!: number;
+    name!: string;
+    default!: boolean;
+
+    constructor(data?: ICategoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.default = _data["default"];
+        }
+    }
+
+    static fromJS(data: any): CategoryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CategoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["default"] = this.default;
+        return data;
+    }
+}
+
+export interface ICategoryDto {
+    id: number;
+    name: string;
+    default: boolean;
 }
 
 export class TransactionDto implements ITransactionDto {

@@ -3,9 +3,10 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import * as React from 'react';
 
-import { AssetDto, TaxSchemeDto, TransactionDto } from '../../api/api';
+import { AssetDto, CategoryDto, TaxSchemeDto, TransactionDto } from '../../api/api';
 import fetchAssets from '../../api/fetchAssets';
 import fetchTaxSchemes from '../../api/fetchTaxSchemes';
+import fetchTransactionCategories from '../../api/fetchTransactionCategories';
 import useCache, { CacheKey } from '../../hooks/useCache';
 import RecurringTransactionTab from './RecurringTransactionTab';
 import SingleTransactionTab from './SingleTransactionTab';
@@ -27,6 +28,7 @@ interface Props {
 }
 
 export default function EditDialog({ transaction, isOpen, onClose, onSave, onDelete }: Props) {
+  const [categories, _setCategories] = fetchTransactionCategories(...useCache<CategoryDto[] | null>(CacheKey.TransactionCategories, null));
   const [taxSchemes, _setTaxSchemes] = fetchTaxSchemes(...useCache<TaxSchemeDto[] | null>(CacheKey.TaxSchemes, null));
   const [assets, _setAssets] = fetchAssets(...useCache<AssetDto[] | null>(CacheKey.Assets, null));
 

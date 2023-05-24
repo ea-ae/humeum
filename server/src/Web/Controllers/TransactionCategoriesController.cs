@@ -11,7 +11,7 @@ using Web.Filters;
 namespace Web.Controllers;
 
 /// <inheritdoc cref="Domain.V1.TransactionCategoryAggregate.TransactionCategory"/>
-[Route("api/v{Version:ApiVersion}/users/{user}/profiles/{profile}/transactions/categories")]
+[Route("api/v{Version:ApiVersion}/users/{User}/profiles/{Profile}/transactions/categories")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleProfileData")]
 [ApplicationExceptionFilter]
 [CsrfXHeaderFilter]
@@ -28,7 +28,12 @@ public class TransactionCategoriesController : ControllerBase {
     /// <summary>
     /// Get all categories that are either default or created by the profile.
     /// </summary>
+    /// <response code="200">Returns all the transaction categories.</response>
+    /// <response code="400">If the fields did not satisfy the domain invariants.</response>
+    /// <response code="401">If a user route is accessed without an authentication token.</response>
+    /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<CategoryDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories(GetCategoriesQuery query) {
         var categories = await _mediator.Send(query);
         return Ok(categories);
@@ -37,7 +42,14 @@ public class TransactionCategoriesController : ControllerBase {
     /// <summary>
     /// Get details of a category with given ID.
     /// </summary>
+    /// <response code="200">Returns a transaction category with the specified ID.</response>
+    /// <response code="400">If the fields did not satisfy the domain invariants.</response>
+    /// <response code="401">If a user route is accessed without an authentication token.</response>
+    /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
+    /// <response code="404">If a transaction category with given ID was not found.</response>
     [HttpGet("{Category}")]
+    [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<CategoryDto>> GetCategory(GetCategoryQuery query) {
         var category = await _mediator.Send(query);
         return Ok(category);

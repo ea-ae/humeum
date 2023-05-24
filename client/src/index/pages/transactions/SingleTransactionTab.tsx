@@ -2,7 +2,7 @@ import * as Mui from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 
-import { AssetDto, BriefRelatedResourceDto, TaxSchemeDto, TransactionDto } from '../../api/api';
+import { AssetDto, BriefRelatedResourceDto, CategoryDto, TaxSchemeDto, TransactionDto } from '../../api/api';
 import CurrencyInput from '../../components/cards/CurrencyInput';
 import Input from '../../components/cards/Input';
 
@@ -23,11 +23,13 @@ const TRANSACTION_TYPES: TransactionType[] = [
 interface Props {
   data: TransactionDto;
   setData: (data: TransactionDto) => void;
+
+  categories: CategoryDto[];
   taxSchemes: TaxSchemeDto[];
   assets: AssetDto[];
 }
 
-export default function SingleTransactionTab({ data, setData, taxSchemes, assets }: Props) {
+export default function SingleTransactionTab({ data, setData, categories, taxSchemes, assets }: Props) {
   const setTaxScheme = (event: Mui.SelectChangeEvent<number>) => {
     const taxSchemeId = event.target.value as number;
     const taxScheme = taxSchemes.find((t) => t.id === taxSchemeId);
