@@ -1,5 +1,6 @@
 import DensitySmallIcon from '@mui/icons-material/DensitySmall';
-import LogoutIcon from '@mui/icons-material/Logout';
+
+import LogoutButton from './LogoutButton';
 
 interface Props {
   appLayout?: boolean;
@@ -12,7 +13,7 @@ export default function NavigationBar({ appLayout }: Props) {
         {appLayout ? <DensitySmallIcon className="flex-shrink cursor-pointer" /> : null}
         <span className="ml-5 text-xl font-semibold cursor-default">Humeum</span>
       </div>
-      {appLayout ? <LogoutIcon className="text-3xl cursor-pointer" /> : null}
+      {appLayout ? <LogoutButton /> : null}
     </div>
   );
 }
