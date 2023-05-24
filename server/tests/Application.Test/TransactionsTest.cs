@@ -102,12 +102,13 @@ public class TransactionsTest {
         await context.SaveChangesAsync();
 
         AddTransactionCommand command = new() {
+            User = 1,
             Profile = profile.Id,
             Amount = -200,
             Name = "Groceries",
             Description = "My groceries",
             Type = "ALWAYS",
-            PaymentStart = new DateOnly(2022, 3, 1),
+            PaymentStart = new DateTime(2022, 3, 1),
             TaxScheme = 1
         };
 
@@ -123,7 +124,7 @@ public class TransactionsTest {
         Assert.Equal(command.Name, transaction.Name);
         Assert.Equal(command.Description, transaction.Description);
         Assert.Equal(command.Type, transaction.Type.Code);
-        Assert.Equal(command.PaymentStart, transaction.PaymentTimeline.Period.Start);
+        Assert.Equal(DateOnly.FromDateTime((DateTime)command.PaymentStart!), transaction.PaymentTimeline.Period.Start);
         Assert.Null(transaction.PaymentTimeline.Frequency);
         Assert.Null(transaction.PaymentTimeline.Period.End);
         Assert.Null(transaction.DeletedAt);
@@ -141,13 +142,14 @@ public class TransactionsTest {
         // create transaction
 
         AddTransactionCommand command = new() {
+            User = 1,
             Profile = profile.Id,
             Amount = 150,
             Name = "Shoplifting",
             Description = "My shoplifted groceries",
             Type = "PRERETIREMENTONLY",
-            PaymentStart = new DateOnly(2016, 3, 1),
-            PaymentEnd = new DateOnly(2021, 1, 1),
+            PaymentStart = new DateTime(2016, 3, 1),
+            PaymentEnd = new DateTime(2021, 1, 1),
             TimeUnit = "WEEKS",
             TimesPerCycle = 3,
             UnitsInCycle = 2,
@@ -164,8 +166,8 @@ public class TransactionsTest {
         Assert.Equal(command.Name, transaction.Name);
         Assert.Equal(command.Description, transaction.Description);
         Assert.Equal(command.Type, transaction.Type.Code);
-        Assert.Equal(command.PaymentStart, transaction.PaymentTimeline.Period.Start);
-        Assert.Equal(command.PaymentEnd, transaction.PaymentTimeline.Period.End);
+        Assert.Equal(DateOnly.FromDateTime((DateTime)command.PaymentStart!), transaction.PaymentTimeline.Period.Start);
+        Assert.Equal(DateOnly.FromDateTime((DateTime)command.PaymentEnd!), transaction.PaymentTimeline.Period.End);
         Assert.Equal(command.TimeUnit, transaction.PaymentTimeline.Frequency?.TimeUnit.Code);
         Assert.Equal(command.TimesPerCycle, transaction.PaymentTimeline.Frequency?.TimesPerCycle);
         Assert.Equal(command.UnitsInCycle, transaction.PaymentTimeline.Frequency?.UnitsInCycle);
@@ -200,8 +202,8 @@ public class TransactionsTest {
             Name = null,
             Description = null,
             Type = "RETIREMENTONLY",
-            PaymentStart = new DateOnly(2016, 1, 1),
-            PaymentEnd = new DateOnly(2021, 1, 1),
+            PaymentStart = new DateTime(2016, 1, 1),
+            PaymentEnd = new DateTime(2021, 1, 1),
             TimeUnit = "WEEKS",
             TimesPerCycle = 1,
             UnitsInCycle = 1,
@@ -218,8 +220,8 @@ public class TransactionsTest {
         Assert.Equal(command.Amount, transaction.Amount);
         Assert.Equal(command.Name, transaction.Name);
         Assert.Equal(TransactionType.RetirementOnly.Id, transaction.TypeId);
-        Assert.Equal(command.PaymentStart, transaction.PaymentTimeline.Period.Start);
-        Assert.Equal(command.PaymentEnd, transaction.PaymentTimeline.Period.End);
+        Assert.Equal(DateOnly.FromDateTime((DateTime)command.PaymentStart!), transaction.PaymentTimeline.Period.Start);
+        Assert.Equal(DateOnly.FromDateTime((DateTime)command.PaymentEnd!), transaction.PaymentTimeline.Period.End);
         Assert.Equal(TimeUnit.Weeks.Id, transaction.PaymentTimeline.Frequency?.TimeUnitId);
         Assert.Equal(command.TimesPerCycle, transaction.PaymentTimeline.Frequency?.TimesPerCycle);
         Assert.Equal(command.UnitsInCycle, transaction.PaymentTimeline.Frequency?.UnitsInCycle);

@@ -31,4 +31,12 @@ internal class ApplicationUserServiceStub : IApplicationUserService {
         var user = new User(id, "test");
         return Result<User, NotFoundValidationException>.Ok(user);
     }
+
+    public Task<IResult<None, IBaseException>> SignOutUserAsync() {
+        throw new NotImplementedException();
+    }
+
+    public Task<IResult<int, IAuthenticationException>> RefreshUserAsync() {
+        throw new NotImplementedException();
+    }
 }

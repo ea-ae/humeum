@@ -33,6 +33,7 @@ public class AssetsTest {
         // create asset
 
         AddAssetCommand command = new() {
+            User = 1,
             Profile = profile.Id,
             Name = "Custom asset",
             Description = "My asset description",
