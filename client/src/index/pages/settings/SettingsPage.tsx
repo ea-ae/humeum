@@ -7,15 +7,15 @@ import PercentageInput from '../../components/cards/PercentageInput';
 export default function SettingsPage() {
   return (
     <div className="">
-      <Card className="inline-flex max-w-fit mr-4 mb-4">
+      <Card className="inline-flex max-w-min mr-4 mb-4">
         <h1 className="mb-4 text-xl">Profile Settings</h1>
-        <Mui.Button className="mb-4" variant="outlined">
+        <Mui.Button className="mb-4 px-10 whitespace-nowrap" variant="outlined">
           Download profile data
         </Mui.Button>
-        <Mui.Button className="mb-4 bg-red-700" variant="contained">
+        <Mui.Button className="mb-4 px-10 bg-red-700 whitespace-nowrap" variant="contained">
           Delete profile data
         </Mui.Button>
-        <p className="text-sm text-red-700">
+        <p className="text-sm text-red-700 text-center">
           Warning: This action is irreversible. Your profile will be deleted and you will lose all your data.
         </p>
       </Card>
