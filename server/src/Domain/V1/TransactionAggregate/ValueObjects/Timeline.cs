@@ -46,7 +46,7 @@ public class Timeline : ValueObject
         }
 
         List<DateOnly> dates = new();
-        DateOnly cursor = Period.Start.AddDays(-1);
+        DateOnly cursor = Period.Start;
 
         while (cursor <= Period.End) {
             DateOnly dateAfterCycle;
@@ -65,26 +65,39 @@ public class Timeline : ValueObject
             }
 
             // get cycle length in days
-            int cycleLength = dateAfterCycle.DayNumber - cursor.DayNumber;
+            decimal cycleLength = dateAfterCycle.DayNumber - cursor.DayNumber;
 
             // get amount of days in a single frequency period of the cycle
-            int daysInCyclePeriod = (int)Math.Ceiling((double)cycleLength / Frequency.TimesPerCycle);
+            decimal cyclePeriodLength = cycleLength / Frequency.TimesPerCycle;
+
+            int daysAccountedFor = 0;
 
             // add date points, making sure the numbers add up to the cycle length
             // e.g. 3 payments over a week would mean payments on days 3/6/7
-            for (int daysRemaining = cycleLength; daysRemaining > 0; daysRemaining -= daysInCyclePeriod) {
-                if (daysRemaining < daysInCyclePeriod) {
-                    daysInCyclePeriod = daysRemaining; // add the remaining days to the last period
+            for (decimal timePastStart = cyclePeriodLength; timePastStart <= cycleLength; timePastStart += cyclePeriodLength) {
+                // in case we are dealing with a remainder, make sure we don't go over the cycle length
+                decimal timeRemaining = cycleLength - timePastStart;
+                bool isLastPeriod = timeRemaining < cyclePeriodLength;
+                if (isLastPeriod) {
+                    cyclePeriodLength = timeRemaining;
                 }
 
-                cursor = cursor.AddDays(daysInCyclePeriod);
+                int daysToAdd = (int)Math.Floor(timePastStart - daysAccountedFor - 0.01m);
+                daysAccountedFor += daysToAdd;
+                cursor = cursor.AddDays(daysToAdd);
 
                 if (cursor > Period.End) {
                     break;
                 }
 
                 dates.Add(cursor);
+
+                if (isLastPeriod) {
+                    break;
+                }
             }
+
+            cursor = dateAfterCycle;
         }
 
         return Result<IEnumerable<DateOnly>, DomainException>.Ok(dates);

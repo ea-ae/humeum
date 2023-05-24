@@ -80,6 +80,32 @@ public class TimelineTest {
     }
 
     [Fact]
+    public void GetPaymentDates_TwiceADayForThreeDays_ReturnsCorrectDates() {
+        // arrange
+
+        var period = TimePeriod.Create(new DateOnly(2000, 1, 1), new DateOnly(2000, 1, 3)).Unwrap();
+        var frequency = Frequency.Create(TimeUnit.Days, 2, 1).Unwrap();
+        var timeline = Timeline.Create(period, frequency).Unwrap();
+
+        var expected = new[] {
+            new DateOnly(2000, 1, 1),
+            new DateOnly(2000, 1, 1),
+            new DateOnly(2000, 1, 2),
+            new DateOnly(2000, 1, 2),
+            new DateOnly(2000, 1, 3),
+            new DateOnly(2000, 1, 3)
+        };
+
+        // act
+
+        var actual = timeline.GetPaymentDates().Unwrap();
+
+        // assert
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void GetPaymentDates_ThreeTimesAWeek_ReturnsCorrectDates() {
         // arrange
 
@@ -87,7 +113,7 @@ public class TimelineTest {
         var frequency = Frequency.Create(TimeUnit.Weeks, 3, 1).Unwrap();
         var timeline = Timeline.Create(period, frequency).Unwrap();
 
-        var expected = new[] { new DateOnly(2000, 1, 3), new DateOnly(2000, 1, 6), new DateOnly(2000, 1, 7) };
+        var expected = new[] { new DateOnly(2000, 1, 3), new DateOnly(2000, 1, 5), new DateOnly(2000, 1, 7) };
 
         // act
 
