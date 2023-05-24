@@ -162,6 +162,10 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity
     /// </summary>
     public decimal TotalTransactionAmount => Amount * TotalTransactionCount;
 
+    public IResult<decimal, DomainException> GetTransactionAmountInPeriod(DateOnly from, DateOnly until) {
+        throw new NotImplementedException();
+    }
+
     IResult<None, DomainException> SetName(string? name)
     {
         if (name is null || name == "")

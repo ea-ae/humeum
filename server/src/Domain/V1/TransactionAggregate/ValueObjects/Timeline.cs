@@ -40,6 +40,17 @@ public class Timeline : ValueObject
 
     Timeline() { }
 
+    public IEnumerable<DateOnly> GetPaymentDates() {
+        throw new NotImplementedException();
+        //List<DateOnly> dates = new();
+        //DateOnly cursor = Period.Start;
+
+        //while (cursor <= Period.End) {
+        //    dates.Add(cursor);
+
+        //}
+    }
+
     protected override IEnumerable<object?> GetEqualityComponents()
     {
         yield return Frequency;
