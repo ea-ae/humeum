@@ -43,7 +43,11 @@ export default function CreateDialog({ isOpen, onClose, onCreate }: Props) {
   const theme = Mui.useTheme();
   const fullScreen = Mui.useMediaQuery(theme.breakpoints.down('md'));
 
-  const onAssetCreate = () => onCreate(new AssetDto());
+  const onAssetCreate = () => {
+    data.name ??= 'Unnamed asset';
+    onClose();
+    onCreate(data);
+  };
 
   const setAssetType = (event: Mui.SelectChangeEvent<number>) => {
     const id = event.target.value as number;
