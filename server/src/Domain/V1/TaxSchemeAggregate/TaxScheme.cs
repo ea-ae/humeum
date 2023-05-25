@@ -15,6 +15,28 @@ namespace Domain.V1.TaxSchemeAggregate;
 /// </summary>
 public class TaxScheme : TimestampedEntity
 {
+    public static readonly TaxScheme IncomeTax = Create(1,
+        "Income tax",
+        "Regular flat income tax in Estonia, applicable to all income by default. First 654EUR/mo aka 7848EUR/yr are tax-free.",
+        20).Unwrap();
+
+    public static readonly TaxScheme IIIPillarPost2021 = Create(2,
+        "III pillar, post-2021",
+        "Asset income invested through III pillar, with an account opened in 2021 or later. " +
+        "Term pensions based on life expectancy, not included here, provide a 20% discount.",
+        20).Unwrap();
+
+    public static readonly TaxScheme IIIPillarPre2021 = Create(3,
+        "III pillar, pre-2021",
+        "Asset income invested through III pillar, with an account opened before 2021. " +
+        "Term pensions based on life expectancy, not included here, provide a 20% discount.",
+         20).Unwrap();
+
+    public static readonly TaxScheme NonTaxable = TaxScheme.Create(4,
+        "Non-taxable income",
+        "Income that due to special circumstances (e.g. charity) is not taxed whatsoever.",
+        0).Unwrap();
+
     public string Name { get; private set; } = null!;
 
     public string? Description { get; private set; }

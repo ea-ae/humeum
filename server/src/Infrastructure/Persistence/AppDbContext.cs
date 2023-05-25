@@ -111,24 +111,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
 
     static void ConfigureTaxSchemes(ModelBuilder builder) {
         builder.Entity<TaxScheme>().HasData(
-            TaxScheme.Create(1,
-                "Income tax",
-                "Regular flat income tax in Estonia, applicable to all income by default. First 654EUR/mo aka 7848EUR/yr are tax-free.",
-                20).Unwrap(),
-            TaxScheme.Create(2,
-                "III pillar, post-2021",
-                "Asset income invested through III pillar, with an account opened in 2021 or later. " +
-                "Term pensions based on life expectancy, not included here, provide a 20% discount.",
-                20).Unwrap(),
-            TaxScheme.Create(3,
-                "III pillar, pre-2021",
-                "Asset income invested through III pillar, with an account opened before 2021. " +
-                "Term pensions based on life expectancy, not included here, provide a 20% discount.",
-                20).Unwrap(),
-            TaxScheme.Create(4,
-                "Non-taxable income",
-                "Income that due to special circumstances (e.g. charity) is not taxed whatsoever.",
-                0).Unwrap()
+            TaxScheme.IncomeTax,
+            TaxScheme.IIIPillarPost2021,
+            TaxScheme.IIIPillarPre2021,
+            TaxScheme.NonTaxable
         );
 
         builder.Entity<TaxScheme>().OwnsOne(ts => ts.IncentiveScheme).HasData( // required workaround for EF core owned entity seeding bug
