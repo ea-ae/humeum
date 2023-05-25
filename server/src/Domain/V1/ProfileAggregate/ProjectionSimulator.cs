@@ -110,7 +110,8 @@ public class ProjectionSimulator {
             if (payment.Asset is not null) {
                 var asset = (PaymentAsset)payment.Asset;
                 assets.TryGetValue(asset, out double amount);
-                assets[asset] = amount + payment.Amount;
+                assets[asset] = amount - payment.Amount;
+                assetWorth -= payment.Amount;
             }
 
             // update date and add time point to series
@@ -137,7 +138,7 @@ public class ProjectionSimulator {
         double earnings = 0;
 
         foreach ((PaymentAsset asset, double amount) in assets) {
-            double newAmount = Math.Pow(amount, (1 + asset.ReturnRate) * yearsPassed); // simple version for now, no SD involved
+            double newAmount = amount * Math.Pow(1 + asset.ReturnRate, yearsPassed); // simple version for now, no SD involved
 
             earnings += newAmount - amount;
             assets[asset] = newAmount;

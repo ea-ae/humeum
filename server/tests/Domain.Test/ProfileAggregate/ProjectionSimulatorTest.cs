@@ -1,4 +1,5 @@
-﻿using Domain.V1.ProfileAggregate;
+﻿using Domain.V1.AssetAggregate;
+using Domain.V1.ProfileAggregate;
 using Domain.V1.ProfileAggregate.ValueObjects;
 using Domain.V1.TaxSchemeAggregate;
 using Domain.V1.TransactionAggregate;
@@ -90,6 +91,30 @@ public class ProjectionSimulatorTest {
         Assert.Equal(expected, actual);
     }
 
+    [Fact]
+    public void SimulateProjection_AssetPaymentAndRegularPayment_ReturnsTimePointsWithInterest() {
+        // arrange
+
+        var asset = Asset.Create(1, "1", null, 100, 0, 1).Unwrap();
+        var transaction = BuildRecurringTransaction(15, new(1999, 1, 1), new(2004, 1, 5), TimeUnit.Years, 1, 1, TransactionType.Always, TaxScheme.NonTaxable);
+        var assetTransaction = BuildRecurringTransaction(-10, new(1999, 1, 1), new(2004, 1, 1), TimeUnit.Years, 1, 2, TransactionType.Always, TaxScheme.NonTaxable, asset);
+        var expected = Projection.Create(new() {
+            new(new(1999, 12, 31), 15, 0),
+            new(new(2000, 12, 31), 20, 10),
+            new(new(2001, 12, 31), 35, 20),
+            new(new(2002, 12, 31), 40, 50),
+            new(new(2003, 12, 31), 55, 100)
+        }).Unwrap();
+
+        // act
+
+        var actual = CreateProjection(new[] { transaction, assetTransaction }, new(1900, 1, 1), new(2100, 1, 1));
+
+        // assert
+
+        Assert.Equal(expected, actual);
+    }
+
     public static Projection CreateProjection(IEnumerable<Transaction> transactions, DateOnly start, DateOnly end, double goal = 100_000, double withdrawal = 3.5) {
         var simulator = ProjectionSimulator.Create(transactions, ProjectionTimePeriod.Create(start, end).Unwrap()).Unwrap();
         return simulator.SimulateProjection(goal, withdrawal).Unwrap();
@@ -111,11 +136,12 @@ public class ProjectionSimulatorTest {
                                                         int nTimes,
                                                         int everyN,
                                                         TransactionType type,
-                                                        TaxScheme taxScheme) {
+                                                        TaxScheme taxScheme,
+                                                        Asset? asset = null) {
         var profile = Profile.Create(1, "", retirementGoal: 500_000, withdrawalRate: 3.5m, birthday: new DateOnly(2000, 1, 1)).Unwrap();
         var frequency = Frequency.Create(timeUnit, nTimes, everyN).Unwrap();
         var timeline = Timeline.Create(TimePeriod.Create(start, end).Unwrap(), frequency).Unwrap();
-        var transaction = Transaction.Create(null, null, amount, type, timeline, profile, taxScheme).Unwrap();
+        var transaction = Transaction.Create(null, null, amount, type, timeline, profile, taxScheme, asset).Unwrap();
         return transaction;
     }
 }

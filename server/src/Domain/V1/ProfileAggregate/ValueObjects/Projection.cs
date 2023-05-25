@@ -18,7 +18,7 @@ public struct TimePoint {
     }
 
     public override string ToString() {
-        return $"{Date.ToShortDateString()} L{LiquidWorth:F0} A{AssetWorth:F0}";
+        return $"{Date.ToShortDateString()} L{LiquidWorth:F2} A{AssetWorth:F2}";
     }
 }
 
