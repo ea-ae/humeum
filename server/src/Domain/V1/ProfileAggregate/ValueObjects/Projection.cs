@@ -1,26 +1,28 @@
 ﻿using Domain.Common.Exceptions;
 using Domain.Common.Models;
-using Domain.V1.TransactionAggregate;
 
 using Shared.Interfaces;
 using Shared.Models;
 
 namespace Domain.V1.ProfileAggregate.ValueObjects;
 
+public struct TimePoint {
+    public DateOnly Date;
+    public double LiquidWorth;
+    public double AssetWorth;
+}
+
 public class Projection : ValueObject {
-    /// <summary>Projection of net worth in a given time period.</summary>
-    public IEnumerable<decimal>? NetWorthProjection { get; private init; }
+    public List<TimePoint> TimeSeries { get; private init; } = null!;
 
-    public static IResult<Projection, DomainException> Create(IEnumerable<Transaction> transactions, TimePeriod period) {
-        return Result<Projection, DomainException>.Ok(new Projection(transactions, period));
+    public static IResult<Projection, DomainException> Create(List<TimePoint> timeSeries) {
+        var projection = new Projection() { TimeSeries = timeSeries };
+        return Result<Projection, DomainException>.Ok(projection);
     }
 
-    Projection(IEnumerable<Transaction> transactions, TimePeriod period) {
-        var earliestTransaction = transactions.Select(t => t.PaymentTimeline.Period.Start).Min();
-        throw new NotImplementedException();
-    }
+    Projection() { }
 
     protected override IEnumerable<object?> GetEqualityComponents() {
-        yield return NetWorthProjection;
+        yield return TimeSeries;
     }
 }

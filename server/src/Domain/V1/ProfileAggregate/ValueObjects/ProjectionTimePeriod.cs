@@ -10,22 +10,22 @@ namespace Domain.V1.ProfileAggregate.ValueObjects;
 /// <summary>
 /// A time period with a start and end date.
 /// </summary>
-public class TimePeriod : ValueObject {
+public class ProjectionTimePeriod : ValueObject {
     /// <summary>Start of time period.</summary>
     public DateOnly Start { get; private init; }
 
     /// <summary>End of time period.</summary>
     public DateOnly End { get; private init; }
 
-    public static IResult<TimePeriod, DomainException> Create(DateOnly start, DateOnly end) {
+    public static IResult<ProjectionTimePeriod, DomainException> Create(DateOnly start, DateOnly end) {
         if (end <= start) {
-            return Result<TimePeriod, DomainException>.Fail(new DomainException(new ArgumentException("Time period must end after it starts.")));
+            return Result<ProjectionTimePeriod, DomainException>.Fail(new DomainException(new ArgumentException("Time period must end after it starts.")));
         }
 
-        return Result<TimePeriod, DomainException>.Ok(new TimePeriod { Start = start, End = end });
+        return Result<ProjectionTimePeriod, DomainException>.Ok(new ProjectionTimePeriod { Start = start, End = end });
     }
 
-    TimePeriod() { }
+    ProjectionTimePeriod() { }
 
     protected override IEnumerable<object?> GetEqualityComponents() {
         yield return Start;

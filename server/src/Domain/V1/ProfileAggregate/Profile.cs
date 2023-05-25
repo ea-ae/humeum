@@ -60,6 +60,10 @@ public class Profile : TimestampedEntity {
     Profile() { }
 
     public IResult<Projection, DomainException> GenerateProjection(DateOnly until) {
-        return TimePeriod.Create(DateOnly.FromDateTime(DateTime.UtcNow), until).Then(period => Projection.Create(Transactions, period));
+        var projection = ProjectionTimePeriod.Create(DateOnly.FromDateTime(DateTime.UtcNow), until)
+            .Then(period => ProjectionSimulator.Create(Transactions, period))
+            .Then(simulator => simulator.SimulateProjection(100_000, (double)WithdrawalRate)); // temp retirement goal for now
+
+        return projection; // todo need to add AGE for TAXES?
     }
 }
