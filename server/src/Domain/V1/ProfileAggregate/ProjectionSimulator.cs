@@ -118,6 +118,13 @@ public class ProjectionSimulator {
 
             // add payments
             liquidBalance += payment.Amount;
+            if (payment.Asset is null && payment.Amount > 0 && payment.TaxScheme != TaxScheme.NonTaxable) {
+                int age = CalculateAge(birthday, date);
+                decimal taxRate = CalculateTaxRate(payment.TaxScheme, age);
+                liquidBalance -= payment.Amount * (double)(taxRate / 100); // income tax
+            }
+
+            // add asset investments
             if (payment.Asset is not null) {
                 var asset = (PaymentAsset)payment.Asset;
                 assets.TryGetValue(asset, out double amount);

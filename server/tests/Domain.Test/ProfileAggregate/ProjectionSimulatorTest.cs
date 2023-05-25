@@ -191,12 +191,12 @@ public class ProjectionSimulatorTest {
 
         var asset = Asset.Create(1, "1", null, 100, 0, 1).Unwrap();
 
-        var initialTransaction = BuildOneTimeTransaction(50, new(2000, 1, 1), TransactionType.Always, TaxScheme.NonTaxable);
+        var initialTransaction = BuildOneTimeTransaction(62.5m, new(2000, 1, 1), TransactionType.Always, TaxScheme.IncomeTax);
         var assetTransaction = BuildOneTimeTransaction(-50, new(2001, 12, 31), TransactionType.Always, TaxScheme.IncomeTax, asset);
         var recurringPayment = BuildRecurringTransaction(-40, new(2002, 1, 1), new(2004, 1, 1), TimeUnit.Years, 1, 1, TransactionType.Always, TaxScheme.NonTaxable);
 
         var expected = Projection.Create(new() {
-            new(new(2000, 1, 1), 50, 0),
+            new(new(2000, 1, 1), 62.5 - 12.5, 0), // 20% income tax => 50
             new(new(2001, 12, 31), 0, 50), // tax-free: 50, value: 50
             new(new(2002, 12, 31), 0, 50 + 50 - 40), // tax-free: 10, value: 60
             new(new(2003, 12, 31), 0, 60 + 60 - 40 - 6), // tax-free: 0, taxed: (40 - 10) * 0.2 = 6, value: 74
