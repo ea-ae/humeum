@@ -98,6 +98,6 @@ public class Profile : TimestampedEntity {
             .Then(period => ProjectionSimulator.Create(Transactions, period))
             .Then(simulator => simulator.SimulateProjection(100_000, (double)WithdrawalRate)); // temp retirement goal for now
 
-        return projection; // todo need to add AGE for TAXES?
+        return projection;
     }
 }

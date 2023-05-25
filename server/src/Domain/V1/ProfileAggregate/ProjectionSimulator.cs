@@ -83,7 +83,7 @@ public class ProjectionSimulator {
         double assetWorth = 0;
 
         Dictionary<PaymentAsset, double> assets = new();
-        var date = _payments.First().Date;
+        var date = _payments.First().Date.AddDays(-1);
 
         foreach (var payment in _payments) {
             // check whether a payment should be processed pre/post-retirement phase
@@ -92,7 +92,7 @@ public class ProjectionSimulator {
             }
 
             // add asset interest
-            double yearsPassed = (payment.Date.DayNumber - date.DayNumber) / 365;
+            double yearsPassed = (double)(payment.Date.DayNumber - date.DayNumber) / 365;
             assetWorth += SimulateAssetInterest(assets, yearsPassed);
 
             // add payments
@@ -111,7 +111,7 @@ public class ProjectionSimulator {
             // update date and add time point to series
             if (yearsPassed > 0) {
                 date = payment.Date;
-                series.Add(new TimePoint() { Date = date, LiquidWorth = liquidBalance, AssetWorth = assetWorth });
+                series.Add(new TimePoint(date, liquidBalance, assetWorth));
             }
         }
 

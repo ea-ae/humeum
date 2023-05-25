@@ -10,6 +10,16 @@ public struct TimePoint {
     public DateOnly Date;
     public double LiquidWorth;
     public double AssetWorth;
+
+    public TimePoint(DateOnly date, double liquidWorth, double assetWorth) {
+        Date = date;
+        LiquidWorth = liquidWorth;
+        AssetWorth = assetWorth;
+    }
+
+    public override string ToString() {
+        return $"{Date.ToShortDateString()} L{LiquidWorth:F0} A{AssetWorth:F0}";
+    }
 }
 
 public class Projection : ValueObject {
@@ -23,6 +33,8 @@ public class Projection : ValueObject {
     Projection() { }
 
     protected override IEnumerable<object?> GetEqualityComponents() {
-        yield return TimeSeries;
+        foreach (var timePoint in TimeSeries) {
+            yield return timePoint;
+        }
     }
 }
