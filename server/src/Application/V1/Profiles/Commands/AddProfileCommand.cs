@@ -27,7 +27,7 @@ public class AddProfileCommandHandler : ICommandHandler<AddProfileCommand, IResu
 
     public async Task<IResult<int, IBaseException>> Handle(AddProfileCommand request, CancellationToken token = default)
     {
-        var profileResult = Profile.Create(request.User, request.Name, request.Description, request.WithdrawalRate);
+        var profileResult = Profile.Create(request.User, request.Name, request.Description, withdrawalRate: request.WithdrawalRate);
 
         return await profileResult.ThenAsync(async profile =>
         {
