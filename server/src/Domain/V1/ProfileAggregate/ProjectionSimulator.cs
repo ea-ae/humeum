@@ -87,13 +87,23 @@ public class ProjectionSimulator {
 
         foreach (var payment in _payments) {
             // check whether a payment should be processed pre/post-retirement phase
-            if ((!payment.PreRetirement && retiringAt is null) || (!payment.PostRetirement || retiringAt is not null)) {
-                continue;
-            }
+            if (!payment.PreRetirement || !payment.PostRetirement) {
+                bool activePreRetirement = payment.PreRetirement && (retiringAt is null || date == retiringAt); // enables determinism irrespective of same-day ordering
+                bool activePostRetirement = payment.PostRetirement && retiringAt is not null && date != retiringAt;
 
+                if (!activePreRetirement && !activePostRetirement) {
+                    continue;
+                }
+            }
+            
             // add asset interest
             double yearsPassed = (double)(payment.Date.DayNumber - date.DayNumber) / 365;
             assetWorth += SimulateAssetInterest(assets, yearsPassed);
+
+            // check whether retirement goal has been reached
+            if (yearsPassed > 0 && retiringAt is null && liquidBalance + assetWorth >= retirementGoal) {
+                retiringAt = date;
+            }
 
             // add payments
             liquidBalance += payment.Amount;
@@ -103,15 +113,12 @@ public class ProjectionSimulator {
                 assets[asset] = amount + payment.Amount;
             }
 
-            // check whether retirement goal has been reached
-            if (retiringAt is null && liquidBalance + assetWorth >= retirementGoal) {
-                retiringAt = date;
-            }
-
             // update date and add time point to series
             if (yearsPassed > 0) {
                 date = payment.Date;
                 series.Add(new TimePoint(date, liquidBalance, assetWorth));
+            } else {
+                series[^1] = new TimePoint(date, liquidBalance, assetWorth);
             }
         }
 

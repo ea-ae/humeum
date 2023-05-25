@@ -106,6 +106,28 @@ public class TimelineTest {
     }
 
     [Fact]
+    public void GetPaymentDates_EverySecondDayForFiveDays_ReturnsCorrectDates() {
+        // arrange
+
+        var period = TimePeriod.Create(new DateOnly(2000, 1, 1), new DateOnly(2000, 1, 5)).Unwrap();
+        var frequency = Frequency.Create(TimeUnit.Days, 1, 2).Unwrap();
+        var timeline = Timeline.Create(period, frequency).Unwrap();
+
+        var expected = new[] {
+            new DateOnly(2000, 1, 2),
+            new DateOnly(2000, 1, 4)
+        };
+
+        // act
+
+        var actual = timeline.GetPaymentDates().Unwrap();
+
+        // assert
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void GetPaymentDates_ThreeTimesAWeek_ReturnsCorrectDates() {
         // arrange
 
