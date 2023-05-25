@@ -2,6 +2,7 @@
 using Domain.V1.ProfileAggregate;
 using Domain.V1.ProfileAggregate.ValueObjects;
 using Domain.V1.TaxSchemeAggregate;
+using Domain.V1.TaxSchemeAggregate.ValueObjects;
 using Domain.V1.TransactionAggregate;
 using Domain.V1.TransactionAggregate.ValueObjects;
 
@@ -15,6 +16,7 @@ public class ProjectionSimulatorTest {
         // arrange
 
         var transaction = BuildOneTimeTransaction(10, new DateOnly(2000, 1, 1), TransactionType.Always, TaxScheme.NonTaxable);
+
         var expected = Projection.Create(new() { new(new DateOnly(2000, 1, 1), 10, 0) }).Unwrap();
 
         // act
@@ -31,6 +33,7 @@ public class ProjectionSimulatorTest {
         // arrange
 
         var transaction = BuildRecurringTransaction(10, new(2000, 1, 1), new(2000, 1, 3), TimeUnit.Days, 1, 1, TransactionType.Always, TaxScheme.NonTaxable);
+
         var expected = Projection.Create(new() { 
             new(new(2000, 1, 1), 10, 0),
             new(new(2000, 1, 2), 20, 0),
@@ -52,6 +55,7 @@ public class ProjectionSimulatorTest {
 
         var dailyTransaction = BuildRecurringTransaction(10, new(2000, 1, 1), new(2000, 1, 3), TimeUnit.Days, 1, 1, TransactionType.Always, TaxScheme.NonTaxable);
         var biDailyTransaction = BuildRecurringTransaction(-3, new(2000, 1, 1), new(2000, 1, 3), TimeUnit.Days, 1, 2, TransactionType.Always, TaxScheme.NonTaxable);
+
         var expected = Projection.Create(new() {
             new(new(2000, 1, 1), 10, 0),
             new(new(2000, 1, 2), 17, 0),
@@ -74,6 +78,7 @@ public class ProjectionSimulatorTest {
         var alwaysTransaction = BuildRecurringTransaction(10, new(2000, 1, 1), new(2000, 1, 4), TimeUnit.Days, 1, 1, TransactionType.Always, TaxScheme.NonTaxable);
         var preTransaction = BuildRecurringTransaction(-3, new(2000, 1, 2), new(2000, 1, 5), TimeUnit.Days, 1, 1, TransactionType.PreRetirementOnly, TaxScheme.NonTaxable);
         var postTransaction = BuildRecurringTransaction(-1, new(2000, 1, 1), new(2000, 1, 5), TimeUnit.Days, 1, 1, TransactionType.RetirementOnly, TaxScheme.NonTaxable);
+
         var expected = Projection.Create(new() {
             new(new(2000, 1, 1), 10, 0),
             new(new(2000, 1, 2), 17, 0),
@@ -100,6 +105,7 @@ public class ProjectionSimulatorTest {
         var transaction = BuildRecurringTransaction(15, new(1999, 1, 1), new(2004, 1, 5), TimeUnit.Years, 1, 1, TransactionType.Always, TaxScheme.NonTaxable);
         var assetTransaction = BuildRecurringTransaction(-10, new(1999, 1, 1), new(2004, 1, 1), TimeUnit.Years, 1, 2, TransactionType.Always, TaxScheme.NonTaxable, asset);
         var zeroAssetTransaction = BuildRecurringTransaction(-1, new(2000, 1, 1), new(2002, 1, 1), TimeUnit.Years, 1, 1, TransactionType.Always, TaxScheme.NonTaxable, zeroAsset);
+
         var expected = Projection.Create(new() {
             new(new(1999, 12, 31), 15, 0),
             new(new(2000, 12, 31), 19, 11),
@@ -125,6 +131,7 @@ public class ProjectionSimulatorTest {
         var initialTransaction = BuildOneTimeTransaction(20, new(2000, 1, 1), TransactionType.Always, TaxScheme.NonTaxable);
         var assetTransaction = BuildRecurringTransaction(-10, new(2000, 1, 1), new(2006, 1, 1), TimeUnit.Years, 1, 1, TransactionType.PreRetirementOnly, TaxScheme.NonTaxable, asset);
         var recurringPayment = BuildRecurringTransaction(-25, new(2000, 1, 1), new(2006, 1, 1), TimeUnit.Years, 1, 1, TransactionType.RetirementOnly, TaxScheme.NonTaxable);
+
         var expected = Projection.Create(new() {
             new(new(2000, 1, 1), 20, 0),
             new(new(2000, 12, 31), 10, 10),
@@ -132,7 +139,7 @@ public class ProjectionSimulatorTest {
             new(new(2002, 12, 31), 0, 60),
             new(new(2003, 12, 31), 0, 120),
             new(new(2004, 12, 31), 0, 215.46), // withdraw 25 for retirement payments from now onward (leap year added .46)
-            new(new(2005, 12, 31), 0, 405.92),
+            new(new(2005, 12, 31), 0, 405.92)
         }).Unwrap();
 
         // act
@@ -141,13 +148,47 @@ public class ProjectionSimulatorTest {
 
         // assert
 
-        Assert.Equal(expected.TimeSeries.Skip(3), actual.TimeSeries.Skip(3));
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void SimulateProjection_AssetPaymentsOfDifferingTaxAndRiskPriority_WithdrawsAssetsInOrder() {
+        // arrange
+
+        var lowAsset = Asset.Create(1, "1", null, 100, 0, 1).Unwrap(); // low risk, high return (non-taxable, thus we can withdraw anytime without pressure)
+        var highAsset = Asset.Create(1, "1", null, 0, 30, 1).Unwrap(); // high risk, low return (attached to age requirement tax scheme)
+        var ageTaxScheme = BuildAgeLimitTaxScheme();
+
+        var initialTransaction = BuildOneTimeTransaction(15, new(2057, 1, 1), TransactionType.Always, TaxScheme.NonTaxable);
+        var boostTransaction = BuildOneTimeTransaction(10, new(2060, 1, 1), TransactionType.Always, TaxScheme.NonTaxable);
+        var lowTransaction = BuildRecurringTransaction(-10, new(2057, 1, 1), new(2061, 1, 1), TimeUnit.Years, 1, 1,
+                                                       TransactionType.Always, TaxScheme.NonTaxable, lowAsset);
+        var highTransaction = BuildRecurringTransaction(-4, new(2057, 1, 1), new(2061, 1, 1), TimeUnit.Years, 1, 1,
+                                                        TransactionType.Always, ageTaxScheme,
+                                                        highAsset);
+
+        var expected = Projection.Create(new() {
+            new(new(2057, 1, 1), 15, 0),
+            new(new(2057, 12, 31), 1, 10 + 4), // 10 in low-risk, 4 in high-risk (low-risk 10 will accumulate to 20)
+            new(new(2058, 12, 31), 0, 17 + 8), // 20-3=17 in low-risk, 8 in high-risk (sold low-risk asset due to tax scheme priority)
+            new(new(2059, 12, 31), 0, 30 + 12), // 34-4=30 in low-risk, 12 in high-risk (sold low-risk asset due to tax scheme priority)
+            new(new(2060, 1, 1), 10, 30.06 + 12), // liquid income boost (incl mid-year additions, leap year is coming)
+            new(new(2060, 12, 31), 0, 74.12 + 8), // 60+10+4=74 in low-risk, 12-4=8 in high-risk (sold high-risk asset due to tax age requirement being reached)
+        }).Unwrap();
+
+        // act
+
+        var actual = CreateProjection(new[] { initialTransaction, boostTransaction, lowTransaction, highTransaction }, new(1900, 1, 1), new(2100, 1, 1));
+
+        // assert
+
+        Assert.Equal(expected.TimeSeries.Skip(4), actual.TimeSeries.Skip(4));
         Assert.Equal(expected, actual);
     }
 
     public static Projection CreateProjection(IEnumerable<Transaction> transactions, DateOnly start, DateOnly end, double goal = 100_000, double withdrawal = 3.5) {
         var simulator = ProjectionSimulator.Create(transactions, ProjectionTimePeriod.Create(start, end).Unwrap()).Unwrap();
-        return simulator.SimulateProjection(goal, withdrawal, new(1990, 1, 1)).Unwrap();
+        return simulator.SimulateProjection(goal, withdrawal, new(2000, 1, 1)).Unwrap();
     }
 
     /// <summary>Shorthand for constructing a single-time transaction.</summary>
@@ -173,5 +214,11 @@ public class ProjectionSimulatorTest {
         var timeline = Timeline.Create(TimePeriod.Create(start, end).Unwrap(), frequency).Unwrap();
         var transaction = Transaction.Create(null, null, amount, type, timeline, profile, taxScheme, asset).Unwrap();
         return transaction;
+    }
+
+    public static TaxScheme BuildAgeLimitTaxScheme() {
+        var incentiveScheme = TaxIncentiveScheme.Create(20, 60, null, null).Unwrap();
+        var taxScheme = TaxScheme.Create("a", "b", 20, incentiveScheme).Unwrap();
+        return taxScheme;
     }
 }

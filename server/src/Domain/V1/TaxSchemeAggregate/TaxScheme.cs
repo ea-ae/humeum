@@ -32,7 +32,7 @@ public class TaxScheme : TimestampedEntity
         "Term pensions based on life expectancy, not included here, provide a 20% discount.",
          20).Unwrap();
 
-    public static readonly TaxScheme NonTaxable = TaxScheme.Create(4,
+    public static readonly TaxScheme NonTaxable = Create(4,
         "Non-taxable income",
         "Income that due to special circumstances (e.g. charity) is not taxed whatsoever.",
         0).Unwrap();

@@ -1,5 +1,7 @@
 ﻿using Domain.Common.Exceptions;
 using Domain.V1.ProfileAggregate.ValueObjects;
+using Domain.V1.TaxSchemeAggregate;
+using Domain.V1.TaxSchemeAggregate.ValueObjects;
 using Domain.V1.TransactionAggregate;
 using Domain.V1.TransactionAggregate.ValueObjects;
 
@@ -12,6 +14,7 @@ public class ProjectionSimulator {
     struct PaymentAsset {
         public double ReturnRate;
         public double StandardDeviation;
+        public TaxScheme TaxScheme;
     }
 
     struct Payment {
@@ -51,7 +54,8 @@ public class ProjectionSimulator {
                 Amount = (double)transaction.Amount,
                 Asset = transaction.Asset is null ? null : new PaymentAsset {
                     ReturnRate = (double)transaction.Asset.ReturnRate / 100,
-                    StandardDeviation = (double)transaction.Asset.StandardDeviation / 100
+                    StandardDeviation = (double)transaction.Asset.StandardDeviation / 100,
+                    TaxScheme = transaction.TaxScheme
                 },
                 PreRetirement = transaction.Type != TransactionType.RetirementOnly,
                 PostRetirement = transaction.Type != TransactionType.PreRetirementOnly
@@ -117,7 +121,8 @@ public class ProjectionSimulator {
 
             // in case we are in debt, withdraw from assets to reach zero
             if (liquidBalance < 0) {
-                var withdrawn = WithdrawAssets(assets, -liquidBalance);
+                int age = CalculateAge(birthday, date);
+                var withdrawn = WithdrawAssets(assets, -liquidBalance, age);
                 liquidBalance += withdrawn;
                 assetBalance -= withdrawn;
             }
@@ -156,15 +161,17 @@ public class ProjectionSimulator {
     }
 
     /// <summary>
-    /// Withdraws assets, prioritizing the withdrawal of higher-risk assets. Used when in debt, usually retirement.
+    /// Withdraws assets, prioritizing the withdrawal of higher-risk assets, and deprioritizing the withdrawal of assets with unfulfilled tax incentive requirements.
     /// </summary>
     /// <param name="assets">Dictionary of assets and their values.</param>
     /// <param name="amount">Amount to withdraw if possible.</param>
     /// <returns>Amount withdrawn.</returns>
-    double WithdrawAssets(Dictionary<PaymentAsset, double> assets, double withdrawalAmount) {
+    double WithdrawAssets(Dictionary<PaymentAsset, double> assets, double withdrawalAmount, int age) {
         double withdrawn = 0;
 
-        foreach ((PaymentAsset asset, double amount) in assets.OrderBy(a => -a.Key.StandardDeviation)) {
+        foreach ((PaymentAsset asset, double amount) in assets.OrderBy(a => GetTaxSchemePriority(a.Key.TaxScheme, age))
+                                                              .ThenBy(a => -a.Key.StandardDeviation)
+                                                              .ThenBy(a => a.Key.ReturnRate)) {
             double leftToWithdraw = withdrawalAmount - withdrawn;
 
             if (withdrawalAmount < amount) {
@@ -178,6 +185,16 @@ public class ProjectionSimulator {
         }
 
         return withdrawn;
+    }
+
+    /// <summary>Calculates the priority of assets to withdraw based on whether their tax requirements have been fulfilled.</summary>
+    int GetTaxSchemePriority(TaxScheme taxScheme, int age) {
+        if (taxScheme.IncentiveScheme is not null && taxScheme.IncentiveScheme.MinAge is not null) {
+            bool requiredDiscountAgeReached = age >= taxScheme.IncentiveScheme.MinAge;
+            return requiredDiscountAgeReached ? 0 : 1;
+        }
+
+        return 0;
     }
 
     /// <summary>Calculate age, taking into account leap years. Used primarily for tax calculations.</summary>
