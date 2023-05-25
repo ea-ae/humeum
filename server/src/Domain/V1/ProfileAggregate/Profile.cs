@@ -96,7 +96,7 @@ public class Profile : TimestampedEntity {
     public IResult<Projection, DomainException> GenerateProjection(DateOnly until) {
         var projection = ProjectionTimePeriod.Create(DateOnly.FromDateTime(DateTime.UtcNow), until)
             .Then(period => ProjectionSimulator.Create(Transactions, period))
-            .Then(simulator => simulator.SimulateProjection(100_000, (double)WithdrawalRate)); // temp retirement goal for now
+            .Then(simulator => simulator.SimulateProjection((double)RetirementGoal, (double)WithdrawalRate, Birthday)); // temp retirement goal for now
 
         return projection;
     }

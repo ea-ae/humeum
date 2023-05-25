@@ -117,9 +117,37 @@ public class ProjectionSimulatorTest {
         Assert.Equal(expected, actual);
     }
 
+    [Fact]
+    public void SimulateProjection_AssetPaymentWithRetirementGoal_ReachesRetirementGoalAndWithdraws() {
+        // arrange
+
+        var asset = Asset.Create(1, "1", null, 100, 0, 1).Unwrap();
+        var initialTransaction = BuildOneTimeTransaction(20, new(2000, 1, 1), TransactionType.Always, TaxScheme.NonTaxable);
+        var assetTransaction = BuildRecurringTransaction(-10, new(2000, 1, 1), new(2006, 1, 1), TimeUnit.Years, 1, 1, TransactionType.PreRetirementOnly, TaxScheme.NonTaxable, asset);
+        var recurringPayment = BuildRecurringTransaction(-25, new(2000, 1, 1), new(2006, 1, 1), TimeUnit.Years, 1, 1, TransactionType.RetirementOnly, TaxScheme.NonTaxable);
+        var expected = Projection.Create(new() {
+            new(new(2000, 1, 1), 20, 0),
+            new(new(2000, 12, 31), 10, 10),
+            new(new(2001, 12, 31), 0, 30),
+            new(new(2002, 12, 31), 0, 60),
+            new(new(2003, 12, 31), 0, 120),
+            new(new(2004, 12, 31), 0, 215.46), // withdraw 25 for retirement payments from now onward (leap year added .46)
+            new(new(2005, 12, 31), 0, 405.92),
+        }).Unwrap();
+
+        // act
+
+        var actual = CreateProjection(new[] { initialTransaction, assetTransaction, recurringPayment }, new(1900, 1, 1), new(2010, 1, 1), goal: 100, withdrawal: 10);
+
+        // assert
+
+        Assert.Equal(expected.TimeSeries.Skip(3), actual.TimeSeries.Skip(3));
+        Assert.Equal(expected, actual);
+    }
+
     public static Projection CreateProjection(IEnumerable<Transaction> transactions, DateOnly start, DateOnly end, double goal = 100_000, double withdrawal = 3.5) {
         var simulator = ProjectionSimulator.Create(transactions, ProjectionTimePeriod.Create(start, end).Unwrap()).Unwrap();
-        return simulator.SimulateProjection(goal, withdrawal).Unwrap();
+        return simulator.SimulateProjection(goal, withdrawal, new(1990, 1, 1)).Unwrap();
     }
 
     /// <summary>Shorthand for constructing a single-time transaction.</summary>
