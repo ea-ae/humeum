@@ -92,23 +92,25 @@ public class ProjectionSimulatorTest {
     }
 
     [Fact]
-    public void SimulateProjection_AssetPaymentAndRegularPayment_ReturnsTimePointsWithInterest() {
+    public void SimulateProjection_AssetPaymentsAndRegularPayment_ReturnsTimePointsWithInterest() {
         // arrange
 
         var asset = Asset.Create(1, "1", null, 100, 0, 1).Unwrap();
+        var zeroAsset = Asset.Create(2, "2", null, 0, 0, 1).Unwrap();
         var transaction = BuildRecurringTransaction(15, new(1999, 1, 1), new(2004, 1, 5), TimeUnit.Years, 1, 1, TransactionType.Always, TaxScheme.NonTaxable);
         var assetTransaction = BuildRecurringTransaction(-10, new(1999, 1, 1), new(2004, 1, 1), TimeUnit.Years, 1, 2, TransactionType.Always, TaxScheme.NonTaxable, asset);
+        var zeroAssetTransaction = BuildRecurringTransaction(-1, new(2000, 1, 1), new(2002, 1, 1), TimeUnit.Years, 1, 1, TransactionType.Always, TaxScheme.NonTaxable, zeroAsset);
         var expected = Projection.Create(new() {
             new(new(1999, 12, 31), 15, 0),
-            new(new(2000, 12, 31), 20, 10),
-            new(new(2001, 12, 31), 35, 20),
-            new(new(2002, 12, 31), 40, 50),
-            new(new(2003, 12, 31), 55, 100)
+            new(new(2000, 12, 31), 19, 11),
+            new(new(2001, 12, 31), 33, 22),
+            new(new(2002, 12, 31), 38, 52),
+            new(new(2003, 12, 31), 53, 102)
         }).Unwrap();
 
         // act
 
-        var actual = CreateProjection(new[] { transaction, assetTransaction }, new(1900, 1, 1), new(2100, 1, 1));
+        var actual = CreateProjection(new[] { transaction, assetTransaction, zeroAssetTransaction }, new(1900, 1, 1), new(2100, 1, 1));
 
         // assert
 
