@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230412130952_RefreshTokenUser")]
-    partial class RefreshTokenUser
+    [Migration("20230525100210_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.AssetAggregate.Asset", b =>
+            modelBuilder.Entity("Domain.V1.AssetAggregate.Asset", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -73,9 +73,9 @@ namespace Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 4, 12, 13, 9, 52, 96, DateTimeKind.Utc).AddTicks(5724),
+                            CreatedAt = new DateTime(2023, 5, 25, 10, 2, 9, 891, DateTimeKind.Utc).AddTicks(2255),
                             Description = "Index funds track the performance of a particular market index; great diversification, low fees, and easy management.",
-                            ModifiedAt = new DateTime(2023, 4, 12, 13, 9, 52, 96, DateTimeKind.Utc).AddTicks(5724),
+                            ModifiedAt = new DateTime(2023, 5, 25, 10, 2, 9, 891, DateTimeKind.Utc).AddTicks(2257),
                             Name = "Index fund (default)",
                             ReturnRate = 8.1m,
                             StandardDeviation = 15.2m,
@@ -84,9 +84,9 @@ namespace Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 4, 12, 13, 9, 52, 96, DateTimeKind.Utc).AddTicks(5765),
+                            CreatedAt = new DateTime(2023, 5, 25, 10, 2, 9, 891, DateTimeKind.Utc).AddTicks(2308),
                             Description = "Bond funds provide great diversification potential and are stereotypically less volatile than other securities.",
-                            ModifiedAt = new DateTime(2023, 4, 12, 13, 9, 52, 96, DateTimeKind.Utc).AddTicks(5765),
+                            ModifiedAt = new DateTime(2023, 5, 25, 10, 2, 9, 891, DateTimeKind.Utc).AddTicks(2309),
                             Name = "Bond fund (default)",
                             ReturnRate = 1.9m,
                             StandardDeviation = 3.0m,
@@ -94,163 +94,7 @@ namespace Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.ProfileAggregate.Profile", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("WithdrawalRate")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Profiles");
-                });
-
-            modelBuilder.Entity("Domain.TaxSchemeAggregate.TaxScheme", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("TaxRate")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TaxSchemes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2023, 4, 12, 13, 9, 52, 96, DateTimeKind.Utc).AddTicks(5825),
-                            Description = "Regular flat income tax in Estonia, applicable to all income by default. First 654EUR/mo aka 7848EUR/yr are tax-free.",
-                            ModifiedAt = new DateTime(2023, 4, 12, 13, 9, 52, 96, DateTimeKind.Utc).AddTicks(5825),
-                            Name = "Income tax",
-                            TaxRate = 20m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2023, 4, 12, 13, 9, 52, 96, DateTimeKind.Utc).AddTicks(5827),
-                            Description = "Asset income invested through III pillar, with an account opened in 2021 or later. Term pensions based on life expectancy, not included here, provide a 20% discount.",
-                            ModifiedAt = new DateTime(2023, 4, 12, 13, 9, 52, 96, DateTimeKind.Utc).AddTicks(5828),
-                            Name = "III pillar, post-2021",
-                            TaxRate = 20m
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2023, 4, 12, 13, 9, 52, 96, DateTimeKind.Utc).AddTicks(5829),
-                            Description = "Asset income invested through III pillar, with an account opened before 2021. Term pensions based on life expectancy, not included here, provide a 20% discount.",
-                            ModifiedAt = new DateTime(2023, 4, 12, 13, 9, 52, 96, DateTimeKind.Utc).AddTicks(5829),
-                            Name = "III pillar, pre-2021",
-                            TaxRate = 20m
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedAt = new DateTime(2023, 4, 12, 13, 9, 52, 96, DateTimeKind.Utc).AddTicks(5830),
-                            Description = "Income that due to special circumstances (e.g. charity) is not taxed whatsoever.",
-                            ModifiedAt = new DateTime(2023, 4, 12, 13, 9, 52, 96, DateTimeKind.Utc).AddTicks(5830),
-                            Name = "Non-taxable income",
-                            TaxRate = 0m
-                        });
-                });
-
-            modelBuilder.Entity("Domain.TransactionAggregate.Transaction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("numeric");
-
-                    b.Property<int?>("AssetId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<int>("ProfileId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TaxSchemeId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TypeId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssetId");
-
-                    b.HasIndex("ProfileId");
-
-                    b.HasIndex("TaxSchemeId");
-
-                    b.HasIndex("TypeId");
-
-                    b.ToTable("Transactions");
-                });
-
-            modelBuilder.Entity("Domain.TransactionAggregate.ValueObjects.AssetType", b =>
+            modelBuilder.Entity("Domain.V1.AssetAggregate.ValueObjects.AssetType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -315,7 +159,169 @@ namespace Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.TransactionAggregate.ValueObjects.TimeUnit", b =>
+            modelBuilder.Entity("Domain.V1.ProfileAggregate.Profile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateOnly>("Birthday")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("RetirementGoal")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("WithdrawalRate")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Profiles");
+                });
+
+            modelBuilder.Entity("Domain.V1.TaxSchemeAggregate.TaxScheme", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("TaxRate")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TaxSchemes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2023, 5, 25, 10, 2, 9, 440, DateTimeKind.Utc).AddTicks(566),
+                            Description = "Regular flat income tax in Estonia, applicable to all income by default. First 654EUR/mo aka 7848EUR/yr are tax-free.",
+                            ModifiedAt = new DateTime(2023, 5, 25, 10, 2, 9, 440, DateTimeKind.Utc).AddTicks(570),
+                            Name = "Income tax",
+                            TaxRate = 20m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2023, 5, 25, 10, 2, 9, 441, DateTimeKind.Utc).AddTicks(1190),
+                            Description = "Asset income invested through III pillar, with an account opened in 2021 or later. Term pensions based on life expectancy, not included here, provide a 20% discount.",
+                            ModifiedAt = new DateTime(2023, 5, 25, 10, 2, 9, 441, DateTimeKind.Utc).AddTicks(1195),
+                            Name = "III pillar, post-2021",
+                            TaxRate = 20m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2023, 5, 25, 10, 2, 9, 441, DateTimeKind.Utc).AddTicks(1224),
+                            Description = "Asset income invested through III pillar, with an account opened before 2021. Term pensions based on life expectancy, not included here, provide a 20% discount.",
+                            ModifiedAt = new DateTime(2023, 5, 25, 10, 2, 9, 441, DateTimeKind.Utc).AddTicks(1224),
+                            Name = "III pillar, pre-2021",
+                            TaxRate = 20m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2023, 5, 25, 10, 2, 9, 441, DateTimeKind.Utc).AddTicks(1229),
+                            Description = "Income that due to special circumstances (e.g. charity) is not taxed whatsoever.",
+                            ModifiedAt = new DateTime(2023, 5, 25, 10, 2, 9, 441, DateTimeKind.Utc).AddTicks(1230),
+                            Name = "Non-taxable income",
+                            TaxRate = 0m
+                        });
+                });
+
+            modelBuilder.Entity("Domain.V1.TransactionAggregate.Transaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("AssetId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProfileId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TaxSchemeId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TypeId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssetId");
+
+                    b.HasIndex("ProfileId");
+
+                    b.HasIndex("TaxSchemeId");
+
+                    b.HasIndex("TypeId");
+
+                    b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("Domain.V1.TransactionAggregate.ValueObjects.TimeUnit", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -365,7 +371,7 @@ namespace Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.TransactionAggregate.ValueObjects.TransactionType", b =>
+            modelBuilder.Entity("Domain.V1.TransactionAggregate.ValueObjects.TransactionType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -409,7 +415,7 @@ namespace Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.TransactionCategoryAggregate.TransactionCategory", b =>
+            modelBuilder.Entity("Domain.V1.TransactionCategoryAggregate.TransactionCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -443,57 +449,57 @@ namespace Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 4, 12, 13, 9, 52, 95, DateTimeKind.Utc).AddTicks(9630),
-                            ModifiedAt = new DateTime(2023, 4, 12, 13, 9, 52, 95, DateTimeKind.Utc).AddTicks(9631),
+                            CreatedAt = new DateTime(2023, 5, 25, 10, 2, 9, 890, DateTimeKind.Utc).AddTicks(4416),
+                            ModifiedAt = new DateTime(2023, 5, 25, 10, 2, 9, 890, DateTimeKind.Utc).AddTicks(4417),
                             Name = "General"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 4, 12, 13, 9, 52, 95, DateTimeKind.Utc).AddTicks(9634),
-                            ModifiedAt = new DateTime(2023, 4, 12, 13, 9, 52, 95, DateTimeKind.Utc).AddTicks(9635),
+                            CreatedAt = new DateTime(2023, 5, 25, 10, 2, 9, 890, DateTimeKind.Utc).AddTicks(4419),
+                            ModifiedAt = new DateTime(2023, 5, 25, 10, 2, 9, 890, DateTimeKind.Utc).AddTicks(4419),
                             Name = "Investing"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2023, 4, 12, 13, 9, 52, 95, DateTimeKind.Utc).AddTicks(9635),
-                            ModifiedAt = new DateTime(2023, 4, 12, 13, 9, 52, 95, DateTimeKind.Utc).AddTicks(9636),
+                            CreatedAt = new DateTime(2023, 5, 25, 10, 2, 9, 890, DateTimeKind.Utc).AddTicks(4420),
+                            ModifiedAt = new DateTime(2023, 5, 25, 10, 2, 9, 890, DateTimeKind.Utc).AddTicks(4420),
                             Name = "Work, Education, & Business"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2023, 4, 12, 13, 9, 52, 95, DateTimeKind.Utc).AddTicks(9637),
-                            ModifiedAt = new DateTime(2023, 4, 12, 13, 9, 52, 95, DateTimeKind.Utc).AddTicks(9637),
+                            CreatedAt = new DateTime(2023, 5, 25, 10, 2, 9, 890, DateTimeKind.Utc).AddTicks(4421),
+                            ModifiedAt = new DateTime(2023, 5, 25, 10, 2, 9, 890, DateTimeKind.Utc).AddTicks(4422),
                             Name = "Recreation & Lifestyle"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2023, 4, 12, 13, 9, 52, 95, DateTimeKind.Utc).AddTicks(9638),
-                            ModifiedAt = new DateTime(2023, 4, 12, 13, 9, 52, 95, DateTimeKind.Utc).AddTicks(9638),
+                            CreatedAt = new DateTime(2023, 5, 25, 10, 2, 9, 890, DateTimeKind.Utc).AddTicks(4422),
+                            ModifiedAt = new DateTime(2023, 5, 25, 10, 2, 9, 890, DateTimeKind.Utc).AddTicks(4423),
                             Name = "Food & Clothing"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2023, 4, 12, 13, 9, 52, 95, DateTimeKind.Utc).AddTicks(9639),
-                            ModifiedAt = new DateTime(2023, 4, 12, 13, 9, 52, 95, DateTimeKind.Utc).AddTicks(9639),
+                            CreatedAt = new DateTime(2023, 5, 25, 10, 2, 9, 890, DateTimeKind.Utc).AddTicks(4423),
+                            ModifiedAt = new DateTime(2023, 5, 25, 10, 2, 9, 890, DateTimeKind.Utc).AddTicks(4424),
                             Name = "Housing & Utilities"
                         },
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2023, 4, 12, 13, 9, 52, 95, DateTimeKind.Utc).AddTicks(9640),
-                            ModifiedAt = new DateTime(2023, 4, 12, 13, 9, 52, 95, DateTimeKind.Utc).AddTicks(9640),
+                            CreatedAt = new DateTime(2023, 5, 25, 10, 2, 9, 890, DateTimeKind.Utc).AddTicks(4425),
+                            ModifiedAt = new DateTime(2023, 5, 25, 10, 2, 9, 890, DateTimeKind.Utc).AddTicks(4425),
                             Name = "Transportation"
                         },
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2023, 4, 12, 13, 9, 52, 95, DateTimeKind.Utc).AddTicks(9641),
-                            ModifiedAt = new DateTime(2023, 4, 12, 13, 9, 52, 95, DateTimeKind.Utc).AddTicks(9641),
+                            CreatedAt = new DateTime(2023, 5, 25, 10, 2, 9, 890, DateTimeKind.Utc).AddTicks(4426),
+                            ModifiedAt = new DateTime(2023, 5, 25, 10, 2, 9, 890, DateTimeKind.Utc).AddTicks(4426),
                             Name = "Gifts & Donations"
                         });
                 });
@@ -522,6 +528,9 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Enabled")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("LockoutEnabled")
@@ -726,14 +735,14 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("TransactionWithCategory", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.AssetAggregate.Asset", b =>
+            modelBuilder.Entity("Domain.V1.AssetAggregate.Asset", b =>
                 {
-                    b.HasOne("Domain.ProfileAggregate.Profile", "Profile")
+                    b.HasOne("Domain.V1.ProfileAggregate.Profile", "Profile")
                         .WithMany("Assets")
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Domain.TransactionAggregate.ValueObjects.AssetType", "Type")
+                    b.HasOne("Domain.V1.AssetAggregate.ValueObjects.AssetType", "Type")
                         .WithMany()
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -744,9 +753,9 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Type");
                 });
 
-            modelBuilder.Entity("Domain.TaxSchemeAggregate.TaxScheme", b =>
+            modelBuilder.Entity("Domain.V1.TaxSchemeAggregate.TaxScheme", b =>
                 {
-                    b.OwnsOne("Domain.TaxSchemeAggregate.ValueObjects.TaxIncentiveScheme", "IncentiveScheme", b1 =>
+                    b.OwnsOne("Domain.V1.TaxSchemeAggregate.ValueObjects.TaxIncentiveScheme", "IncentiveScheme", b1 =>
                         {
                             b1.Property<int>("TaxSchemeId")
                                 .HasColumnType("integer");
@@ -760,7 +769,7 @@ namespace Infrastructure.Persistence.Migrations
                             b1.Property<int?>("MinAge")
                                 .HasColumnType("integer");
 
-                            b1.Property<decimal>("TaxRefundRate")
+                            b1.Property<decimal?>("TaxRefundRate")
                                 .HasColumnType("numeric");
 
                             b1.HasKey("TaxSchemeId");
@@ -798,31 +807,31 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("IncentiveScheme");
                 });
 
-            modelBuilder.Entity("Domain.TransactionAggregate.Transaction", b =>
+            modelBuilder.Entity("Domain.V1.TransactionAggregate.Transaction", b =>
                 {
-                    b.HasOne("Domain.AssetAggregate.Asset", "Asset")
+                    b.HasOne("Domain.V1.AssetAggregate.Asset", "Asset")
                         .WithMany("Transactions")
                         .HasForeignKey("AssetId");
 
-                    b.HasOne("Domain.ProfileAggregate.Profile", "Profile")
+                    b.HasOne("Domain.V1.ProfileAggregate.Profile", "Profile")
                         .WithMany("Transactions")
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.TaxSchemeAggregate.TaxScheme", "TaxScheme")
+                    b.HasOne("Domain.V1.TaxSchemeAggregate.TaxScheme", "TaxScheme")
                         .WithMany("Transactions")
                         .HasForeignKey("TaxSchemeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.TransactionAggregate.ValueObjects.TransactionType", "Type")
+                    b.HasOne("Domain.V1.TransactionAggregate.ValueObjects.TransactionType", "Type")
                         .WithMany()
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Domain.TransactionAggregate.ValueObjects.Timeline", "PaymentTimeline", b1 =>
+                    b.OwnsOne("Domain.V1.TransactionAggregate.ValueObjects.Timeline", "PaymentTimeline", b1 =>
                         {
                             b1.Property<int>("TransactionId")
                                 .HasColumnType("integer");
@@ -834,7 +843,7 @@ namespace Infrastructure.Persistence.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("TransactionId");
 
-                            b1.OwnsOne("Domain.TransactionAggregate.ValueObjects.Frequency", "Frequency", b2 =>
+                            b1.OwnsOne("Domain.V1.TransactionAggregate.ValueObjects.Frequency", "Frequency", b2 =>
                                 {
                                     b2.Property<int>("TimelineTransactionId")
                                         .HasColumnType("integer");
@@ -854,7 +863,7 @@ namespace Infrastructure.Persistence.Migrations
 
                                     b2.ToTable("Transactions");
 
-                                    b2.HasOne("Domain.TransactionAggregate.ValueObjects.TimeUnit", "TimeUnit")
+                                    b2.HasOne("Domain.V1.TransactionAggregate.ValueObjects.TimeUnit", "TimeUnit")
                                         .WithMany()
                                         .HasForeignKey("TimeUnitId")
                                         .OnDelete(DeleteBehavior.Cascade)
@@ -866,7 +875,7 @@ namespace Infrastructure.Persistence.Migrations
                                     b2.Navigation("TimeUnit");
                                 });
 
-                            b1.OwnsOne("Domain.TransactionAggregate.ValueObjects.TimePeriod", "Period", b2 =>
+                            b1.OwnsOne("Domain.V1.TransactionAggregate.ValueObjects.TimePeriod", "Period", b2 =>
                                 {
                                     b2.Property<int>("TimelineTransactionId")
                                         .HasColumnType("integer");
@@ -903,9 +912,9 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Type");
                 });
 
-            modelBuilder.Entity("Domain.TransactionCategoryAggregate.TransactionCategory", b =>
+            modelBuilder.Entity("Domain.V1.TransactionCategoryAggregate.TransactionCategory", b =>
                 {
-                    b.HasOne("Domain.ProfileAggregate.Profile", "Profile")
+                    b.HasOne("Domain.V1.ProfileAggregate.Profile", "Profile")
                         .WithMany("TransactionCategories")
                         .HasForeignKey("ProfileId");
 
@@ -965,25 +974,25 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("TransactionTransactionCategory", b =>
                 {
-                    b.HasOne("Domain.TransactionCategoryAggregate.TransactionCategory", null)
+                    b.HasOne("Domain.V1.TransactionCategoryAggregate.TransactionCategory", null)
                         .WithMany()
                         .HasForeignKey("CategoriesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.TransactionAggregate.Transaction", null)
+                    b.HasOne("Domain.V1.TransactionAggregate.Transaction", null)
                         .WithMany()
                         .HasForeignKey("TransactionsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.AssetAggregate.Asset", b =>
+            modelBuilder.Entity("Domain.V1.AssetAggregate.Asset", b =>
                 {
                     b.Navigation("Transactions");
                 });
 
-            modelBuilder.Entity("Domain.ProfileAggregate.Profile", b =>
+            modelBuilder.Entity("Domain.V1.ProfileAggregate.Profile", b =>
                 {
                     b.Navigation("Assets");
 
@@ -992,7 +1001,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Transactions");
                 });
 
-            modelBuilder.Entity("Domain.TaxSchemeAggregate.TaxScheme", b =>
+            modelBuilder.Entity("Domain.V1.TaxSchemeAggregate.TaxScheme", b =>
                 {
                     b.Navigation("Transactions");
                 });
