@@ -12,7 +12,7 @@ namespace Domain.V1.TaxSchemeAggregate.ValueObjects;
 public class TaxIncentiveScheme : ValueObject
 {
     /// <summary>Income tax refund rate for investments. E.g. for a 20% tax rate, a 10% discount would mean a 50% return.</summary>
-    public decimal? TaxRefundRate { get; private init; }
+    public decimal TaxRefundRate { get; private init; } = 0;
 
     /// <summary>The optional minimum age requirement at which the tax incentive benefits can be collected.</summary>
     public int? MinAge { get; private init; }
