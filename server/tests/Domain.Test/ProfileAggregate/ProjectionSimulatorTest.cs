@@ -182,7 +182,32 @@ public class ProjectionSimulatorTest {
 
         // assert
 
-        Assert.Equal(expected.TimeSeries.Skip(4), actual.TimeSeries.Skip(4));
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void SimulateProjection_AssetWithdrawalWithIncomeTax_WithdrawsWithTax() {
+        // act
+
+        var asset = Asset.Create(1, "1", null, 100, 0, 1).Unwrap();
+
+        var initialTransaction = BuildOneTimeTransaction(50, new(2000, 1, 1), TransactionType.Always, TaxScheme.NonTaxable);
+        var assetTransaction = BuildOneTimeTransaction(-50, new(2001, 12, 31), TransactionType.Always, TaxScheme.IncomeTax, asset);
+        var recurringPayment = BuildRecurringTransaction(-40, new(2002, 1, 1), new(2004, 1, 1), TimeUnit.Years, 1, 1, TransactionType.Always, TaxScheme.NonTaxable);
+
+        var expected = Projection.Create(new() {
+            new(new(2000, 1, 1), 50, 0),
+            new(new(2001, 12, 31), 0, 50), // tax-free: 50, value: 50
+            new(new(2002, 12, 31), 0, 50 + 50 - 40), // tax-free: 10, value: 60
+            new(new(2003, 12, 31), 0, 60 + 60 - 40 - 6), // tax-free: 0, taxed: (40 - 10) * 0.2 = 6, value: 74
+        }).Unwrap();
+
+        // act
+
+        var actual = CreateProjection(new[] { initialTransaction, assetTransaction, recurringPayment }, new(1900, 1, 1), new(2100, 1, 1));
+
+        // assert
+
         Assert.Equal(expected, actual);
     }
 
@@ -192,10 +217,10 @@ public class ProjectionSimulatorTest {
     }
 
     /// <summary>Shorthand for constructing a single-time transaction.</summary>
-    public static Transaction BuildOneTimeTransaction(decimal amount, DateOnly time, TransactionType type, TaxScheme taxScheme) {
+    public static Transaction BuildOneTimeTransaction(decimal amount, DateOnly time, TransactionType type, TaxScheme taxScheme, Asset? asset = null) {
         var profile = Profile.Create(1, "", retirementGoal: 500_000, withdrawalRate: 3.5m, birthday: new DateOnly(2000, 1, 1)).Unwrap();
         var timeline = Timeline.Create(TimePeriod.Create(time).Unwrap()).Unwrap();
-        var transaction = Transaction.Create(null, null, amount, type, timeline, profile, taxScheme).Unwrap();
+        var transaction = Transaction.Create(null, null, amount, type, timeline, profile, taxScheme, asset).Unwrap();
         return transaction;
     }
 

@@ -118,7 +118,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
         );
 
         builder.Entity<TaxScheme>().OwnsOne(ts => ts.IncentiveScheme).HasData( // required workaround for EF core owned entity seeding bug
-            new { TaxSchemeId = 1, TaxRefundRate = 20m, MaxApplicableIncome = 7848 },
+            new { TaxSchemeId = 1, TaxRefundRate = 20m, MaxApplicableIncome = 7848 }, // todo: 8448eur starting from pension
             new { TaxSchemeId = 2, TaxRefundRate = 10m, MinAge = 60, MaxIncomePercentage = 15m, MaxApplicableIncome = 6000 },
             new { TaxSchemeId = 3, TaxRefundRate = 10m, MinAge = 55, MaxIncomePercentage = 15m, MaxApplicableIncome = 6000 }
         );

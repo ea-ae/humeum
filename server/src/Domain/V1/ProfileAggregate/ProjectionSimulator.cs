@@ -21,6 +21,8 @@ public class ProjectionSimulator {
         public DateOnly Date;
         public double Amount;
         public PaymentAsset? Asset;
+        public TaxScheme TaxScheme;
+
         public bool PreRetirement;
         public bool PostRetirement;
     }
@@ -57,6 +59,7 @@ public class ProjectionSimulator {
                     StandardDeviation = (double)transaction.Asset.StandardDeviation / 100,
                     TaxScheme = transaction.TaxScheme
                 },
+                TaxScheme = transaction.TaxScheme,
                 PreRetirement = transaction.Type != TransactionType.RetirementOnly,
                 PostRetirement = transaction.Type != TransactionType.PreRetirementOnly
             }))
@@ -85,8 +88,11 @@ public class ProjectionSimulator {
         DateOnly? retiringAt = null;
         double liquidBalance = 0;
         double assetBalance = 0;
+        double taxFreeBalance = 0; // when we withdraw from our portfolio, only profits are taxed
 
         Dictionary<PaymentAsset, double> assets = new();
+        Dictionary<TaxScheme, double> taxDiscounts = new();
+
         var date = _payments.First().Date.AddDays(-1);
 
         foreach (var payment in _payments) {
@@ -117,14 +123,16 @@ public class ProjectionSimulator {
                 assets.TryGetValue(asset, out double amount);
                 assets[asset] = amount - payment.Amount;
                 assetBalance -= payment.Amount;
+
+                taxFreeBalance -= payment.Amount;
             }
 
             // in case we are in debt, withdraw from assets to reach zero
             if (liquidBalance < 0) {
                 int age = CalculateAge(birthday, date);
-                var withdrawn = WithdrawAssets(assets, -liquidBalance, age);
+                (double withdrawn, double taxed) = WithdrawAssets(assets, -liquidBalance, age, ref taxFreeBalance);
                 liquidBalance += withdrawn;
-                assetBalance -= withdrawn;
+                assetBalance -= withdrawn + taxed;
             }
 
             // update date and add time point to series
@@ -166,25 +174,53 @@ public class ProjectionSimulator {
     /// <param name="assets">Dictionary of assets and their values.</param>
     /// <param name="amount">Amount to withdraw if possible.</param>
     /// <returns>Amount withdrawn.</returns>
-    double WithdrawAssets(Dictionary<PaymentAsset, double> assets, double withdrawalAmount, int age) {
+    (double withdrawn, double taxed) WithdrawAssets(Dictionary<PaymentAsset, double> assets, double withdrawalAmount, int age, ref double taxFreeBalance) {
         double withdrawn = 0;
+        double taxed = 0;
 
-        foreach ((PaymentAsset asset, double amount) in assets.OrderBy(a => GetTaxSchemePriority(a.Key.TaxScheme, age))
+        foreach ((PaymentAsset asset, double assetAmount) in assets.OrderBy(a => GetTaxSchemePriority(a.Key.TaxScheme, age))
                                                               .ThenBy(a => -a.Key.StandardDeviation)
                                                               .ThenBy(a => a.Key.ReturnRate)) {
             double leftToWithdraw = withdrawalAmount - withdrawn;
 
-            if (withdrawalAmount < amount) {
+            // calculate withdrawal taxes
+            decimal taxRate = CalculateTaxRate(asset.TaxScheme, age);
+            double taxAmount = Math.Max(leftToWithdraw - taxFreeBalance, 0) * (double)(taxRate / 100);
+            double postTaxAssetAmount = assetAmount - taxAmount;
+
+            // withdraw
+            if (withdrawalAmount < postTaxAssetAmount) {
                 withdrawn += withdrawalAmount;
-                assets[asset] -= withdrawalAmount;
+                assets[asset] -= withdrawalAmount + taxAmount;
+                taxFreeBalance = Math.Max(taxFreeBalance - withdrawalAmount, 0);
+                taxed += taxAmount;
                 break;
             } else {
-                withdrawn += assets[asset];
+                withdrawn += postTaxAssetAmount;
+                taxFreeBalance = Math.Max(taxFreeBalance - assets[asset], 0);
                 assets.Remove(asset); // asset has been emptied
+                taxed += taxAmount;
             }
         }
 
-        return withdrawn;
+        return (withdrawn, taxed);
+    }
+
+    /// <summary>Calculates the tax rate for a tax scheme.</summary>
+    decimal CalculateTaxRate(TaxScheme taxScheme, int age) {
+        decimal taxRate = taxScheme.TaxRate;
+
+        if (taxRate == 0) {
+            return 0;
+        }
+
+        if (taxScheme.IncentiveScheme is not null) {
+            if (age >= taxScheme.IncentiveScheme.MinAge) {
+                taxRate -= taxScheme.IncentiveScheme.TaxRefundRate;
+            }
+        }
+
+        return taxRate;
     }
 
     /// <summary>Calculates the priority of assets to withdraw based on whether their tax requirements have been fulfilled.</summary>

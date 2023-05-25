@@ -6,6 +6,7 @@ using Domain.V1.ProfileAggregate;
 using Domain.V1.TaxSchemeAggregate;
 using Domain.V1.TransactionAggregate.ValueObjects;
 using Domain.V1.TransactionCategoryAggregate;
+
 using Shared.Interfaces;
 using Shared.Models;
 
@@ -18,8 +19,7 @@ namespace Domain.V1.TransactionAggregate;
 /// can also be conditional on the dynamic time point at which one retires, which is signified through
 /// the transaction type.
 /// </summary>
-public class Transaction : TimestampedEntity, IRequiredProfileEntity
-{
+public class Transaction : TimestampedEntity, IRequiredProfileEntity {
     string? _name;
     public string? Name => _name;
 
@@ -54,10 +54,8 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity
                                                                Timeline paymentTimeline,
                                                                Profile profile,
                                                                TaxScheme taxScheme,
-                                                               Asset? asset = null)
-    {
-        var transaction = new Transaction()
-        {
+                                                               Asset? asset = null) {
+        var transaction = new Transaction() {
             Type = type,
             TypeId = type.Id,
             Profile = profile,
@@ -79,8 +77,7 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity
                                                                Timeline paymentTimeline,
                                                                int profileId,
                                                                int taxSchemeId,
-                                                               int? assetId = null)
-    {
+                                                               int? assetId = null) {
         var transaction = new Transaction() { Type = type, TypeId = type.Id, ProfileId = profileId, TaxSchemeId = taxSchemeId, AssetId = assetId };
         var builder = new Result<Transaction, DomainException>.Builder().AddValue(transaction);
 
@@ -91,8 +88,7 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity
                                                                   string? name,
                                                                   string? description,
                                                                   decimal amount,
-                                                                  Timeline paymentTimeline)
-    {
+                                                                  Timeline paymentTimeline) {
         return builder.Transform(transaction => transaction.SetName(name))
                       .Transform(transaction => transaction.SetDescription(description))
                       .Transform(transaction => transaction.SetAmount(amount))
@@ -108,8 +104,7 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity
                                                   TransactionType type,
                                                   Timeline paymentTimeline,
                                                   int taxSchemeId,
-                                                  int? assetId)
-    {
+                                                  int? assetId) {
         Type = type;
         TypeId = type.Id;
         TaxSchemeId = taxSchemeId;
@@ -124,8 +119,7 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity
     /// </summary>
     /// <param name="category">Category to assign.</param>
     /// <returns>Whether the category was assigned (in other words, it didn't exist before).</returns>
-    public bool AddCategory(TransactionCategory category)
-    {
+    public bool AddCategory(TransactionCategory category) {
         return _categories.Add(category);
     }
 
@@ -134,20 +128,16 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity
     /// </summary>
     /// <param name="category">Category to remove.</param>
     /// <returns>Whether the category was removed (in other words, whether it was previously assigned).</returns>
-    public bool RemoveCategory(TransactionCategory category)
-    {
+    public bool RemoveCategory(TransactionCategory category) {
         return _categories.Remove(category);
     }
 
     /// <summary>
     /// Total count of payments made in a recurring transaction.
     /// </summary>
-    public int TotalTransactionCount
-    {
-        get
-        {
-            if (!PaymentTimeline.Period.IsRecurring || PaymentTimeline.Frequency is null)
-            {
+    public int TotalTransactionCount {
+        get {
+            if (!PaymentTimeline.Period.IsRecurring || PaymentTimeline.Frequency is null) {
                 return 1;
             }
 
@@ -171,59 +161,44 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity
         return PaymentTimeline.GetPaymentDates().Then(dates => Result<IEnumerable<DateOnly>, DomainException>.Ok(dates.Where(d => d >= from && d <= until)));
     }
 
-    IResult<None, DomainException> SetName(string? name)
-    {
-        if (name is null || name == "")
-        {
+    IResult<None, DomainException> SetName(string? name) {
+        if (name is null || name == "") {
             _name = null;
-        }
-        else if (name.Length > 50)
-        {
+        } else if (name.Length > 50) {
             return Result<None, DomainException>.Fail(new DomainException("Name cannot exceed 50 characters."));
-        }
-        else
-        {
+        } else {
             _name = name;
         }
 
         return Result<None, DomainException>.Ok(None.Value);
     }
 
-    IResult<None, DomainException> SetDescription(string? description)
-    {
-        if (description is null || description == "")
-        {
+    IResult<None, DomainException> SetDescription(string? description) {
+        if (description is null || description == "") {
             _description = null;
-        }
-        else if (description.Length > 400)
-        {
+        } else if (description.Length > 400) {
             return Result<None, DomainException>.Fail(new DomainException("Description cannot exceed 400 characters."));
-        }
-        else
-        {
+        } else {
             _description = description;
         }
 
         return Result<None, DomainException>.Ok(None.Value);
     }
 
-    IResult<None, DomainException> SetAmount(decimal amount)
-    {
-        if (amount == 0)
-        {
+    IResult<None, DomainException> SetAmount(decimal amount) {
+        if (amount == 0) {
             return Result<None, DomainException>.Fail(new DomainException("Transaction amount cannot be zero."));
-        }
-        else if (Asset is not null && amount >= 0)
-        {
+        } else if (AssetId is not null && amount >= 0) {
             return Result<None, DomainException>.Fail(new DomainException("Asset transactions can only be expenses (a negative amount)."));
+        } else if (amount <= 0 && AssetId is null && TaxScheme.Id != TaxScheme.NonTaxable.Id) {
+            return Result<None, DomainException>.Fail(new DomainException("Non-asset expense transactions cannot have taxes. Use TaxScheme.NonTaxable instead."));
         }
 
         _amount = amount;
         return Result<None, DomainException>.Ok(None.Value);
     }
 
-    IResult<None, DomainException> SetPaymentTimeline(Timeline paymentTimeline)
-    {
+    IResult<None, DomainException> SetPaymentTimeline(Timeline paymentTimeline) {
         _paymentTimeline = paymentTimeline;
         return Result<None, DomainException>.Ok(None.Value);
     }

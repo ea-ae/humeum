@@ -158,7 +158,7 @@ public class Result<T, E> : IResult<T, E> where E : IBaseException {
 
     /// <inheritdoc/>
     public T Unwrap() {
-        return Success ? _value : throw new InvalidOperationException("Result did not succeed, cannot access value.");
+        return Success ? _value : throw new InvalidOperationException($"Result did not succeed, cannot access value: {GetErrors().First().Message}");
     }
 
     /// <inheritdoc/>
