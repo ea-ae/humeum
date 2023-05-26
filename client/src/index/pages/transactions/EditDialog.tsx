@@ -97,6 +97,9 @@ export default function EditDialog({ transaction, isOpen, onClose, onSave, onDel
         </div>
       </Mui.DialogContent>
       <Mui.DialogActions>
+        <Mui.Button onClick={onClose} className="text-stone-700">
+          Cancel
+        </Mui.Button>
         <Mui.Button
           onClick={onTransactionDelete}
           disabled={newTransaction}
