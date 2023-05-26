@@ -50,13 +50,15 @@ export default function AssetList() {
     AssetsClient.callAuthenticatedEndpoint(get, set, fail, user.id);
   };
 
-  const onAssetCreate = (asset: AssetDto) => {
+  const onAssetCreate = (createdAsset: AssetDto) => {
+    const asset = createdAsset;
+
     if (user === null || assets === null) {
       throw new Error('User or state was null in event handler');
     }
 
-    const get = () =>
-      client.addAsset(
+    const get = async () => {
+      const result = await client.addAsset(
         user.id,
         user.profiles[0].id,
         '1',
@@ -66,6 +68,12 @@ export default function AssetList() {
         asset.standardDeviation,
         asset.type.code
       );
+
+      const createdId = parseInt(result.headers.location.split('/').pop() as string, 10);
+      asset.id = createdId;
+
+      return result;
+    };
 
     const set = () => setAssets([...assets, asset]);
 

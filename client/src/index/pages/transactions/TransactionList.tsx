@@ -73,7 +73,9 @@ function TransactionList() {
 
   const onDialogClose = () => setIsEditDialogOpen(false); // we do not null the transaction here, because we want to keep it for the transition
 
-  const createTransaction = (transaction: TransactionDto) => {
+  const createTransaction = (createdTransaction: TransactionDto) => {
+    const transaction = createdTransaction;
+
     if (user !== null && transactions !== null) {
       const client = new TransactionsClient();
       const profileId = user.profiles[0].id;
@@ -99,6 +101,7 @@ function TransactionList() {
         );
 
         const createdId = parseInt(result.headers.location.split('/').pop() as string, 10);
+        transaction.id = createdId;
 
         transaction.categories.forEach((c) => client.addCategoryToTransaction(profileId, createdId, '1', user.id.toString(), c.id));
         return result;
