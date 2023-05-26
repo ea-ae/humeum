@@ -190,7 +190,7 @@ public class Transaction : TimestampedEntity, IRequiredProfileEntity {
             return Result<None, DomainException>.Fail(new DomainException("Transaction amount cannot be zero."));
         } else if (AssetId is not null && amount >= 0) {
             return Result<None, DomainException>.Fail(new DomainException("Asset transactions can only be expenses (a negative amount)."));
-        } else if (amount <= 0 && AssetId is null && TaxScheme.Id != TaxScheme.NonTaxable.Id) {
+        } else if (amount <= 0 && AssetId is null && TaxSchemeId != TaxScheme.NonTaxable.Id) {
             return Result<None, DomainException>.Fail(new DomainException("Non-asset expense transactions cannot have taxes. Use TaxScheme.NonTaxable instead."));
         }
 

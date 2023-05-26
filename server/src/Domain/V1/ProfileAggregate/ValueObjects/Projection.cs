@@ -23,16 +23,18 @@ public struct TimePoint {
 }
 
 public class Projection : ValueObject {
+    public DateOnly? RetiringAt { get; private init; }
     public List<TimePoint> TimeSeries { get; private init; } = null!;
 
-    public static IResult<Projection, DomainException> Create(List<TimePoint> timeSeries) {
-        var projection = new Projection() { TimeSeries = timeSeries };
+    public static IResult<Projection, DomainException> Create(List<TimePoint> timeSeries, DateOnly? retiringAt = null) {
+        var projection = new Projection() { TimeSeries = timeSeries, RetiringAt = retiringAt };
         return Result<Projection, DomainException>.Ok(projection);
     }
 
     Projection() { }
 
     protected override IEnumerable<object?> GetEqualityComponents() {
+        yield return RetiringAt;
         foreach (var timePoint in TimeSeries) {
             yield return timePoint;
         }

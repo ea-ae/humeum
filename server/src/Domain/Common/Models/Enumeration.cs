@@ -45,6 +45,14 @@ public abstract class Enumeration : ValueObject, IComparable {
 
     public override int GetHashCode() => Code.GetHashCode();
 
+    public static bool operator ==(Enumeration left, Enumeration right) {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(Enumeration left, Enumeration right) {
+        return !left.Equals(right);
+    }
+
     protected static IEnumerable<T> GetAll<T>() where T : Enumeration =>
         typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
                  .Select(f => f.GetValue(null))

@@ -1,7 +1,6 @@
 ﻿using Domain.Common.Exceptions;
 using Domain.V1.ProfileAggregate.ValueObjects;
 using Domain.V1.TaxSchemeAggregate;
-using Domain.V1.TaxSchemeAggregate.ValueObjects;
 using Domain.V1.TransactionAggregate;
 using Domain.V1.TransactionAggregate.ValueObjects;
 
@@ -151,7 +150,7 @@ public class ProjectionSimulator {
             }
         }
 
-        return Projection.Create(series);
+        return Projection.Create(series, retiringAt);
     }
 
     /// <summary>Adds asset interests to their value, re-investing all income.</summary>

@@ -6,10 +6,13 @@ using Application.V1.TransactionCategories.Queries;
 using Application.V1.Transactions.Queries;
 using Domain.V1.AssetAggregate;
 using Domain.V1.AssetAggregate.ValueObjects;
+using Domain.V1.ProfileAggregate.ValueObjects;
 using Domain.V1.TaxSchemeAggregate;
 using Domain.V1.TransactionAggregate;
 using Domain.V1.TransactionCategoryAggregate;
 using Domain.V1.UserAggregate;
+
+using static Application.V1.Profiles.Queries.ProjectionDto;
 
 namespace Application.Common.Mappings;
 
@@ -39,6 +42,10 @@ public class ApplicationMappingProfile : AutoMapper.Profile {
         CreateMap<TaxScheme, TaxSchemeDto>();
 
         CreateMap<Domain.V1.ProfileAggregate.Profile, ProfileDto>();
+
+        CreateMap<Projection, ProjectionDto>()
+            .ForMember(dest => dest.TimeSeries,
+                       o => o.MapFrom(src => src.TimeSeries.Select(tp => new TimePointDto() { Date = tp.Date, LiquidWorth = tp.LiquidWorth, AssetWorth = tp.AssetWorth })));
 
         CreateMap<User, UserDto>()
             .ForMember(dest => dest.Profiles,

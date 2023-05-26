@@ -45,15 +45,31 @@ public class ProfilesController : ControllerBase {
     /// Returns profile with given ID owned by user.
     /// </summary>
     /// <response code="200">Returns the profile.</response>
-    /// <response code="401">If a user route is accessed without an authentication token.</response>
-    /// <response code="403">If a user route is accessed with an invalid authentication token or CSRF header is missing.</response>
+    /// <response code="401">If a profile route is accessed without an authentication token.</response>
+    /// <response code="403">If a profile route is accessed with an invalid authentication token or CSRF header is missing.</response>
     /// <response code="404">Profile with given ID was not found for user.</response>
     [HttpGet("{Profile}")]
     [ProducesResponseType(typeof(ProfileDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleProfileData")]
     public async Task<ActionResult<IResult<ProfileDto, IBaseException>>> GetProfile(GetProfileQuery query) {
         var profile = await _mediator.Send(query);
         return Ok(profile);
+    }
+
+    /// <summary>
+    /// Returns the projection chart for a profile.
+    /// </summary>
+    /// <response code="200">Returns the chart.</response>
+    /// <response code="401">If a profile route is accessed without an authentication token.</response>
+    /// <response code="403">If a profile route is accessed with an invalid authentication token or CSRF header is missing.</response>
+    /// <response code="404">Profile with given ID was not found for user.</response>
+    [HttpGet("{Profile}/chart")]
+    [ProducesResponseType(typeof(ProjectionDto), StatusCodes.Status200OK)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "CanHandleProfileData")]
+    public async Task<ActionResult<IResult<ProjectionDto, IBaseException>>> GenerateChart(GenerateChartQuery query) {
+        var chart = await _mediator.Send(query);
+        return Ok(chart);
     }
 
     /// <summary>
