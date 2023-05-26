@@ -2,7 +2,7 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { BriefRelatedResourceDto, TransactionCategoriesClient, TransactionDto, TransactionsClient } from '../../api/api';
+import { BriefRelatedResourceDto, TransactionDto, TransactionsClient } from '../../api/api';
 import fetchTransactions from '../../api/fetchTransactions';
 import useAuth from '../../hooks/useAuth';
 import useCache, { CacheKey } from '../../hooks/useCache';
