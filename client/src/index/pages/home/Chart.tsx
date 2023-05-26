@@ -1,4 +1,4 @@
-import ECharts, { EChartsOption } from 'echarts-for-react';
+import ECharts from 'echarts-for-react';
 
 import { TimePointDto } from '../../api/api';
 
@@ -11,6 +11,7 @@ export default function Charts({ data }: Props) {
 
   const seriesOptions = {
     type: 'line',
+    smooth: true,
   };
 
   const netWorth = {
@@ -32,25 +33,25 @@ export default function Charts({ data }: Props) {
   };
 
   const options = {
-    grid: { top: 8, right: 8, bottom: 70, left: 40 },
+    grid: {
+      containLabel: true,
+    },
     toolbox: { feature: { restore: {} } },
     xAxis: {
       type: 'category',
       name: 'Date',
       data: dates,
-      // boundaryGap: true,
     },
     yAxis: {
       type: 'value',
       name: 'Value',
       scale: true,
-      // boundaryGap: [0, '100%'],
       axisLabel: { formatter: '{value}€' },
     },
-    // dataZoom: [
-    //   { type: 'inside', start: 0, end: 100 },
-    //   { start: 0, end: 100 },
-    // ],
+    dataZoom: [
+      { type: 'inside', start: 0, end: 100 },
+      { start: 0, end: 100 },
+    ],
     tooltip: {
       trigger: 'axis',
       valueFormatter: (value: number | string) => (value == null ? '-' : `${Number(value).toFixed(2).toString()}€`),
@@ -58,5 +59,5 @@ export default function Charts({ data }: Props) {
     series: [netWorth, liquidWorth, assetWorth],
   };
 
-  return <ECharts option={options} style={{ width: '100%' }} />;
+  return <ECharts option={options} style={{ height: '96%', width: '96%' }} />;
 }

@@ -36,7 +36,7 @@ public class ProjectionSimulator {
     ProjectionTimePeriod _period;
 
     public static IResult<ProjectionSimulator, DomainException> Create(IEnumerable<Transaction> transactions, ProjectionTimePeriod period) {
-        var earliestTransaction = transactions.Select(t => t.PaymentTimeline.Period.Start).Min();
+        // var earliestTransaction = transactions.Select(t => t.PaymentTimeline.Period.Start).Min();
         return GetPaymentChronology(transactions, period).Then(payments => {
             return Result<ProjectionSimulator, DomainException>.Ok(new ProjectionSimulator(payments, period));
         });
