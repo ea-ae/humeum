@@ -32,24 +32,30 @@ public class ProjectionSimulator {
     /// <summary>List of chronological payments processed from the transaction list.</summary>
     List<Payment> _payments;
 
+    /// <summary>A period filter for what payments should be included in the end projection after calculations.</summary>
+    ProjectionTimePeriod _period;
+
     public static IResult<ProjectionSimulator, DomainException> Create(IEnumerable<Transaction> transactions, ProjectionTimePeriod period) {
         var earliestTransaction = transactions.Select(t => t.PaymentTimeline.Period.Start).Min();
-        return GetPaymentChronology(transactions, period).Then(payments =>
-        {
-            return Result<ProjectionSimulator, DomainException>.Ok(new ProjectionSimulator(payments));
+        return GetPaymentChronology(transactions, period).Then(payments => {
+            return Result<ProjectionSimulator, DomainException>.Ok(new ProjectionSimulator(payments, period));
         });
     }
 
     /// <summary>Returns a timeline of payments in chronological order.</summary>
     static IResult<List<Payment>, DomainException> GetPaymentChronology(IEnumerable<Transaction> transactions, ProjectionTimePeriod period) {
         List<Payment> payments = new();
-        foreach (var transaction in transactions)
-        {
-            var paymentDates = transaction.GetPaymentDates(period.Start, period.End);
-            if (paymentDates.Failure)
-            {
+
+        // filter out transactions that start too late
+        var filteredTransactions = transactions.Where(t => t.PaymentTimeline.Period.Start <= period.End);
+
+        foreach (var transaction in filteredTransactions) {
+            var paymentDates = transaction.GetPaymentDates(period.End);
+
+            if (paymentDates.Failure) {
                 return Result<List<Payment>, DomainException>.Fail(paymentDates.GetErrors());
             }
+
             payments.AddRange(paymentDates.Unwrap().Select(pd => new Payment {
                 Date = pd,
                 Amount = (double)transaction.Amount,
@@ -61,16 +67,16 @@ public class ProjectionSimulator {
                 TaxScheme = transaction.TaxScheme,
                 PreRetirement = transaction.Type != TransactionType.RetirementOnly,
                 PostRetirement = transaction.Type != TransactionType.PreRetirementOnly
-            }))
-            ;;
+            }));
         }
 
         payments.Sort((p1, p2) => p1.Date.CompareTo(p2.Date));
         return Result<List<Payment>, DomainException>.Ok(payments);
     }
 
-    ProjectionSimulator(List<Payment> payments) {
+    ProjectionSimulator(List<Payment> payments, ProjectionTimePeriod period) {
         _payments = payments;
+        _period = period;
     }
 
     /// <summary>Simulates a projection based on constructed timeline of payments.</summary>
@@ -144,9 +150,13 @@ public class ProjectionSimulator {
             // update date and add time point to series
             if (yearsPassed > 0) {
                 date = payment.Date;
-                series.Add(new TimePoint(date, Math.Ceiling(liquidBalance * 100) / 100, Math.Ceiling(assetBalance * 100) / 100));
+                if (date >= _period.Start) {
+                    series.Add(new TimePoint(date, Math.Ceiling(liquidBalance * 100) / 100, Math.Ceiling(assetBalance * 100) / 100));
+                }
             } else {
-                series[^1] = new TimePoint(date, Math.Ceiling(liquidBalance * 100) / 100, Math.Ceiling(assetBalance * 100) / 100);
+                if (date >= _period.Start) {
+                    series[^1] = new TimePoint(date, Math.Ceiling(liquidBalance * 100) / 100, Math.Ceiling(assetBalance * 100) / 100);
+                }
             }
         }
 

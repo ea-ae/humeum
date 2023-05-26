@@ -43,7 +43,7 @@ public class GenerateChartQueryHandler : IQueryHandler<GenerateChartQuery, IResu
         var projectionResult = profileResult.Then<Projection, IBaseException>(profile => {
             var until = DateOnly.FromDateTime(request.Until ?? new DateTime(2100, 1, 1));
             return profile.GenerateProjection(until);
-        }).Then<ProjectionDto, IBaseException>(projection =>  _mapper.MapToResult<ProjectionDto>(projection));
+        }).Then(projection =>  _mapper.MapToResult<ProjectionDto>(projection));
 
         return Task.FromResult(projectionResult);
     }

@@ -40,7 +40,7 @@ public class Timeline : ValueObject
 
     Timeline() { }
 
-    public IResult<IEnumerable<DateOnly>, DomainException> GetPaymentDates() {
+    public IResult<IEnumerable<DateOnly>, DomainException> GetPaymentDates(DateOnly? until = null) {
         if (Frequency is null) {
             return Result<IEnumerable<DateOnly>, DomainException>.Ok(new List<DateOnly>() { Period.Start });
         }
@@ -48,7 +48,7 @@ public class Timeline : ValueObject
         List<DateOnly> dates = new();
         DateOnly cursor = Period.Start;
 
-        while (cursor <= Period.End) {
+        while (cursor <= (until ?? Period.End)) {
             DateOnly dateAfterCycle;
 
             // get the date after the cycle
