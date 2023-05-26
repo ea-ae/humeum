@@ -231,7 +231,7 @@ function TransactionList() {
         disableSelectionOnClick
         experimentalFeatures={{ newEditingApi: true }}
         classes={{ cell: 'outline-none', columnHeader: 'outline-none', row: 'group' }}
-        className="min-w-fit card"
+        className="min-w-fit card mr-4"
         components={{
           Footer: footerConstructor,
         }}

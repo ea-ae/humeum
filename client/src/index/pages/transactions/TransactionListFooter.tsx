@@ -1,6 +1,5 @@
 import * as Mui from '@mui/material';
 import { GridFooter, GridFooterContainer } from '@mui/x-data-grid';
-import React from 'react';
 
 interface Props {
   onCreateClick: () => void;
