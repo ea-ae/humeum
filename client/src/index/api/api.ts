@@ -833,14 +833,14 @@ export class ProfilesClient extends ApiClient {
             let result401: any = null;
             let resultData401  = _responseText;
             result401 = ProblemDetails.fromJS(resultData401);
-            return throwException("If a user route is accessed without an authentication token.", status, _responseText, _headers, result401);
+            return throwException("If a profile route is accessed without an authentication token.", status, _responseText, _headers, result401);
 
         } else if (status === 403) {
             const _responseText = response.data;
             let result403: any = null;
             let resultData403  = _responseText;
             result403 = ProblemDetails.fromJS(resultData403);
-            return throwException("If a user route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
+            return throwException("If a profile route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
 
         } else if (status === 200) {
             const _responseText = response.data;
@@ -941,6 +941,86 @@ export class ProfilesClient extends ApiClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Promise.resolve<SwaggerResponse<void>>(new SwaggerResponse(status, _headers, null as any));
+    }
+
+    /**
+     * Returns the projection chart for a profile.
+     * @param until (optional) 
+     * @return Returns the chart.
+     */
+    generateChart(profile: number, version: string, user: string, until?: Date | null | undefined , cancelToken?: CancelToken | undefined): Promise<SwaggerResponse<ProjectionDto>> {
+        let url_ = this.baseUrl + "/api/v{Version}/users/{User}/profiles/{Profile}/chart?";
+        if (profile === undefined || profile === null)
+            throw new Error("The parameter 'profile' must be defined.");
+        url_ = url_.replace("{Profile}", encodeURIComponent("" + profile));
+        if (version === undefined || version === null)
+            throw new Error("The parameter 'version' must be defined.");
+        url_ = url_.replace("{Version}", encodeURIComponent("" + version));
+        if (user === undefined || user === null)
+            throw new Error("The parameter 'user' must be defined.");
+        url_ = url_.replace("{User}", encodeURIComponent("" + user));
+        if (until !== undefined && until !== null)
+            url_ += "Until=" + encodeURIComponent(until ? "" + until.toISOString() : "") + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.instance.request(transformedOptions_);
+        }).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGenerateChart(_response);
+        });
+    }
+
+    protected processGenerateChart(response: AxiosResponse): Promise<SwaggerResponse<ProjectionDto>> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 401) {
+            const _responseText = response.data;
+            let result401: any = null;
+            let resultData401  = _responseText;
+            result401 = ProblemDetails.fromJS(resultData401);
+            return throwException("If a profile route is accessed without an authentication token.", status, _responseText, _headers, result401);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            let result403: any = null;
+            let resultData403  = _responseText;
+            result403 = ProblemDetails.fromJS(resultData403);
+            return throwException("If a profile route is accessed with an invalid authentication token or CSRF header is missing.", status, _responseText, _headers, result403);
+
+        } else if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = ProjectionDto.fromJS(resultData200);
+            return Promise.resolve<SwaggerResponse<ProjectionDto>>(new SwaggerResponse<ProjectionDto>(status, _headers, result200));
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<SwaggerResponse<ProjectionDto>>(new SwaggerResponse(status, _headers, null as any));
     }
 }
 
@@ -2929,6 +3009,101 @@ export interface IProfileDto {
     name: string;
     description?: string | undefined;
     withdrawalRate: number;
+}
+
+export class ProjectionDto implements IProjectionDto {
+    retiringAt?: Date | undefined;
+    timeSeries!: TimePointDto[];
+
+    constructor(data?: IProjectionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.timeSeries = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.retiringAt = _data["retiringAt"] ? new Date(_data["retiringAt"].toString()) : <any>undefined;
+            if (Array.isArray(_data["timeSeries"])) {
+                this.timeSeries = [] as any;
+                for (let item of _data["timeSeries"])
+                    this.timeSeries!.push(TimePointDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ProjectionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProjectionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["retiringAt"] = this.retiringAt ? formatDate(this.retiringAt) : <any>undefined;
+        if (Array.isArray(this.timeSeries)) {
+            data["timeSeries"] = [];
+            for (let item of this.timeSeries)
+                data["timeSeries"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IProjectionDto {
+    retiringAt?: Date | undefined;
+    timeSeries: TimePointDto[];
+}
+
+export class TimePointDto implements ITimePointDto {
+    date!: Date;
+    liquidWorth!: number;
+    assetWorth!: number;
+
+    constructor(data?: ITimePointDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
+            this.liquidWorth = _data["liquidWorth"];
+            this.assetWorth = _data["assetWorth"];
+        }
+    }
+
+    static fromJS(data: any): TimePointDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TimePointDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date ? formatDate(this.date) : <any>undefined;
+        data["liquidWorth"] = this.liquidWorth;
+        data["assetWorth"] = this.assetWorth;
+        return data;
+    }
+}
+
+export interface ITimePointDto {
+    date: Date;
+    liquidWorth: number;
+    assetWorth: number;
 }
 
 /** Result object that contains either a result value or a collection of exceptions. */

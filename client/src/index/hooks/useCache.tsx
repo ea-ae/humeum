@@ -9,6 +9,7 @@ export enum CacheKey {
   TransactionCategories = 'transactionCategories',
   TaxSchemes = 'taxSchemes',
   Assets = 'assets',
+  Chart = 'chart',
 }
 
 function isCacheInitializationFunction<T>(updateCache: (() => T) | T): updateCache is () => T {

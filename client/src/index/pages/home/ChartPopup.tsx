@@ -1,5 +1,10 @@
 import * as Mui from '@mui/material';
 
+import { ProjectionDto } from '../../api/api';
+import fetchChart from '../../api/fetchChart';
+import useCache, { CacheKey } from '../../hooks/useCache';
+import Chart from './Chart';
+
 interface Props {
   isOpen: boolean;
 
@@ -7,6 +12,10 @@ interface Props {
 }
 
 export default function ChartPopup({ isOpen, onClose }: Props) {
+  const [chart, _setChart] = fetchChart(...useCache<ProjectionDto | null>(CacheKey.Chart, null));
+
+  const loading = <p className="h-min text-3xl">Loading...</p>;
+
   return (
     <Mui.Dialog
       open={isOpen}
@@ -21,7 +30,7 @@ export default function ChartPopup({ isOpen, onClose }: Props) {
       </Mui.DialogActions>
       <Mui.DialogContent dividers>
         <div className="flex h-full justify-center items-center text-gray-600">
-          <p className="h-min text-3xl">Loading...</p>
+          {chart === null ? loading : <Chart data={chart.timeSeries} />}
         </div>
       </Mui.DialogContent>
     </Mui.Dialog>
