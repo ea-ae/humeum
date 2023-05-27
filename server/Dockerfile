@@ -20,4 +20,4 @@ RUN dotnet publish src/Web -c Release -o /publish
 FROM base as app
 WORKDIR /app
 COPY --from=publish /publish ./
-ENTRYPOINT dotnet Web.dll
+ENTRYPOINT dotnet Web.dll --urls "http://*:8080" --environment Production

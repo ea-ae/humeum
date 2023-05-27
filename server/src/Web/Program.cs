@@ -20,7 +20,11 @@ public class Program {
 
         app.UseStaticFiles();
         app.UseOpenApi();
-        app.UseSwaggerUi3();
+
+        if (!app.Environment.IsDevelopment()) {
+            app.UseSwaggerUi3();
+        }
+
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();

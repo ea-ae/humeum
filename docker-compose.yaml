@@ -24,12 +24,27 @@ services:
       - database
     env_file:
       - .env
-    ports:  # this is temporary (until we set up nginx)
-      - 80:80
-      - 443:443
+    expose:
+      - 8080
     restart: unless-stopped
     networks:
       - main
+
+  nginx:
+    build: nginx/
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - client
+    env_file:
+      - .env
+    ports:
+      - 81:81
+    restart: unless-stopped
+    networks:
+      - main
+    volumes:
+      - static:/static:ro
   
 volumes:
   data:
