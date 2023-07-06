@@ -1,6 +1,6 @@
 # Humeum
 
-Humeum is a webapp for retirement planning. Still in progress, not all features outlined are complete.
+Humeum is a webapp for retirement planning. The project had an emphasis on the backend, where I tried out a lot of new technologies & design patterns.
 
 ## Features
 
