@@ -1,6 +1,6 @@
 # Humeum
 
-Humeum is a webapp for retirement planning. The project had an emphasis on the backend, where I tried out a lot of new technologies & design patterns. The frontend was an afterthought and it's not code I'm particularly fond of.
+Humeum is a webapp for retirement planning. The project had an emphasis on the backend, where I tried out a lot of new technologies (ASP.NET, EF) & design patterns (DDD, CA). The frontend was an afterthought and it's not code I'm particularly proud of.
 
 ## Features
 
